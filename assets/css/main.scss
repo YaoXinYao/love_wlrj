@@ -1,0 +1,31 @@
+// 统一样式的风格
+@import "normalize.css";
+@import "element-plus/dist/index.css";
+// 不需导入了，在nuxt.config中已经配置自动导入
+// @import "@/assets/css/variables.scss";
+//全局样式
+.wrapper {
+  width: $contentWidth;
+  margin: 0 auto;
+}
+
+body {
+  font-size: 14px;
+  color: #333;
+  font-family: OPPOSans2, PingFang SC, Microsoft YaHei, Helvetica Neue,
+    Helvetica, Arial, sans-serif;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
