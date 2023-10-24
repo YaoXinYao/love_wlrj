@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import ElementPlus from "unplugin-element-plus/vite";
 export default defineNuxtConfig({
-  css: ["@/assets/css/main.scss", "@/assets/cus-font/iconfont.css"],
+  css: ["@/assets/css/main.scss"],
   vite: {
     css: {
       preprocessorOptions: {

@@ -2,6 +2,7 @@
   <div>login</div>
 </template>
 <script setup lang="ts">
+import { definePageMeta } from "nuxt/dist/pages/runtime/composables";
 interface Inprops {
   title?: string;
 }

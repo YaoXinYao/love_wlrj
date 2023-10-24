@@ -1,12 +1,22 @@
 // 统一样式的风格
 @import "normalize.css";
 @import "element-plus/dist/index.css";
+@import "//at.alicdn.com/t/c/font_4299098_2jjxg4zxt5n.css";
 // 不需导入了，在nuxt.config中已经配置自动导入
 // @import "@/assets/css/variables.scss";
 //全局样式
 .wrapper {
   width: $contentWidth;
   margin: 0 auto;
+}
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+html {
+  font-size: 100px;
+  background-image: url(/images/wallhaven-kxj3l1_1920x1080.png);
 }
 
 body {
@@ -28,4 +38,5 @@ ul {
 
 a {
   text-decoration: none;
+  color: inherit;
 }

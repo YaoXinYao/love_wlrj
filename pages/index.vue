@@ -1,9 +1,10 @@
 <template>
-  <div class="wrapper">
-    <h1>我是首页</h1>
-  </div>
+  <div class="wrapper"></div>
 </template>
-
 <script setup lang="ts"></script>
-
-<style scoped></style>
+<style scoped lang="scss">
+.wrapper {
+  height: 120vh;
+  width: 100%;
+}
+</style>

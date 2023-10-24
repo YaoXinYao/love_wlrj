@@ -1,9 +1,9 @@
 <template>
-  <div class="app-footer">
+  <!-- <div class="app-footer">
     <div class="content">
       <h1>我是尾部</h1>
     </div>
-  </div>
+  </div> -->
 </template>
 <script lang="ts" setup></script>
 
