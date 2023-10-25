@@ -9,7 +9,9 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.6",
     "@nuxt/devtools": "latest",
+    "element-plus": "^2.4.1",
     "nuxt": "^3.7.0",
     "sass": "^1.66.1",
     "scss": "^0.2.4"
@@ -17,7 +19,6 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
     "axios": "^1.2.0",
-    "element-plus": "^2.3.12",
     "gsap": "^3.12.2",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",

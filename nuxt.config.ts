@@ -35,7 +35,7 @@ export default defineNuxtConfig({
       noscript: [{ children: "Javascript is required" }],
     },
   },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "@element-plus/nuxt"],
   build: {
     transpile: ["element-plus/es"],
   },
