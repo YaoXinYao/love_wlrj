@@ -2,7 +2,7 @@
   <div class="wrapperMixd">
     <div class="mixed">
       <div class="mixedinner">
-        <div class="header-title">未来软件工作室</div>
+        <div class="header-title EN0">未来软件工作室</div>
         <div class="header-title EN">Future software Studio</div>
         <div class="header-title EN2">做一个有影响力的人</div>
         <div class="header-title EN3">做一个有影响力的团队</div>
@@ -22,6 +22,16 @@
 </template>
 
 <script setup lang="ts">
+import { gsap } from "gsap";
+onMounted(() => {
+  const line = gsap.timeline();
+  line
+    .fromTo(".EN0", { x: "-2000px" }, { x: "0" }, 1)
+    .fromTo(".EN", { x: "2000px" }, { x: "0" }, ">")
+    .fromTo(".EN2", { x: "-2000px" }, { x: "0" }, ">")
+    .fromTo(".EN3", { x: "2000px" }, { x: "0" }, ">")
+    .fromTo(".EN4", { x: "-2000px" }, { x: "0" }, ">");
+});
 const carouselItem = [
   {
     src: "/images/wallhaven-3l2vm3_1920x1080.png",
@@ -42,8 +52,9 @@ const carouselItem = [
   width: 100%;
   height: auto;
   position: relative;
+  overflow: hidden;
   .wrapper {
-    height: 120vh;
+    height: 100vh;
     width: 100%;
   }
   .mixed {
@@ -71,8 +82,10 @@ const carouselItem = [
       .EN {
         margin-top: 0.2rem;
         font-size: 0.3rem;
-        color: rgb(33, 155, 255);
+        /* 渐变色 */
+        @include gradual();
       }
+
       .EN2 {
         margin-top: 0.2rem;
         font-size: 0.2rem;
