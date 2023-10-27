@@ -51,7 +51,31 @@ $bgGrayColor: #fafafa;
   top: $top;
   z-index: $z;
 }
-
+@keyframes gradientText {
+  0% {
+    background-position: 0;
+  }
+  100% {
+    background-position: 28000px;
+  }
+}
+@mixin gradual() {
+  animation: gradientText 300s infinite linear;
+  -webkit-animation: gradientText 300s infinite linear;
+  color: transparent;
+  background: -webkit-linear-gradient(
+    0deg,
+    #56ecc7,
+    #9f5ad8 25%,
+    #56ecc7 50%,
+    #9f5ad8 75%,
+    #56ecc7
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: auto;
+}
 @mixin hoverEffect() {
   transition: all 0.2s linear;
   transform: translateY(-3px);
