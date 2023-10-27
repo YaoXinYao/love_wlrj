@@ -142,7 +142,6 @@ onBeforeUnmount(() => {
 //切换演示
 function handlerscroll() {
   let scrolly = window.scrollY;
-  console.log(scrolly);
   if (scrolly >= 100) {
     headerTop.value = {
       height: "0.8rem",
