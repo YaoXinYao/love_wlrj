@@ -19,6 +19,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
     "axios": "^1.2.0",
+    "echarts": "^5.4.3",
     "gsap": "^3.12.2",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",

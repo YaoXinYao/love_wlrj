@@ -38,7 +38,7 @@
         </el-menu>
       </div>
 
-      <el-scrollbar max-height="calc(100vh - 60px - 20px)" class="routerBox"
+      <el-scrollbar min-height="calc(100vh - 60px - 20px)" class="routerBox"
         ><NuxtPage></NuxtPage
       ></el-scrollbar>
     </div>
