@@ -76,8 +76,7 @@ const Props = withDefaults(defineProps<IProps>(),{
 .announcement{
     overflow: hidden;
     padding: 24px;
-    width: 50%;
-    height: 600px ;
+    width: 90%;
     display: flex;
     flex-direction: column;
     border: 1px solid #e3e8f7;
