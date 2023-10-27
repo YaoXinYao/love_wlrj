@@ -100,3 +100,43 @@ $bgGrayColor: #fafafa;
   /* autoprefixer: ignore next */
   -webkit-box-orient: vertical;
 }
+@keyframes masked-animation {
+  0% {
+    background-position: 0 -100%;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+//米哈游渐变色
+@mixin mihayoutext() {
+  background-image: linear-gradient(
+    -135deg,
+    #418ae0,
+    #56a0d8,
+    #dc8bc3,
+    #56a0d8,
+    #418ae0,
+    #56a0d8,
+    #dc8bc3,
+    #56a0d8,
+    #418ae0
+  );
+  background-image: -ms-linear-gradient(
+    -135deg,
+    #418ae0,
+    #56a0d8,
+    #dc8bc3,
+    #56a0d8,
+    #418ae0,
+    #56a0d8,
+    #dc8bc3,
+    #56a0d8,
+    #418ae0
+  );
+  -webkit-text-fill-color: rgba(0, 0, 0, 0);
+  -webkit-background-clip: text;
+  background-size: 200% 100%;
+  -webkit-animation: masked-animation 3s infinite linear;
+  animation: masked-animation 3s infinite linear;
+}

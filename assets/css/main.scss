@@ -1,6 +1,6 @@
 // 统一样式的风格
 @import "normalize.css";
-@import "//at.alicdn.com/t/c/font_4299098_2jjxg4zxt5n.css";
+@import "//at.alicdn.com/t/c/font_4299098_hhhaqsudg8m.css";
 // 不需导入了，在nuxt.config中已经配置自动导入
 // @import "@/assets/css/variables.scss";
 //全局样式
@@ -8,14 +8,49 @@
   width: $contentWidth;
   margin: 0 auto;
 }
+::-webkit-scrollbar {
+  /* 对应纵向滚动条的宽度 */
+  width: 10px;
+  /* 对应横向滚动条的宽度 */
+  height: 10px;
+}
+
+/* 滚动条上的滚动滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: #9fd8ff;
+  border-radius: 32px;
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background-color: #dbeffd;
+  border-radius: 32px;
+}
 * {
   padding: 0px;
   margin: 0px;
   box-sizing: border-box;
 }
 html {
+  transition-duration: 0.3s;
   font-size: 100px;
   //background-image: url(/images/wallhaven-kxj3l1_1920x1080.png);
+}
+/* 在媒体查询中根据屏幕宽度来调整根字体大小 */
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 80px; /* 当屏幕宽度小于等于768px时，根字体大小为80px */
+  }
+}
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  html {
+    font-size: 90px; /* 当屏幕宽度大于768px且小于等于1024px时，根字体大小为90px */
+  }
+}
+@media screen and (min-width: 1025px) {
+  html {
+    font-size: 85px; /* 当屏幕宽度大于1024px时，根字体大小为110px */
+  }
 }
 body {
   font-size: 14px;
