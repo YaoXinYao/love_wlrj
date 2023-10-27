@@ -86,7 +86,7 @@
           </div>
         </div>
         <div class="HeaderNavItem">
-          <span>资讯</span>
+          <span>公告</span>
         </div>
         <div class="HeaderNavItem">
           <span>论坛</span>
@@ -197,7 +197,6 @@ function handlerscroll() {
       display: flex;
       height: 100%;
       width: 100%;
-      justify-content: start;
       .HeaderNavItem {
         cursor: pointer;
         height: 100%;
@@ -288,7 +287,6 @@ function handlerscroll() {
       display: flex;
       height: 100%;
       width: 100%;
-      justify-content: start;
       .HeaderNavItem {
         cursor: pointer;
         height: 100%;
