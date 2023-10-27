@@ -49,7 +49,7 @@ import { ArrowDown } from "@element-plus/icons-vue";
 }
 
 .el-dropdown-link {
-  color: aliceblue;
+  color: #fff;
   font-size: 17px;
   cursor: pointer;
 }
@@ -77,6 +77,7 @@ import { ArrowDown } from "@element-plus/icons-vue";
       border-radius: 5px;
       font-size: 17px;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     li:not(:last-child):hover {

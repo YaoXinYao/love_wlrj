@@ -1,50 +1,56 @@
 <template>
   <div class="content">
     <div class="baseInfo">
-      <div class="avatar">
-        <el-upload
-          class="avatar-uploader"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
-      </div>
-      <el-space
-        class="baseInfoText"
-        direction="vertical"
-        :size="10"
-        alignment="start"
-      >
-        <div class="userName">
-          用户名<img class="userSex" src="@/assets/image/female.png" />
+      <div class="baseInfoCard">
+        <div class="avatar">
+          <el-upload
+            class="avatar-uploader"
+            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img
+              v-if="imageUrl"
+              src="https://article.biliimg.com/bfs/article/2e4c0a3f6bfbc348feb3634f017ad8651733516338.png"
+              class="avatar"
+            />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
         </div>
-        <div class="userId">ID:12345612345</div>
-      </el-space>
+        <div class="infoCard"></div>
+      </div>
+      <div class="blog" :style="`height: ${blogHeight};`">
+        <span class="blogLabel" @click="blogDisplayFun()">我的博客</span>
+        <el-input
+          v-model="blogLink"
+          class="blogLink"
+          placeholder="请输入你的博客链接"
+          clearable
+        />
+      </div>
     </div>
-    <el-card class="box-card">
+    <!-- <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>我的博客</span>
-          <el-button type="primary" plain>修改</el-button>
+          <el-button type="success" plain>修改</el-button>
         </div>
       </template>
       <div class="text item">
         <el-input
           v-model="blogLink"
+          class="blogLink"
           placeholder="请输入你的博客链接"
           clearable
         />
       </div>
-    </el-card>
+    </el-card> -->
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>修改密码</span>
-          <el-button type="primary" plain>修改</el-button>
+          <el-button type="success" plain>修改</el-button>
         </div>
       </template>
       <div class="text item" style="display: flex; justify-content: center">
@@ -74,21 +80,6 @@
         </el-form>
       </div>
     </el-card>
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>我的博客</span>
-          <el-button type="primary" plain>修改</el-button>
-        </div>
-      </template>
-      <div class="text item">
-        <el-input
-          v-model="blogLink"
-          placeholder="请输入你的博客链接"
-          clearable
-        />
-      </div>
-    </el-card>
   </div>
 </template>
 
@@ -99,14 +90,26 @@ import { Plus } from "@element-plus/icons-vue";
 
 import type { UploadProps } from "element-plus";
 
-const imageUrl = ref("");
+const imageUrl = ref(
+  "https://article.biliimg.com/bfs/article/2e4c0a3f6bfbc348feb3634f017ad8651733516338.png"
+);
 const blogLink = ref("");
+const blogDisplay = ref(false);
+const blogHeight = ref("40px");
 const updatePassword = reactive({
   newPassword: "",
   oldPassWord: "",
   surePassword: "",
 });
 
+const blogDisplayFun = () => {
+  // blogDisplay.value = !blogDisplay.value;
+  if (blogHeight.value == "40px") {
+    blogHeight.value = "120px";
+  } else {
+    blogHeight.value = "40px";
+  }
+};
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
   uploadFile
@@ -130,15 +133,15 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 
 <style lang="scss" scoped>
 @import "@/assets/css/cssConstant.scss";
-.avatar {
-  width: 50%;
-}
+
 .avatar-uploader {
+  width: 140px;
+  height: 140px;
   text-align: center;
 }
 .avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
@@ -160,46 +163,69 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 
 .baseInfo {
   display: flex;
-  justify-content: center;
   align-items: center;
+  flex-direction: column;
   border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 6px 2px 8px #ccc;
+  // box-shadow: 6px 2px 8px #ccc;
   padding: 20px;
-}
-.userName {
-  display: flex;
-  align-items: center;
-  width: 200px;
-  height: 40px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #666;
-}
-.userSex {
-  width: 38px;
-  margin: 0 10px;
+  // background-color: rgba(101, 167, 235, 0.4);
 }
 
-.baseInfoText {
-  flex: 1;
+.baseInfoCard {
+  width: max-content;
+  position: relative;
+}
+.infoCard {
+  width: 300px;
+  height: 130px;
+  background-color: #fff;
+  position: absolute;
+  left: 65px;
+  top: 2px;
 }
 
+.avatar {
+  position: relative;
+  z-index: 2;
+}
 //博客
 .box-card {
   margin: 20px 0;
+}
+
+.blog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 80px;
+  text-align: center;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.blogLabel {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-weight: 500;
+  color: $groupColor;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 </style>
 
 <style lang="scss">
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
+  // border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   transition: var(--el-transition-duration-fast);
-  background-color: #fff;
+  background-color: transparent;
   width: 140px;
   height: 140px;
   border-radius: 100%;
@@ -215,5 +241,16 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
   width: 178px;
   height: 178px;
   text-align: center;
+}
+
+.blogLink {
+  display: inline-block;
+  width: 60%;
+  height: 40px;
+
+  .el-input__wrapper {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

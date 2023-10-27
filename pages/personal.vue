@@ -17,10 +17,16 @@
             <el-icon><User /></el-icon>
             <template #title>我的信息</template>
           </el-menu-item>
-          <el-menu-item index="2">
-            <el-icon><icon-menu /></el-icon>
-            <template #title>Navigator Two</template>
-          </el-menu-item>
+          <el-sub-menu index="2">
+            <template #title>
+              <el-icon><GoldMedal /></el-icon>
+              <span>我的成绩</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="2-1">item one</el-menu-item>
+              <el-menu-item index="2-2">item two</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
           <el-menu-item index="3" disabled>
             <el-icon><document /></el-icon>
             <template #title>Navigator Three</template>
@@ -32,7 +38,7 @@
         </el-menu>
       </div>
 
-      <el-scrollbar max-height="calc(100vh - 60px)" class="routerBox"
+      <el-scrollbar max-height="calc(100vh - 60px - 20px)" class="routerBox"
         ><NuxtPage></NuxtPage
       ></el-scrollbar>
     </div>
@@ -50,6 +56,7 @@ import {
   Menu as IconMenu,
   User,
   Setting,
+  GoldMedal,
 } from "@element-plus/icons-vue";
 
 const isCollapse = ref(false);
@@ -65,13 +72,13 @@ const handleClose = (key: string, keyPath: string[]) => {
 @import "@/assets/css/cssConstant.scss";
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px - 20px);
 }
 
 .content {
   width: 100%;
-  background-color: rgb(230, 235, 238);
-  min-height: calc(100vh - 60px);
+  background-color: rgb(247, 249, 254);
+  min-height: calc(100vh - 60px - 20px);
 }
 
 .mainContent {
@@ -79,11 +86,12 @@ const handleClose = (key: string, keyPath: string[]) => {
   justify-content: space-between;
   margin: 0 auto;
   width: $originalWidth;
+  padding-top: 20px;
 }
 
 .sider {
   width: max-content;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 60px - 20px);
   background-color: #fff;
 }
 
