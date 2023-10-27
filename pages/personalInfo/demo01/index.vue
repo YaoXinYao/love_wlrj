@@ -41,7 +41,7 @@ const initChart = () => {
           { value: 0, name: "算法" },
           { value: 0, name: "项目" },
           { value: 0, name: "平时成绩" },
-          { value: 0, name: "rose 8" },
+          { value: 0, name: "老带新" },
         ],
       },
     ],
