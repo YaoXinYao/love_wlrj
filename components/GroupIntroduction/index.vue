@@ -73,11 +73,9 @@ onMounted(() => {
 function scrollTrigg() {
   ScrollTrigger.create({
     trigger: "#desc",
-    start: 20,
-    end: "+=0",
-    scrub: false,
-    markers: false,
-    pin: true,
+    start: "top-=500",
+    end: "+=100",
+    markers: true,
     animation: gsap
       .timeline()
       .fromTo(
@@ -133,7 +131,7 @@ function mouseover() {
   width: 100%;
   height: 100vh;
   background: linear-gradient(-32.2deg, #f7edfa, #e2ebfa);
-  padding: 1rem 0;
+  padding-top: 0.7rem;
   position: relative;
   .container {
     width: 9.6rem;

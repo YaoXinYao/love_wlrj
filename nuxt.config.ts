@@ -29,7 +29,18 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        {
+          rel: "stylesheet",
+          type: "text/css",
+          href: "https://unpkg.com/swiper@8/swiper-bundle.css",
+        },
         // { rel: "stylesheet", href: "https://liujun.css" }
+      ],
+      script: [
+        {
+          type: "text/javascript",
+          src: "https://unpkg.com/swiper@8/swiper-bundle.js",
+        },
       ],
       // add head
       // script: [{ src: "https://liujun.js" }],

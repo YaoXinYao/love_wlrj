@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { CarouselContext, CarouselProps } from "element-plus";
 import { gsap } from "gsap";
 const carousel = ref();
 const carouselItem = [
@@ -59,7 +58,7 @@ onMounted(() => {
   //首屏划入标题
   const line = gsap.timeline();
   line
-  .fromTo(
+    .fromTo(
       ".EN0",
       { translateY: 50, opacity: 0 },
       { translateY: 0, opacity: 1 }

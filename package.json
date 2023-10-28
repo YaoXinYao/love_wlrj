@@ -23,6 +23,8 @@
     "gsap": "^3.12.2",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",
-    "unplugin-element-plus": "^0.8.0"
+    "swiper": "^9.0.3",
+    "unplugin-element-plus": "^0.8.0",
+    "vue-awesome-swiper": "^5.0.1"
   }
 }

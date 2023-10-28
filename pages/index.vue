@@ -4,6 +4,8 @@
     <Wrapper />
     <!-- 第二屏 -->
     <GroupIntroduction />
+    <!-- 第三屏 -->
+    <ProjectDisplay />
   </div>
 </template>
 <script setup lang="ts"></script>
