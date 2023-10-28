@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, Ref, ref } from "vue";
+import { onMounted, Ref, ref } from "vue";
 import { ECharts, EChartsOption, init } from "echarts";
 
 let chart: ECharts;
@@ -11,27 +11,37 @@ const chartRef: Ref<HTMLElement | null> = ref(null);
 // 初始化图表
 const initChart = () => {
   const option: EChartsOption = {
+    title: {
+      text: "个人成绩分析",
+      // subtext: "Fake Data",
+      left: "center",
+    },
     legend: {
       top: "bottom",
+      left: "center",
     },
     toolbox: {
       show: true,
       feature: {
         mark: { show: true },
-        dataView: { show: true, readOnly: false },
+        // dataView: { show: true, readOnly: false },
         restore: { show: true },
         saveAsImage: { show: true },
       },
     },
+    tooltip: {
+      trigger: "item",
+      formatter: "{a} <br/>{b} : {c} ({d}%)",
+    },
     series: [
       {
-        name: "Nightingale Chart",
+        name: "Area Mode",
         type: "pie",
-        radius: [50, 250],
+        radius: [20, 140],
         center: ["50%", "50%"],
-        roseType: "area",
+        roseType: "radius",
         itemStyle: {
-          borderRadius: 8,
+          borderRadius: 5,
         },
         data: [
           { value: 0, name: "考核" },
@@ -52,12 +62,16 @@ const initChart = () => {
 onMounted(() => {
   chart = init(chartRef.value as HTMLElement);
   initChart();
+
+  window.onresize = function () {
+    chart.resize();
+  };
 });
 </script>
 
 <style scoped>
 .chart {
-  width: 370px;
+  width: 400px;
   height: 400px;
 }
 </style>
