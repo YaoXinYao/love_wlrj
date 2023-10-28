@@ -12,26 +12,35 @@
       </div>
     </div>
     <div class="wrapper">
-      <el-carousel height="100vh" :interval="5000" arrow="always">
+      <div class="spcial">
+        <div @click="prepage" class="arrow wrapperarrowleft">
+          <div class="arrowTip"></div>
+          <div class="arrowicon">
+            <i class="iconfont icon-xiangyou"></i>
+          </div>
+        </div>
+      </div>
+      <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
         <el-carousel-item v-for="(item, index) in carouselItem" :key="index">
           <img height="100%" width="100%" :src="item.src" alt="" />
         </el-carousel-item>
       </el-carousel>
+      <div class="spcial2">
+        <div @click="nextpage" class="arrow wrapperarrowright">
+          <div class="arrowicon">
+            <i class="iconfont icon-xiangyou-copy"></i>
+          </div>
+          <div class="arrowTip"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { CarouselContext, CarouselProps } from "element-plus";
 import { gsap } from "gsap";
-onMounted(() => {
-  const line = gsap.timeline();
-  line
-    .fromTo(".EN0", { x: "-2000px" }, { x: "0" }, 1)
-    .fromTo(".EN", { x: "2000px" }, { x: "0" }, ">")
-    .fromTo(".EN2", { x: "-2000px" }, { x: "0" }, ">")
-    .fromTo(".EN3", { x: "2000px" }, { x: "0" }, ">")
-    .fromTo(".EN4", { x: "-2000px" }, { x: "0" }, ">");
-});
+const carousel = ref();
 const carouselItem = [
   {
     src: "/images/wallhaven-3l2vm3_1920x1080.png",
@@ -46,6 +55,23 @@ const carouselItem = [
     src: "/images/wallhaven-yxkm5k_3840x2160.png",
   },
 ];
+onMounted(() => {
+  //首屏划入标题
+  const line = gsap.timeline();
+  line
+    .fromTo(".EN0", { x: "-2000px" }, { x: "0" }, 1)
+    .fromTo(".EN", { x: "2000px" }, { x: "0" }, "<0.3")
+    .fromTo(".EN2", { x: "-2000px", ease: "power4.out" }, { x: "0" }, "<0.3")
+    .fromTo(".EN3", { x: "2000px", ease: "power4.out" }, { x: "0" }, "<0.3")
+    .fromTo(".EN4", { x: "-2000px", ease: "power4.out" }, { x: "0" }, "<0.3");
+});
+function nextpage() {
+  carousel.value.next();
+  console.log("下一页");
+}
+function prepage() {
+  carousel.value.prev();
+}
 </script>
 <style scoped lang="scss">
 .wrapperMixd {
@@ -56,6 +82,73 @@ const carouselItem = [
   .wrapper {
     height: 100vh;
     width: 100%;
+    position: relative;
+    .spcial {
+      height: 100%;
+      position: absolute;
+      width: 1rem;
+      left: 0px;
+      display: flex;
+      align-items: center;
+    }
+    .spcial2 {
+      height: 100%;
+      position: absolute;
+      width: 1rem;
+      right: 0px;
+      top: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: right;
+    }
+    .arrow {
+      height: 2rem;
+      width: 0.5rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      flex-direction: row;
+      background-color: transparent;
+      z-index: 1;
+      &:hover {
+        .arrowTip {
+          transform: scaleY(2);
+        }
+        .arrowicon {
+          opacity: 1;
+        }
+      }
+    }
+    .wrapperarrowleft {
+      padding-left: 25px;
+      transition-duration: 0.3s;
+
+      .arrowTip {
+        width: 0.02rem;
+        height: 0.5rem;
+        transition-duration: 0.3s;
+        background-color: white;
+      }
+      .arrowicon {
+        transition-duration: 0.3s;
+        opacity: 0;
+      }
+    }
+    .wrapperarrowright {
+      padding-right: 25px;
+      transition-duration: 0.3s;
+
+      .arrowTip {
+        width: 0.02rem;
+        height: 0.5rem;
+        transition-duration: 0.3s;
+        background-color: white;
+      }
+      .arrowicon {
+        transition-duration: 0.3s;
+        opacity: 0;
+      }
+    }
   }
   .mixed {
     position: absolute;
