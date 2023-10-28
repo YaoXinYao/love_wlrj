@@ -59,11 +59,31 @@ onMounted(() => {
   //首屏划入标题
   const line = gsap.timeline();
   line
-    .fromTo(".EN0", { x: "-2000px" }, { x: "0" }, 1)
-    .fromTo(".EN", { x: "2000px" }, { x: "0" }, "<0.3")
-    .fromTo(".EN2", { x: "-2000px", ease: "power4.out" }, { x: "0" }, "<0.3")
-    .fromTo(".EN3", { x: "2000px", ease: "power4.out" }, { x: "0" }, "<0.3")
-    .fromTo(".EN4", { x: "-2000px", ease: "power4.out" }, { x: "0" }, "<0.3");
+  .fromTo(
+      ".EN0",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    )
+    .fromTo(
+      ".EN",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    )
+    .fromTo(
+      ".EN2",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    )
+    .fromTo(
+      ".EN3",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    )
+    .fromTo(
+      ".EN4",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    );
 });
 function nextpage() {
   carousel.value.next();

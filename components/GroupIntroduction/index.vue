@@ -73,7 +73,7 @@ onMounted(() => {
 function scrollTrigg() {
   ScrollTrigger.create({
     trigger: "#desc",
-    start: 10,
+    start: 20,
     end: "+=0",
     scrub: false,
     markers: false,
@@ -82,7 +82,7 @@ function scrollTrigg() {
       .timeline()
       .fromTo(
         ".containerTital",
-        { translateY: 500, opacity: 0 },
+        { translateY: 50, opacity: 0 },
         { translateY: 0, opacity: 1 }
       )
       .fromTo(
