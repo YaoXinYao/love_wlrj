@@ -11,7 +11,9 @@ export default defineNuxtConfig({
       },
     },
     //自动导入样式
-    plugins: [ElementPlus({})],
+    plugins: [
+      ElementPlus({}),
+    ],
   },
   app: {
     head: {

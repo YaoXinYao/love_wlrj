@@ -55,9 +55,6 @@
 export interface IProps {
     content:string,
     timestamp: string,
-    size?: string,
-    type?:string,
-    icon?: string,
     title?: string,
 }
 
@@ -70,6 +67,10 @@ const Props = withDefaults(defineProps<IProps>(),{
 })
 
 
+function con(Props:any){
+    console.log(Props.content,Props.timestamp,Props.title)
+}
+con(Props)
 </script>
 
 <style scoped lang="scss">
