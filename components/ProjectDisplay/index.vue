@@ -26,12 +26,8 @@
           </div>
         </div>
       </div>
-      <div class="swiper-button-prev">
-        <i class="iconfont icon-xiangyou-copy"></i>
-      </div>
-      <div class="swiper-button-next">
-        <i class="iconfont icon-xiangyou-copy-copy"></i>
-      </div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </div>
   </div>
 </template>
@@ -112,19 +108,21 @@ function loading() {
   ScrollTrigger.create({
     trigger: "#projectdisplay",
     start: "top-=200",
-    end: "+=200",
-    markers: true,
-    animation: gsap
-      .timeline()
-      .fromTo(
-        "#swipertran",
-        { translateY: 50, opacity: 0 },
-        { translateY: 0, opacity: 1 }
-      ),
+    end: "+=40",
+    markers: false,
+    animation: gsap.timeline().fromTo(
+      "#swipertran",
+      {
+        translateY: 50,
+        opacity: 0,
+        duration: 5,
+        ease: "elastic.out(1.7,0.3)",
+      },
+      { translateY: 0, opacity: 1, duration: 1, ease: "elastic.out(1.7,0.3)" }
+    ),
   });
 }
 </script>
-
 <style scoped lang="scss">
 #projectdisplay {
   position: relative;
@@ -201,6 +199,7 @@ function loading() {
           font-size: 0.18rem;
           max-height: 0.72rem; /* 设置div的最大高度 */
           overflow-y: hidden;
+          color: #999;
           text-overflow: ellipsis;
           padding: 0.1rem; /* 添加内边距用于示例 */
         }
@@ -257,17 +256,31 @@ function loading() {
       height: 0.35rem;
       bottom: 0.15rem;
       position: absolute;
+      transition-duration: 0.3s;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 40%;
       top: 50%;
+      &:hover {
+        background-color: rgb(55, 112, 229);
+      }
     }
     .swiper-button-prev {
       @extend .swiperbtcommont;
-
+      background-image: url("/images/targetleft.png");
       left: -0.5rem;
+      &:hover {
+        background-image: url("/images/targetleftwhite.png");
+      }
     }
     .swiper-button-next {
       @extend .swiperbtcommont;
-
+      background-image: url("/images/targetright.png");
+      background-position: center;
       right: -0.5rem;
+      &:hover {
+        background-image: url("/images/targetrightwhite.png");
+      }
     }
   }
 }

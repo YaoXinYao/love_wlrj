@@ -75,7 +75,7 @@ function scrollTrigg() {
     trigger: "#desc",
     start: "top-=500",
     end: "+=100",
-    markers: true,
+    markers: false,
     animation: gsap
       .timeline()
       .fromTo(
