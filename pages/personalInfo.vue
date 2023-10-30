@@ -33,11 +33,11 @@
           </div>
         </div>
       </div>
-      <div class="navContent">
+      <div class="navContainer">
         <div class="nav">
           <ul>
             <li>成绩</li>
-            <li>导航</li>
+            <li>课表</li>
             <li>导航</li>
             <li>导航</li>
             <li>导航</li>
@@ -45,7 +45,7 @@
             <li>导航</li>
           </ul>
         </div>
-        <NuxtPage></NuxtPage>
+        <div class="navContent"><NuxtPage></NuxtPage></div>
       </div>
     </div>
   </div>
@@ -88,22 +88,24 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 .container {
   width: 100%;
   background-color: rgb(247, 249, 254);
-  height: calc(100vh - 60px);
-  padding-top: 60px;
-  
+  height: calc(100vh - 70px);
+  box-sizing: content-box;
 }
 .mainContainer {
   display: flex;
   width: $originalWidth;
   margin: auto;
-  padding-top: 10px;
+  height: calc(100vh - 70px);
+  margin-top: 70px;
 
   .aside {
     width: 300px;
+    height: calc(100vh - 70px);
   }
 
-  .navContent {
+  .navContainer {
     flex: 1;
+    height: calc(100vh - 70px);
   }
 }
 
@@ -204,6 +206,7 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
       transition: all 0.3s;
       box-sizing: content-box;
       border: 1px solid transparent;
+      cursor: pointer;
 
       &:hover {
         border: 1px solid $groupColor;
@@ -213,6 +216,17 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
       }
     }
   }
+}
+
+.navContent {
+  overflow: auto;
+  height: calc(100vh - 70px - 50px);
+  padding-bottom: 50px;
+}
+
+//隐藏滚动条但是能滑动
+.navContent::-webkit-scrollbar {
+  width: 0px;
 }
 </style>
 

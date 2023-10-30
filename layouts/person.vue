@@ -53,6 +53,7 @@ import { ArrowDown } from "@element-plus/icons-vue";
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid #ddd;
+  z-index: 9999;
 }
 
 .headerContent {
