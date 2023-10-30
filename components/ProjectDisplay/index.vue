@@ -196,6 +196,7 @@ function loading() {
         }
         .desc {
           width: 100%;
+          user-select: none;
           font-size: 0.18rem;
           max-height: 0.72rem; /* 设置div的最大高度 */
           overflow-y: hidden;

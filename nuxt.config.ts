@@ -28,7 +28,7 @@ export default defineNuxtConfig({
         { name: "referrer", content: "no-referrer" },
       ],
       link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/x-icon", href: "/favicon2.ico" },
         {
           rel: "stylesheet",
           type: "text/css",
