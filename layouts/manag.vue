@@ -63,9 +63,8 @@
           </el-breadcrumb>
         </el-header>
         <el-main>
-          <el-scrollbar height="calc(100vh-60px-20px)" class="routerBox"
-            ><slot></slot></el-scrollbar
-        ></el-main>
+          <slot></slot>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -150,5 +149,8 @@ const handleFold = () => {
     color: $groupColor;
     cursor: pointer;
   }
+}
+.el-main{
+  height: calc(100vh - 60px - 20px);
 }
 </style>
