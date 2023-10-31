@@ -105,25 +105,6 @@ function scrollTrigg() {
       ),
   });
 }
-//按钮切换效果
-function mouseenter() {
-  styles.value = {
-    x: -0.5,
-    time: 300,
-  };
-}
-function mouseover() {
-  styles.value = {
-    x: -1.0,
-    time: 300,
-  };
-  setTimeout(() => {
-    styles.value = {
-      x: 0,
-      time: 0,
-    };
-  }, 300);
-}
 </script>
 
 <style scoped lang="scss">
