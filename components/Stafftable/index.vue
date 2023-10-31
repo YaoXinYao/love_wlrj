@@ -22,13 +22,13 @@ import type { Stafftable } from '#build/components';
       <el-table-column property="direction" label="方向" width="80" />
       <el-table-column #default="scope" label="操作" show-overflow-tooltip>
         <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-          >Edit</el-button
+          >编辑</el-button
         >
         <el-button
           size="small"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)"
-          >Delete</el-button
+          >删除</el-button
         >
       </el-table-column>
     </el-table>
