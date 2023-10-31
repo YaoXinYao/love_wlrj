@@ -81,7 +81,7 @@ function changenews(value: number) {
 <style scoped lang="scss">
 .advisory {
   width: 100%;
-  height: 90vh;
+  min-height: 90vh;
   padding: 1rem 0;
   background-color: #f4f8fb;
   .news {

@@ -129,7 +129,7 @@ function mouseover() {
 <style scoped lang="scss">
 #desc {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(-32.2deg, #f7edfa, #e2ebfa);
   padding-top: 0.7rem;
   position: relative;
@@ -175,10 +175,8 @@ function mouseover() {
       height: auto;
       position: relative;
       .about-intro {
-        position: absolute;
-        left: 50%;
         user-select: none;
-        transform: translateX(-50%);
+
         top: 0;
         width: 98%;
         height: 100%;
@@ -245,6 +243,7 @@ function mouseover() {
           }
         }
         .about-intro__weilai {
+          height: auto;
           .about-intro__title {
             position: relative;
             margin-bottom: 0.4rem;
@@ -269,7 +268,7 @@ function mouseover() {
             font-size: 0.15rem;
             color: #3d424d;
             line-height: 0.34rem;
-            height: 2rem;
+            height: auto;
             p {
               text-indent: 0.3rem;
             }

@@ -93,6 +93,7 @@ function loading() {
   background: linear-gradient(-32.2deg, #f7edfa, #e2ebfa);
   color: white;
   padding: 1rem 0;
+  padding-top: 0.5rem;
   .AdviserContainer {
     width: 10.6rem;
     height: auto;
