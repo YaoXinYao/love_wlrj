@@ -11,7 +11,7 @@
         'text-align': 'center',
       }"
       :cell-style="cellStyle"
-      @cell-click="editCourse(1)"
+      @cell-click="handleCellClick"
     >
       <el-table-column fixed prop="date" label="" width="80" />
       <el-table-column fixed prop="monday" label="星期一">
@@ -112,285 +112,32 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useCourseStore } from "@/store/course";
-const handleClick = () => {
-  console.log("click");
-};
+import { storeToRefs } from "pinia";
 const dialogVisible = ref(false);
 const isEditable = ref(true);
-const tableData = [
-  {
-    date: "1-2",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-  {
-    date: "3-4",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-  {
-    date: "1-2",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-  {
-    date: "5-6",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-  {
-    date: "7-8",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-  {
-    date: "9-10",
-    monday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    tuesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    wednesday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    thursday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    friday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    saturday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-    sunday: {
-      courseName: "高数",
-      coursePlace: "0#2",
-      courseWeek: "单周",
-      courseWeekLength: "1-19周",
-    },
-  },
-];
+const course = useCourseStore();
 
-const { editCourse } = useCourseStore();
+interface Course {
+  date: number;
+  monday: CourseDetail;
+  tuesday: CourseDetail;
+  wednesday: CourseDetail;
+  thursday: CourseDetail;
+  friday: CourseDetail;
+  saturday: CourseDetail;
+  sunday: CourseDetail;
+}
+
+interface CourseDetail {
+  courseName: string;
+  coursePlace: string;
+  courseWeek: string;
+  courseWeekLength: string;
+}
+const { courseList } = storeToRefs(course);
+const tableData: Course[] = courseList.value;
+console.log(tableData[0]);
+
 const cellStyle = ({ row, column, rowIndex, columnIndex }) => {
   if (columnIndex === 0) {
     return {
@@ -407,14 +154,24 @@ const cellStyle = ({ row, column, rowIndex, columnIndex }) => {
   }
 };
 
-interface infoType {
-  courseName: string;
-  coursePlace: string;
-  courseWeek: string;
-  courseWeekLength: string;
-}
-const props = defineProps(["editCourse"]);
-props.editCourse("我是子组件的函数");
+// course.editCourse({ date: 0, week: "monday" });
+type DayOfWeek =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+const handleCellClick = (row: Course, column: any, event: any) => {
+  const rowData = Object.assign({}, row); // 将代理对象转换为普通对象
+  console.log("Cell clicked row:", row);
+  console.log("Cell clicked column:", column);
+  console.log("Cell clicked event:", event);
+  console.log(tableData[row.date][column.property as DayOfWeek]);
+
+  // 在这里可以处理单元格点击事件的逻辑
+};
 </script>
 
 <style lang="scss" scoped>
