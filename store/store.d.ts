@@ -200,3 +200,19 @@ export interface PlaceholderLabel {
   type: number;
   activityInfo: string;
 }
+
+
+
+type annoucement = {
+  title:string,
+  content:string,
+  type:string,
+}
+
+
+
+
+// 公告类型
+export interface Announcement {
+  announcementList: annoucement[]
+}
