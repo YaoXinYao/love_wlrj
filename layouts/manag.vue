@@ -3,20 +3,20 @@
     <el-container>
       <el-aside>
         <el-menu
-          default-active="2"
           class="el-menu-vertical-demo"
+          default-active="2"
           :collapse="isCollapse"
         >
-        <el-menu-item index="1">
+          <el-menu-item index="1">
             <el-icon><icon-menu /></el-icon>
-            <template #title
-              >后台管理</template
-            >
+            <template #title>后台管理</template>
           </el-menu-item>
           <el-menu-item index="2">
             <el-icon><icon-menu /></el-icon>
             <template #title
-              ><NuxtLink to="/admin/staff">人员管理</NuxtLink></template
+              ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
+                >人员管理</NuxtLink
+              ></template
             >
           </el-menu-item>
           <el-sub-menu index="3">
@@ -30,7 +30,11 @@
           </el-sub-menu>
           <el-menu-item index="4">
             <el-icon><document /></el-icon>
-            <template #title>Navigator Three</template>
+            <template #title
+              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
+                >轮播管理</NuxtLink
+              ></template
+            >
           </el-menu-item>
           <el-menu-item index="5">
             <el-icon><setting /></el-icon>
@@ -53,13 +57,9 @@
           </div>
           <el-breadcrumb separator="/">
             <el-breadcrumb-item>后台管理</el-breadcrumb-item>
-            <el-breadcrumb-item
-              ><NuxtLink to="/admin/staff"
-                >人员管理</NuxtLink
-              ></el-breadcrumb-item
-            >
-            <el-breadcrumb-item>list</el-breadcrumb-item>
-            <el-breadcrumb-item>detail</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item, index) in title" :key="index">
+              <NuxtLink :to="item.skip">{{ item.name }}</NuxtLink>
+            </el-breadcrumb-item>
           </el-breadcrumb>
         </el-header>
         <el-main>
@@ -71,6 +71,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { adminStore } from "~/store/admin";
 import {
   Document,
   Menu as IconMenu,
@@ -84,6 +86,27 @@ const handleFold = () => {
   isCollapse.value = !isCollapse.value;
   console.log(isCollapse.value);
 };
+const adminsStore = adminStore();
+const { title, currentModel } = storeToRefs(adminsStore);
+function skipAdd(a: any) {
+  let obj = {
+    name: a.target.innerText,
+    skip: a.target.getAttribute("href"),
+  };
+  let existIndex = -1;
+  //判断是否已经点击过该模块
+  for (let i = 0; i < title.value.length; i++) {
+    if (title.value[i].name == obj.name) {
+      existIndex = i;
+      break;
+    }
+  }
+  if (existIndex !== -1) {
+    title.value.splice(existIndex, 1);
+  }
+  //添加新的对象
+  title.value.push(obj);
+}
 </script>
 <style scoped lang="scss">
 .el-aside {
@@ -150,7 +173,7 @@ const handleFold = () => {
     cursor: pointer;
   }
 }
-.el-main{
+.el-main {
   height: calc(100vh - 60px - 20px);
 }
 </style>

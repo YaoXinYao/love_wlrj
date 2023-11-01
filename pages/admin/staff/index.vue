@@ -14,7 +14,9 @@
         <el-button type="primary" :icon="Search">搜索</el-button>
       </div>
       <div>
-        <el-button type="success" :icon="Plus" @click="modelState = true"
+        <el-button type="primary" :icon="Plus">新增</el-button>
+        <el-button type="danger" :icon="Minus">删除</el-button>
+        <el-button type="success" :icon="Upload" @click="modelState = true"
           >导入</el-button
         >
       </div>
@@ -35,9 +37,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {storeToRefs} from "pinia"
+import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
-import { Search, Plus } from "@element-plus/icons-vue";
+import { Search, Plus, Minus, Upload } from "@element-plus/icons-vue";
 import { ref } from "vue";
 const select = ref("");
 const input = ref("");
@@ -68,7 +70,7 @@ const options = [
   },
 ];
 const staffStore = useStaffStore();
-const {modelState} = storeToRefs(staffStore)
+const { modelState } = storeToRefs(staffStore);
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
