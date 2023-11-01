@@ -6,14 +6,12 @@
       <el-button type="danger">清空</el-button>
     </div>
 
-    <Timetable :editCourse="editCourse" />
+    <Timetable/>
   </div>
 </template>
 
 <script setup lang="ts">
-const editCourse = (info: any) => {
-  console.log(info);
-};
+
 </script>
 
 <style lang="scss" scoped>
