@@ -1,4 +1,3 @@
-import type { Stafftable } from '#build/components';
 <template>
   <div class="Stafftable">
     <el-table
@@ -10,14 +9,14 @@ import type { Stafftable } from '#build/components';
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
-      <el-table-column property="date" label="年级" width="100">
+      <el-table-column property="grade" label="年级" width="100">
       </el-table-column>
       <el-table-column property="code" label="学号" width="180">
       </el-table-column>
       <el-table-column property="name" label="姓名" width="120" />
-      <el-table-column property="sex" label="性别" width="80" />
-      <el-table-column label="班级" width="120">
-        <template #default="scope">{{ scope.row.date }}</template>
+      <el-table-column property="sex" label="性别" width="60" />
+      <el-table-column label="班级" width="100">
+        <template #default="scope">{{ scope.row.grade }}</template>
       </el-table-column>
       <el-table-column property="direction" label="方向" width="80" />
       <el-table-column #default="scope" label="操作" show-overflow-tooltip>
@@ -35,17 +34,21 @@ import type { Stafftable } from '#build/components';
   </div>
 </template>
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { useStaffStore } from "~/store/staff";
+const satffData = useStaffStore();
+const { deleteModel, editModel } = storeToRefs(satffData);
 interface User {
-  date: string;
+  grade: string;
   name: string;
   sex: string;
   class: string;
   direction: string;
   code: string;
 }
-const tableData= [
+const tableData = [
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -53,7 +56,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -61,7 +64,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -69,7 +72,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -77,7 +80,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -85,7 +88,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -93,7 +96,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -101,7 +104,7 @@ const tableData= [
     code: "CA 90036",
   },
   {
-    date: "2016",
+    grade: "2016",
     name: "Tom",
     sex: "男",
     class: "Los Angeles",
@@ -115,9 +118,11 @@ const handleSelectionChange = (val: User[]) => {
 };
 const handleEdit = (index: number, row: User) => {
   console.log(index, row);
+  editModel.value = true
 };
 const handleDelete = (index: number, row: User) => {
   console.log(index, row);
+  deleteModel.value = true
 };
 </script>
 

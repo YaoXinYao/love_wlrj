@@ -14,8 +14,8 @@
         <el-button type="primary" :icon="Search">搜索</el-button>
       </div>
       <div>
-        <el-button type="primary" :icon="Plus">新增</el-button>
-        <el-button type="danger" :icon="Minus">删除</el-button>
+        <el-button type="primary" :icon="Plus" @click="addModel=true">新增</el-button>
+        <el-button type="danger" :icon="Minus" @click="deleteModel=true">删除</el-button>
         <el-button type="success" :icon="Upload" @click="modelState = true"
           >导入</el-button
         >
@@ -70,7 +70,7 @@ const options = [
   },
 ];
 const staffStore = useStaffStore();
-const { modelState } = storeToRefs(staffStore);
+const { modelState,deleteModel,editModel,addModel} = storeToRefs(staffStore);
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
@@ -85,6 +85,8 @@ const handleCurrentChange = (val: number) => {
 .header {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  width: 960px;
   .el-input {
     width: 200px;
     margin-left: 20px;
@@ -95,6 +97,7 @@ const handleCurrentChange = (val: number) => {
   border-radius: 5px;
   background-color: white;
   min-height: 200px;
+  min-width: 1000px;
   .el-pagination {
     margin-top: 16px;
     .demo-pagination-block + .demo-pagination-block {

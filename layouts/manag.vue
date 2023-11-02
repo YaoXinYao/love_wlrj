@@ -12,9 +12,11 @@
             <template #title>后台管理</template>
           </el-menu-item>
           <el-menu-item index="2">
-            <NuxtLink to="/admin/staff" @click="skipAdd($event)">
-              <el-icon><icon-menu /></el-icon>
-              人员管理</NuxtLink
+            <el-icon><icon-menu /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
+                >人员管理</NuxtLink
+              ></template
             >
           </el-menu-item>
           <el-sub-menu index="3">
@@ -27,27 +29,26 @@
             <el-menu-item index="1-3">item three</el-menu-item>
           </el-sub-menu>
           <el-menu-item index="4">
-            <NuxtLink to="/admin/rotationChart" @click="skipAdd($event)">
-              <el-icon><document /></el-icon>
-              轮播管理</NuxtLink
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
+                >轮播管理</NuxtLink
+              ></template
             >
           </el-menu-item>
           <el-menu-item index="5">
             <el-icon><setting /></el-icon>
-            Navigator Four
+            <template #title>four</template>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
         <el-header>
           <div class="icons">
-            <el-icon
-              size="20px"
-              v-if="isCollapse == false"
-              @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse==false" @click="handleFold()"
               ><Fold
             /></el-icon>
-            <el-icon size="20px" v-if="isCollapse == true" @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse==true" @click="handleFold()"
               ><Expand
             /></el-icon>
           </div>
@@ -66,7 +67,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminStore } from "~/store/admin";
 import {
@@ -78,6 +79,14 @@ import {
   Fold,
 } from "@element-plus/icons-vue";
 let isCollapse = ref(false);
+let windowWidth = ref(0);
+onMounted(() => {
+  windowWidth.value = window.innerWidth;
+  if (windowWidth.value < 600) {
+    isCollapse.value = true;
+  }
+});
+
 const handleFold = () => {
   isCollapse.value = !isCollapse.value;
   console.log(isCollapse.value);
@@ -111,7 +120,6 @@ function skipAdd(a: any) {
   background-color: $groupColor;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
   min-height: calc(100vh - 60px);
   background-color: $groupColor;
   .el-menu-item {

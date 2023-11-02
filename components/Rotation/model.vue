@@ -3,7 +3,7 @@
     <el-dialog
       v-model="rotatinDelete"
       title="提示信息"
-      width="30%"
+      width="300px"
     >
       <span>确定要删除这个轮播图？</span>
       <template #footer>
