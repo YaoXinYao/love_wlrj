@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { EditPen } from "@element-plus/icons-vue";
+import { EditPen, Plus } from "@element-plus/icons-vue";
 import { ElMessage, type UploadProps } from "element-plus";
 
 const imageUrl = ref(

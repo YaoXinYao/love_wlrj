@@ -265,13 +265,12 @@ const tableData = [
     height: 30px;
 
     img {
-      width: 25px;
+      width: 20px;
     }
   }
   p {
     height: auto;
-    line-height: 30px;
-    margin-top: 5px;
+    line-height: 25px;
   }
 }
 </style>
