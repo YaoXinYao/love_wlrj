@@ -1,4 +1,3 @@
-import type { uploadBaseProps } from 'element-plus';
 <template>
   <!-- Form -->
   <!-- ElementUI的Upload组件的action属性指定上传文件的URL地址。 -->
@@ -9,7 +8,7 @@ import type { uploadBaseProps } from 'element-plus';
       action="#"
       :auto-upload="false"
       accept=".xls,.xlsx"
-      drag="true"
+      drag
       @change="handelUpload($event)"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -36,7 +35,7 @@ const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
 let { modelState } = storeToRefs(staffStore);
 let formData: any = new FormData();
-function handelUpload(file) {
+function handelUpload(file:any) {
   //获取上传文件的后缀
   let fileName = file.name.substring(file.name.lastIndexOf(".") + 1);
   if (fileName == "xls" || fileName == "xlsx") {
@@ -53,10 +52,12 @@ function handelUpload(file) {
   }
 }
 function submitFiles() {
-  modelState.value = false;
   uploadFiles.value!.submit();
-  uploadFiles.value!.clearFiles();
-  formData.set('files', '');
+  setTimeout(()=>{
+    modelState.value = false;
+    uploadFiles.value!.clearFiles();
+    formData.set('files', '');
+  },1000)
 }
 function closeDialog() {
   modelState.value = false;

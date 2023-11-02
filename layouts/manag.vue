@@ -12,11 +12,9 @@
             <template #title>后台管理</template>
           </el-menu-item>
           <el-menu-item index="2">
-            <el-icon><icon-menu /></el-icon>
-            <template #title
-              ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
-                >人员管理</NuxtLink
-              ></template
+            <NuxtLink to="/admin/staff" @click="skipAdd($event)">
+              <el-icon><icon-menu /></el-icon>
+              人员管理</NuxtLink
             >
           </el-menu-item>
           <el-sub-menu index="3">
@@ -29,16 +27,14 @@
             <el-menu-item index="1-3">item three</el-menu-item>
           </el-sub-menu>
           <el-menu-item index="4">
-            <el-icon><document /></el-icon>
-            <template #title
-              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
-                >轮播管理</NuxtLink
-              ></template
+            <NuxtLink to="/admin/rotationChart" @click="skipAdd($event)">
+              <el-icon><document /></el-icon>
+              轮播管理</NuxtLink
             >
           </el-menu-item>
           <el-menu-item index="5">
             <el-icon><setting /></el-icon>
-            <template #title>Navigator Four</template>
+            Navigator Four
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -58,7 +54,7 @@
           <el-breadcrumb separator="/">
             <el-breadcrumb-item>后台管理</el-breadcrumb-item>
             <el-breadcrumb-item v-for="(item, index) in title" :key="index">
-              <NuxtLink :to="item.skip">{{ item.name }}</NuxtLink>
+              {{ item.name }}
             </el-breadcrumb-item>
           </el-breadcrumb>
         </el-header>
@@ -87,7 +83,7 @@ const handleFold = () => {
   console.log(isCollapse.value);
 };
 const adminsStore = adminStore();
-const { title, currentModel } = storeToRefs(adminsStore);
+const { title } = storeToRefs(adminsStore);
 function skipAdd(a: any) {
   let obj = {
     name: a.target.innerText,
@@ -120,6 +116,10 @@ function skipAdd(a: any) {
   background-color: $groupColor;
   .el-menu-item {
     color: aliceblue;
+    a {
+      width: 100%;
+      height: 100%;
+    }
   }
   .el-sub-menu__title * {
     color: aliceblue;
