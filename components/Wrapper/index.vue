@@ -22,7 +22,7 @@
       </div>
       <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
         <el-carousel-item v-for="(item, index) in carouselItem" :key="index">
-          <img height="100%" width="100%" :src="item.src" alt="" />
+          <img class="carouselimg" :src="item.src" alt="" />
         </el-carousel-item>
       </el-carousel>
       <div class="spcial2">
@@ -102,6 +102,11 @@ function prepage() {
     height: 100vh;
     width: 100%;
     position: relative;
+    .carouselimg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .spcial {
       height: 100%;
       position: absolute;

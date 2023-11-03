@@ -2,211 +2,336 @@
   <div class="blog">
     <div class="blogcontainer">
       <div class="blogcontarinerleft">
-        <div :class="`gradeitem ${curGrade == 0 ? 'activegrade' : ''}`">
-          2023级
+        <div
+          v-for="(item, index) in blogdata"
+          :key="index"
+          @click="() => changegrade(index)"
+          :class="`gradeitem ${curGrade == index ? 'activegrade' : ''}`"
+        >
+          {{ item.grade + "级" }}
         </div>
-        <div class="gradeitem">2022级</div>
-        <div class="gradeitem">2021级</div>
-        <div class="gradeitem">2020级</div>
       </div>
       <div class="blogcontarinerright">
-        <h2 class="blogtarget">前端🎣(6)</h2>
+        <h2 class="blogtarget">
+          前端🎣({{ blogdata[curGrade].forword.length }})
+        </h2>
         <div class="blogitembox">
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
+          <NuxtLink
+            :href="item.link"
+            target="_blank"
+            v-for="(item, index) in blogdata[curGrade].forword"
+            :key="Math.random() * 10"
+            class="blogitem"
+          >
+            <img class="avaterimg" :src="item.img" alt="" />
             <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
+              <div class="avtertitle">{{ item.name }}</div>
             </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">遥遥领先</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
+          </NuxtLink>
         </div>
-        <h2 class="blogtarget">后端(8)</h2>
+        <h2 class="blogtarget">后端({{ blogdata[curGrade].back.length }})</h2>
         <div class="blogitembox">
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7"
-              alt=""
-            />
+          <NuxtLink
+            v-for="(item, index) in blogdata[curGrade].back"
+            :key="Math.random() * 10"
+            class="blogitem"
+          >
+            <img class="avaterimg" :src="item.img" alt="" />
             <div class="avtername">
-              <div class="avtertitle">张三</div>
+              <div class="avtertitle">{{ item.name }}</div>
             </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://tse1-mm.cn.bing.net/th/id/OIP-C.PtvTUNA8Je2YgjbFDQcz5gHaEK?w=384&h=182&c=7&r=0&o=5&pid=1.7"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">李四</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">赵子豪</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">遥遥领先</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">遥遥领先</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">遥遥领先</div>
-            </div>
-            <div class=""></div>
-          </a>
-          <a class="blogitem">
-            <img
-              class="avaterimg"
-              src="https://img02.anheyu.com/adminuploads/1/2022/12/27/63aa5649a4cbc.webp!linkavatar"
-              alt=""
-            />
-            <div class="avtername">
-              <div class="avtertitle">无敌霸王龙无敌霸王龙无敌霸王龙</div>
-            </div>
-            <div class=""></div>
-          </a>
+          </NuxtLink>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-useHeader();
-const activities = [
-  {
-    content: "Custom icon",
-    timestamp: "2018-04-12 20:46",
-    size: "large",
-    type: "primary",
-    icon: "#0bbd87",
-  },
-  {
-    content: "Custom color",
-    timestamp: "2018-04-03 20:46",
-    color: "#0bbd87",
-  },
-  {
-    content: "Custom size",
-    timestamp: "2018-04-03 20:46",
-    size: "large",
-  },
-  {
-    content: "Custom hollow",
-    timestamp: "2018-04-03 20:46",
-    type: "primary",
-    hollow: true,
-  },
-  {
-    content: "Default node",
-    timestamp: "2018-04-03 20:46",
-  },
-];
+import gsap from "gsap";
 //保存选中年级
 const curGrade = ref(0);
+
+const blogdata = ref([
+  {
+    grade: "2023",
+    forword: [
+      {
+        name: "赵子豪",
+        link: "https://www.zzh.fyi",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "张三",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "王五",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+    back: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+  },
+  {
+    grade: "2022",
+    forword: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "张三",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "王五",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+    back: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+  },
+  {
+    grade: "2021",
+    forword: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "张三",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "王五",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+    back: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+  },
+  {
+    grade: "2020",
+    forword: [
+      {
+        name: "赵子豪",
+        link: "https://www.zzh.fyi",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "张三",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "王五",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+    back: [
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+      {
+        name: "赵子豪",
+        link: "",
+        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+      },
+    ],
+  },
+]);
+onMounted(() => {
+  loading();
+});
+function loading() {
+  const line = gsap.timeline();
+  line
+    .fromTo(
+      ".blogtarget",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    )
+    .fromTo(
+      ".blogitem",
+      { translateY: 50, opacity: 0 },
+      { translateY: 0, opacity: 1 }
+    );
+}
+function changegrade(index: number) {
+  if (index == curGrade.value) return;
+  curGrade.value = index;
+  //等待DOM 渲染完成，在进行动画
+  nextTick(() => {
+    loading();
+  });
+}
+useHeader();
 </script>
 <style scoped lang="scss">
 .blog {
@@ -218,24 +343,25 @@ const curGrade = ref(0);
     display: flex;
     flex-direction: row;
     width: 14rem;
-    height: 5rem;
+    height: auto;
     margin: auto;
     .blogcontarinerleft {
       padding-inline: 0.1rem;
       padding-block: 0.2rem;
       border-radius: 5px;
-      background-color: white;
       height: 100%;
       width: 20%;
       .gradeitem {
         width: 100%;
         cursor: pointer;
+        transition-duration: 0.3s;
         height: 0.7rem;
         border-radius: 10px;
-        background-color: rgb(232, 233, 234);
+        background-color: rgb(255, 255, 255);
+        box-shadow: 5px 5px 15px rgb(201, 198, 198), -5px -5px 10px #fff;
         font-size: 0.2rem;
         display: flex;
-        margin-bottom: 0.1rem;
+        margin-bottom: 0.2rem;
         justify-content: center;
         align-items: center;
       }
