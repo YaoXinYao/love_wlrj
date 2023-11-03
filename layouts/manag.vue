@@ -38,27 +38,24 @@
           </el-menu-item>
           <el-menu-item index="5">
             <el-icon><setting /></el-icon>
-            <template #title>Navigator Four</template>
+            <template #title>four</template>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
         <el-header>
           <div class="icons">
-            <el-icon
-              size="20px"
-              v-if="isCollapse == false"
-              @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse==false" @click="handleFold()"
               ><Fold
             /></el-icon>
-            <el-icon size="20px" v-if="isCollapse == true" @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse==true" @click="handleFold()"
               ><Expand
             /></el-icon>
           </div>
           <el-breadcrumb separator="/">
             <el-breadcrumb-item>后台管理</el-breadcrumb-item>
             <el-breadcrumb-item v-for="(item, index) in title" :key="index">
-              <NuxtLink :to="item.skip">{{ item.name }}</NuxtLink>
+              {{ item.name }}
             </el-breadcrumb-item>
           </el-breadcrumb>
         </el-header>
@@ -70,7 +67,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminStore } from "~/store/admin";
 import {
@@ -82,12 +79,20 @@ import {
   Fold,
 } from "@element-plus/icons-vue";
 let isCollapse = ref(false);
+let windowWidth = ref(0);
+onMounted(() => {
+  windowWidth.value = window.innerWidth;
+  if (windowWidth.value < 600) {
+    isCollapse.value = true;
+  }
+});
+
 const handleFold = () => {
   isCollapse.value = !isCollapse.value;
   console.log(isCollapse.value);
 };
 const adminsStore = adminStore();
-const { title, currentModel } = storeToRefs(adminsStore);
+const { title } = storeToRefs(adminsStore);
 function skipAdd(a: any) {
   let obj = {
     name: a.target.innerText,
@@ -115,11 +120,14 @@ function skipAdd(a: any) {
   background-color: $groupColor;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
   min-height: calc(100vh - 60px);
   background-color: $groupColor;
   .el-menu-item {
     color: aliceblue;
+    a {
+      width: 100%;
+      height: 100%;
+    }
   }
   .el-sub-menu__title * {
     color: aliceblue;
