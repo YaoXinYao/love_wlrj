@@ -1,18 +1,21 @@
 <template>
-  <div class="app-header" :style="{ ...headerTop }">
+  <div
+    class="app-header"
+    :style="isRequireanim ? { ...header } : { ...headertype }"
+  >
     <div class="container">
       <div class="logo">
-        <a href="">
+        <NuxtLink to="/">
           <img src="/images/小组logo.png" alt="" />
-        </a>
+        </NuxtLink>
       </div>
-      <nav :class="headerTop.isSpread ? 'NavBar' : 'NavBar2'">
+      <nav :class="header.isSpread ? 'NavBar' : 'NavBar2'">
         <div class="HeaderNavItem">
           <span>
             产品
             <i
               :class="`iconfont ${
-                headerTop.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
+                header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
               }`"
             ></i>
           </span>
@@ -38,7 +41,7 @@
             >小组网盘
             <i
               :class="`iconfont ${
-                headerTop.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
+                header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
               }`"
             ></i>
           </span>
@@ -64,7 +67,7 @@
             >技术文档
             <i
               :class="`iconfont ${
-                headerTop.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
+                header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
               }`"
             ></i>
           </span>
@@ -96,14 +99,14 @@
             >关于我们
             <i
               :class="`iconfont ${
-                headerTop.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
+                header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
               }`"
             ></i>
           </span>
           <div class="header-dropdown">
             <ul>
               <li>
-                <a href="">博客展示</a>
+                <NuxtLink to="/blog">博客展示</NuxtLink>
               </li>
               <li>
                 <a href="">小组介绍</a>
@@ -121,19 +124,22 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Scollactive } from "~/types/Home";
+import { useHomestore } from "~/store/home";
+import { storeToRefs } from "pinia";
+const homestore = useHomestore(); //获取顶部状态
+const { header, isRequireanim } = storeToRefs(homestore);
+const headertype = {
+  height: "0.8rem",
+  backgroundColor: "white",
+  color: "black",
+  isSpread: false,
+};
 //注册插件
 gsap.registerPlugin(ScrollTrigger);
-const headerTop = ref<Scollactive>({
-  height: "1.8rem",
-  backgroundColor: "transparent",
-  color: "white",
-  isSpread: true,
-});
 //组件挂载完毕
 onMounted(() => {
-  //绑定事件
   document.addEventListener("scroll", handlerscroll);
+  //绑定事件
 });
 onBeforeUnmount(() => {
   //卸载解绑
@@ -141,21 +147,22 @@ onBeforeUnmount(() => {
 });
 //切换演示
 function handlerscroll() {
+  if (!isRequireanim.value) return;
   let scrolly = window.scrollY;
   if (scrolly >= 100) {
-    headerTop.value = {
+    homestore.ChangeHeader({
       height: "0.8rem",
       backgroundColor: "white",
       color: "black",
       isSpread: false,
-    };
+    });
   } else {
-    headerTop.value = {
+    homestore.ChangeHeader({
       height: "1.8rem",
       backgroundColor: "transparent",
       color: "white",
       isSpread: true,
-    };
+    });
   }
 }
 </script>
