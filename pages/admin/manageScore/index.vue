@@ -1,5 +1,6 @@
 <template>
-  <div class="">
+  <div class="container">
+    <AddAccessInfo :dialogVisible="dialogVisible" @addAlert="addAlertHandle" />
     <el-form :inline="true" :model="searchKeys">
       <el-form-item label="考核名称"
         ><el-input
@@ -49,6 +50,7 @@
       <el-form-item>
         <el-button type="primary">搜索</el-button>
         <el-button type="warning">重置</el-button>
+        <el-button type="success" @click="addAlert">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData" :border="parentBorder" style="width: 100%">
@@ -108,6 +110,17 @@
       <el-table-column label="考核对象" prop="accessTarget" />
       <el-table-column label="考核时间" prop="date" />
     </el-table>
+    <el-pagination
+      style="margin-top: 20px"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="[5, 10, 15, 20]"
+      :small="false"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="40"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -116,6 +129,16 @@ import { reactive, ref } from "vue";
 definePageMeta({
   layout: "manag",
 });
+
+const dialogVisible = ref(false);
+const currentPage = ref(4);
+const pageSize = ref(10);
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`);
+};
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
+};
 
 let searchKeys = reactive({
   accessName: "",
@@ -371,9 +394,27 @@ const tableData = [
     ],
   },
 ];
+
+const addAlert = () => {
+  dialogVisible.value = !dialogVisible.value;
+};
+
+const addAlertHandle = (props: boolean) => {
+  dialogVisible.value = props;
+};
 </script>
 
 <style lang="scss" scoped>
+.demo-pagination-block + .demo-pagination-block {
+  margin-top: 10px;
+}
+.demo-pagination-block .demonstration {
+  margin-bottom: 16px;
+}
+
+.container {
+  padding: 20px 20px;
+}
 .accessInfo {
   width: 90%;
   padding-left: 5%;

@@ -21,7 +21,26 @@
           </div>
           <div class="userName">用户名</div>
           <div class="userBlog">
-            https://www.neflibata.cn/<el-icon><EditPen /></el-icon>
+            <div :class="['displayBlog', { hidden: isEditBlog }]">
+              {{ blog }}
+              <el-button
+                type="primary"
+                plain
+                style="height: 25px"
+                @click="() => (isEditBlog = true)"
+                >编辑</el-button
+              >
+            </div>
+            <div :class="['editBlog', { hidden: !isEditBlog }]">
+              <input type="text" :value="blog" />
+              <el-button
+                type="primary"
+                plain
+                style="height: 27px"
+                @click="() => (isEditBlog = false)"
+                >保存</el-button
+              >
+            </div>
           </div>
         </div>
         <div class="noticeBox">
@@ -55,7 +74,8 @@
 import { ref } from "vue";
 import { EditPen, Plus } from "@element-plus/icons-vue";
 import { ElMessage, type UploadProps } from "element-plus";
-
+const isEditBlog = ref(false);
+const blog = ref("https://www.neflibata.cn/");
 const imageUrl = ref(
   "https://article.biliimg.com/bfs/article/2e4c0a3f6bfbc348feb3634f017ad8651733516338.png"
 );
@@ -85,7 +105,7 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 
 <style lang="scss" scoped>
 @import "@/assets/css/cssConstant.scss";
-.container {
+\ .container {
   width: 100%;
   background-color: rgb(247, 249, 254);
   height: calc(100vh - 70px);
@@ -152,16 +172,47 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 .userBlog {
   width: 100%;
   height: max-content;
-  line-height: 30px;
+  line-height: 25px;
   font-size: 16px;
   color: #666;
   text-align: center;
   color: $groupColor;
 
+  .displayBlog {
+    width: 90%;
+    margin-left: 5%;
+    display: inline-block;
+    word-break: break-all;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
   .el-icon {
     margin: 0 5px;
     cursor: pointer;
   }
+
+  .editBlog {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin-left: 5%;
+    transition: all 0.2s;
+
+    input {
+      flex: 1;
+      border: none;
+      height: 25px;
+      outline: none;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.hidden {
+  height: 0;
+  overflow: hidden;
 }
 
 .noticeBox {
