@@ -11,6 +11,7 @@
 
 <style lang="scss" scoped>
 .forum {
-  background-color: #c5e3fa59;
+  background-color: rgb(221 235 255);
+  min-height: calc(100vh - 136px);
 }
 </style>
