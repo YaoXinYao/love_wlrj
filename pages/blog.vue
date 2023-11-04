@@ -50,7 +50,6 @@
 import gsap from "gsap";
 //保存选中年级
 const curGrade = ref(0);
-
 const blogdata = ref([
   {
     grade: "2023",
@@ -319,8 +318,15 @@ function loading() {
     )
     .fromTo(
       ".blogitem",
-      { translateY: 50, opacity: 0 },
-      { translateY: 0, opacity: 1 }
+      { opacity: 0, scale: 0.1 },
+      {
+        opacity: 1,
+        scale: 1,
+        stagger: {
+          from: "center",
+          amount: 1,
+        },
+      }
     );
 }
 function changegrade(index: number) {
