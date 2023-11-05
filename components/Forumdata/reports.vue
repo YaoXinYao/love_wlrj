@@ -1,22 +1,23 @@
 <template>
   <div class="tablePost">
-    <el-form label-position="right" label-width="100px">
+    <el-form label-position="top" label-width="100px">
       <el-form-item label="新帖标题">
         <el-input />
       </el-form-item>
       <el-form-item label="正文内容">
+        <el-input type="textarea" />
+      </el-form-item>
+      <el-form-item label="新帖标签">
         <el-input />
       </el-form-item>
       <el-form-item label="添加图片">
         <div>
-          <ForumdataUpload/>
+          <ForumdataUpload />
         </div>
       </el-form-item>
       <el-form-item label="上传附件">
-        <el-input />
-      </el-form-item>
-      <el-form-item label="新帖标签">
-        <el-input />
+        <!-- <ForumdataAnnex/> -->
+        <ForumdataAnnexcom/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary"> 提交 </el-button>
@@ -27,7 +28,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-
+import { Plus } from "@element-plus/icons-vue";
 const formLabelAlign = reactive({
   name: "",
   region: "",
@@ -50,6 +51,24 @@ const formLabelAlign = reactive({
       height: 36px;
       line-height: 36px;
     }
+  }
+}
+.uploadFile {
+  width: 148px;
+  height: 148px;
+  margin-right: 6px;
+  background-color: #fafafa;
+  border: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  .el-icon {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+    color: #909399;
   }
 }
 </style>

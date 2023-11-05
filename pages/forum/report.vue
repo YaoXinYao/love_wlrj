@@ -15,7 +15,6 @@
 .report {
     padding-top: 150px;
   .post {
-    width: 1000px;
     margin: 0 auto;
     font-family: "阿里妈妈刀隶体";
     .head {
