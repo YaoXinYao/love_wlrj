@@ -29,7 +29,7 @@
                         v-model="refForm.content" 
                         maxlength="100"
                         show-word-limit
-
+                        class="el-textareaC"
                     />
                 </el-form-item>
                 <el-form-item>
@@ -43,11 +43,12 @@
 
 <script setup lang="ts">
 import type  { FormRules, FormInstance} from 'element-plus';
-import {ElNotification} from 'element-plus'
+import {ElNotification, } from 'element-plus'
 import { ref, reactive, MaybeRef } from 'vue';
 
 
 const hide = ref(true)
+
 
 interface IProps {
     title:string,
@@ -137,6 +138,13 @@ const resetForm = (forEl:FormInstance | undefined)=>{
         position: relative;
         width: 100%;
         overflow: hidden;
+    }
+}
+</style>
+<style lang="scss">
+.el-textareaC{
+    textarea {
+        min-height: 200px !important;
     }
 }
 </style>

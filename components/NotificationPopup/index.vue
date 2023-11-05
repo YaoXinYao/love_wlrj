@@ -1,32 +1,22 @@
-<template>
-    <div v-if="props.isShow" @click="handleShowClick" class="dialog">
-
+<template >
+    <div class="dialogs">
+        <el-form>
+            <el-form-item>
+                <el-input></el-input>
+            </el-form-item>
+        </el-form>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 
-interface IProps {
-    isShow:boolean
-}
-
-const emit = defineEmits(['changeClick'])
-
-const props = defineProps<IProps>()
-
-function handleShowClick(){
-    emit('changeClick',!props.isShow);
-}
 
 
 </script>
 
 <style scoped lang="scss">
-.dialog{
-    width:200px;
-    position: relative;
-    z-index: 100000;
-    height: 200px;
-    background-color: red;
+.dialogs{
+
 }
 </style>
