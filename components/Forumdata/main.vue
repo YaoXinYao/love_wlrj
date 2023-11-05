@@ -2,7 +2,7 @@
   <div class="main">
     <div class="title">相关帖子</div>
     <ul class="posts">
-      <li v-for="(item, index) in data" :key="index">
+      <li v-for="(item, index) in datas" :key="index">
         <div class="cardTop">
           <div class="userInfo">
             <div>
@@ -65,63 +65,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
 import { ChatDotRound } from "@element-plus/icons-vue";
-const data = reactive([
-  {
-    name: "迷雾",
-    timer: "2021-10-09",
-    regard: "是",
-    content:
-      '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-    head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390",
-    photo: [
-      "https://img1.baidu.com/it/u=2559867097,3726275945&fm=253&fmt=auto&app=138&f=JPEG?w=1333&h=500",
-    ],
-    likes: true,
-  },
-  {
-    name: "迷雾",
-    timer: "2021-10-09",
-    regard: "否",
-    content:
-      '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-    head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-    photo: [
-      "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-      "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-      "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-      "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-      "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-      "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-    ],
-    likes: true,
-  },
-  {
-    name: "迷雾",
-    timer: "2021-10-09",
-    regard: "是",
-    content: "",
-    head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202106%2F10%2F20210610232327_c1b93.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=31882182eabc65f519aa13e462154e2b",
-    photo: [
-      "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-    ],
-    likes: false,
-  },
-  {
-    name: "迷雾",
-    timer: "2021-10-09",
-    regard: "是",
-    content:
-      '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-    head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-    photo: [],
-    likes: true,
-  },
-]);
+import {storeToRefs} from 'pinia'
+import {forumStore} from '~/store/forum'
+let forums = forumStore()
+const {datas} = storeToRefs(forums)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .main {
   width: 1000px;
   margin: 0 auto;
@@ -158,7 +109,7 @@ const data = reactive([
             font-size: 12px;
           }
           .time {
-            color: rgb(218, 213, 213);
+            color: rgb(210 146 26);
           }
         }
         img {
