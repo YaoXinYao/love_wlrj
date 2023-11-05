@@ -4,19 +4,25 @@
             <Header></Header>
         </div>
         <div class="announcementl">
-            <Content></Content>
+            <Content @show-click="handleChangesClick" ></Content>
         </div>
         
-        announcement
+        <div>
+            <NotificationPopup :isShow="isShow" @change-click="handleChangeClick" />
+        </div>
+       
     </div>
 </template>
 
 <script setup lang="ts">
 import Header  from '@/components/recent-announcement/index.vue'
 import Content from '@/components/announcementContent/index.vue'
+import NotificationPopup  from '@/components/NotificationPopup/index.vue'
 // definePageMeta({
 //     layout:'announcement'
 // })
+
+let isShow = ref(false)
 
 interface IProps {
     title: string
@@ -24,6 +30,15 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(),{
     title:'公告'
 })
+
+function handleChangesClick(flag:any){
+    isShow = flag
+}
+
+
+function handleChangeClick(flag:any){
+    isShow = flag
+}
 
 useHead({
     title:props.title
