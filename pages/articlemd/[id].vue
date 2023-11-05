@@ -39,7 +39,7 @@ markText.value = data.value!.username;
   .articleright {
     border-radius: 10px;
     width: 2.5rem;
-    height: auto;
+    height: 5rem;
     background-color: rgb(255, 255, 255);
   }
 }
