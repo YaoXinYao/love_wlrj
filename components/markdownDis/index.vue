@@ -1,14 +1,17 @@
 <template>
-  <div class="wrapper detail" v-loading.fullscreen="loading">
-    <div class="content" v-html="result"></div>
+  <div class="articlemd detail" v-loading.fullscreen="loading">
+    <div class="markdown-body" v-html="result"></div>
   </div>
 </template>
 
 <script setup lang="ts">
+//引入markdown的样式
+import "~/assets/css/mark.scss";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 //代码高亮主题
 import "highlight.js/styles/atom-one-dark.css";
+const loading = ref(false);
 const { markText } = defineProps({
   markText: {
     required: true,
@@ -18,7 +21,6 @@ const { markText } = defineProps({
 const post = ref({
   content: markText,
 });
-const loading = ref(false);
 let md: any = new MarkdownIt({
   html: true,
   linkify: true,
@@ -44,13 +46,14 @@ let md: any = new MarkdownIt({
 let result = md.render(post.value.content);
 </script>
 <style lang="scss" scoped>
-.wrapper {
+.detail {
+  position: relative;
   width: 100%;
   height: auto;
-  .content {
+  .markdown-body {
     width: 100%;
     height: auto;
-    line-height: 0.45rem;
+    line-height: 0.4rem;
   }
 }
 </style>

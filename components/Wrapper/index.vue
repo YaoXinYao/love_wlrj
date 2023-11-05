@@ -28,7 +28,7 @@
       <div class="spcial2">
         <div @click="nextpage" class="arrow wrapperarrowright">
           <div class="arrowicon">
-            <i class="iconfont icon-xiangyou-copy"></i>
+            <i class="iconfont icon-xiangyou-white"></i>
           </div>
           <div class="arrowTip"></div>
         </div>

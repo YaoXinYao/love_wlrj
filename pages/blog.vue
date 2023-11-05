@@ -348,9 +348,10 @@ useHeader();
   .blogcontainer {
     display: flex;
     flex-direction: row;
-    width: 14rem;
+    width: 100%;
     height: auto;
     margin: auto;
+    padding-inline: 1rem;
     .blogcontarinerleft {
       padding-inline: 0.1rem;
       padding-block: 0.2rem;
