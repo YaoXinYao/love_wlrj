@@ -11,7 +11,9 @@
         ></div>
         <div class="newsright">
           <div class="newsrighttop">
-            <div
+            <NuxtLink
+              :to="`/articlemd/${item.descid}`"
+              target="_blank"
               :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
               v-for="(item, index) in news.newarr"
               :key="index"
@@ -22,7 +24,7 @@
                 <div class="newitemContent">{{ item.title }}</div>
               </div>
               <div class="borderitem"></div>
-            </div>
+            </NuxtLink>
           </div>
           <div class="newsrightbootom">
             <div class="bottomPrev">
@@ -37,7 +39,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 //统一管理当前选项
 const curIndexnews = ref(0);
@@ -46,21 +47,21 @@ const news = ref({
     {
       imgsrc:
         "https://download.cocos.com/CocosPortal/image/2169866ba6074376beaa772389d813f8/2169866ba6074376beaa772389d813f8.jpg",
-      descid: "",
+      descid: "1",
       title: "23级第一次考核",
       time: "2023.11.10",
     },
     {
       imgsrc:
         "https://download.cocos.com/CocosPortal/image/335b68eeb65f4cf983a507355cb287a8/335b68eeb65f4cf983a507355cb287a8.jpeg",
-      descid: "",
+      descid: "2",
       title: "未来小组年会",
       time: "2023.11.10",
     },
     {
       imgsrc:
         "https://lmy-1311156074.cos.ap-nanjing.myqcloud.com/test/1ff7894ef990fe71a5cf95febdfa226a_0.png",
-      descid: "",
+      descid: "3",
       title: "宝宝喜提loopy",
       time: "2023.11.10",
     },

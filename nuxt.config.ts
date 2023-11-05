@@ -14,7 +14,6 @@ export default defineNuxtConfig({
     plugins: [ElementPlus({})],
   },
   app: {
-
     head: {
       meta: [
         {

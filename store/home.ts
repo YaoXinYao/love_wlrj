@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Headertype } from "./store";
+import type { Headertype } from "./store";
 export const useHomestore = defineStore("home", {
   state(): { header: Headertype; isRequireanim: boolean } {
     return {
