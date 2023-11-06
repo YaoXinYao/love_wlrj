@@ -9,7 +9,6 @@
 <script setup lang="ts">
 const unfold = ref<any>(null);
 function openbox() {
-  console.log("123");
   unfold.value!.changeflod(true);
 }
 </script>
@@ -36,9 +35,8 @@ function openbox() {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(4, 4, 4, 0.6);
     i {
-      font-size: 0.24rem;
+      font-size: 0.26rem;
     }
     .unfoldbox {
       width: 100% !important;

@@ -13,7 +13,7 @@
               <div class="anim">
                 <p style="white-space: pre-wrap">做一个有影响力的团队</p>
                 <p style="white-space: pre-wrap; text-align: right">
-                  做一个有影响力的人
+                  <span>做一个有影响力的人</span>
                 </p>
               </div>
             </div>
@@ -109,13 +109,13 @@ function scrollTrigg() {
 
 <style scoped lang="scss">
 #desc {
-  width: 100%;
+  width: 100%rem;
   min-height: 100vh;
   background: linear-gradient(-32.2deg, #f7edfa, #e2ebfa);
   padding-top: 0.7rem;
   position: relative;
   .container {
-    width: 9.6rem;
+    width: 8.6rem;
     height: auto;
     margin: auto;
     display: flex;
@@ -157,13 +157,12 @@ function scrollTrigg() {
       position: relative;
       .about-intro {
         user-select: none;
-
         top: 0;
         width: 98%;
         height: 100%;
         padding-right: 0.4rem;
         .about-vision {
-          max-height: 2.84rem;
+          //max-height: 2.84rem;
           .about-intro__title {
             position: relative;
             margin-bottom: 0.4rem;
@@ -261,6 +260,33 @@ function scrollTrigg() {
         }
       }
     }
+  }
+}
+@media screen and (max-width: 998px) {
+  .container {
+    width: 100% !important;
+  }
+  .about-intro__title {
+    padding-inline: 0.3rem;
+  }
+  .about-intro__vision-slg {
+    margin-left: 0.4rem;
+    margin-bottom: 0.5rem !important;
+  }
+  .anim {
+    p {
+      white-space: "" !important;
+      text-align: left !important;
+    }
+  }
+  .home-about-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+  }
+  .about-intro__weilai-desc {
+    padding-left: 0.4rem;
   }
 }
 </style>

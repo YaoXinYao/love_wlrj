@@ -86,13 +86,19 @@ onMounted(() => {
 });
 function nextpage() {
   carousel.value.next();
-  console.log("下一页");
 }
 function prepage() {
   carousel.value.prev();
 }
 </script>
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .mixedinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
 .wrapperMixd {
   width: 100%;
   height: auto;
