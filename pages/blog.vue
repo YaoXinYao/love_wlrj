@@ -44,6 +44,7 @@
         </div>
       </div>
     </div>
+    <input v-focus type="text" />
   </div>
 </template>
 <script setup lang="ts">
