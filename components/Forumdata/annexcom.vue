@@ -24,7 +24,7 @@ const submitUpload = () => {
   uploadRef.value!.submit();
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .uploadFile {
   width: 148px;
   height: 148px;

@@ -13,9 +13,6 @@
               <p class="time">{{ item.timer }}</p>
             </div>
           </div>
-          <div class="regard">
-            {{ item.regard == "是" ? "已关注" : "关注" }}
-          </div>
         </div>
         <div class="cardContent">{{ item.content }}</div>
         <div class="cardImage">

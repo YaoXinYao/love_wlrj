@@ -17,7 +17,7 @@
 import { Plus } from "@element-plus/icons-vue";
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .uploadFile {
   width: 148px;
   height: 148px;

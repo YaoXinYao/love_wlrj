@@ -19,7 +19,7 @@
         <template #default="scope">{{ scope.row.grade }}</template>
       </el-table-column>
       <el-table-column property="direction" label="方向" width="80" />
-      <el-table-column #default="scope" label="操作" show-overflow-tooltip>
+      <el-table-column #default="scope" label="操作">
         <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button
         >
@@ -31,11 +31,25 @@
         >
       </el-table-column>
     </el-table>
+    <el-pagination
+      v-model:current-page="currentPage"
+      :small="small"
+      :disabled="disabled"
+      :background="background"
+      layout="total, prev, pager, next, jumper"
+      :total="400"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
+import { ref } from "vue";
+const currentPage = ref(4);
+const small = ref(false);
+const background = ref(false);
+const disabled = ref(false);
 const satffData = useStaffStore();
 const { deleteModel, editModel } = storeToRefs(satffData);
 interface User {
@@ -118,15 +132,26 @@ const handleSelectionChange = (val: User[]) => {
 };
 const handleEdit = (index: number, row: User) => {
   console.log(index, row);
-  editModel.value = true
+  editModel.value = true;
 };
 const handleDelete = (index: number, row: User) => {
   console.log(index, row);
-  deleteModel.value = true
+  deleteModel.value = true;
+};
+//改变当前页
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
 };
 </script>
 
-<style lang="scss">
-.Stafftable {
+<style lang="scss" scoped>
+.el-pagination {
+  margin-top: 16px;
+  .demo-pagination-block + .demo-pagination-block {
+    margin-top: 10px;
+  }
+  .demo-pagination-block .demonstration {
+    margin-bottom: 16px;
+  }
 }
 </style>

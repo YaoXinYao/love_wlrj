@@ -4,7 +4,8 @@ export interface dataType {
   title: string;
   name: string;
   timer: string;
-  regard: string;
+  label: string;
+  subfield: string;
   content: string;
   head: string;
   photo: string[];
@@ -27,6 +28,12 @@ export interface cards {
   datas: dataType[];
   discuss: discussType[];
 }
+export interface forums {
+  labelModel: boolean;
+  subfieldModel: boolean;
+  lookModel: boolean;
+  deleteModel: boolean;
+}
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
     return {
@@ -37,7 +44,8 @@ export const forumStore = defineStore("forumInfo", {
           name: "迷雾",
           title: "走进心理世界",
           timer: "2021-10-09",
-          regard: "是",
+          label: "是",
+          subfield: "总结",
           content:
             '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
           head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390",
@@ -51,7 +59,8 @@ export const forumStore = defineStore("forumInfo", {
           name: "迷雾",
           title: "走进心理世界",
           timer: "2021-10-09",
-          regard: "否",
+          label: "是",
+          subfield: "总结",
           content:
             '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
           head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
@@ -70,7 +79,8 @@ export const forumStore = defineStore("forumInfo", {
           name: "迷雾",
           title: "走进心理世界",
           timer: "2021-10-09",
-          regard: "是",
+          label: "是",
+          subfield: "总结",
           content: "",
           head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202106%2F10%2F20210610232327_c1b93.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=31882182eabc65f519aa13e462154e2b",
           photo: [
@@ -83,7 +93,8 @@ export const forumStore = defineStore("forumInfo", {
           name: "迷雾",
           title: "走进心理世界",
           timer: "2021-10-09",
-          regard: "是",
+          label: "是",
+          subfield: "总结",
           content:
             '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
           head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
@@ -106,6 +117,16 @@ export const forumStore = defineStore("forumInfo", {
           child: [],
         },
       ],
+    };
+  },
+});
+export const forumManage = defineStore("manage", {
+  state: (): forums => {
+    return {
+      labelModel: false,
+      subfieldModel: false,
+      lookModel: false,
+      deleteModel: false,
     };
   },
 });
