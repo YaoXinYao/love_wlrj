@@ -2,7 +2,9 @@
   <div :class="`unflodbox ${isflod ? 'avtivebox' : ''}`">
     <div class="unflodboxcontainer">
       <div class="title">
-        <img src="/images/小组logo.png" alt="" />
+        <NuxtLink to="/">
+          <img src="/images/小组logo.png" alt="" />
+        </NuxtLink>
         <i @click="isflod = false" class="iconfont icon-guanbi"></i>
       </div>
 
@@ -59,6 +61,16 @@
               <el-menu-item index="6-1">精美手办</el-menu-item>
               <el-menu-item index="6-2">文创产品</el-menu-item>
               <el-menu-item index="6-3">饰品</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="8">
+              <template #title>
+                <i class="iconfont icon--strategy"> </i>
+                <span>关于我们</span>
+              </template>
+              <el-menu-item index="8-1">
+                <NuxtLink to="/blog">博客展示</NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="8-2">关于我们</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="7">
               <template #title>

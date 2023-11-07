@@ -7,7 +7,14 @@
   </div>
 </template>
 <script setup lang="ts">
+const router = useRouter();
 const unfold = ref<any>(null);
+watch(
+  () => router.currentRoute.value.path,
+  (newValue, oldValue) => {
+    unfold.value!.changeflod(false);
+  }
+);
 function openbox() {
   unfold.value!.changeflod(true);
 }

@@ -44,7 +44,6 @@
         </div>
       </div>
     </div>
-    <input v-focus type="text" />
   </div>
 </template>
 <script setup lang="ts">
@@ -341,6 +340,24 @@ function changegrade(index: number) {
 useHeader();
 </script>
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .blogcontainer {
+    padding-inline: 0.3rem !important;
+    flex-direction: column !important;
+  }
+  .blogcontarinerleft {
+    width: 100% !important;
+  }
+  .blogcontarinerright {
+    width: 100%;
+  }
+  .blogcontarinerright {
+    width: 100% !important;
+  }
+  .blogitem {
+    width: 1.5rem !important;
+  }
+}
 .blog {
   padding: 1rem 0;
   height: auto;
