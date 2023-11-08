@@ -68,8 +68,27 @@
 <script lang="ts" setup></script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 998px) {
+  .app-footer {
+    .container {
+      height: 100%;
+      margin: auto;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      .containerleft {
+        display: none !important;
+      }
+      .containerright {
+        width: 100% !important;
+        text-align: center;
+      }
+    }
+  }
+}
 .app-footer {
   height: 40vh;
+  overflow: hidden;
   width: 100%;
   padding: 0.2rem 0.8rem;
   background-color: #292929;
@@ -157,6 +176,7 @@
         justify-content: center;
         width: 100%;
         height: 40%;
+        transform: translateX(24px);
       }
       .telinfo {
         width: 100%;

@@ -11,9 +11,7 @@ export default defineNuxtConfig({
       },
     },
     //自动导入样式
-    plugins: [
-      ElementPlus({}),
-    ],
+    plugins: [ElementPlus({})],
   },
   app: {
     head: {
@@ -44,13 +42,20 @@ export default defineNuxtConfig({
           src: "https://unpkg.com/swiper@8/swiper-bundle.js",
         },
       ],
-      // add head
-      // script: [{ src: "https://liujun.js" }],
       noscript: [{ children: "Javascript is required" }],
     },
   },
   modules: ["@pinia/nuxt", "@element-plus/nuxt"],
   build: {
     transpile: ["element-plus/es"],
+  },
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://124.222.153.56:19591/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+    },
   },
 });

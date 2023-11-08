@@ -201,18 +201,19 @@ export interface PlaceholderLabel {
   activityInfo: string;
 }
 
-
-
 type annoucement = {
-  title:string,
-  content:string,
-  type:string,
-}
-
-
-
-
+  title: string;
+  content: string;
+  type: string;
+};
 // 公告类型
 export interface Announcement {
-  announcementList: annoucement[]
+  announcementList: annoucement[];
+}
+
+export interface Headertype {
+  height: string;
+  backgroundColor: string;
+  color: string;
+  isSpread: boolean;
 }

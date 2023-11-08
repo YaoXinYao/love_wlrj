@@ -8,4 +8,4 @@ useHead({
   title: "未来软件工作室", //网站标题
 });
 </script>
-<style lang="scss" scoped></style>
+<style></style>
