@@ -11,6 +11,10 @@ export interface dataType {
   photo: string[];
   likes: boolean;
 }
+export interface label {
+  labelId: number;
+  labelName: string;
+}
 export interface discussType {
   id: number;
   postid: number;
@@ -33,6 +37,7 @@ export interface forums {
   subfieldModel: boolean;
   lookModel: boolean;
   deleteModel: boolean;
+  labels: label[];
 }
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
@@ -127,6 +132,7 @@ export const forumManage = defineStore("manage", {
       subfieldModel: false,
       lookModel: false,
       deleteModel: false,
+      labels: [],
     };
   },
 });

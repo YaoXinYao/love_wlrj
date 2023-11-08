@@ -55,72 +55,14 @@
         </span>
       </template>
     </el-dialog>
-    <!-- 标签管理 -->
-    <el-dialog v-model="labelModel" title="标签管理" width="440px">
-      <el-tag
-        v-for="item in labels"
-        :key="item.name"
-        class="mx-1"
-        closable
-        :type="item.type"
-        @close="handleClose(item.name)"
-      >
-        {{ item.name }}
-      </el-tag>
-      <el-input
-        v-if="inputVisible"
-        v-model="inputLabel"
-        class="ml-1 w-20"
-        size="small"
-        @keyup.enter="handleInputConfirm"
-        @blur="handleInputConfirm"
-      />
-      <el-button
-        v-else
-        class="button-new-tag ml-1"
-        size="small"
-        @click="showInput"
-      >
-        + 添加标签
-      </el-button>
-    </el-dialog>
-    <!-- 分栏管理 -->
-    <el-dialog v-model="subfieldModel" title="分栏管理" width="440px">
-      <el-tag
-        v-for="item in subfields"
-        :key="item.name"
-        class="mx-1"
-        closable
-        :type="item.type"
-        @close="subfieldClose(item.name)"
-      >
-        {{ item.name }}
-      </el-tag>
-      <el-input
-        v-if="subfieldVisible"
-        v-model="subfieldLabel"
-        class="ml-1 w-20"
-        size="small"
-        @keyup.enter="subfieldInputConfirm"
-        @blur="subfieldInputConfirm"
-      />
-      <el-button
-        v-else
-        class="button-new-tag ml-1"
-        size="small"
-        @click="subfieldInput"
-      >
-        + 添加分栏
-      </el-button>
-    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, Ref } from "vue";
+import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
 let manage = forumManage();
-let { labelModel, subfieldModel, lookModel, deleteModel } = storeToRefs(manage);
+let { lookModel, deleteModel } = storeToRefs(manage);
 const formLabelWidth = "80px";
 let postInfos = reactive({
   id: 1,
@@ -137,80 +79,11 @@ let postInfos = reactive({
   ],
   likes: true,
 });
-let inputLabel = ref("");
-interface Label {
-  name: string;
-  type: "" | "success" | "warning" | "info" | "danger";
-}
-let labels: Ref<Label[]> = ref([
-  { name: "Tag 1", type: "" },
-  { name: "Tag 2", type: "success" },
-  { name: "Tag 3", type: "info" },
-  { name: "Tag 4", type: "warning" },
-  { name: "Tag 5", type: "danger" },
-]);
-const inputVisible = ref(false);
-
-let subfields: Ref<Label[]> = ref([
-  { name: "Tag 1", type: "" },
-  { name: "Tag 2", type: "success" },
-  { name: "Tag 3", type: "info" },
-  { name: "Tag 4", type: "warning" },
-  { name: "Tag 5", type: "danger" },
-]);
-const subfieldVisible = ref(false);
-let subfieldLabel = ref("");
-
 // 删除帖子
 function deletePost() {
   console.log("删除帖子");
   deleteModel.value = false;
 }
-// 标签管理
-const handleClose = (tag: string) => {
-  for (let i = 0; i < labels.value.length; i++) {
-    if (labels.value[i].name == tag) {
-      labels.value.splice(i, 1);
-    }
-  }
-};
-const showInput = () => {
-  inputVisible.value = true;
-};
-const handleInputConfirm = () => {
-  if (inputLabel.value) {
-    let obj: Label = {
-      type: "success",
-      name: inputLabel.value,
-    };
-    labels.value.push(obj);
-  }
-  inputVisible.value = false;
-  inputLabel.value = "";
-};
-
-// 分栏管理
-const subfieldClose = (subfiseld: string) => {
-  for (let i = 0; i < subfields.value.length; i++) {
-    if (subfields.value[i].name == subfiseld) {
-        subfields.value.splice(i, 1);
-    }
-  }
-};
-const subfieldInput = () => {
-    subfieldVisible.value = true;
-};
-const subfieldInputConfirm = () => {
-  if (inputLabel.value) {
-    let obj: Label = {
-      type: "success",
-      name: inputLabel.value,
-    };
-    labels.value.push(obj);
-  }
-  inputVisible.value = false;
-  inputLabel.value = "";
-};
 </script>
 
 <style lang="scss" scoped>
@@ -227,9 +100,5 @@ const subfieldInputConfirm = () => {
       height: 200px;
     }
   }
-}
-.el-tag.is-closable {
-  margin-right: 7px;
-  margin-bottom: 10px;
 }
 </style>

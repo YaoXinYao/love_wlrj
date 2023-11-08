@@ -9,8 +9,8 @@
           <el-option
             v-for="(item, index) in labels"
             :key="index"
-            :label="item.label"
-            :value="item.value"
+            :label="item.labelName"
+            :value="item.labelId"
           />
         </el-select>
       </el-form-item>
@@ -62,12 +62,14 @@
       />
     </div>
     <forummanage-model></forummanage-model>
+    <forummanage-labelmodel/>
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumStore, forumManage } from "~/store/forum";
+import { getLabel } from "@/service/admin";
 import { ref } from "vue";
 const currentPage = ref(4);
 const small = ref(false);
@@ -76,8 +78,7 @@ const disabled = ref(false);
 const forums = forumStore();
 let { datas } = storeToRefs(forums);
 let manages = forumManage();
-let { labelModel, subfieldModel, lookModel, deleteModel } =
-  storeToRefs(manages);
+let { labelModel, subfieldModel, lookModel, deleteModel,labels } =storeToRefs(manages);
 let condition = reactive({
   name: "",
   label: "",
@@ -87,8 +88,17 @@ interface dataType {
   value: string;
   label: string;
 }
-let labels: dataType[] = [];
 let subfields: dataType[] = [];
+//获取标签
+let labelInfo = async () => {
+  let res: any = await getLabel({
+    pageNo: 1,
+    pageSize: 2,
+  });
+  console.log(res.data.value?.data);
+  labels.value = res.data.value?.data?.records;
+};
+labelInfo()
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
