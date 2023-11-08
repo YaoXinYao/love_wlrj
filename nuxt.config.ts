@@ -34,7 +34,6 @@ export default defineNuxtConfig({
           type: "text/css",
           href: "https://unpkg.com/swiper@8/swiper-bundle.css",
         },
-        // { rel: "stylesheet", href: "https://liujun.css" }
       ],
       script: [
         {

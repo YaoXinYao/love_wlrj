@@ -8,21 +8,36 @@
       <div :class="`loginbox ${isshow ? 'activebox' : ''}`">
         <div class="loginboxleft"></div>
         <div class="loginboxright">
-          <title>登录</title>
+          <h2>登录</h2>
+          <el-input
+            class="elinput"
+            v-model="username"
+            placeholder="Please input"
+          />
+          <el-input
+            class="elinput"
+            prefix="密码"
+            v-model="password"
+            type="password"
+            @focus="() => changeback(true)"
+            @blur="() => changeback(false)"
+            placeholder="Please input password"
+            show-password
+          />
+          <TransitionButton class="loginbt" innertext="登录" />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-interface Inprops {
-  title?: string;
-}
 //定义登录的模板
 definePageMeta({
   layout: "custom",
 });
 const isshow = ref(false);
+const username = ref("");
+const password = ref("");
 function changeback(val: boolean) {
   console.log(111);
   isshow.value = val;
@@ -69,6 +84,20 @@ $count: 1000;
     }
   }
 }
+@media screen and (max-width: 760px) {
+  .loginbox {
+    width: 90% !important;
+    height: 7rem !important;
+    flex-direction: column;
+    align-items: center;
+  }
+  .loginboxleft {
+    width: 84% !important;
+  }
+  .loginboxright {
+    width: 80% !important;
+  }
+}
 .loginpage {
   background-color: black;
   width: 100%;
@@ -106,9 +135,22 @@ $count: 1000;
         background-repeat: no-repeat;
       }
       .loginboxright {
+        padding-top: 0.2rem;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
         width: 60%;
         height: 100%;
-        background-color: salmon;
+        h2 {
+          margin-bottom: 0.2rem;
+        }
+        .elinput {
+          margin-bottom: 0.2rem;
+          height: 0.5rem;
+        }
+        .loginbt {
+          width: 90%;
+        }
       }
     }
     .activebox {
