@@ -64,6 +64,7 @@
 import { ref, Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
+const tagTypes = ["success", "info", "warning", "danger", ""];
 let manage = forumManage();
 let { labelModel, subfieldModel, labels } = storeToRefs(manage);
 let inputLabel = ref("");
@@ -75,8 +76,15 @@ const inputVisible = ref(false);
 let subfields: Ref<Label[]> = ref([]);
 const subfieldVisible = ref(false);
 let subfieldLabel = ref("");
+//添加/删除成功提示
+const successMessage = (news:string,type:any) => {
+  ElMessage({
+    message: news,
+    type,
+  });
+};
+//随机生成标签颜色
 function getRandomTagType() {
-  const tagTypes = ["success", "info", "warning", "danger", ""];
   return tagTypes[Math.floor(Math.random() * tagTypes.length)] as
     | "success"
     | "info"
@@ -92,13 +100,23 @@ const handleClose = (tag: string) => {
     }
   }
 };
+//按钮变输入框
 const showInput = () => {
   inputVisible.value = true;
 };
+//添加标签
 const handleInputConfirm = async () => {
   if (inputLabel.value) {
-    // const {data} = await postLabel(inputLabel.value)
-    // console.log("添加标签",data.value);
+    manage.addLabel(inputLabel.value).then((result) => {
+      if (result == 20000) {
+        manage.labelInfo(1, 100);
+        successMessage("添加标签成功","success")
+      }else if(result == 53003){
+        successMessage("标签已经存在","warning")
+      }else{
+        successMessage("添加标签失败","danger")
+      }
+    });
   }
   inputVisible.value = false;
   inputLabel.value = "";

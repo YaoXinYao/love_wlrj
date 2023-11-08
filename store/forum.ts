@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getLabel, postLabel } from "~/service/forums/admin";
 export interface dataType {
   id: number;
   title: string;
@@ -135,5 +136,17 @@ export const forumManage = defineStore("manage", {
       labels: [],
     };
   },
-  
+  actions: {
+    //获取标签
+    async labelInfo(pageNo: number, pageSize: number) {
+      const { data } = await getLabel(pageNo, pageSize);
+      this.labels = data.value?.data.records || [];
+    },
+    //添加标签
+    async addLabel(name: string) {
+      const { data } = await postLabel(name);
+      const code = data.value?.code
+      return code
+    },
+  },
 });

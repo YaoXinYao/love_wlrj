@@ -11,9 +11,7 @@ export default defineNuxtConfig({
       },
     },
     //自动导入样式
-    plugins: [
-      ElementPlus({}),
-    ],
+    plugins: [ElementPlus({})],
   },
   app: {
     head: {
@@ -53,13 +51,18 @@ export default defineNuxtConfig({
   build: {
     transpile: ["element-plus/es"],
   },
-  nitro:{
-    devProxy:{
-      '/api':{
-        target:"http://152.136.54.204:19999/forum",
-        changeOrigin:true,
-        prependPath:true,
-      }
-    }
-  }
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://152.136.54.204:19999/forum",
+        changeOrigin: true,
+        prependPath: true,
+      },
+    },
+  },
+  routeRules: {
+    "/admin/**": {
+      ssr: false,
+    },
+  },
 });

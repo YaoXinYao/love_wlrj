@@ -69,7 +69,6 @@
 import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumStore, forumManage } from "~/store/forum";
-import { getLabel } from "@/service/admin";
 import { ref } from "vue";
 const currentPage = ref(4);
 const small = ref(false);
@@ -89,18 +88,8 @@ interface dataType {
   label: string;
 }
 let subfields: dataType[] = [];
-//获取标签
-let labelInfo = async () => {
-  let res: any = await getLabel({
-    pageNo: 1,
-    pageSize: 2,
-  });
-  console.log(res.data.value);
-  labels.value = res.data.value?.data?.records;
-};
-if( process.client ){
-  labelInfo();
-}
+// 获取标签
+manages.labelInfo(1,100)
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
