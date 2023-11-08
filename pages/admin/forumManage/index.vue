@@ -62,7 +62,7 @@
       />
     </div>
     <forummanage-model></forummanage-model>
-    <forummanage-labelmodel/>
+    <forummanage-labelmodel></forummanage-labelmodel>
   </div>
 </template>
 <script lang="ts" setup>

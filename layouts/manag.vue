@@ -38,9 +38,7 @@
           </el-menu-item>
           <el-menu-item index="5">
             <el-icon><document /></el-icon>
-            <template #title
-              >请假管理</template
-            >
+            <template #title>请假管理</template>
           </el-menu-item>
           <el-menu-item index="6">
             <el-icon><document /></el-icon>
@@ -52,9 +50,13 @@
           </el-menu-item>
           <el-menu-item index="7">
             <el-icon><setting /></el-icon>
-            <template #title><NuxtLink to="/admin/forumManage">论坛管理</NuxtLink></template>
+            <template #title
+              ><NuxtLink to="/admin/forumManage" @click="skipAdd($event)"
+                >论坛管理</NuxtLink
+              ></template
+            >
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="8">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
@@ -67,10 +69,13 @@
       <el-container>
         <el-header>
           <div class="icons">
-            <el-icon size="20px" v-if="isCollapse==false" @click="handleFold()"
+            <el-icon
+              size="20px"
+              v-if="isCollapse == false"
+              @click="handleFold()"
               ><Fold
             /></el-icon>
-            <el-icon size="20px" v-if="isCollapse==true" @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse == true" @click="handleFold()"
               ><Expand
             /></el-icon>
           </div>
