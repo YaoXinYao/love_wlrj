@@ -6,7 +6,7 @@ interface params {
 }
 
 export const getLabel = (params: params) => {
-  return hyRequest.get<IResultData<any>>("/label/select", params);
+  return hyRequest.get<IResultData<any>>("/api/label/select", params);
 };
 export const postLabel = (name: string) => {
   return hyRequest.post<IResultData<any>>(

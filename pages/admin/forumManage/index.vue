@@ -95,10 +95,12 @@ let labelInfo = async () => {
     pageNo: 1,
     pageSize: 2,
   });
-  console.log(res.data.value?.data);
+  console.log(res.data.value);
   labels.value = res.data.value?.data?.records;
 };
-labelInfo()
+if( process.client ){
+  labelInfo();
+}
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);

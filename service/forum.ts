@@ -1,5 +1,4 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
-const baseURL = "http://152.136.54.204:19999/forum";
 type Methods = "GET" | "POST" | "DELETE" | "PUT";
 export interface IResultData<T> {
   code: number;
@@ -14,7 +13,7 @@ class HYRequest {
   ): Promise<AsyncData<T, Error>> {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
-        baseURL: baseURL,
+       //baseURL: baseURL,
         method: method,
         ...options,
       };
