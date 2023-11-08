@@ -77,6 +77,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 
 .content {
   width: 100%;
+  margin-top: 60px;
   background-color: rgb(247, 249, 254);
   min-height: calc(100vh - 60px - 20px);
 }

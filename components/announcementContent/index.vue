@@ -1,76 +1,72 @@
+import { reactive } from 'vue';
 <template>
     <div class="announcement">
         <div class="content">
             <el-timeline>
-                <el-timeline-item center placement="top" :timestamp="timestamp">
-                    <el-card>
-                        <h2>{{ title }}</h2>
-                        <p>{{ content }}</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-                <el-timeline-item center timestamp="2018/4/12" placement="top">
-                    <el-card>
-                        <h4>Update Github template</h4>
-                        <p>Tom committed 2018/4/12 20:46</p>
-                    </el-card>
-                </el-timeline-item>
-
+                <template v-for="(item,index) in announcement" :key="index">
+                    <el-timeline-item center placement="top" :timestamp="item.timestamp"  >
+                        <el-card @click="con(item)">
+                            <h2>{{ item.type }}</h2>
+                        </el-card>
+                    </el-timeline-item>
+                </template>
             </el-timeline>
         </div>
+
     </div>
 </template>
 
 <script setup lang="ts">
+import {reactive} from 'vue'
 
-export interface IProps {
-    content:string,
+export interface anType {
+    title:string,
+    type:string,
+    content: string,
     timestamp: string,
-    title?: string,
 }
 
 
+const announcement = reactive([
+    {
+        title:'考试',
+        type:'考核通知',
+        content: '这次将对你们进行学习计划的第一次考核',
+        timestamp: '2018-04-15',
+    },
+    {
+        title:'会议',
+        type:'会议通知',
+        content: 'Approved',
+        timestamp: '2018-04-13',
+    },
+    {
+        title:'讲课',
+        type:'讲课通知',
+        content: 'Success',
+        timestamp: '2018-04-11',
+    },
+])
 
-const Props = withDefaults(defineProps<IProps>(),{
-    content:'Custom',
-    timestamp: '2018/4/17',
-    title: '考核通知'
-})
+
+const isShow = ref(true)
 
 
-function con(Props:any){
-    console.log(Props.content,Props.timestamp,Props.title)
+
+const emit = defineEmits(['ShowClick'])
+
+
+function handleAnnouncement(){
+    
 }
-con(Props)
+
+function con(Props:anType){
+    // console.log(Props.content,Props.timestamp,Props.title)
+    console.log(Props)
+    emit('ShowClick',Props)
+    // isShow.value = !isShow.value
+    // console.log(isShow.value)
+}
 </script>
 
 <style scoped lang="scss">
@@ -90,6 +86,9 @@ con(Props)
     }
     .content::-webkit-scrollbar{
         width:0px
+    }
+    .show{
+
     }
 
 }
