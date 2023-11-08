@@ -24,7 +24,7 @@ const rotations = useRotationStore();
 const { rotatinDelete, rotatinState } = storeToRefs(rotations);
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .rota {
   .dialog-footer button:first-child {
     margin-right: 10px;

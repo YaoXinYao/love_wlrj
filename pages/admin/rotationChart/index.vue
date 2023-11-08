@@ -56,7 +56,7 @@ const carouselItem: any[] = [
   },
 ];
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .carousel-item-wrapper {
   display: flex;
   flex-direction: column;
