@@ -24,7 +24,7 @@ export default defineNuxtConfig({
           name: "keywords",
           content: "未来, 未来软件工作室, 未来小组，河南科技学院最牛小组",
         },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "viewport", content: "width=device-width, initial-scale=1"},
         { name: "referrer", content: "no-referrer" },
       ],
       link: [
@@ -42,8 +42,6 @@ export default defineNuxtConfig({
           src: "https://unpkg.com/swiper@8/swiper-bundle.js",
         },
       ],
-      // add head
-      // script: [{ src: "https://liujun.js" }],
       noscript: [{ children: "Javascript is required" }],
     },
   },

@@ -54,6 +54,14 @@
             <el-icon><setting /></el-icon>
             <template #title><NuxtLink to="/admin/forumManage">论坛管理</NuxtLink></template>
           </el-menu-item>
+          <el-menu-item index="6">
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
+                >公告管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>

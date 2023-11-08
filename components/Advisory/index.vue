@@ -11,7 +11,9 @@
         ></div>
         <div class="newsright">
           <div class="newsrighttop">
-            <div
+            <NuxtLink
+              :to="`/articlemd/${item.descid}`"
+              target="_blank"
               :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
               v-for="(item, index) in news.newarr"
               :key="index"
@@ -22,7 +24,7 @@
                 <div class="newitemContent">{{ item.title }}</div>
               </div>
               <div class="borderitem"></div>
-            </div>
+            </NuxtLink>
           </div>
           <div class="newsrightbootom">
             <div class="bottomPrev">
@@ -37,8 +39,9 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 //统一管理当前选项
 const curIndexnews = ref(0);
 const news = ref({
@@ -46,21 +49,21 @@ const news = ref({
     {
       imgsrc:
         "https://download.cocos.com/CocosPortal/image/2169866ba6074376beaa772389d813f8/2169866ba6074376beaa772389d813f8.jpg",
-      descid: "",
+      descid: "1",
       title: "23级第一次考核",
       time: "2023.11.10",
     },
     {
       imgsrc:
         "https://download.cocos.com/CocosPortal/image/335b68eeb65f4cf983a507355cb287a8/335b68eeb65f4cf983a507355cb287a8.jpeg",
-      descid: "",
+      descid: "2",
       title: "未来小组年会",
       time: "2023.11.10",
     },
     {
       imgsrc:
         "https://lmy-1311156074.cos.ap-nanjing.myqcloud.com/test/1ff7894ef990fe71a5cf95febdfa226a_0.png",
-      descid: "",
+      descid: "3",
       title: "宝宝喜提loopy",
       time: "2023.11.10",
     },
@@ -73,18 +76,62 @@ const news = ref({
     },
   ],
 });
+onMounted(() => {
+  loading();
+});
 function changenews(value: number) {
   curIndexnews.value = value;
+}
+function loading() {
+  const line = gsap.timeline();
+  ScrollTrigger.create({
+    trigger: ".newscontainer",
+    start: "top-=300",
+    end: "+=100",
+    animation: line.fromTo(
+      ".newscontainer",
+      {
+        // rotateY: 0,
+        translateY: 50,
+        opacity: 0,
+        duration: 0.4,
+        scale: 0.9,
+      },
+      {
+        translateY: 0,
+        opacity: 1,
+        duration: 0.4,
+        scale: 1,
+      }
+    ),
+  });
 }
 </script>
 
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .newsleft {
+    display: none !important;
+  }
+  .newscontainer {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .news {
+    width: 100% !important;
+  }
+}
 .advisory {
   width: 100%;
   min-height: 90vh;
   padding: 1rem 0;
   background-color: #f4f8fb;
   .news {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     width: 11.2rem;
     height: auto;
     margin: auto;
@@ -95,6 +142,7 @@ function changenews(value: number) {
     }
     .newscontainer {
       background-color: white;
+      position: relative;
       border-radius: 0.1rem;
       margin-top: 0.5rem;
       overflow: hidden;
@@ -108,7 +156,7 @@ function changenews(value: number) {
         background-size: cover;
       }
       .newsright {
-        width: 40%;
+        width: 4.48rem;
         display: flex;
         flex-direction: column;
         user-select: none;
@@ -118,7 +166,7 @@ function changenews(value: number) {
           align-items: center;
           flex-direction: column;
           .newshover {
-            width: 110% !important;
+            width: 105% !important;
             background-color: rgb(40, 77, 213);
             color: white;
             height: 30% !important;
