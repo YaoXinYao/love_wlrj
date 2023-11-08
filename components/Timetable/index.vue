@@ -14,20 +14,30 @@
               v-model="currentEditCourse.info.courseWeek"
               placeholder="请选择"
             >
-              <el-option label="" value="" />
               <el-option label="连续周" value="连续周" />
               <el-option label="单周" value="单周" />
               <el-option label="双周" value="双周" />
             </el-select>
           </el-form-item>
-          <el-form-item label="课程周数">
-            <el-input
-              style="width: 50px"
-              v-model="currentEditCourse.info.courseWeekLength[0]"
-            />&emsp;周&emsp;-&emsp;<el-input
-              style="width: 50px"
-              v-model="currentEditCourse.info.courseWeekLength[1]"
-            />&emsp;周
+          <el-form-item
+            label="课程开始时间（双周课则为第二周周一）"
+          >
+            <el-date-picker
+              v-model="currentEditCourse.info.courseStartTime"
+              type="date"
+              format="YYYY/MM/DD"
+              value-format="YYYY/MM/DD"
+              placeholder="选择开课周周一日期"
+            />
+          </el-form-item>
+          <el-form-item label="课程结束时间（结束周周日）">
+            <el-date-picker
+              v-model="currentEditCourse.info.courseEndTime"
+              type="date"
+              format="YYYY/MM/DD"
+              value-format="YYYY/MM/DD"
+              placeholder="选择结束周周日日期"
+            />
           </el-form-item>
         </el-form>
         <template #footer>
@@ -74,10 +84,10 @@
               props.row.monday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.monday.courseWeekLength.length">{{
-              `${props.row.monday.courseWeekLength[0]}
+            <span v-if="props.row.monday.courseStartTime">{{
+              `${props.row.monday.courseStartTime}
                 -
-                ${props.row.monday.courseWeekLength[1]}周`
+                ${props.row.monday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -97,8 +107,8 @@
               props.row.tuesday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.tuesday.courseWeekLength.length">{{
-              `${props.row.tuesday.courseWeekLength[0]}-${props.row.tuesday.courseWeekLength[1]}周`
+            <span v-if="props.row.tuesday.courseStartTime">{{
+              `${props.row.tuesday.courseStartTime}-${props.row.tuesday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -118,8 +128,8 @@
               props.row.wednesday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.wednesday.courseWeekLength.length">{{
-              `${props.row.wednesday.courseWeekLength[0]}-${props.row.wednesday.courseWeekLength[1]}周`
+            <span v-if="props.row.wednesday.courseStartTime">{{
+              `${props.row.wednesday.courseStartTime}-${props.row.wednesday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -139,8 +149,8 @@
               props.row.thursday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.thursday.courseWeekLength.length">{{
-              `${props.row.thursday.courseWeekLength[0]}-${props.row.thursday.courseWeekLength[1]}周`
+            <span v-if="props.row.thursday.courseStartTime">{{
+              `${props.row.thursday.courseStartTime}-${props.row.thursday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -160,8 +170,8 @@
               props.row.friday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.friday.courseWeekLength.length">{{
-              `${props.row.friday.courseWeekLength[0]}-${props.row.friday.courseWeekLength[1]}周`
+            <span v-if="props.row.friday.courseStartTime">{{
+              `${props.row.friday.courseStartTime}-${props.row.friday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -181,8 +191,8 @@
               props.row.saturday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.saturday.courseWeekLength.length">{{
-              `${props.row.saturday.courseWeekLength[0]}-${props.row.saturday.courseWeekLength[1]}周`
+            <span v-if="props.row.saturday.courseStartTime">{{
+              `${props.row.saturday.courseStartTime}-${props.row.saturday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -202,8 +212,8 @@
               props.row.sunday.courseWeek
             }}</span
             ><br />
-            <span v-if="props.row.sunday.courseWeekLength.length">{{
-              `${props.row.sunday.courseWeekLength[0]}-${props.row.sunday.courseWeekLength[1]}周`
+            <span v-if="props.row.sunday.courseStartTime">{{
+              `${props.row.sunday.courseStartTime}-${props.row.sunday.courseEndTime}`
             }}</span>
           </div>
         </template>
@@ -246,7 +256,8 @@ interface CourseDetail {
   courseName: string;
   coursePlace: string;
   courseWeek: string;
-  courseWeekLength: Array<number>;
+  courseStartTime: string;
+  courseEndTime: string;
 }
 
 let currentEditCourse = {
@@ -256,7 +267,8 @@ let currentEditCourse = {
     courseName: "",
     coursePlace: "",
     courseWeek: "",
-    courseWeekLength: [0, 0],
+    courseStartTime: "",
+    courseEndTime: "",
   },
 };
 type DayOfWeek =
