@@ -31,14 +31,28 @@
           <el-menu-item index="4">
             <el-icon><document /></el-icon>
             <template #title
+              ><NuxtLink to="/admin/manageScore" @click="skipAdd($event)"
+                >成绩管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
+          <el-menu-item index="5">
+            <el-icon><document /></el-icon>
+            <template #title
+              >请假管理</template
+            >
+          </el-menu-item>
+          <el-menu-item index="6">
+            <el-icon><document /></el-icon>
+            <template #title
               ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
                 >轮播管理</NuxtLink
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="7">
             <el-icon><setting /></el-icon>
-            <template #title>four</template>
+            <template #title><NuxtLink to="/admin/forumManage">论坛管理</NuxtLink></template>
           </el-menu-item>
         </el-menu>
       </el-aside>

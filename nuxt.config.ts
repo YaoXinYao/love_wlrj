@@ -49,13 +49,13 @@ export default defineNuxtConfig({
   build: {
     transpile: ["element-plus/es"],
   },
-  nitro: {
-    devProxy: {
-      "/api": {
-        target: "http://124.222.153.56:19591/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-    },
-  },
+  nitro:{
+    devProxy:{
+      '/api':{
+        target:"http://152.136.54.204:19999/forum",
+        changeOrigin:true,
+        prependPath:true,
+      }
+    }
+  }
 });
