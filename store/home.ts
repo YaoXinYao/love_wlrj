@@ -1,20 +1,23 @@
 import { defineStore } from "pinia";
-import { fetchhomeinfo, homeinfotype } from "~/service/home";
-import { HomeData } from "./store";
+import type { Headertype } from "./store";
 export const useHomestore = defineStore("home", {
-  state(): HomeData {
+  state(): { header: Headertype; isRequireanim: boolean } {
     return {
-      navbars: [],
-      banners: [],
-      categorys: [],
+      header: {
+        height: "1.8rem",
+        backgroundColor: "transparent",
+        color: "white",
+        isSpread: true,
+      },
+      isRequireanim: true,
     };
   },
   actions: {
-    async GetHomeinfo(type: homeinfotype) {
-      const { data } = await fetchhomeinfo(type);
-      this.navbars = data.value.data.navbars || [];
-      this.banners = data.value.data.banners || [];
-      this.categorys = data.value.data.categorys || [];
+    async ChangeHeader(headerType: any) {
+      this.header = headerType;
+    },
+    async ChangeisRequireanim(flag: boolean) {
+      this.isRequireanim = flag;
     },
   },
 });

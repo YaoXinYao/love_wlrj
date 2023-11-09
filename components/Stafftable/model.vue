@@ -1,7 +1,7 @@
 <template>
   <!-- 批量导入成员 -->
   <!-- ElementUI的Upload组件的action属性指定上传文件的URL地址。 -->
-  <el-dialog v-model="modelState" title="成员导入" width="635px">
+  <el-dialog v-model="modelState" title="成员导入" width="500px">
     <el-upload
       class="upload-demo"
       ref="uploadFiles"
@@ -25,7 +25,7 @@
     </template>
   </el-dialog>
   <!-- 添加成员 -->
-  <el-dialog v-model="addModel" title="新增成员">
+  <el-dialog v-model="addModel" title="新增成员" width="440px">
     <el-form :model="staffInfo">
       <el-form-item label="姓名" :label-width="formLabelWidth">
         <el-input v-model="staffInfo.name" autocomplete="off" />
@@ -60,7 +60,7 @@
     </template>
   </el-dialog>
   <!-- 删除弹窗 -->
-  <el-dialog v-model="deleteModel" title="提示信息" width="30%">
+  <el-dialog v-model="deleteModel" title="提示信息" width="400px">
     <span>确定要删除此成员数据？</span>
     <template #footer>
       <span class="dialog-footer">
@@ -70,7 +70,7 @@
     </template>
   </el-dialog>
   <!-- 编辑成员信息 -->
-  <el-dialog v-model="editModel" title="成员信息">
+  <el-dialog v-model="editModel" title="成员信息" width="400px">
     <el-form :model="editInfo">
       <el-form-item label="姓名" :label-width="formLabelWidth">
         <el-input v-model="editInfo.name" autocomplete="off" />
@@ -116,7 +116,7 @@ import { storeToRefs } from "pinia";
 import { useStaffStore, staffForm } from "~/store/staff";
 import { UploadFilled } from "@element-plus/icons-vue";
 import type { UploadInstance } from "element-plus";
-const formLabelWidth = "140px";
+const formLabelWidth = "80px";
 const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
 let { modelState, deleteModel, addModel, editModel } = storeToRefs(staffStore);

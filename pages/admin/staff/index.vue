@@ -23,15 +23,6 @@
     </div>
     <div class="main">
       <Stafftable />
-      <el-pagination
-        v-model:current-page="currentPage"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="total, prev, pager, next, jumper"
-        :total="400"
-        @current-change="handleCurrentChange"
-      />
     </div>
     <StafftableModel></StafftableModel>
   </div>
@@ -43,10 +34,6 @@ import { Search, Plus, Minus, Upload } from "@element-plus/icons-vue";
 import { ref } from "vue";
 const select = ref("");
 const input = ref("");
-const currentPage = ref(4);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
 const options = [
   {
     value: "Option1",
@@ -70,11 +57,7 @@ const options = [
   },
 ];
 const staffStore = useStaffStore();
-const { modelState,deleteModel,editModel,addModel} = storeToRefs(staffStore);
-//改变当前页
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-};
+const { modelState,deleteModel,addModel} = storeToRefs(staffStore);
 </script>
 
 <style lang="scss" scoped>
@@ -93,19 +76,10 @@ const handleCurrentChange = (val: number) => {
   }
 }
 .main {
-  padding: 18px 20px 0px 0px;
+  padding: 15px 20px 0px 0px;
   border-radius: 5px;
   background-color: white;
   min-height: 200px;
   min-width: 1000px;
-  .el-pagination {
-    margin-top: 16px;
-    .demo-pagination-block + .demo-pagination-block {
-      margin-top: 10px;
-    }
-    .demo-pagination-block .demonstration {
-      margin-bottom: 16px;
-    }
-  }
 }
 </style>

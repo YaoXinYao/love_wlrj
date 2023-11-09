@@ -86,6 +86,23 @@ function loading() {
 </script>
 
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .Adviser {
+    height: auto !important;
+  }
+  .Adviserbox {
+    height: auto !important;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+  }
+  .AdviserContainer {
+    width: 100% !important;
+  }
+  .Advcard {
+    width: 90% !important;
+  }
+}
 .Adviser {
   width: 100%;
   height: 100vh;

@@ -22,13 +22,13 @@
       </div>
       <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
         <el-carousel-item v-for="(item, index) in carouselItem" :key="index">
-          <img height="100%" width="100%" :src="item.src" alt="" />
+          <img class="carouselimg" :src="item.src" alt="" />
         </el-carousel-item>
       </el-carousel>
       <div class="spcial2">
         <div @click="nextpage" class="arrow wrapperarrowright">
           <div class="arrowicon">
-            <i class="iconfont icon-xiangyou-copy"></i>
+            <i class="iconfont icon-xiangyou-white"></i>
           </div>
           <div class="arrowTip"></div>
         </div>
@@ -86,13 +86,19 @@ onMounted(() => {
 });
 function nextpage() {
   carousel.value.next();
-  console.log("下一页");
 }
 function prepage() {
   carousel.value.prev();
 }
 </script>
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .mixedinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
 .wrapperMixd {
   width: 100%;
   height: auto;
@@ -102,6 +108,11 @@ function prepage() {
     height: 100vh;
     width: 100%;
     position: relative;
+    .carouselimg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .spcial {
       height: 100%;
       position: absolute;
