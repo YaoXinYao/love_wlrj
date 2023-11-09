@@ -1,5 +1,12 @@
 import { defineStore } from "pinia";
-import { getLabel, postLabel } from "~/service/forums/admin";
+import {
+  getLabel,
+  postLabel,
+  deleteLabel,
+  getSubfield,
+  postSubfield,
+  deleteSubfield,
+} from "~/service/forums/admin";
 export interface dataType {
   id: number;
   title: string;
@@ -11,10 +18,6 @@ export interface dataType {
   head: string;
   photo: string[];
   likes: boolean;
-}
-export interface label {
-  labelId: number;
-  labelName: string;
 }
 export interface discussType {
   id: number;
@@ -28,6 +31,14 @@ export interface discussType {
   likes: boolean;
   child: string[];
 }
+export interface label {
+  labelId: number;
+  labelName: string;
+}
+export interface subfield {
+  subId: number;
+  subName: string;
+}
 export interface cards {
   source: string;
   datas: dataType[];
@@ -39,6 +50,7 @@ export interface forums {
   lookModel: boolean;
   deleteModel: boolean;
   labels: label[];
+  subfields: subfield[];
 }
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
@@ -134,6 +146,7 @@ export const forumManage = defineStore("manage", {
       lookModel: false,
       deleteModel: false,
       labels: [],
+      subfields: [],
     };
   },
   actions: {
@@ -145,8 +158,29 @@ export const forumManage = defineStore("manage", {
     //添加标签
     async addLabel(name: string) {
       const { data } = await postLabel(name);
-      const code = data.value?.code
-      return code
+      const code = data.value?.code;
+      return code;
+    },
+    //删除标签
+    async labelDelete(ids: number) {
+      const { data } = await deleteLabel(ids);
+      const code = data.value?.code;
+      return code;
+    },
+
+    async subfieldInfo(pageNo: number, pageSize: number) {
+      const { data } = await getSubfield(pageNo, pageSize);
+      this.subfields = data.value?.data.records || [];
+    },
+    async addSubfield(subName: string) {
+      const { data } = await postSubfield(subName);
+      const code = data.value?.code;
+      return code;
+    },
+    async subfieldDelete(ids: number) {
+      const { data } = await deleteSubfield(ids);
+      const code = data.value?.code;
+      return code;
     },
   },
 });

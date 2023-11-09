@@ -19,16 +19,20 @@
           <el-option
             v-for="(item, index) in subfields"
             :key="index"
-            :label="item.label"
-            :value="item.value"
+            :label="item.subName"
+            :value="item.subId"
           />
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary">搜索</el-button>
         <el-button type="info">重置</el-button>
-        <el-button type="success" @click="labelModel=true">标签管理</el-button>
-        <el-button type="warning" @click="subfieldModel=true">分栏管理</el-button>
+        <el-button type="success" @click="labelModel = true"
+          >标签管理</el-button
+        >
+        <el-button type="warning" @click="subfieldModel = true"
+          >分栏管理</el-button
+        >
       </el-form-item>
     </el-form>
     <div class="main">
@@ -77,19 +81,17 @@ const disabled = ref(false);
 const forums = forumStore();
 let { datas } = storeToRefs(forums);
 let manages = forumManage();
-let { labelModel, subfieldModel, lookModel, deleteModel,labels } =storeToRefs(manages);
+let { labelModel, subfieldModel, lookModel, deleteModel, labels, subfields } =
+  storeToRefs(manages);
 let condition = reactive({
   name: "",
   label: "",
   subfield: "",
 });
-interface dataType {
-  value: string;
-  label: string;
-}
-let subfields: dataType[] = [];
-// 获取标签
-manages.labelInfo(1,100)
+onMounted(() => {
+  manages.labelInfo(1, 100);
+  manages.subfieldInfo(1, 100);
+});
 //改变当前页
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
