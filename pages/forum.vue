@@ -11,7 +11,7 @@
 
 <style lang="scss" scoped>
 .forum {
-  background-color: rgb(221 235 255);
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   min-height: calc(100vh - 136px);
 }
 </style>

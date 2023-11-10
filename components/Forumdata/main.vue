@@ -71,7 +71,7 @@ const {datas} = storeToRefs(forums)
 
 <style lang="scss" scoped>
 .main {
-  width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   .title {
     font-size: 24px;

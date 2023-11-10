@@ -7,6 +7,7 @@ import {
   postSubfield,
   deleteSubfield,
 } from "~/service/forums/admin";
+import {addpost} from "~/service/forums/card"
 export interface dataType {
   id: number;
   title: string;
@@ -137,6 +138,16 @@ export const forumStore = defineStore("forumInfo", {
       ],
     };
   },
+  actions:{
+    // 发布帖子
+    async addCard(params:FormData){
+      const {data} = await addpost(params)
+      const code = data.value?.code;
+      console.log(data);
+      
+      return code;
+    }
+  }
 });
 export const forumManage = defineStore("manage", {
   state: (): forums => {
@@ -153,7 +164,7 @@ export const forumManage = defineStore("manage", {
     //获取标签
     async labelInfo(pageNo: number, pageSize: number) {
       const { data } = await getLabel(pageNo, pageSize);
-      this.labels = data.value?.data.records || [];
+      this.labels = data.value?.data.records || []; 
     },
     //添加标签
     async addLabel(name: string) {

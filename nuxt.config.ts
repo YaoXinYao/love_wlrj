@@ -62,5 +62,8 @@ export default defineNuxtConfig({
     "/admin/**": {
       ssr: false,
     },
+    "/forum/**": {
+      ssr: false,
+    },
   },
 });
