@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref } from "vue";
-import { ECharts, EChartsOption, init } from "echarts";
+import { onMounted, type Ref, ref } from "vue";
+import { type ECharts, type EChartsOption, init } from "echarts";
 
 let chart: ECharts;
 const chartRef: Ref<HTMLElement | null> = ref(null);
@@ -35,7 +35,7 @@ const initChart = () => {
     },
     series: [
       {
-        name: "Area Mode",
+        name: "模块占比",
         type: "pie",
         radius: [20, 140],
         center: ["50%", "50%"],

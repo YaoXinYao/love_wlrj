@@ -44,7 +44,11 @@
           </div>
         </div>
         <div class="noticeBox">
-          <h3><img src="@/assets/image/公告.png" /><span>公告</span></h3>
+          <h3>
+            <img src="@/assets/image/公告.png" class="noticeIcon" /><span
+              >公告</span
+            >
+          </h3>
           <div class="noticeContent">
             <div class="noticeContent">
               这里是公告这里是公告这里是公告这里是公告这里是公告这里是公告这里是公告这里是公告
@@ -55,25 +59,40 @@
       <div class="navContainer">
         <div class="nav">
           <ul>
-            <li>成绩</li>
-            <li>课表</li>
-            <li>导航</li>
-            <li>导航</li>
-            <li>导航</li>
-            <li>导航</li>
-            <li>导航</li>
+            <li :class="route.path === '/personalInfo/score' ? 'active' : ''">
+              <NuxtLink to="/personalInfo/score">成绩</NuxtLink>
+            </li>
+            <li
+              :class="
+                route.path === '/personalInfo/userTimeTable' ? 'active' : ''
+              "
+            >
+              <NuxtLink to="/personalInfo/userTimeTable">课表</NuxtLink>
+            </li>
+            <li
+              :class="route.path === '/personalInfo/leaveling' ? 'active' : ''"
+            >
+              <NuxtLink to="/personalInfo/leaveling">请假</NuxtLink>
+            </li>
           </ul>
         </div>
-        <div class="navContent"><NuxtPage></NuxtPage></div>
+        <div class="navContent">
+          <NuxtPage class="animate__animated animate__fadeIn"></NuxtPage>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import "animate.css";
 import { ref } from "vue";
-import { EditPen, Plus } from "@element-plus/icons-vue";
+import { Plus } from "@element-plus/icons-vue";
 import { ElMessage, type UploadProps } from "element-plus";
+
+const route = useRoute();
+console.log(route);
+
 const isEditBlog = ref(false);
 const blog = ref("https://www.neflibata.cn/");
 const imageUrl = ref(
@@ -105,7 +124,7 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 
 <style lang="scss" scoped>
 @import "@/assets/css/cssConstant.scss";
-\ .container {
+.container {
   width: 100%;
   background-color: rgb(247, 249, 254);
   height: calc(100vh - 70px);
@@ -157,7 +176,7 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 }
 .avatar {
   position: relative;
-  z-index: 2;
+  z-index: 0;
 }
 
 .userName {
@@ -238,6 +257,36 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
   }
 }
 
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(15deg);
+  }
+  30% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  70% {
+    transform: rotate(-4deg);
+  }
+  90% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.noticeIcon {
+  animation: swing 1.5s ease-in-out infinite;
+  transform-origin: top center;
+  margin-right: 5px;
+}
+
 //右侧
 .nav {
   width: 90%;
@@ -255,12 +304,11 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
       color: #666;
       font-size: 16px;
       transition: all 0.3s;
-      box-sizing: content-box;
+      box-sizing: border-box;
       border: 1px solid transparent;
       cursor: pointer;
 
       &:hover {
-        border: 1px solid $groupColor;
         color: #fff;
         border-radius: 5px;
         color: $groupColor;
@@ -278,6 +326,12 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
 //隐藏滚动条但是能滑动
 .navContent::-webkit-scrollbar {
   width: 0px;
+}
+.active {
+  border: 1px solid $groupColor !important;
+  color: #fff !important;
+  border-radius: 5px !important;
+  color: $groupColor !important;
 }
 </style>
 

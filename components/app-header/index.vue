@@ -115,9 +115,11 @@
           </div>
         </div>
       </nav>
-      <div class="login">
-        <TransitionButton innertext="进入后台"></TransitionButton>
-      </div>
+      <NuxtLink to="/login">
+        <div class="login">
+          <TransitionButton innertext="登录"></TransitionButton>
+        </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
