@@ -173,7 +173,7 @@ const onSubmit = () => {
     margin-top: 2%;
     background-color: white;
     padding: 14px;
-    // border: 1px solid #9ca6c2;
+    border: 1px solid #9ca6c2;
     border-radius: 12px;
     .text-center{
         display: flex;
