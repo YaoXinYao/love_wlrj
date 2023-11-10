@@ -5,35 +5,38 @@
                 <el-row :gutter="20">
                     <el-col :span="8">
                         <el-form-item label="姓名" >
-                            <el-input v-model="formInline.user" placeholder="Approved by" clearable />
+                            <el-input v-model="formInline.user" placeholder="请输入姓名" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="请假类型" >
-                            <el-input v-model="formInline.user" placeholder="Approved by" clearable />
+                        <el-form-item label="请假类型"  >
+                            <el-select placeholder="选择请假类型" clearable>
+                                <el-option label="病假" value="病假"  />
+                                <el-option label="事假" value="事假"  />
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="审核状态" >
-                            <el-input v-model="formInline.user" placeholder="Approved by" clearable />
+                            <el-select
+                            placeholder="审核状态"
+                            clearable
+                            >
+                            <el-option label="未审批" value="未审批" />
+                            <el-option label="审批通过" value="审批通过" />
+                            <el-option label="驳回" value="驳回" />
+                            </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="8">
-                        <el-form-item label="请假时间">
-                            <el-select
-                            v-model="formInline.region"
-                            placeholder="Activity zone"
-                            clearable
-                            >
-                            <el-option label="Zone one" value="shanghai" />
-                            <el-option label="Zone two" value="beijing" />
-                            </el-select>
+                        <el-form-item label="学号">
+                            <el-input placeholder="请输入学号"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="Activity time">
+                        <el-form-item label="请假时间">
                             <el-date-picker
                             v-model="formInline.date"
                             type="date"
@@ -90,7 +93,7 @@
     justify-content: flex-start;
     flex-direction: column;
     align-items: center;
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #9ca6c2;
