@@ -160,7 +160,7 @@ function scrollTrigg() {
         top: 0;
         width: 98%;
         height: 100%;
-        padding-right: 0.4rem;
+        // padding-right: 0.4rem;
         .about-vision {
           //max-height: 2.84rem;
           .about-intro__title {
@@ -195,6 +195,7 @@ function scrollTrigg() {
             color: #4ea1d9;
             .anim {
               @include mihayoutext();
+              padding-right: 0.2rem;
             }
             &:before {
               left: 0;

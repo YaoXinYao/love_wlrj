@@ -55,6 +55,14 @@
               ></template
             >
           </el-menu-item>
+          <el-menu-item index="7">
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/leaveling" @click="skipAdd($event)"
+                >请假管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>

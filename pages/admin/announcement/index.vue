@@ -7,15 +7,31 @@
             <Content @show-click="handleChangesClick" ></Content>
         </div>
         
-        <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%">
-            <template #header>
-                <h1>{{ announcementCon.value.title }}</h1>
-                <h4 style="margin-top: 20px;">{{ announcementCon.value.type }}</h4>
-            </template>
-            <template #footer>
-                <NotificationPopup ref="popupRef" />
-            </template>
-        </el-dialog>
+        <ClientOnly>
+            <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%">
+                <template #header>
+                    <h1>{{ announcementCon.title }}</h1>
+                    <h4 style="margin-top: 20px;">{{ announcementCon.type }}</h4>
+                </template>
+                <template #footer>
+                    <div class="dialogs">
+                        <el-form>
+                            <el-form-item>
+                                <div class="announceContent">
+                                    {{ announcementCon.content }}
+                                </div>
+                                <!-- <el-input :placeholder="announcementCon.content" /> -->
+                            </el-form-item>
+                            <el-form-item>
+                                <div>
+                                    
+                                </div>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </template>
+            </el-dialog>
+        </ClientOnly>
        
     </div>
 </template>
@@ -24,20 +40,20 @@
 import Header  from '@/components/recent-announcement/index.vue'
 import Content from '@/components/announcementContent/index.vue'
 import NotificationPopup  from '@/components/NotificationPopup/index.vue'
-import {ref, reactive,toRefs, toRef, nextTick, watch } from 'vue'
+import {ref } from 'vue'
 import type {anType} from '@/components/announcementContent/index.vue'
 
 const isShow = ref(false)
 const popupRef = ref<InstanceType<typeof NotificationPopup>>()
 
-let announcementCon = reactive<anType>({
+let announcementCon = ref<anType>({
     title:'',
     type:'',
     content:'',
     timestamp:'',
 })
 
-announcementCon.value = handleChangesClick
+// announcementCon = handleChangesClick
 
 
 interface IProps {
@@ -47,9 +63,11 @@ const props = withDefaults(defineProps<IProps>(),{
     title:'公告'
 })
 
-function handleChangesClick(flag:anType){
+function handleChangesClick(flag:any){
     announcementCon.value = flag
     isShow.value = !isShow.value
+    
+    console.log(isShow.value)
     // return flag
 }
 
@@ -97,6 +115,14 @@ useHead({
     :deep(.el-dialog--center){
         .el-dialog__body{
             padding: 10px;
+        }
+    }
+    :deep(.el-dialog__footer){
+        padding: 10px 30px
+    }
+    .dialogs{
+        .announceContent{
+            display: flex;
         }
     }
 }

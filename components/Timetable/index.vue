@@ -6,9 +6,6 @@
           <el-form-item label="课程名">
             <el-input v-model="currentEditCourse.info.courseName" />
           </el-form-item>
-          <el-form-item label="上课地点">
-            <el-input v-model="currentEditCourse.info.coursePlace" />
-          </el-form-item>
           <el-form-item label="单双周">
             <el-select
               v-model="currentEditCourse.info.courseWeek"
@@ -19,9 +16,7 @@
               <el-option label="双周" value="双周" />
             </el-select>
           </el-form-item>
-          <el-form-item
-            label="课程开始时间（双周课则为第二周周一）"
-          >
+          <el-form-item label="课程开始时间（双周课则为第二周周一）">
             <el-date-picker
               v-model="currentEditCourse.info.courseStartTime"
               type="date"
@@ -239,7 +234,7 @@ if (props.isOthers) {
   tableData = props.othersInfo as Course[];
 } else {
   const { courseList } = storeToRefs(course);
-  tableData = courseList.value;
+  tableData = courseList.value as Course[];
 }
 interface Course {
   date: number;
@@ -254,23 +249,21 @@ interface Course {
 
 interface CourseDetail {
   courseName: string;
-  coursePlace: string;
   courseWeek: string;
   courseStartTime: string;
   courseEndTime: string;
 }
 
-let currentEditCourse = {
+let currentEditCourse = reactive({
   date: 0,
   week: "",
   info: {
     courseName: "",
-    coursePlace: "",
     courseWeek: "",
     courseStartTime: "",
     courseEndTime: "",
   },
-};
+});
 type DayOfWeek =
   | "monday"
   | "tuesday"
@@ -285,9 +278,11 @@ const handleCellClick = (row: Course, column: any, event: any) => {
     return;
   }
   if (column.no != 0) {
-    currentEditCourse.date = row.date;
-    currentEditCourse.week = column.property;
-    currentEditCourse.info = tableData[row.date][column.property as DayOfWeek];
+    currentEditCourse.date = JSON.parse(JSON.stringify(row.date)) as number;
+    currentEditCourse.week = JSON.parse(JSON.stringify(column.property));
+    currentEditCourse.info = JSON.parse(
+      JSON.stringify(tableData[row.date][column.property as DayOfWeek])
+    );
     isEdit.value = true;
   }
 };
