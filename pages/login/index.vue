@@ -150,7 +150,10 @@ onMounted(() => {
   }
 
   const intervalId = setInterval(draw, 40);
-
+  window.addEventListener("resize", function () {
+    // 在窗口大小变化时执行的代码
+    init();
+  });
   return () => clearInterval(intervalId);
 });
 </script>
