@@ -19,10 +19,12 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
+    "animate.css": "^4.1.1",
     "axios": "^1.2.0",
     "echarts": "^5.4.3",
     "gsap": "^3.12.2",
     "highlight.js": "^11.9.0",
+    "lodash": "^4.17.21",
     "markdown-it": "^13.0.2",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",
