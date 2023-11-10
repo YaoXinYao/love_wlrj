@@ -54,6 +54,7 @@
           </div>
         </div>
       </div>
+      <canvas style="position: fixed" ref="canvasRef"></canvas>
     </div>
   </div>
 </template>
@@ -67,8 +68,6 @@ definePageMeta({
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
-const username = ref("");
-const password = ref("");
 const ruleForm = ref({
   username: "",
   password: "",
@@ -103,6 +102,57 @@ function login() {
     loginanimin.value = false;
   }, 2000);
 }
+const canvasRef = ref<HTMLCanvasElement>();
+let CharIndex: any[] = [];
+onMounted(() => {
+  const canvas = canvasRef.value;
+  if (canvas == null) return;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  if (!ctx) return;
+
+  const devicePixelRatio = window.devicePixelRatio || 1;
+
+  function init() {
+    canvas!.width = window.innerWidth * devicePixelRatio;
+    canvas!.height = window.innerHeight * devicePixelRatio;
+    CharIndex = new Array(
+      Math.floor(canvas!.width / (12 * devicePixelRatio))
+    ).fill(0);
+  }
+  init();
+  console.log(CharIndex);
+  const fontSize = 12 * devicePixelRatio;
+  ctx.font = `${fontSize}px Cambria, Cochin, Georgia, Times, "Times New Roman", serif`;
+
+  function getRandomChar() {
+    const str =
+      "✧☹︎☠︎☸︎☣︎☢︎☯︎♾♲✰❤︎✦⚛︎☭☮︎⚔︎⚒︎☄︎✵⚰︎☘︎⚘♨︎✞☺︎♘♞☆☃︎★☼☀︎☾◎☽☁︎™Ω℞№ℹ︎❂❁✡︎✣✶✺✷◦◉⦿☒✗☐☞◇☛⚙︎☑︎⌘✘✔︎";
+    return str[Math.floor(Math.random() * str.length)];
+  }
+  function draw() {
+    const newCharIndex = [...CharIndex];
+    ctx.fillStyle = "rgba(251,251,251,0.1)";
+    ctx.fillRect(0, 0, canvas!.width, canvas!.height);
+    ctx.fillStyle = "rgba(127,155,229, 1)";
+    ctx.textBaseline = "top";
+
+    newCharIndex.forEach((index, i) => {
+      const x = i * fontSize;
+      const y = index * fontSize;
+      ctx.fillText(getRandomChar(), x, y);
+      if (y > canvas!.height && Math.random() > 0.99) {
+        newCharIndex[i] = 0;
+      } else {
+        newCharIndex[i] = index + 1;
+      }
+    });
+    CharIndex = newCharIndex;
+  }
+
+  const intervalId = setInterval(draw, 40);
+
+  return () => clearInterval(intervalId);
+});
 </script>
 <style scoped lang="scss">
 @media screen and (max-width: 760px) {
@@ -120,7 +170,7 @@ function login() {
   }
 }
 .loginpage {
-  background-color: rgb(255, 255, 255);
+  z-index: 99999;
   width: 100%;
   height: 100vh;
   overflow: hidden;
@@ -131,7 +181,7 @@ function login() {
     justify-content: center;
     align-items: center;
     .loginbox {
-      z-index: 9999;
+      z-index: 999999;
       width: 8rem;
       height: 4rem;
       padding: 0.5rem;
@@ -147,7 +197,7 @@ function login() {
       background-repeat: no-repeat, no-repeat;
       background-size: 14%;
       display: flex;
-      backdrop-filter: blur(50px);
+      backdrop-filter: blur(40px);
 
       .loginboxleft {
         width: 40%;
