@@ -4,14 +4,14 @@
       <el-aside>
         <el-menu
           class="el-menu-vertical-demo"
-          default-active="2"
+          :default-active="defaultRoute"
           :collapse="isCollapse"
         >
-          <el-menu-item index="1">
+          <el-menu-item index="/admin" :disabled="true">
             <el-icon><icon-menu /></el-icon>
             <template #title>后台管理</template>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/admin/staff">
             <el-icon><icon-menu /></el-icon>
             <template #title
               ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
@@ -19,16 +19,7 @@
               ></template
             >
           </el-menu-item>
-          <el-sub-menu index="3">
-            <template #title>
-              <el-icon><location /></el-icon>
-              <span>Navigator One</span>
-            </template>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
-            <el-menu-item index="1-3">item three</el-menu-item>
-          </el-sub-menu>
-          <el-menu-item index="4">
+          <el-menu-item index="/admin/manageScore">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/manageScore" @click="skipAdd($event)"
@@ -36,13 +27,11 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="/">
             <el-icon><document /></el-icon>
-            <template #title
-              >请假管理</template
-            >
+            <template #title>请假管理</template>
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="/admin/rotationChart">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
@@ -50,11 +39,15 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="7">
+          <el-menu-item index="/admin/forumManage">
             <el-icon><setting /></el-icon>
-            <template #title><NuxtLink to="/admin/forumManage">论坛管理</NuxtLink></template>
+            <template #title
+              ><NuxtLink to="/admin/forumManage" @click="skipAdd($event)"
+                >论坛管理</NuxtLink
+              ></template
+            >
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="/admin/announcement">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
@@ -75,10 +68,13 @@
       <el-container>
         <el-header>
           <div class="icons">
-            <el-icon size="20px" v-if="isCollapse==false" @click="handleFold()"
+            <el-icon
+              size="20px"
+              v-if="isCollapse == false"
+              @click="handleFold()"
               ><Fold
             /></el-icon>
-            <el-icon size="20px" v-if="isCollapse==true" @click="handleFold()"
+            <el-icon size="20px" v-if="isCollapse == true" @click="handleFold()"
               ><Expand
             /></el-icon>
           </div>
@@ -108,6 +104,8 @@ import {
   Expand,
   Fold,
 } from "@element-plus/icons-vue";
+const route = useRoute();
+let defaultRoute = ref("");
 let isCollapse = ref(false);
 let windowWidth = ref(0);
 onMounted(() => {
@@ -115,11 +113,11 @@ onMounted(() => {
   if (windowWidth.value < 600) {
     isCollapse.value = true;
   }
+  defaultRoute.value = route?.href;
 });
 
 const handleFold = () => {
   isCollapse.value = !isCollapse.value;
-  console.log(isCollapse.value);
 };
 const adminsStore = adminStore();
 const { title } = storeToRefs(adminsStore);
@@ -147,11 +145,12 @@ function skipAdd(a: any) {
 .el-aside {
   min-height: 100vh;
   width: max-content;
-  background-color: $groupColor;
+  background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
   min-height: calc(100vh - 60px);
-  background-color: $groupColor;
+  background-color: rgba(101, 168, 235, 0);
   .el-menu-item {
     color: aliceblue;
     a {
@@ -170,9 +169,11 @@ function skipAdd(a: any) {
   }
   .el-sub-menu__title:hover * {
     color: $groupColor !important;
+    background-color: aliceblue;
   }
   li:hover {
     color: $groupColor !important;
+    background-color: aliceblue;
   }
   .el-menu-item.is-active {
     color: $groupColor !important;

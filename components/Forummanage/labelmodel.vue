@@ -1,6 +1,5 @@
 <template>
   <div class="forumModel">
-    <!-- 标签管理 -->
     <el-dialog v-model="labelModel" title="标签管理" width="440px">
       <el-tag
         v-for="item in labels"
@@ -8,7 +7,7 @@
         class="mx-1"
         closable
         :type="getRandomTagType()as'success' | 'info' | 'warning' | 'danger' | ''"
-        @close="handleClose(item.labelName)"
+        @close="handleClose(item.labelId)"
       >
         {{ item.labelName }}
       </el-tag>
@@ -29,17 +28,16 @@
         + 添加标签
       </el-button>
     </el-dialog>
-    <!-- 分栏管理 -->
     <el-dialog v-model="subfieldModel" title="分栏管理" width="440px">
       <el-tag
         v-for="item in subfields"
-        :key="item.labelName"
+        :key="item.subName"
         class="mx-1"
         closable
         :type="getRandomTagType()as'success' | 'info' | 'warning' | 'danger' | ''"
-        @close="subfieldClose(item.labelName)"
+        @close="subfieldClose(item.subId)"
       >
-        {{ item.labelName }}
+        {{ item.subName }}
       </el-tag>
       <el-input
         v-if="subfieldVisible"
@@ -58,25 +56,50 @@
         + 添加分栏
       </el-button>
     </el-dialog>
+    <el-dialog v-model="deleteNews" title="提示信息" width="400px">
+      <span>确定要删除此标签？</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="shutSure">确定</el-button>
+          <el-button @click="deleteNews = false"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="subfieldNews" title="提示信息" width="400px">
+      <span>确定要删除此分栏？</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="shutNews">确定</el-button>
+          <el-button @click="subfieldNews = false"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, Ref } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
+const tagTypes = ["success", "info", "warning", "danger", ""];
 let manage = forumManage();
-let { labelModel, subfieldModel, labels } = storeToRefs(manage);
+let { labelModel, subfieldModel, labels, subfields } = storeToRefs(manage);
+let ids = 0;
+let deleteNews = ref(false);
 let inputLabel = ref("");
-interface Label {
-  labelId: number;
-  labelName: string;
-}
 const inputVisible = ref(false);
-let subfields: Ref<Label[]> = ref([]);
-const subfieldVisible = ref(false);
+
+let subids = 0;
+let subfieldNews = ref(false);
 let subfieldLabel = ref("");
+const subfieldVisible = ref(false);
+const successMessage = (news: string, type: any) => {
+  ElMessage({
+    message: news,
+    type,
+  });
+};
+//随机生成标签颜色
 function getRandomTagType() {
-  const tagTypes = ["success", "info", "warning", "danger", ""];
   return tagTypes[Math.floor(Math.random() * tagTypes.length)] as
     | "success"
     | "info"
@@ -84,39 +107,73 @@ function getRandomTagType() {
     | "danger"
     | "";
 }
-// 标签管理
-const handleClose = (tag: string) => {
-  for (let i = 0; i < labels.value.length; i++) {
-    if (labels.value[i].labelName == tag) {
-      labels.value.splice(i, 1);
-    }
-  }
+// --------------------------标签管理---------------------------------
+const handleClose = (id: number) => {
+  ids = id;
+  deleteNews.value = true;
 };
+function shutSure() {
+  manage.labelDelete(ids).then((result) => {
+    if (result == 20000) {
+      manage.labelInfo(1, 100);
+      successMessage("删除标签成功", "success");
+    } else {
+      successMessage("删除标签失败", "danger");
+    }
+  });
+  deleteNews.value = false;
+}
 const showInput = () => {
   inputVisible.value = true;
 };
 const handleInputConfirm = async () => {
   if (inputLabel.value) {
-    // const {data} = await postLabel(inputLabel.value)
-    // console.log("添加标签",data.value);
+    manage.addLabel(inputLabel.value).then((result) => {
+      if (result == 20000) {
+        manage.labelInfo(1, 100);
+        successMessage("添加标签成功", "success");
+      } else if (result == 53003) {
+        successMessage("标签已经存在", "warning");
+      } else {
+        successMessage("添加标签失败", "danger");
+      }
+    });
   }
   inputVisible.value = false;
   inputLabel.value = "";
 };
 
-// 分栏管理
-const subfieldClose = (subfiseld: string) => {
-  for (let i = 0; i < subfields.value.length; i++) {
-    if (subfields.value[i].labelName == subfiseld) {
-      subfields.value.splice(i, 1);
-    }
-  }
+//-------------------------分栏管理-----------------------------
+const subfieldClose = (id: number) => {
+  subids = id;
+  subfieldNews.value = true;
 };
+function shutNews() {
+  manage.subfieldDelete(subids).then((result) => {
+    if (result == 20000) {
+      manage.subfieldInfo(1, 100);
+      successMessage("删除分栏成功", "success");
+    } else {
+      successMessage("删除分栏失败", "danger");
+    }
+  });
+  subfieldNews.value = false;
+}
 const subfieldInput = () => {
   subfieldVisible.value = true;
 };
 const subfieldInputConfirm = () => {
   if (subfieldLabel.value) {
+    manage.addSubfield(subfieldLabel.value).then((result) => {
+      if (result == 20000) {
+        manage.subfieldInfo(1, 100);
+        successMessage("添加分栏成功", "success");
+      } else if (result == 53003) {
+        successMessage("分栏已经存在", "warning");
+      } else {
+        successMessage("添加分栏失败", "danger");
+      }
+    });
   }
   subfieldVisible.value = false;
   subfieldLabel.value = "";
