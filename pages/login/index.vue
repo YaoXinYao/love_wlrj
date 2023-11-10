@@ -1,89 +1,110 @@
 <template>
-  <div class="loginpage">
-    <div class="layer1"></div>
-    <div class="layer2"></div>
-    <div class="layer3"></div>
-    <div class="layer4"></div>
-    <div class="container">
+  <div
+    class="loginpage"
+    style="
+       {
+        overflow: hidden;
+      }
+    "
+  >
+    <div class="container animate__zoomInDown animate__animated">
       <div :class="`loginbox ${isshow ? 'activebox' : ''}`">
         <div class="loginboxleft"></div>
         <div class="loginboxright">
-          <h2>登录</h2>
-          <el-input
-            class="elinput"
-            v-model="username"
-            placeholder="Please input"
-          />
-          <el-input
-            class="elinput"
-            prefix="密码"
-            v-model="password"
-            type="password"
-            @focus="() => changeback(true)"
-            @blur="() => changeback(false)"
-            placeholder="Please input password"
-            show-password
-          />
-          <TransitionButton class="loginbt" innertext="登录" />
+          <h2 class="animate__animated animate__bounceInDown">登录</h2>
+          <el-form
+            ref="ruleFormRef"
+            :model="ruleForm"
+            status-icon
+            :rules="rules"
+            style="width: 90%"
+            class="demo-ruleForm"
+          >
+            <el-form-item prop="username">
+              <el-input
+                class="elinput"
+                v-model="ruleForm.username"
+                placeholder="请输入学号"
+                autocomplete="off"
+              />
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input
+                class="elinput"
+                prefix="密码"
+                v-model="ruleForm.password"
+                type="password"
+                @focus="() => changeback(true)"
+                @blur="() => changeback(false)"
+                placeholder="请输入密码"
+                show-password
+                autocomplete="off"
+              />
+            </el-form-item>
+          </el-form>
+          <div class="loginbt" @click="login">
+            <TransitionButton
+              :class="
+                !loginanimin
+                  ? 'animate__animated animate__backInUp '
+                  : 'animate__animated animate__hinge'
+              "
+              innertext="登录"
+            />
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import "animate.css";
+import type { FormInstance, FormRules } from "element-plus";
 //定义登录的模板
 definePageMeta({
   layout: "custom",
 });
+const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
+const loginanimin = ref(false);
 const username = ref("");
 const password = ref("");
+const ruleForm = ref({
+  username: "",
+  password: "",
+});
+const validatePass = (rule: any, value: string, callback: any) => {
+  if (value.length !== 11) {
+    callback(new Error("请输入11位学号"));
+  } else {
+    callback();
+  }
+};
+const validatePass2 = (rule: any, value: any, callback: any) => {
+  if (value == "") {
+    callback(new Error("密码不能为空"));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules<typeof ruleForm>>({
+  username: [{ validator: validatePass, trigger: "blur" }],
+  password: [{ validator: validatePass2, trigger: "blur" }],
+});
+
 function changeback(val: boolean) {
   console.log(111);
   isshow.value = val;
 }
+function login() {
+  loginanimin.value = true;
+  setTimeout(() => {
+    loginanimin.value = false;
+  }, 2000);
+}
 </script>
 <style scoped lang="scss">
-@function getshadows($n) {
-  $showdows: "#{random(100)}vw #{random(100)}vh #fff";
-  @for $i from 2 through $n {
-    $showdows: "#{$showdows},#{random(100)}vw #{random(100)}vh #fff";
-  }
-  @return unquote($showdows);
-}
-@keyframes moveUp {
-  100% {
-    transform: translateY(-100vh);
-  }
-}
-$duration: 400s;
-$count: 1000;
-@for $i from 1 through 4 {
-  $duration: floor(calc($duration / 2));
-  $count: floor(calc($count / 2));
-  .layer#{$i} {
-    $size: #{$i}px;
-    position: fixed;
-    width: $size;
-    height: $size;
-    border-radius: 50%;
-    background-color: white;
-    left: 0px;
-    top: 0px;
-    animation: moveUp $duration linear infinite;
-    box-shadow: getshadows($count);
-    &::after {
-      content: "";
-      position: fixed;
-      top: 100vh;
-      width: $size;
-      height: $size;
-      left: 0;
-      border-radius: inherit;
-      box-shadow: inherit;
-    }
-  }
-}
 @media screen and (max-width: 760px) {
   .loginbox {
     width: 90% !important;
@@ -99,9 +120,10 @@ $count: 1000;
   }
 }
 .loginpage {
-  background-color: black;
+  background-color: rgb(255, 255, 255);
   width: 100%;
   height: 100vh;
+  overflow: hidden;
   .container {
     width: 100%;
     height: 100vh;
@@ -120,11 +142,12 @@ $count: 1000;
       border-radius: 10px;
       background-image: url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/22_open.4ea5f239.png),
         url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/33_open.f7d7f655.png);
-      box-shadow: 0 4px 14px 0 rgba(126, 134, 142, 0.16);
+      box-shadow: 0 4px 14px 0 rgb(0 0 0 / 16%);
       background-position: 0 100%, 100% 100%;
       background-repeat: no-repeat, no-repeat;
       background-size: 14%;
       display: flex;
+      backdrop-filter: blur(50px);
 
       .loginboxleft {
         width: 40%;
@@ -143,12 +166,13 @@ $count: 1000;
         height: 100%;
         h2 {
           margin-bottom: 0.2rem;
+          user-select: none;
         }
         .elinput {
-          margin-bottom: 0.2rem;
           height: 0.5rem;
         }
         .loginbt {
+          margin-top: 0.2rem;
           width: 90%;
         }
       }
