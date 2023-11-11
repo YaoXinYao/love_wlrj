@@ -48,16 +48,10 @@
           <div class="header-dropdown">
             <ul>
               <li>
-                <a href="">未来软件工作室</a>
+                <a href="">我的网盘</a>
               </li>
               <li>
-                <a href="">未来软件工作室</a>
-              </li>
-              <li>
-                <a href="">未来软件工作室</a>
-              </li>
-              <li>
-                <a href="">未来软件工作室</a>
+                <a href="">热门下载</a>
               </li>
             </ul>
           </div>
@@ -109,7 +103,7 @@
                 <NuxtLink to="/blog">博客展示</NuxtLink>
               </li>
               <li>
-                <a href="">小组介绍</a>
+                <NuxtLink to="/grouphistory">小组历程</NuxtLink>
               </li>
             </ul>
           </div>

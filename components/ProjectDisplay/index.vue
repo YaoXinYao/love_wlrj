@@ -91,7 +91,7 @@ onMounted(() => {
   let swiper = new Swiper(".mySwiper", {
     slidesPerView: 3, // 轮播区域展示的数量
     spaceBetween: 30,
-    mousewheel: true,
+    mousewheel: false,
     keyboard: true,
     loop: true, // 循环播放
     speed: 1000,
