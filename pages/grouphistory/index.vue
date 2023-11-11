@@ -33,10 +33,10 @@
         </div>
         <div ref="num" class="progressyear">2011</div>
         <div class="progressButton">
-          <div class="progress-prev">
+          <div @click="Pagedele" class="progress-prev">
             <i class="iconfont icon-a-youjiantouzhixiangyoujiantou-copy"></i>
           </div>
-          <div class="progress-next">
+          <div @click="changecur" class="progress-next">
             <i class="iconfont icon-a-youjiantouzhixiangyoujiantou"></i>
           </div>
         </div>
@@ -141,6 +141,16 @@ function tranform(nums: number, dur: number) {
     ease: "power1.inOut", // 缓动函数
   });
 }
+function changecur() {
+  const pagenum = curYear.value;
+  if (pagenum >= yearDate.value.length) return;
+  curYear.value = curYear.value + 1;
+}
+function Pagedele() {
+  const pagenum = curYear.value;
+  if (pagenum <= 0) return;
+  curYear.value = curYear.value - 1;
+}
 </script>
 
 <style scoped lang="scss">
@@ -211,10 +221,12 @@ function tranform(nums: number, dur: number) {
       }
     }
     .about-progress1 {
+      position: relative;
+      overflow: hidden;
       padding: 0.5rem;
       border-radius: 0.1rem;
       width: 11rem;
-      height: 80vh;
+      height: 75vh;
       background-color: white;
       margin: auto;
       .progressdesc {
@@ -255,24 +267,29 @@ function tranform(nums: number, dur: number) {
         color: #dfdfdf;
       }
       .progressButton {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
         width: 100%;
         height: 10vh;
         display: flex;
-        .progress-prev {
+        .progressbt {
+          transition-duration: 0.2s;
           cursor: pointer;
           height: 100%;
           width: 50%;
           display: flex;
           justify-content: center;
           align-items: center;
+          &:hover {
+            background-color: rgb(241, 241, 241);
+          }
+        }
+        .progress-prev {
+          @extend .progressbt;
         }
         .progress-next {
-          cursor: pointer;
-          height: 100%;
-          width: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          @extend .progressbt;
         }
       }
     }
