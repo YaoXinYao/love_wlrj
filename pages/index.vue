@@ -13,8 +13,14 @@
   </div>
 </template>
 <script setup lang="ts">
+useHead({
+  script: [{ src: "https://api.vvhan.com/api/snow" }],
+});
 </script>
 <style scoped lang="scss">
+.vvhan-com-denglong-c {
+  font-size: 0.24rem;
+}
 .smooth-wrapper {
   height: auto;
   width: 100%;

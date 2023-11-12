@@ -193,8 +193,8 @@ onMounted(() => {
       top: 50%;
       background-color: white;
       border-radius: 10px;
-      background-image: url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/22_open.4ea5f239.png),
-        url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/33_open.f7d7f655.png);
+      background-image: url(/images/22_open.4ea5f239.png),
+        url(/images/33_open.f7d7f655.png);
       box-shadow: 0 4px 14px 0 rgb(0 0 0 / 16%);
       background-position: 0 100%, 100% 100%;
       background-repeat: no-repeat, no-repeat;
@@ -231,8 +231,8 @@ onMounted(() => {
       }
     }
     .activebox {
-      background-image: url("https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/22_close.9382a5a8.png"),
-        url("https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/33_close.a8c18fc8.png") !important;
+      background-image: url("/images/22_close.9382a5a8.png"),
+        url("/images/33_close.a8c18fc8.png") !important;
     }
   }
 }
