@@ -2,21 +2,22 @@
   <div class="main">
     <div class="title">相关帖子</div>
     <ul class="posts">
-      <li v-for="(item, index) in datas" :key="index">
+      <li v-for="(item, index) in pagesData" :key="index">
         <div class="cardTop">
           <div class="userInfo">
             <div>
               <img v-if="item.head" :src="item.head" />
             </div>
             <div>
-              <p>{{ item.name }}</p>
-              <p class="time">{{ item.timer }}</p>
+              <p>{{ item.userName }}</p>
+              <p class="time">{{ item.postTime }}</p>
             </div>
           </div>
         </div>
-        <div class="cardContent">{{ item.content }}</div>
+        <h4 class="cardTitle">{{ item.postTitle }}</h4>
+        <div class="cardContent">{{ item.postContent }}</div>
         <div class="cardImage">
-          <img v-for="(u, o) in item.photo" :key="o" :src="u" />
+          <img v-for="(u, o) in item.photos" :key="o" :src="u" />
         </div>
         <div class="icon">
           <el-icon><ChatDotRound color="black" /></el-icon>
@@ -59,14 +60,90 @@
         </div>
       </li>
     </ul>
+    <div class="footer">
+      <span>{{ footNews }}</span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ChatDotRound } from "@element-plus/icons-vue";
-import {storeToRefs} from 'pinia'
-import {forumStore} from '~/store/forum'
-let forums = forumStore()
-const {datas} = storeToRefs(forums)
+import { storeToRefs } from "pinia";
+import { forumStore } from "~/store/forum";
+let forums = forumStore();
+const { datas, pages, uploadRender, postSubId, postSource } =
+  storeToRefs(forums);
+let pageNo = ref(1);
+let pagesData = ref<any[]>([]);
+let isLoading = ref(false);
+let footNews = ref("加载中，请耐心等待...");
+function fetchData() {
+  if (isLoading.value) return;
+  isLoading.value = true;
+  if (postSource.value && postSubId.value != 0) {
+    forums
+      .selectPost(pageNo.value, 4, postSource.value, postSubId.value)
+      .then((res) => {
+        if (res) {
+          pagesData.value = [...pagesData.value, ...res];
+          pageNo.value++;
+        }
+        isLoading.value = false;
+      });
+  } else if (!postSource.value && postSubId.value != 0) {
+    forums.selectPost(pageNo.value, 4, "", postSubId.value).then((res) => {
+      if (res) {
+        pagesData.value = [...pagesData.value, ...res];
+        pageNo.value++;
+      }
+      isLoading.value = false;
+    });
+  } else if (postSource.value && postSubId.value == 0) {
+    forums.selectPost(pageNo.value, 4, postSource.value).then((res) => {
+      if (res) {
+        pagesData.value = [...pagesData.value, ...res];
+        pageNo.value++;
+      }
+      isLoading.value = false;
+    });
+  } else {
+    forums.selectPost(pageNo.value, 4).then((res) => {
+      if (res) {
+        pagesData.value = [...pagesData.value, ...res];
+        pageNo.value++;
+      }
+      isLoading.value = false;
+    });
+  }
+}
+function handleScroll() {
+  const scrollTop = window.scrollY;
+  const scrollHeight = document.documentElement.scrollHeight;
+  const clientHeight = window.innerHeight;
+  if (scrollTop + clientHeight >= scrollHeight - 10) {
+    if (pageNo.value <= pages.value) {
+      fetchData();
+    } else if (pageNo.value > pages.value) {
+      footNews.value = "已加载全部数据";
+    }
+  }
+}
+
+onMounted(() => {
+  fetchData();
+  window.addEventListener("scroll", handleScroll);
+});
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
+watch(datas, (newValue, oldValue) => {
+  if (uploadRender.value) {
+    footNews.value = "加载中，请耐心等待...";
+    pageNo.value = 1;
+    pagesData.value = [];
+    uploadRender.value = false;
+    handleScroll();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -78,18 +155,29 @@ const {datas} = storeToRefs(forums)
     font-weight: 400;
     font-family: "阿里妈妈刀隶体";
   }
+  .footer {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    text-align: center;
+    font-family: "阿里妈妈刀隶体";
+    span {
+      display: inline-block;
+      width: max-content;
+    }
+  }
 }
 .posts {
   width: 100%;
   min-height: 100px;
   list-style: none;
   li {
-    min-height: 150px;
+    min-height: 100px;
     width: 98%;
     margin: auto;
     margin-top: 15px;
     padding-bottom: 15px;
-    border-bottom: solid rgb(50, 49, 49) 1px;
     .cardTop {
       height: 50px;
       margin-bottom: 8px;
@@ -127,7 +215,9 @@ const {datas} = storeToRefs(forums)
       }
     }
     .cardContent {
-      margin-bottom: 5px;
+      margin-bottom: 9px;
+      margin-top: 9px;
+      text-indent: 2em;
     }
     .cardImage {
       img {
