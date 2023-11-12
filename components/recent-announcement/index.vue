@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import type  { FormRules, FormInstance} from 'element-plus';
 import {ElNotification, } from 'element-plus'
-import { ref, reactive, MaybeRef } from 'vue';
+import { ref, reactive } from 'vue';
 
 
 const hide = ref(true)

@@ -62,6 +62,11 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+      "/check":{
+        target:"http://124.222.153.56:19591/",
+        changeOrigin:true,
+        prependPath:true,
+      }
     },
   },
   routeRules: {
