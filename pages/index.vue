@@ -13,12 +13,12 @@
   </div>
 </template>
 <script setup lang="ts">
-useHead({
+/* useHead({
   script: [
     { src: "https://api.vvhan.com/api/denglong2", async: true },
     { src: "https://api.vvhan.com/api/snow", async: true },
   ],
-});
+}); */
 </script>
 <style lang="scss">
 .vvhan-com-denglong-c {
