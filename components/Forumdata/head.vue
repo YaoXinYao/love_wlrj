@@ -81,14 +81,13 @@ function handleLabel(id: number, name: string) {
 function selectCards() {
   uploadRender.value = true;
   if (postSource.value && subValue.value) {
-    forumData.selectPost(1, 4, postSource.value, postSubId.value);
+    forumData.selectPost(1, 10, postSource.value, postSubId.value);
   } else if (!postSource.value && subValue.value) {
-    forumData.selectPost(1, 4, "", postSubId.value);
+    forumData.selectPost(1, 10, "", postSubId.value);
   } else if (postSource.value && !subValue.value) {
-    forumData.selectPost(1, 4, postSource.value);
+    forumData.selectPost(1, 10, postSource.value);
   } else {
-    forumData.selectPost(1, 4);
-    console.log("加载全部");
+    forumData.selectPost(1, 10);
   }
 }
 </script>

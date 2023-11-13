@@ -94,7 +94,7 @@ export const forumStore = defineStore("forumInfo", {
         postUserId
       );
       this.pages = data.value?.data.pages;
-      this.datas= []
+      this.datas = []
       let dataArr = data.value?.data.records || [];
       for (let i = 0; i < dataArr.length; i++) {
         const { postImg, ...postData } = dataArr[i];
@@ -102,6 +102,7 @@ export const forumStore = defineStore("forumInfo", {
         //分割图片
         let photos: string[] = img ? img.split(",") : [];
         let likes = false;
+        let collect = false;
         //判断用户是否点赞
         const result = await this.addlike(dataArr[i].postId, 1, "Like", 1);
         if (result == 20000) {
@@ -109,11 +110,18 @@ export const forumStore = defineStore("forumInfo", {
         } else if (result == 53003) {
           likes = true;
         }
+        //判断用户是否收藏
+        const res = await this.addlike(dataArr[i].postId, 1, "Collect", 1);
+        if (res == 20000) {
+          await this.addlike(dataArr[i].postId, 0, "Collect", 1);
+        } else if (res == 53003) {
+          collect = true;
+        }
         let userName = "迷雾";
         let head =
           "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390";
-        this.datas.push({ ...postData, photos, userName, head, likes });
-      }
+        this.datas[i]={ ...postData, photos, userName, head, likes,collect };
+       }
       return this.datas
     },
 

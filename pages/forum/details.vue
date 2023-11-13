@@ -2,13 +2,13 @@
   <div class="deatils">
     <ul class="photo">
       <li>
-        <img :src="datas[0].photo[0]" alt="" />
+        <img src="/img/light.jpg" alt="" />
       </li>
     </ul>
     <div class="content">
       <div class="text">
-        <h3>{{ datas[0].title }}</h3>
-        <div>{{ datas[0].content }}</div>
+        <h3>111111111111111</h3>
+        <div>2222222222222222222222</div>
         <ul class="discuss">
           <li v-for="(item, index) in discuss" :key="index">
             <div class="cardTop">
@@ -95,6 +95,8 @@ import { ref } from "vue";
 let textarea = ref("");
 let forums = forumStore();
 const { datas, discuss } = storeToRefs(forums);
+const data = useRoute().query.data
+console.log("id值",data)
 </script>
 
 <style lang="scss" scoped>
@@ -157,6 +159,7 @@ const { datas, discuss } = storeToRefs(forums);
           }
           .time {
             color: rgb(210 146 26);
+            margin-top: 10px;
           }
         }
         img {
