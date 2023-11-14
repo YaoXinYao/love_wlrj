@@ -74,5 +74,8 @@ export default defineNuxtConfig({
     "/admin/**": {
       ssr: false,
     },
+    "/networkdisk/**": {
+      ssr: false,
+    },
   },
 });

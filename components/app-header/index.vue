@@ -37,21 +37,31 @@
           </div>
         </div>
         <div class="HeaderNavItem">
-          <span
-            >小组网盘
-            <i
-              :class="`iconfont ${
-                header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
-              }`"
-            ></i>
-          </span>
+          <NuxtLink to="/networkdisk">
+            <span
+              >小组网盘
+              <i
+                :class="`iconfont ${
+                  header.isSpread ? 'icon-xiangxia' : 'icon-xiangxia-copy'
+                }`"
+              ></i>
+            </span>
+          </NuxtLink>
           <div class="header-dropdown">
             <ul>
               <li>
-                <a href="">我的网盘</a>
+                <NuxtLink to="/networkdisk/uploadfile">上传文件</NuxtLink>
               </li>
               <li>
-                <a href="">热门下载</a>
+                <NuxtLink to="/networkdisk/documentcommunity"
+                  >文件社区</NuxtLink
+                >
+              </li>
+              <li>
+                <NuxtLink to="/networkdisk/mylove">我的收藏</NuxtLink>
+              </li>
+              <li>
+                <NuxtLink to="/networkdisk/myfile">我的文件</NuxtLink>
               </li>
             </ul>
           </div>
@@ -109,11 +119,31 @@
           </div>
         </div>
       </nav>
-      <NuxtLink to="/login">
-        <div class="login">
+
+      <div class="login">
+        <NuxtLink to="/login">
           <TransitionButton innertext="登录"></TransitionButton>
-        </div>
-      </NuxtLink>
+        </NuxtLink>
+        <!--  <el-dropdown :hide-on-click="false">
+          <div class="loginbox" style="">
+            <div
+              class="boximg"
+              style="
+                background-image: url(https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp);
+              "
+            ></div>
+          </div>
+
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item>我的网盘</el-dropdown-item>
+              <el-dropdown-item>上传文件</el-dropdown-item>
+              <el-dropdown-item>退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown> -->
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +158,7 @@ const headertype = {
   height: "0.8rem",
   backgroundColor: "white",
   color: "black",
+  boxShadow: "-7px 3px 10px 0 rgba(0, 0, 0, 0.06)",
   isSpread: false,
 };
 //注册插件
@@ -176,6 +207,7 @@ function handlerscroll() {
   font-size: 0.16rem;
   color: white;
   z-index: 999;
+
   .container {
     position: relative;
     width: 10.6rem;
@@ -383,6 +415,28 @@ function handlerscroll() {
       display: flex;
       align-items: center;
       justify-content: center;
+      .loginbox {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        font-size: 26px;
+        text-align: center;
+        padding: 0.05rem;
+        line-height: 60px;
+        box-shadow: 0 0 10px #fff;
+        outline: none;
+        color: rgb(106, 106, 245);
+        background-color: #fff;
+        transition-duration: 0.3s;
+        .boximg {
+          content: "";
+          display: block;
+          width: 0.4rem;
+          height: 0.4rem;
+          background-size: cover;
+          border-radius: 50%;
+        }
+      }
     }
   }
 }
