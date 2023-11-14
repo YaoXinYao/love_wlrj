@@ -6,7 +6,7 @@
         <div class="cardPhotos">
           <NuxtLink @click="navigateTo({path:'/forum/details',query:{data:item.postId}})">
             <img
-              :src="item.photos.length ? item.photos[0] : '/img/light.jpg'"
+              :src="item.photos.length ? item.photos[0] : '/image/back.jpeg'"
             />
           </NuxtLink>
         </div>
@@ -138,7 +138,7 @@ function fetchData() {
     isLoading.value = true;
     setTimeout(() => {
       textLoading.value = "已经到底了";
-    }, 1000);
+    }, 4000);
   }
 }
 const handleScroll = () => {

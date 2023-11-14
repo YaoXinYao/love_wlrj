@@ -7,19 +7,7 @@ import {
   postSubfield,
   deleteSubfield,
 } from "~/service/forums/admin";
-import { addpost, getPost, judgeLike } from "~/service/forums/card";
-export interface discussType {
-  id: number;
-  postid: number;
-  mainid: number;
-  name: string;
-  timer: string;
-  content: string;
-  head: string;
-  photo: string[];
-  likes: boolean;
-  child: string[];
-}
+import { addpost, getPost, judgeLike, singlePost } from "~/service/forums/card";
 export interface label {
   labelId: number;
   labelName: string;
@@ -28,13 +16,30 @@ export interface subfield {
   subId: number;
   subName: string;
 }
+export interface singleType {
+  collect: boolean;
+  head: string;
+  likes: boolean;
+  photos: string[];
+  postCollect: number;
+  postContent: string;
+  postId: number;
+  postLike: number;
+  postSubId: number;
+  postTime: string;
+  postTitle: string;
+  postUserId: number;
+  postView: number;
+  userName: string;
+}
 export interface cards {
-  postSubId:number;
-  postSource:string;
-  uploadRender:boolean;
+  postSubId: number;
+  postSource: string;
+  uploadRender: boolean;
   pages: number;
   datas: any[];
-  discuss: discussType[];
+  discuss: any[];
+  singleData: any;
 }
 export interface forums {
   labelModel: boolean;
@@ -47,26 +52,13 @@ export interface forums {
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
     return {
-      postSubId:0,
-      postSource:"",
-      uploadRender:false,
+      postSubId: 0,
+      postSource: "",
+      uploadRender: false,
       pages: 0,
       datas: [],
-      discuss: [
-        {
-          id: 1,
-          postid: 0,
-          mainid: 2,
-          name: "迷雾",
-          timer: "2021-10-09",
-          content:
-            '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。',
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-          photo: [],
-          likes: true,
-          child: [],
-        },
-      ],
+      discuss: [],
+      singleData: {},
     };
   },
   actions: {
@@ -76,6 +68,7 @@ export const forumStore = defineStore("forumInfo", {
       const code = data.value?.code;
       return code;
     },
+
     //查询帖子
     async selectPost(
       pageNo: number,
@@ -94,7 +87,7 @@ export const forumStore = defineStore("forumInfo", {
         postUserId
       );
       this.pages = data.value?.data.pages;
-      this.datas = []
+      this.datas = [];
       let dataArr = data.value?.data.records || [];
       for (let i = 0; i < dataArr.length; i++) {
         const { postImg, ...postData } = dataArr[i];
@@ -120,9 +113,9 @@ export const forumStore = defineStore("forumInfo", {
         let userName = "迷雾";
         let head =
           "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390";
-        this.datas[i]={ ...postData, photos, userName, head, likes,collect };
-       }
-      return this.datas
+        this.datas[i] = { ...postData, photos, userName, head, likes, collect };
+      }
+      return this.datas;
     },
 
     //收藏/点赞
@@ -135,6 +128,44 @@ export const forumStore = defineStore("forumInfo", {
       const { data } = await judgeLike(postId, status, type, userId);
       const code = data.value?.code;
       return code;
+    },
+
+    //查询单个帖子
+    async getSingle(postId: number) {
+      const { data } = await singlePost(postId);
+      let single = data.value?.data || {};
+      const { postImg, ...postData } = single;
+      let img: string = single.postImg;
+      //分割图片
+      let photos: string[] = img ? img.split(",") : [];
+      let likes = false;
+      let collect = false;
+      //判断用户是否点赞
+      const result = await this.addlike(single.postId, 1, "Like", 1);
+      if (result == 20000) {
+        await this.addlike(single.postId, 0, "Like", 1);
+      } else if (result == 53003) {
+        likes = true;
+      }
+      //判断用户是否收藏
+      const res = await this.addlike(single.postId, 1, "Collect", 1);
+      if (res == 20000) {
+        await this.addlike(single.postId, 0, "Collect", 1);
+      } else if (res == 53003) {
+        collect = true;
+      }
+      let userName = "迷雾";
+      let head =
+        "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390";
+
+      Object.assign(this.singleData, {
+        ...postData,
+        photos,
+        userName,
+        head,
+        likes,
+        collect,
+      });
     },
   },
 });

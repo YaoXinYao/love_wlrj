@@ -1,9 +1,11 @@
 import hyRequest from "../forum";
 import type { IResultData } from "../forum";
+
 //发布帖子
 export const addpost = (params: FormData) => {
   return hyRequest.post<IResultData<any>>("/api/post/insert", params);
 };
+
 //查询帖子
 export const getPost = (
   pageNo: number,
@@ -37,3 +39,8 @@ export const judgeLike = (
     userId,
   });
 };
+
+//查询单个帖子
+export const singlePost = (postId:number)=>{
+  return hyRequest.get<IResultData<any>>("/api/post/getPostById",{postId})
+}
