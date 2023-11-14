@@ -25,6 +25,7 @@ const check = defineStore('check',{
         async getCheckList(query:any){
             const listResult = await getLeave(query)
             console.log(listResult.data)
+            console.log(listResult.data.value)
             const list = listResult.data.value.data.list
             const count = listResult.data.value.data.allCount;
             const Page = listResult.data.value.data.allPage;

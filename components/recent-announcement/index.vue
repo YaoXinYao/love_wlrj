@@ -15,9 +15,18 @@
                     <el-input placeholder="填写公告标题" v-model="refForm.title" />
                 </el-form-item>
                 <el-form-item label="公告类型" prop="type">
-                    <el-select  placeholder="请选择公告类型" v-model="refForm.type" >
-                        <el-option label="讲课通知" value="讲课通知" />
+                    <el-select  placeholder="请选择公告类型" v-model="refForm.type" default="讲课通知" >
+                        <el-option label="讲课通知" value="讲课通知"  />
                         <el-option label="会议通知" value="会议通知" />
+                        <el-option label="违纪通告" value="违纪通告" />
+                        <el-option label="考核通告" value="考核通告" />
+                        <el-option label="其他" value="其他" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="公告范围">
+                    <el-select  placeholder="面向人员" v-model="refForm.type" >
+                        <el-option label="全部人员" value="ALL" />
+                        <el-option label="某一届人员" value="某一届人员" />
                         <el-option label="违纪通告" value="违纪通告" />
                         <el-option label="考核通告" value="考核通告" />
                         <el-option label="其他" value="其他" />
