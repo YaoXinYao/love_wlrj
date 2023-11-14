@@ -18,7 +18,7 @@ class Hyrequest {
         newoptions.query = data || {};
       }
       if (method == "POST") {
-        newoptions.body = data || {};
+        newoptions.params = data || {};
       }
       useFetch<T>(url)
         .then((res) => {

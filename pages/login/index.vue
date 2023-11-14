@@ -60,6 +60,7 @@
 </template>
 <script setup lang="ts">
 import "animate.css";
+import { Userlogin } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
 //定义登录的模板
 definePageMeta({
@@ -96,8 +97,14 @@ function changeback(val: boolean) {
   console.log(111);
   isshow.value = val;
 }
-function login() {
+async function login() {
   loginanimin.value = true;
+  const loginval = {
+    userAccount: "20211544112",
+    userPassword: "111111",
+  };
+  const res = await Userlogin(loginval);
+  console.log(res.data);
   setTimeout(() => {
     loginanimin.value = false;
   }, 2000);

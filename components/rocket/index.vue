@@ -1,6 +1,6 @@
 <template>
   <a href="#top">
-    <div class="rocket">
+    <div :class="`rocket ${isShow ? '' : 'topactive'}`">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="icon back-to-top-icon"
@@ -19,7 +19,19 @@
   </a>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const isShow = ref(false);
+function handlerScroll() {
+  console.log(window.scrollY);
+  window.scrollY > 100 ? (isShow.value = true) : (isShow.value = false);
+}
+onMounted(() => {
+  document.addEventListener("scroll", handlerScroll);
+});
+onUnmounted(() => {
+  document.removeEventListener("scroll", handlerScroll);
+});
+</script>
 
 <style scoped lang="scss">
 .rocket {
@@ -44,5 +56,8 @@
     fill: currentcolor;
     color: rgb(40, 77, 213);
   }
+}
+.topactive {
+  display: none;
 }
 </style>
