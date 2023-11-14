@@ -21,7 +21,7 @@ class HYRequest {
         newoptions.query = data;
       }
       if (method == "POST" || method == "PUT") {
-        newoptions.body = data;
+        newoptions.params = data;
       }
       useFetch<T>(url, newoptions as any)
         .then((res) => {

@@ -62,6 +62,7 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+      // 考勤接口
       "/check":{
         target:"http://124.222.153.56:19591/",
         changeOrigin:true,
