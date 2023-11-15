@@ -90,6 +90,10 @@ const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let selectValue = ref("");
+let manages = forumManage();
+let forumData = forumStore();
+let { userInfo } = storeToRefs(forumData);
+let { subfields, labels } = storeToRefs(manages);
 let formImage = reactive<any>({
   files: [],
 });
@@ -99,11 +103,8 @@ let postNews = reactive<any>({
   postImg: [],
   postSubId: Number(selectValue.value),
   postTitle: "",
-  postUserId: 3,
+  postUserId: 8,
 });
-let manages = forumManage();
-let forumData = forumStore();
-let { subfields, labels } = storeToRefs(manages);
 onMounted(() => {
   manages.labelInfo(1, 100);
   manages.subfieldInfo(1, 100);
@@ -114,54 +115,57 @@ watch(selectValue, (newValue) => {
 //--------------获取上传文件-----------
 //文件上传
 const uploadPhoto = () => {
+  let jage = true;
+  postNews.postImg=[]
   for (let i = 0; i < formImage.files.length; i++) {
-    postNews.postImg[i] = formImage.files[i].raw;
-    console.log(postNews.postImg[0].type);
-    const jage = postNews.postImg[0].type.startsWith("image/");
+    jage = formImage.files[i].raw.type.startsWith("image/");
     if (!jage) {
       ElMessage.warning("文件类型错误");
-      break;
+      return;
+    } else {
+      postNews.postImg.push(formImage.files[i].raw);
     }
   }
-  let formData = new FormData();
-  Object.keys(postNews).forEach((key: string) => {
-    if (Array.isArray(postNews[key])) {
-      postNews[key].forEach((item: any, index: number) => {
-        formData.append(`${key}[${index}]`, item);
-      });
-    } else {
-      formData.append(key, postNews[key]);
-    }
-  });
-  forumData.addCard(formData).then((result) => {
-    if (result == 20000) {
-      ElMessage.success("发布帖子成功");
-      formImage.files=[]
-      selectValue.value=""
-      postNews.labelId=[]
-      postNews.postContent=""
-      postNews.postImg=[]
-      postNews.postTitle=""
-    } else {
-      ElMessage.error("发布帖子失败");
-    }
-  });
+  if (jage) {
+    let formData = new FormData();
+    Object.keys(postNews).forEach((key: string) => {
+      if (Array.isArray(postNews[key])) {
+        postNews[key].forEach((item: any, index: number) => {
+          formData.append(`${key}[${index}]`, item);
+        });
+      } else {
+        formData.append(key, postNews[key]);
+      }
+    });
+    forumData.addCard(formData).then((result) => {
+      if (result == 20000) {
+        ElMessage.success("发布帖子成功");
+        formImage.files = [];
+        selectValue.value = "";
+        postNews.labelId = [];
+        postNews.postContent = "";
+        postNews.postImg = [];
+        postNews.postTitle = "";
+      } else {
+        ElMessage.error("发布帖子失败");
+      }
+    });
+  }
 };
-function clearNews(){
-  formImage.files=[]
-      selectValue.value=""
-      postNews.labelId=[]
-      postNews.postContent=""
-      postNews.postImg=[]
-      postNews.postTitle=""
+function clearNews() {
+  formImage.files = [];
+  selectValue.value = "";
+  postNews.labelId = [];
+  postNews.postContent = "";
+  postNews.postImg = [];
+  postNews.postTitle = "";
 }
 //删除图片
 const handleRemove = (file: UploadFile) => {
-  console.log(file);
   const index = formImage.files.indexOf(file);
   if (index !== -1) {
     formImage.files.splice(index, 1);
-    postNews.postImg.splice(index,1)
+    postNews.postImg.splice(index, 1);
     ElMessage.success("移除成功");
   }
 };
@@ -192,7 +196,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
     }
   }
 }
-.uploadFile {
+/* .uploadFile {
   width: 148px;
   height: 148px;
   margin-right: 6px;
@@ -209,7 +213,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
     font-size: 28px;
     color: #909399;
   }
-}
+} */
 .el-dialog {
   overflow: hidden;
   img {

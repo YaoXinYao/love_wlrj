@@ -1,12 +1,17 @@
 <template>
-<div class="forum">
+  <div class="forum">
     <NuxtPage></NuxtPage>
-</div>
+  </div>
 </template>
 <script lang="ts" setup>
-  definePageMeta({
-    layout: "default",
-  });
+import { forumStore } from "~/store/forum";
+definePageMeta({
+  layout: "default",
+});
+let forums = forumStore()
+onMounted(()=>{
+  forums.getUser(8)
+})
 </script>
 
 <style lang="scss" scoped>

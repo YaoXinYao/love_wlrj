@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     devProxy: {
-      //后台管理
+      //论坛管理
       "/api": {
         target: "http://152.136.54.204:19999/forum",
         changeOrigin: true,
@@ -62,6 +62,12 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+      //用户接口
+      "/zinfo":{
+        target: "http://112.125.120.78:8666",
+        changeOrigin: true,
+        prependPath: true,
+      }
     },
   },
   routeRules: {

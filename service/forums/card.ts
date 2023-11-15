@@ -44,3 +44,13 @@ export const judgeLike = (
 export const singlePost = (postId:number)=>{
   return hyRequest.get<IResultData<any>>("/api/post/getPostById",{postId})
 }
+
+//查询指定文章下评论
+export const getComment = (postId:number)=>{
+  return hyRequest.get<IResultData<any>>("/api/comment/select",{postId})
+}
+
+//发布评论
+export const postComment=(params:FormData)=>{
+  return hyRequest.get<IResultData<any>>("/api/comment/insert",params)
+}

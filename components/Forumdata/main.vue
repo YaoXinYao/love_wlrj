@@ -6,7 +6,7 @@
         <div class="cardPhotos">
           <NuxtLink @click="navigateTo({path:'/forum/details',query:{data:item.postId}})">
             <img
-              :src="item.photos.length ? item.photos[0] : '/image/back.jpeg'"
+              :src="item.photos.length ? item.photos[0] : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'"
             />
           </NuxtLink>
         </div>
@@ -97,12 +97,15 @@ import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource } =
+const { datas, pages, uploadRender, postSubId, postSource,userInfo } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
 let isLoading = ref(false);
 let textLoading = ref("加载中...");
+onMounted(() => {
+  fetchData();
+});
 //查询帖子
 function fetchData() {
   if (postSource.value && postSubId.value != 0) {
@@ -152,7 +155,7 @@ const handleScroll = () => {
 };
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
-  forums.addlike(postId, status, type, 1).then((res) => {
+  forums.addlike(postId, status, type,userInfo.value.userId).then((res) => {
     if (status == 1) {
       if (type == "Like") {
         if (res == 20000) {
@@ -196,9 +199,6 @@ function postLike(postId: number, type: string, status: number, index: number) {
     }
   });
 }
-onMounted(() => {
-  fetchData();
-});
 watch(datas, (newValue, oldValue) => {
   if (uploadRender.value) {
     pageNo.value = 1;

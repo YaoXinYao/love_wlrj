@@ -2,7 +2,7 @@
   <div class="head">
     <div class="content">
       <div class="text">
-        <p><span>下午好</span> TOM</p>
+        <p><span style="margin-right:7px">{{time}}</span>{{ userInfo.userName }}</p>
         <div>欢迎来到未来论坛</div>
       </div>
       <div class="search">
@@ -46,9 +46,22 @@ import { forumStore, forumManage } from "~/store/forum";
 const forumData = forumStore();
 const manage = forumManage();
 let { subfields } = storeToRefs(manage);
-let { uploadRender,postSource,postSubId } = storeToRefs(forumData);
+let { uploadRender, postSource, postSubId, userInfo } = storeToRefs(forumData);
 const tagTypes = ["success", "info", "warning", "danger", ""];
 let subValue = ref("");
+let time = ref("今天好");
+let timer;
+let d = new Date();
+timer = d.getHours();
+if (timer < 11) {
+  time.value = "上午好";
+} else if (timer < 14) {
+  time.value = "中午好";
+} else if (timer < 19) {
+  time.value = "下午好";
+} else {
+  time.value = "晚上好";
+}
 onMounted(() => {
   manage.subfieldInfo(1, 100);
 });
