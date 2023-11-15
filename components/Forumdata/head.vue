@@ -2,26 +2,39 @@
   <div class="head">
     <div class="content">
       <div class="text">
-        <p><span>下午好</span> TOM</p>
+        <p><span style="margin-right:7px">{{time}}</span>{{ userInfo.userName }}</p>
         <div>欢迎来到未来论坛</div>
       </div>
       <div class="search">
         <el-input
-          v-model="source"
+          v-model="postSource"
           class="cardInput"
           size="large"
-          placeholder="搜索帖子"
+          placeholder="请输入关键词"
           :prefix-icon="Search"
         />
-        <ul class="tag">
-          <li>软著</li>
-          <li>成绩</li>
-          <li>学习</li>
-          <li>头脑风暴</li>
-          <li>讲课</li>
-          <li>生活</li>
-          <li>娱乐</li>
-        </ul>
+        <el-button type="primary" round @click="selectCards">搜索</el-button>
+        <div class="subfield">
+          <div>
+            <p class="tagtitle">
+              <span>分栏：</span>
+              <el-input
+                v-model="subValue"
+                placeholder="可以分栏搜索"
+                disabled
+              />
+            </p>
+            <div class="tag">
+              <el-tag
+                v-for="(tag, index) in subfields"
+                :key="index"
+                :type="getRandomTagType()as'success' | 'info' | 'warning' | 'danger' | ''"
+                @click="handleLabel(tag.subId, tag.subName)"
+                >{{ tag.subName }}</el-tag
+              >
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -29,9 +42,67 @@
 <script lang="ts" setup>
 import { Search } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
-import { forumStore } from "~/store/forum";
+import { forumStore, forumManage } from "~/store/forum";
 const forumData = forumStore();
-let { source } = storeToRefs(forumData);
+const manage = forumManage();
+let { subfields } = storeToRefs(manage);
+let { uploadRender, postSource, postSubId, userInfo } = storeToRefs(forumData);
+const tagTypes = ["success", "info", "warning", "danger", ""];
+let subValue = ref("");
+let time = ref("今天好");
+let timer;
+let d = new Date();
+timer = d.getHours();
+if (timer < 11) {
+  time.value = "上午好";
+} else if (timer < 14) {
+  time.value = "中午好";
+} else if (timer < 19) {
+  time.value = "下午好";
+} else {
+  time.value = "晚上好";
+}
+onMounted(() => {
+  manage.subfieldInfo(1, 100);
+});
+//颜色随机
+function getRandomTagType() {
+  return tagTypes[Math.floor(Math.random() * tagTypes.length)] as
+    | "success"
+    | "info"
+    | "warning"
+    | "danger"
+    | "";
+}
+//选中分栏
+function handleLabel(id: number, name: string) {
+  if (!subValue.value) {
+    subValue.value = name;
+    postSubId.value = id;
+    ElMessage.success("分栏选中成功");
+  } else if (subValue.value == name) {
+    subValue.value = "";
+    postSubId.value = 0;
+    ElMessage.success("取消分栏成功");
+  } else {
+    subValue.value = name;
+    postSubId.value = id;
+    ElMessage.success("已替换成此分栏");
+  }
+}
+//搜索帖子
+function selectCards() {
+  uploadRender.value = true;
+  if (postSource.value && subValue.value) {
+    forumData.selectPost(1, 10, postSource.value, postSubId.value);
+  } else if (!postSource.value && subValue.value) {
+    forumData.selectPost(1, 10, "", postSubId.value);
+  } else if (postSource.value && !subValue.value) {
+    forumData.selectPost(1, 10, postSource.value);
+  } else {
+    forumData.selectPost(1, 10);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -54,9 +125,9 @@ let { source } = storeToRefs(forumData);
 }
 .content {
   width: 1000px;
-  height: 200px;
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 .text {
   p {
@@ -74,31 +145,47 @@ let { source } = storeToRefs(forumData);
   }
 }
 .search {
-  width: 300px;
+  max-width: 500px;
   .el-input--large {
-    width: 300px;
+    width: 250px;
     border-radius: 8px;
+    margin-right: 7px;
   }
+  .subfield {
+    div {
+      width: 100%;
+    }
+  }
+  .tagtitle {
+    margin: 20px 0px 10px;
+    font-size: 18px;
+    font-family: "阿里妈妈刀隶体";
+    font-weight: 500px;
+    span {
+      width: 60px;
+    }
+    .el-input {
+      width: 140px;
+    }
+  }
+
   .tag {
-    list-style: none;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 20px;
-    li {
-      width: 90px;
+    .el-tag {
+      display: inline-block;
+      width: max-content;
       height: 30px;
+      font-size: 15px;
       text-align: center;
       line-height: 30px;
-      border: 1px rgba(216, 215, 215, 0.92) solid;
-      border-radius: 3px;
       margin-bottom: 8px;
       cursor: pointer;
+      transition: transform 0.2s ease-in-out;
     }
-    li:hover{
-      color: #409eff;
-      background-color: #ecf5ff;
-      border-color: #c6e2ff;
+    .el-tag:hover {
+      transform: translate(2px, -3px);
     }
   }
 }
