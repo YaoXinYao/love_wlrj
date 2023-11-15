@@ -65,10 +65,29 @@ export interface HomeStore {
   header: Headertype;
   isRequireanim: boolean;
   user: HomeStoreuser;
+  userinfo: Homestoreuserinfo;
 }
 export interface HomeStoreuser {
   expiresIn: number;
   refreshToken: string;
   token: string;
   tokenHead: string;
+}
+export interface Homestoreuserinfo {
+  userId: number;
+  userAccount: string;
+  userPassword: string;
+  userName: any;
+  userSexVal: any;
+  userQq: string;
+  userEmail: string;
+  userPicture: string;
+  userClass: string;
+  userGrade: string;
+  userBlog: string;
+  roleId: any;
+  enabled: any;
+  roleName: any;
+  roles: any;
+  authorities: any;
 }

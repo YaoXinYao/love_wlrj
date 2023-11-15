@@ -68,6 +68,7 @@ definePageMeta({
   layout: "custom",
 });
 const Homestore = useHomestore();
+
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
@@ -89,14 +90,17 @@ const validatePass2 = (rule: any, value: any, callback: any) => {
     callback();
   }
 };
-
 const rules = reactive<FormRules<typeof ruleForm>>({
   username: [{ validator: validatePass, trigger: "blur" }],
   password: [{ validator: validatePass2, trigger: "blur" }],
 });
-
+function error() {
+  loginanimin.value = true;
+  setTimeout(() => {
+    loginanimin.value = false;
+  }, 2000);
+}
 function changeback(val: boolean) {
-  console.log(111);
   isshow.value = val;
 }
 async function login() {
@@ -109,10 +113,31 @@ async function login() {
         userAccount: username,
         userPassword: password,
       });
-      Homestore.Changeuserinfo(res.data.value.data);
-      setTimeout(() => {
-        loginanimin.value = false;
-      }, 2000);
+      const info = res.data.value;
+      switch (info.code) {
+        case 20000:
+          Homestore.Changeuserinfo(info.data);
+          ElMessage({
+            message: "登录成功",
+            type: "success",
+          });
+          navigateTo("/");
+          break;
+        case 52002:
+          error();
+          ElMessage({
+            message: "账号或密码错误",
+            type: "error",
+          });
+          break;
+        default:
+          error();
+          ElMessage({
+            message: "登录失败",
+            type: "error",
+          });
+          break;
+      }
     } else {
       ElMessage({
         message: "信息不全",
@@ -140,7 +165,6 @@ onMounted(() => {
     ).fill(0);
   }
   init();
-  console.log(CharIndex);
   const fontSize = 12 * devicePixelRatio;
   ctx.font = `${fontSize}px Cambria, Cochin, Georgia, Times, "Times New Roman", serif`;
 
