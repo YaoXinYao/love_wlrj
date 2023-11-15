@@ -97,7 +97,11 @@ export default defineNuxtConfig({
       ssr: false,
     },
     "/personalInfoPage/**": {
+      ssr: false,
+    }
     "/networkdisk/**": {
+      ssr: false,
+    }
     "/forum/**": {
       ssr: false,
     "/personalInfo/**":{
