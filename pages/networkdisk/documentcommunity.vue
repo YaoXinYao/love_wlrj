@@ -28,6 +28,11 @@
           label="上传者"
           show-overflow-tooltip
         />
+        <el-table-column
+          property="fileSize"
+          label="文件大小"
+          show-overflow-tooltip
+        />
         <el-table-column property="address" label="操作" show-overflow-tooltip>
           <template #default="scope">
             <ElButton type="primary" plain>下载</ElButton>
@@ -53,42 +58,49 @@ const tableData: any[] = [
     time: "Tom",
     uploaduser: "张三",
     filetype: "mp4",
+    fileSize: "600kb",
   },
   {
     date: "JDK18",
     time: "Tom",
     uploaduser: "张三",
     filetype: "exe",
+    fileSize: "600kb",
   },
   {
     date: "中国共产党宣言",
     time: "Tom",
     uploaduser: "张三",
     filetype: "docx",
+    fileSize: "600kb",
   },
   {
     date: "马克思主义",
     time: "Tom",
     uploaduser: "张三",
     filetype: "java",
+    fileSize: "600kb",
   },
   {
     date: "信号与系统",
     time: "Tom",
     uploaduser: "张三",
     filetype: "PPT",
+    fileSize: "600kb",
   },
   {
     date: "时间简史",
     time: "Tom",
     uploaduser: "张三",
     filetype: "pdf",
+    fileSize: "600kb",
   },
   {
     date: "三体",
     time: "Tom",
     uploaduser: "张三",
     filetype: "mp3",
+    fileSize: "600kb",
   },
 ];
 function iconfontType(val: string) {
