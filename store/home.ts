@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import type { Headertype } from "./store";
+import type { HomeStore, HomeStoreuser } from "~/types/Home";
 export const useHomestore = defineStore("home", {
-  state(): { header: Headertype; isRequireanim: boolean } {
+  state(): HomeStore {
     return {
       header: {
         height: "1.8rem",
@@ -10,6 +10,12 @@ export const useHomestore = defineStore("home", {
         isSpread: true,
       },
       isRequireanim: true,
+      user: {
+        expiresIn: 0,
+        refreshToken: "",
+        token: "",
+        tokenHead: "",
+      },
     };
   },
   actions: {
@@ -19,5 +25,10 @@ export const useHomestore = defineStore("home", {
     async ChangeisRequireanim(flag: boolean) {
       this.isRequireanim = flag;
     },
+    async Changeuserinfo(data: HomeStoreuser) {
+      this.user = data;
+    },
   },
+  //持久化操作
+  persist: true,
 });
