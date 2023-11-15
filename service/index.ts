@@ -1,6 +1,5 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
-const baseURL = "http://codercba.com:9060/oppo-nuxt/api";
-type Methods = "GET" | "POST";
+type Methods = "GET" | "POST" | "put";
 class Hyrequest {
   request<T = any>(
     url: string,
@@ -10,7 +9,6 @@ class Hyrequest {
   ): Promise<AsyncData<T, Error>> {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
-        baseURL: baseURL,
         method: method,
         ...options,
       };
@@ -20,7 +18,7 @@ class Hyrequest {
       if (method == "POST") {
         newoptions.params = data || {};
       }
-      useFetch<T>(url)
+      useFetch<T>(url, newoptions as any)
         .then((res) => {
           resolve(res as AsyncData<T, Error>);
         })
@@ -30,10 +28,10 @@ class Hyrequest {
     });
   }
   get<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
-    return this.request<T>(baseURL + url, "GET", params, options);
+    return this.request<T>(url, "GET", params, options);
   }
   post<T = any>(url: string, data: any, options: UseFetchOptions<T>) {
-    return this.request<T>(baseURL + url, "POST", data, options);
+    return this.request<T>(url, "POST", data, options);
   }
 }
 export default new Hyrequest();

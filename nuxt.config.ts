@@ -68,7 +68,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/coustom": {
-        target: "http://23.224.98.132:8666/",
+        target: "http://112.125.120.78:8666/",
         changeOrigin: true,
         prependPath: true,
       },

@@ -60,7 +60,7 @@
 </template>
 <script setup lang="ts">
 import "animate.css";
-import { Userlogin } from "~/service/homeApi";
+import { Userloginany } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
 //定义登录的模板
 definePageMeta({
@@ -98,16 +98,24 @@ function changeback(val: boolean) {
   isshow.value = val;
 }
 async function login() {
-  loginanimin.value = true;
-  const loginval = {
-    userAccount: "20211544112",
-    userPassword: "111111",
-  };
-  const res = await Userlogin(loginval);
-  console.log(res.data);
-  setTimeout(() => {
-    loginanimin.value = false;
-  }, 2000);
+  //loginanimin.value = true;
+  if (!ruleFormRef) return;
+  ruleFormRef.value?.validate(async (valid) => {
+    if (valid) {
+      const { username, password } = ruleForm.value;
+      const res = await Userloginany({
+        userAccount: username,
+        userPassword: password,
+      });
+      console.log(res.data.value.data.token);
+      setTimeout(() => {
+        loginanimin.value = false;
+      }, 2000);
+    } else {
+      console.log("信息不全");
+      return false;
+    }
+  });
 }
 const canvasRef = ref<HTMLCanvasElement>();
 let CharIndex: any[] = [];
