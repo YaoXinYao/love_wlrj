@@ -2,20 +2,28 @@
   <div class="container">
     <ClientOnly>
       <el-dialog v-model="isEdit" title="课程信息" width="30%" draggable>
-        <el-form :model="currentEditCourse" label-position="top">
-          <el-form-item label="课程名">
+        <el-form
+          :model="currentEditCourse.info"
+          label-position="top"
+          :rules="rules"
+          ref="ruleFormRef"
+        >
+          <el-form-item label="课程名" prop="courseName">
             <el-input v-model="currentEditCourse.info.courseName" />
           </el-form-item>
-          <el-form-item label="单双周">
+          <el-form-item label="单双周/连续周" prop="courseIsDouble">
             <el-select
               v-model="currentEditCourse.info.courseIsDouble"
-              placeholder="Select"
+              placeholder="选择"
             >
-              <el-option label="连续周" value="false" />
-              <el-option label="单双周" value="true" />
+              <el-option label="连续周" :value="false" />
+              <el-option label="单双周" :value="true" />
             </el-select>
           </el-form-item>
-          <el-form-item label="课程开始时间（双周课则为第二周周一）">
+          <el-form-item
+            label="课程开始时间（双周课则为第二周周一）"
+            prop="courseBeginDate"
+          >
             <el-date-picker
               v-model="currentEditCourse.info.courseBeginDate"
               type="date"
@@ -24,7 +32,7 @@
               placeholder="选择开课周周一日期"
             />
           </el-form-item>
-          <el-form-item label="课程结束时间（结束周周日）">
+          <el-form-item label="课程结束时间（结束周周日）" prop="courseEndDate">
             <el-date-picker
               v-model="currentEditCourse.info.courseEndDate"
               type="date"
@@ -37,7 +45,9 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button type="danger" @click="deleteCourseFun">删除</el-button>
-            <el-button type="primary" @click="editCourseFun"> 保存 </el-button>
+            <el-button type="primary" @click="editCourseFun(ruleFormRef)">
+              保存
+            </el-button>
           </span>
         </template>
       </el-dialog>
@@ -202,9 +212,11 @@ import {
   getTimetable,
   updateTimetable,
 } from "~/service/user";
+import type { FormInstance } from "element-plus/es/components/form";
 
 const course = useCourseStore();
 let isEdit = ref(false);
+const ruleFormRef = ref<FormInstance>();
 
 const props = defineProps({
   isEditCourse: Boolean,
@@ -235,7 +247,10 @@ interface CourseDetail {
   courseIsDelete: boolean;
 }
 
-let timetableList: Course[] = await useGetTimetable("4");
+const timetableList = ref<Course[]>([]);
+useGetTimetable("4").then((res) => {
+  timetableList.value = res;
+});
 
 let currentEditCourse = reactive({
   courseOrder: 0,
@@ -259,9 +274,8 @@ type DayOfWeekString =
   | "thursday"
   | "friday"
   | "saturday";
-const handleCellClick = (row: any, column: any, event: any) => {
-  console.log(column.property);
 
+const handleCellClick = (row: any, column: any, event: any) => {
   if (!props.isEditCourse) {
     return;
   }
@@ -272,7 +286,7 @@ const handleCellClick = (row: any, column: any, event: any) => {
     currentEditCourse.week = JSON.parse(JSON.stringify(column.property));
     currentEditCourse.info = JSON.parse(
       JSON.stringify(
-        timetableList[row.date][column.property as DayOfWeekString]
+        timetableList.value[row.date][column.property as DayOfWeekString]
       )
     );
     isEdit.value = true;
@@ -287,7 +301,33 @@ let weekDay = [
   "friday",
   "saturday",
 ];
-const editCourseFun = () => {
+
+//表单校验
+const rules = ref({
+  courseBeginDate: [
+    { required: true, message: "请选择开始日期", trigger: "blur" },
+  ],
+  courseEndDate: [
+    { required: true, message: "请选择结束日期", trigger: "blur" },
+  ],
+  courseName: [{ required: true, message: "请输入课程名称", trigger: "blur" }],
+  courseIsDouble: [
+    { required: true, message: "请选择单双周还是连续周", trigger: "blur" },
+  ],
+});
+
+const editCourseFun = (formValidate: FormInstance | undefined) => {
+  console.log(formValidate);
+  if (!formValidate) return;
+  formValidate?.validate((valid) => {
+    if (!valid) {
+      ElMessage({
+        type: "warning",
+        message: "请填写完整信息",
+      });
+    }
+  });
+  if (!formValidate) return;
   isEdit.value = false;
   course.editCourse(
     currentEditCourse.info,
@@ -311,8 +351,14 @@ const editCourseFun = () => {
     courseUserId: "4",
   };
   if (currentEditCourse.info.courseId == "-1") {
-    addTimetable(props).then((res) => {
-      console.log(res);
+    addTimetable(props).then(async (res) => {
+      if (res.data.value.code === 20000) {
+        ElMessage({
+          type: "success",
+          message: "添加成功",
+        });
+        timetableList.value = await useGetTimetable("4");
+      }
     });
   } else {
     updateTimetable({ ...currentEditCourse.info, courseUserId: "4" }).then(
@@ -320,9 +366,9 @@ const editCourseFun = () => {
         if (res.data.value.code === 20000) {
           ElMessage({
             type: "success",
-            message: "添加成功",
+            message: "修改成功",
           });
-          timetableList = await useGetTimetable("4");
+          timetableList.value = await useGetTimetable("4");
         }
       }
     );
@@ -355,13 +401,12 @@ const deleteCourseFun = () => {
         isEdit.value = false;
       } else {
         deleteTimetable(courseId).then(async (res) => {
-          console.log(res);
           if (res.data.value.code === 20000) {
             ElMessage({
               type: "success",
               message: "删除成功",
             });
-            timetableList = await useGetTimetable("4");
+            timetableList.value = await useGetTimetable("4");
           } else {
             ElMessage({
               type: "error",
