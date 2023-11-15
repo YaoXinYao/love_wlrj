@@ -15,7 +15,7 @@ import {
   getComment,
   postComment,
 } from "~/service/forums/card";
-import { getUserInfo } from "~/service/user";
+import { getUserInfo } from "~/service/staff";
 export interface label {
   labelId: number;
   labelName: string;
