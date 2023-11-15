@@ -9,8 +9,8 @@
       label-width="120px"
       class="demo-baseInfo"
     >
-      <el-form-item label="qq" prop="pass">
-        <el-input v-model="baseInfo.qq" type="qq" autocomplete="off" />
+      <el-form-item label="qq" prop="qq">
+        <el-input v-model="baseInfo.qq" autocomplete="off" />
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="baseInfo.email" autocomplete="off" />
@@ -44,10 +44,10 @@
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="邮箱" prop="checkPass">
+      <el-form-item label="邮箱" prop="email">
         <el-input v-model="updatePassInfo.email" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="验证码" prop="checkPass">
+      <el-form-item label="验证码" prop="code">
         <div style="display: flex">
           <el-input
             v-model="updatePassInfo.code"
@@ -73,6 +73,7 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
+import { PASSWORDREG } from '../../../assets/data/tsConstant';
 
 const baseInfoRef = ref<FormInstance>();
 

@@ -4,7 +4,7 @@
       class="scoreTypeItem"
       v-for="(s, index) in scoreTypes"
       :key="index"
-      :style="`background-color: rgba(${colors[index % colors.length]},0.5);`"
+      :style="`background-color: rgba(${COLORS[index % COLORS.length]},0.5);`"
     >
       {{ s }}
     </div>
@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { colors } from "../../../assets/data/tsConstant";
+import { COLORS } from "../../../assets/data/tsConstant";
 const scoreTypes = [
   "头脑风暴",
   "项目",
