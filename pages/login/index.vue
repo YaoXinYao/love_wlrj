@@ -54,11 +54,13 @@
           </div>
         </div>
       </div>
+      <canvas style="position: fixed" ref="canvasRef"></canvas>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import "animate.css";
+import { Userloginany } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
 //定义登录的模板
 definePageMeta({
@@ -67,8 +69,6 @@ definePageMeta({
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
-const username = ref("");
-const password = ref("");
 const ruleForm = ref({
   username: "",
   password: "",
@@ -97,12 +97,80 @@ function changeback(val: boolean) {
   console.log(111);
   isshow.value = val;
 }
-function login() {
-  loginanimin.value = true;
-  setTimeout(() => {
-    loginanimin.value = false;
-  }, 2000);
+async function login() {
+  //loginanimin.value = true;
+  if (!ruleFormRef) return;
+  ruleFormRef.value?.validate(async (valid) => {
+    if (valid) {
+      const { username, password } = ruleForm.value;
+      const res = await Userloginany({
+        userAccount: username,
+        userPassword: password,
+      });
+      console.log(res.data.value.data.token);
+      setTimeout(() => {
+        loginanimin.value = false;
+      }, 2000);
+    } else {
+      console.log("信息不全");
+      return false;
+    }
+  });
 }
+const canvasRef = ref<HTMLCanvasElement>();
+let CharIndex: any[] = [];
+onMounted(() => {
+  const canvas = canvasRef.value;
+  if (canvas == null) return;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  if (!ctx) return;
+
+  const devicePixelRatio = window.devicePixelRatio || 1;
+
+  function init() {
+    canvas!.width = window.innerWidth * devicePixelRatio;
+    canvas!.height = window.innerHeight * devicePixelRatio;
+    CharIndex = new Array(
+      Math.floor(canvas!.width / (12 * devicePixelRatio))
+    ).fill(0);
+  }
+  init();
+  console.log(CharIndex);
+  const fontSize = 12 * devicePixelRatio;
+  ctx.font = `${fontSize}px Cambria, Cochin, Georgia, Times, "Times New Roman", serif`;
+
+  function getRandomChar() {
+    const str =
+      "✧☹︎☠︎☸︎☣︎☢︎☯︎♾♲✰❤︎✦⚛︎☭☮︎⚔︎⚒︎☄︎✵⚰︎☘︎⚘♨︎✞☺︎♘♞☆☃︎★☼☀︎☾◎☽☁︎™Ω℞№ℹ︎❂❁✡︎✣✶✺✷◦◉⦿☒✗☐☞◇☛⚙︎☑︎⌘✘✔︎";
+    return str[Math.floor(Math.random() * str.length)];
+  }
+  function draw() {
+    const newCharIndex = [...CharIndex];
+    ctx.fillStyle = "rgba(251,251,251,0.1)";
+    ctx.fillRect(0, 0, canvas!.width, canvas!.height);
+    ctx.fillStyle = "rgba(127,155,229, 1)";
+    ctx.textBaseline = "top";
+
+    newCharIndex.forEach((index, i) => {
+      const x = i * fontSize;
+      const y = index * fontSize;
+      ctx.fillText(getRandomChar(), x, y);
+      if (y > canvas!.height && Math.random() > 0.99) {
+        newCharIndex[i] = 0;
+      } else {
+        newCharIndex[i] = index + 1;
+      }
+    });
+    CharIndex = newCharIndex;
+  }
+
+  const intervalId = setInterval(draw, 40);
+  window.addEventListener("resize", function () {
+    // 在窗口大小变化时执行的代码
+    init();
+  });
+  return () => clearInterval(intervalId);
+});
 </script>
 <style scoped lang="scss">
 @media screen and (max-width: 760px) {
@@ -120,7 +188,7 @@ function login() {
   }
 }
 .loginpage {
-  background-color: rgb(255, 255, 255);
+  z-index: 99999;
   width: 100%;
   height: 100vh;
   overflow: hidden;
@@ -131,7 +199,7 @@ function login() {
     justify-content: center;
     align-items: center;
     .loginbox {
-      z-index: 9999;
+      z-index: 999999;
       width: 8rem;
       height: 4rem;
       padding: 0.5rem;
@@ -140,14 +208,14 @@ function login() {
       top: 50%;
       background-color: white;
       border-radius: 10px;
-      background-image: url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/22_open.4ea5f239.png),
-        url(https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/33_open.f7d7f655.png);
+      background-image: url(/images/22_open.4ea5f239.png),
+        url(/images/33_open.f7d7f655.png);
       box-shadow: 0 4px 14px 0 rgb(0 0 0 / 16%);
       background-position: 0 100%, 100% 100%;
       background-repeat: no-repeat, no-repeat;
       background-size: 14%;
       display: flex;
-      backdrop-filter: blur(50px);
+      backdrop-filter: blur(40px);
 
       .loginboxleft {
         width: 40%;
@@ -178,8 +246,8 @@ function login() {
       }
     }
     .activebox {
-      background-image: url("https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/22_close.9382a5a8.png"),
-        url("https://s1.hdslb.com/bfs/seed/jinkela/short/mini-login-v2/img/33_close.a8c18fc8.png") !important;
+      background-image: url("/images/22_close.9382a5a8.png"),
+        url("/images/33_close.a8c18fc8.png") !important;
     }
   }
 }

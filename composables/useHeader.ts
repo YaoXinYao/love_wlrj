@@ -9,7 +9,9 @@ export const useHeader = () => {
       color: "black",
       isSpread: false,
     });
-    usehomestore.ChangeisRequireanim(false);
+    nextTick(() => {
+      usehomestore.ChangeisRequireanim(false);
+    });
   });
   onUnmounted(() => {
     usehomestore.ChangeisRequireanim(true);

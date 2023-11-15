@@ -32,13 +32,17 @@ export default defineNuxtConfig({
         {
           rel: "stylesheet",
           type: "text/css",
-          href: "https://unpkg.com/swiper@8/swiper-bundle.css",
+          href: "/staticcss/swiper-bundle.css",
         },
       ],
       script: [
         {
           type: "text/javascript",
-          src: "https://unpkg.com/swiper@8/swiper-bundle.js",
+          src: "/staticjs/swiper-bundle.js",
+        },
+        {
+          type: "text/javascript",
+          src: "/staticjs/font_4330669_qlx1o97szjn.js",
         },
       ],
       noscript: [{ children: "Javascript is required" }],
@@ -65,6 +69,9 @@ export default defineNuxtConfig({
       // 考勤接口
       "/check": {
         target: "http://124.222.153.56:19591/",
+      //用户接口
+      "/coustom": {
+        target: "http://112.125.120.78:8666/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -75,6 +82,7 @@ export default defineNuxtConfig({
       ssr: false,
     },
     "/personalInfoPage/**": {
+    "/networkdisk/**": {
       ssr: false,
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login2">
     <a class="loginbt">{{ innertext }}</a>
   </div>
 </template>
@@ -8,7 +8,7 @@ const { innertext = "进入后台" } = defineProps(["innertext"]);
 </script>
 
 <style scoped lang="scss">
-.login {
+.login2 {
   .loginbt {
     align-items: center;
     background-color: #284dd5;
