@@ -10,26 +10,25 @@
                     label-position="left"
                     :hide-required-asterisk="hide"
                 >
-                    <el-form-item prop="leaveReason" label="请假理由" >
-                        <el-input v-model="form.leaveReason" />
+                    <el-form-item prop="name" label="请假理由" >
+                        <el-input v-model="form.name" />
                     </el-form-item>
-                    <el-form-item prop="leaveType" label="请假类型">
-                    <el-select v-model="form.leaveType" placeholder="请假类型">
-                        <el-option label="事假" value="2" />
-                        <el-option label="病假" value="1" />
-                        <el-option label="其他" value="3" />
+                    <el-form-item prop="type" label="请假类型">
+                    <el-select v-model="form.type" placeholder="请假类型">
+                        <el-option label="事假" value="事假" />
+                        <el-option label="病假" value="病假" />
+                        <el-option label="其他" value="其他" />
                     </el-select>
                     </el-form-item>
                     <el-form-item label="请假时间">
                         <el-col :span="11">
-                            <el-form-item prop="leaveBeginTime">
+                            <el-form-item prop="date1">
                                 <el-date-picker
-                                    v-model="form.leaveBeginTime"
+                                    v-model="form.date1"
                                     type="datetime"
                                     placeholder="开始时间"
                                     style="width: 100%"
                                     format="YYYY-MM-DD HH:mm"
-                                    
                                     @visible-change="handleCurrent"
                                 />
                             </el-form-item>
@@ -38,14 +37,13 @@
                             <span class="text-gray-500">-</span>
                         </el-col>
                         <el-col :span="11">
-                            <el-form-item prop="leaveEndTime">
+                            <el-form-item prop="date2">
                                 <el-date-picker
-                                    v-model="form.leaveEndTime"
+                                    v-model="form.date2"
                                     type="datetime"
                                     placeholder="结束时间"
                                     style="width: 100%"
                                     format="YYYY-MM-DD HH:mm"
-                                    value-format="YYYY-MM-DD HH:mm:ss"
                                     @visible-change="handles"
                                 />
                             </el-form-item>
@@ -69,69 +67,62 @@ import { reactive, ref } from 'vue'
 import leaveContent from '@/components/leaveContent/index.vue'
 import { ElMessage } from 'element-plus'
 import type {FormInstance, FormRules} from 'element-plus'
-import {createLeave} from '@/service/check/check'
-import {dateFormat, dateFormatReverse} from '@/utils/formats'
 
 const curTime = ref(new Date());
 const hide = ref(true)
 
 
 interface IProps {
-    leaveUserId:number
-    leaveReason: string,
-    leaveBeginTime: any,
-    leaveEndTime: any,
-    leaveType: string,
-    leaveStatus:number,
+    name: string,
+    date1: any,
+    date2: any,
+    type: '事假' | '病假' | '其他'
 }
 
 const formRef = ref<FormInstance>()
 // do not use same name with ref
 const form = reactive<IProps>({
-  leaveUserId: 1,
-  leaveReason: '',
-  leaveBeginTime: dateFormatReverse(curTime.value),
-  leaveEndTime: '',
-  leaveType: '',
-  leaveStatus:0
+  name: '',
+  date1: new Date(curTime.value.getFullYear(),curTime.value.getMonth(),curTime.value.getDate(),curTime.value.getHours(),curTime.value.getMinutes()),
+  date2: '',
+  type: '事假',
 })
 
 
 
 const rules = reactive<FormRules<IProps>>({
-    leaveReason:[
+    name:[
         {required:true,message:'请填写你的理由',trigger:'blur'},
         {min:3,message:'理由太过简短',trigger:'blur'}
     ],
-    leaveBeginTime:[
+    date1:[
         {required:true,message:'请选择开始时间',trigger:'blur'}
     ],
-    leaveEndTime:[
-        {required:true,message:'请选择结束时间',trigger:'blur'}
+    date2:[
+        {required:true,message:'请选择结束事件时间',trigger:'blur'}
     ],
-    leaveType:[
+    type:[
         {required:true,message:'选择请假类型',trigger:'blur'}
     ]
 })
 
 
 function handleCurrent(flag:boolean){
-    const currentTime = dateFormatReverse(curTime.value)
+    const currentTime = new Date(curTime.value.getFullYear(),curTime.value.getMonth(),curTime.value.getDate(),curTime.value.getHours(),curTime.value.getMinutes())
 
-    if((form.leaveBeginTime < currentTime) && !flag){
+    if((form.date1 < currentTime) && !flag){
         ElMessage({
             type:'error',
             message:'从当前时间开始',
             customClass: 'elmessage'
-        })
-        return 
+        })  
     }
 }
 
 function handles(flag:boolean){
     if(!flag){
-        let startTIme = new Date(form.leaveBeginTime)
-        let endTIme = new Date(form.leaveEndTime)
+        let startTIme = new Date(form.date1)
+        let endTIme = new Date(form.date2)
         if(startTIme > endTIme){
             console.log('错误')
             ElMessage({
@@ -148,7 +139,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   const result = await formEl.validate((valid, fields) => {
     if (valid) {
-      
+      console.log('submit!')
       return true
     } else {
       console.log('error submit!', fields)
@@ -156,25 +147,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   })
   if(result){
-    // ElNotification({
-    //     title:'请假完成',
-    //     message:`请假理由：${form.leaveReason}`,
-    //     type:'success',
-    //     zIndex: 10000,
-    // })
-    let forms = form
-    let beginTime = new Date(forms.leaveBeginTime)
-    for(let item in forms){
-        if(item === 'leaveBeginTime'){
-            forms[item] = dateFormat(beginTime)
-        }
-    }
-    console.log(forms)
-    createLeave(forms).then(res=>{
-        console.log(res.data)
+    ElNotification({
+        title:'请假完成',
+        message:`请假理由：${form.name}`,
+        type:'success',
+        zIndex: 10000,
     })
-    // curTime.value = new Date();
-    // formRef.value?.resetFields()
+    curTime.value = new Date();
+    formRef.value?.resetFields()
 
   }
 }

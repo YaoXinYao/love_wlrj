@@ -1,255 +1,435 @@
 import { defineStore } from "pinia";
+import { getTimetable } from "@/service/user/index";
 
 interface infoType {
+  courseId: string;
+  courseUserId: number;
+  courseWeek: number;
   courseName: string;
-  courseWeek: string;
-  courseStartTime: string;
-  courseEndTime: string;
+  courseOrder: number;
+  courseBeginDate: string;
+  courseEndDate: string;
+  courseIsDouble: boolean;
+  courseIsDelete: boolean;
 }
 
-type DayOfWeek =
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday"
-  | "saturday"
-  | "sunday";
+// type DayOfWeek =
+//   | "monday"
+//   | "tuesday"
+//   | "wednesday"
+//   | "thursday"
+//   | "friday"
+//   | "saturday"
+//   | "sunday";
+type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export const useCourseStore = defineStore("course", {
   state: () => ({
     courseList: [
-      {
-        date: 0,
-        monday: {
-          courseName: "",
-          courseWeek: "",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        tuesday: {
-          courseName: "高数02",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        wednesday: {
-          courseName: "高数03",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        thursday: {
-          courseName: "高数04",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        friday: {
-          courseName: "高数05",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        saturday: {
-          courseName: "高数06",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        sunday: {
-          courseName: "高数07",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-      },
-      {
-        date: 1,
-        monday: {
-          courseName: "高数11",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        tuesday: {
-          courseName: "高数12",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        wednesday: {
-          courseName: "高数13",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        thursday: {
-          courseName: "高数14",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        friday: {
-          courseName: "高数15",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        saturday: {
-          courseName: "高数16",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        sunday: {
-          courseName: "高数17",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-      },
-      {
-        date: 2,
-        monday: {
-          courseName: "高数21",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        tuesday: {
-          courseName: "高数22",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        wednesday: {
-          courseName: "",
-          courseWeek: "",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        thursday: {
-          courseName: "高数24",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        friday: {
-          courseName: "高数25",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        saturday: {
-          courseName: "高数26",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-        sunday: {
-          courseName: "高数27",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
-        },
-      },
-      {
-        date: 3,
-        monday: {
+      [
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 0,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 1,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        tuesday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 1,
+          courseName: "数据结构",
+          courseOrder: 1,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        // {
+        //   courseId: 10,
+        //   courseUserId: 4,
+        //   courseWeek: 2,
+        //   courseName: "英语",
+        //   courseOrder: 1,
+        //   courseBeginDate: "2023-11-10",
+        //   courseEndDate: "2023-12-10",
+        //   courseIsDouble: false,
+        //   courseIsDelete: false,
+        // },
+        {
+          courseId: 10,
+          courseUserId: 3,
+          courseWeek: 3,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 1,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        wednesday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 4,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 1,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        thursday: {
+        // {
+        //   courseId: 10,
+        //   courseUserId: 4,
+        //   courseWeek: 5,
+        //   courseName: "高数",
+        //   courseOrder: 1,
+        //   courseBeginDate: "2023-11-10",
+        //   courseEndDate: "2023-12-10",
+        //   courseIsDouble: false,
+        //   courseIsDelete: false,
+        // },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 6,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 1,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        friday: {
+      ],
+      [
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 0,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        saturday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 1,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        sunday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 2,
+          courseName: "英语",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 3,
+          courseWeek: 3,
+          courseName: "c",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 4,
+          courseName: "java",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 5,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-      },
-      {
-        date: 4,
-        monday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 6,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 2,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        tuesday: {
+      ],
+      [
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 0,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        wednesday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 1,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        thursday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 2,
+          courseName: "英语",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 3,
+          courseWeek: 3,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        friday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 4,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        saturday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 5,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-        sunday: {
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 6,
           courseName: "高数",
-          courseWeek: "单周",
-          courseStartTime: "",
-          courseEndTime: "",
+          courseOrder: 3,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
         },
-      },
+      ],
+      [
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 0,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 1,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 2,
+          courseName: "英语",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 3,
+          courseWeek: 3,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 4,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 5,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 6,
+          courseName: "高数",
+          courseOrder: 4,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+      ],
+      [
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 0,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 1,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 2,
+          courseName: "英语",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 3,
+          courseWeek: 3,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 4,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 5,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+        {
+          courseId: 10,
+          courseUserId: 4,
+          courseWeek: 6,
+          courseName: "高数",
+          courseOrder: 5,
+          courseBeginDate: "2023-11-10",
+          courseEndDate: "2023-12-10",
+          courseIsDouble: false,
+          courseIsDelete: false,
+        },
+      ],
     ],
   }),
 
   actions: {
-    editCourse(info: infoType, date: number, week: DayOfWeek) {
-      this.courseList[date][week] = info;
+    editCourse(info: infoType, courseOrder: number, courseWeek: string) {
+      // this.courseList[courseOrder][courseWeek] = info;
+      console.log(info);
+      console.log(courseOrder);
+      console.log(courseWeek);
     },
   },
 });

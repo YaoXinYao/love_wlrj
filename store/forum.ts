@@ -7,30 +7,15 @@ import {
   postSubfield,
   deleteSubfield,
 } from "~/service/forums/admin";
-export interface dataType {
-  id: number;
-  title: string;
-  name: string;
-  timer: string;
-  label: string;
-  subfield: string;
-  content: string;
-  head: string;
-  photo: string[];
-  likes: boolean;
-}
-export interface discussType {
-  id: number;
-  postid: number;
-  mainid: number;
-  name: string;
-  timer: string;
-  content: string;
-  head: string;
-  photo: string[];
-  likes: boolean;
-  child: string[];
-}
+import {
+  addpost,
+  getPost,
+  judgeLike,
+  singlePost,
+  getComment,
+  postComment,
+} from "~/service/forums/card";
+import { getUserInfo } from "~/service/staff";
 export interface label {
   labelId: number;
   labelName: string;
@@ -39,10 +24,31 @@ export interface subfield {
   subId: number;
   subName: string;
 }
+export interface singleType {
+  collect: boolean;
+  head: string;
+  likes: boolean;
+  photos: string[];
+  postCollect: number;
+  postContent: string;
+  postId: number;
+  postLike: number;
+  postSubId: number;
+  postTime: string;
+  postTitle: string;
+  postUserId: number;
+  postView: number;
+  userName: string;
+}
 export interface cards {
-  source: string;
-  datas: dataType[];
-  discuss: discussType[];
+  postSubId: number;
+  postSource: string;
+  uploadRender: boolean;
+  pages: number;
+  datas: any[];
+  discuss: any[];
+  singleData: any;
+  userInfo: any;
 }
 export interface forums {
   labelModel: boolean;
@@ -55,87 +61,175 @@ export interface forums {
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
     return {
-      source: "",
-      datas: [
-        {
-          id: 1,
-          name: "迷雾",
-          title: "走进心理世界",
-          timer: "2021-10-09",
-          label: "是",
-          subfield: "总结",
-          content:
-            '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390",
-          photo: [
-            "https://img1.baidu.com/it/u=2559867097,3726275945&fm=253&fmt=auto&app=138&f=JPEG?w=1333&h=500",
-          ],
-          likes: true,
-        },
-        {
-          id: 2,
-          name: "迷雾",
-          title: "走进心理世界",
-          timer: "2021-10-09",
-          label: "是",
-          subfield: "总结",
-          content:
-            '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-          photo: [
-            "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-            "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-            "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-            "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-            "https://img1.baidu.com/it/u=1876627393,303388089&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
-            "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-          ],
-          likes: true,
-        },
-        {
-          id: 3,
-          name: "迷雾",
-          title: "走进心理世界",
-          timer: "2021-10-09",
-          label: "是",
-          subfield: "总结",
-          content: "",
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202106%2F10%2F20210610232327_c1b93.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=31882182eabc65f519aa13e462154e2b",
-          photo: [
-            "https://img1.baidu.com/it/u=3915533775,2333080297&fm=253&fmt=auto&app=138&f=JPEG?w=705&h=500",
-          ],
-          likes: false,
-        },
-        {
-          id: 4,
-          name: "迷雾",
-          title: "走进心理世界",
-          timer: "2021-10-09",
-          label: "是",
-          subfield: "总结",
-          content:
-            '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。剧本杀的规则是，玩家先选择人物，阅读人物对应剧本，搜集线索后找出活动里隐藏的真凶。',
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-          photo: [],
-          likes: true,
-        },
-      ],
-      discuss: [
-        {
-          id: 1,
-          postid: 0,
-          mainid: 2,
-          name: "迷雾",
-          timer: "2021-10-09",
-          content:
-            '"剧本杀"，一词起源于西方宴会实况角色扮演“谋杀之谜”，是玩家到实景场馆，体验推理性质的项目。',
-          head: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202001%2F04%2F20200104211903_vFdtk.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651756&t=9c7f8590a7185503d81c12d1ad4e49af",
-          photo: [],
-          likes: true,
-          child: [],
-        },
-      ],
+      postSubId: 0,
+      postSource: "",
+      uploadRender: false,
+      pages: 0,
+      datas: [],
+      discuss: [],
+      singleData: {},
+      userInfo: {},
     };
+  },
+  actions: {
+    //获取用户信息
+    async getUser(id: number) {
+      const { data } = await getUserInfo(id);
+      this.userInfo = data.value?.data;
+    },
+    //用于发帖查询用户信息
+    async selectUser(id: number) {
+      const { data } = await getUserInfo(id);
+      return data.value?.data;
+    },
+
+    // 发布帖子
+    async addCard(params: FormData) {
+      const { data } = await addpost(params);
+      const code = data.value?.code;
+      return code;
+    },
+
+    //查询帖子
+    async selectPost(
+      pageNo: number,
+      pageSize: number,
+      postTitle?: string,
+      postSubId?: number,
+      postContent?: string,
+      postUserId?: number
+    ) {
+      const { data } = await getPost(
+        pageNo,
+        pageSize,
+        postTitle,
+        postSubId,
+        postContent,
+        postUserId
+      );
+      this.pages = data.value?.data.pages;
+      this.datas = [];
+      let dataArr = data.value?.data.records || [];
+      for (let i = 0; i < dataArr.length; i++) {
+        const { postImg, ...postData } = dataArr[i];
+        let img: string = dataArr[i].postImg;
+        //分割图片
+        let photos: string[] = img ? img.split(",") : [];
+        let likes = false;
+        let collect = false;
+        //判断用户是否点赞
+        const result = await this.addlike(
+          dataArr[i].postId,
+          1,
+          "Like",
+          this.userInfo.userId
+        );
+        if (result == 20000) {
+          await this.addlike(
+            dataArr[i].postId,
+            0,
+            "Like",
+            this.userInfo.userId
+          );
+        } else if (result == 53003) {
+          likes = true;
+        }
+        //判断用户是否收藏
+        const res = await this.addlike(
+          dataArr[i].postId,
+          1,
+          "Collect",
+          this.userInfo.userId
+        );
+        if (res == 20000) {
+          await this.addlike(
+            dataArr[i].postId,
+            0,
+            "Collect",
+            this.userInfo.userId
+          );
+        } else if (res == 53003) {
+          collect = true;
+        }
+        //查询用户
+        const use = await this.selectUser(dataArr[i].postUserId);
+        let userName = use.userName;
+        let head =
+          use.userPicture == "未设置"
+            ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+            : use.userPicture;
+        this.datas[i] = { ...postData, photos, userName, head, likes, collect };
+      }
+      return this.datas;
+    },
+
+    //收藏/点赞
+    async addlike(
+      postId: number,
+      status: number,
+      type: string,
+      userId: number
+    ) {
+      const { data } = await judgeLike(postId, status, type, userId);
+      const code = data.value?.code;
+      return code;
+    },
+
+    //查询单个帖子
+    async getSingle(postId: number) {
+      const { data } = await singlePost(postId);
+      let single = data.value?.data || {};
+      const { postImg, ...postData } = single;
+      let img: string = single.postImg;
+      //分割图片
+      let photos: string[] = img ? img.split(",") : [];
+      let likes = false;
+      let collect = false;
+      //判断用户是否点赞
+      const result = await this.addlike(single.postId, 1, "Like", this.userInfo.userId);
+      if (result == 20000) {
+        await this.addlike(single.postId, 0, "Like", this.userInfo.userId);
+      } else if (result == 53003) {
+        likes = true;
+      }
+      //判断用户是否收藏
+      const res = await this.addlike(single.postId, 1, "Collect", this.userInfo.userId);
+      if (res == 20000) {
+        await this.addlike(single.postId, 0, "Collect", this.userInfo.userId);
+      } else if (res == 53003) {
+        collect = true;
+      }
+      //查询用户
+      const use = await this.selectUser(single.postUserId);
+      let userName = use.userName;
+      let head =
+        use.userPicture == "未设置"
+          ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+          : use.userPicture;
+      Object.assign(this.singleData, {
+        ...postData,
+        photos,
+        userName,
+        head,
+        likes,
+        collect,
+      });
+    },
+
+    //查询指定帖子下面的评论
+    async selectComment(postId: number) {
+      let { data } = await getComment(postId);
+      console.log("查看文章评论", data.value?.data);
+      this.discuss = data.value?.data || [];
+    },
+
+    //发布评论
+    async addComment(params: FormData) {
+      let { data } = await postComment(params);
+      console.log("发布评论", data.value);
+      const code = data.value?.code;
+      return code;
+    },
   },
 });
 export const forumManage = defineStore("manage", {

@@ -32,19 +32,17 @@
                 </template>
             </el-dialog>
         </ClientOnly>
-       
     </div>
 </template>
 
 <script setup lang="ts">
 import Header  from '@/components/recent-announcement/index.vue'
 import Content from '@/components/announcementContent/index.vue'
-import NotificationPopup  from '@/components/NotificationPopup/index.vue'
 import {ref } from 'vue'
 import type {anType} from '@/components/announcementContent/index.vue'
 
 const isShow = ref(false)
-const popupRef = ref<InstanceType<typeof NotificationPopup>>()
+
 
 let announcementCon = ref<anType>({
     title:'',

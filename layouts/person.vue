@@ -1,10 +1,10 @@
 <template>
   <div class="header">
     <div class="headerContent">
-      <div class="logoBox">
+      <NuxtLink to="/" class="logoBox">
         <img class="logo" src="@/assets/image/小组logo.png" />
         <span class="logoText">未来软件</span>
-      </div>
+      </NuxtLink>
 
       <ul class="nav">
         <li>导航1</li>
@@ -53,7 +53,7 @@ import { ArrowDown } from "@element-plus/icons-vue";
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid #ddd;
-  z-index: 9999;
+  z-index: 10;
 }
 
 .headerContent {
@@ -83,7 +83,6 @@ import { ArrowDown } from "@element-plus/icons-vue";
 
 .nav {
   display: flex;
-
   justify-content: center;
 
   li {

@@ -1,17 +1,22 @@
 <template>
-<div class="forum">
+  <div class="forum">
     <NuxtPage></NuxtPage>
-</div>
+  </div>
 </template>
 <script lang="ts" setup>
-  definePageMeta({
-    layout: "default",
-  });
+import { forumStore } from "~/store/forum";
+definePageMeta({
+  layout: "default",
+});
+let forums = forumStore()
+onMounted(()=>{
+  forums.getUser(8)
+})
 </script>
 
 <style lang="scss" scoped>
 .forum {
-  background-color: rgb(221 235 255);
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   min-height: calc(100vh - 136px);
 }
 </style>
