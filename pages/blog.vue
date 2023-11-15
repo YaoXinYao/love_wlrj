@@ -3,44 +3,33 @@
     <div class="blogcontainer">
       <div class="blogcontarinerleft">
         <div
-          v-for="(item, index) in blogdata"
-          :key="index"
-          @click="() => changegrade(index)"
-          :class="`gradeitem ${curGrade == index ? 'activegrade' : ''}`"
+          v-for="(item, key) in newblog.data"
+          :key="key"
+          @click="() => changegrade(key as string)"
+          :class="`gradeitem ${curGrade == key ? 'activegrade' : ''}`"
         >
-          {{ item.grade + "级" }}
+          {{ key + "级" }}
         </div>
       </div>
       <div class="blogcontarinerright">
-        <h2 class="blogtarget">
-          前端🎣({{ blogdata[curGrade].forword.length }})
-        </h2>
-        <div class="blogitembox">
-          <NuxtLink
-            :href="item.link"
-            target="_blank"
-            v-for="(item, index) in blogdata[curGrade].forword"
-            :key="Math.random() * 10"
-            class="blogitem"
-          >
-            <img class="avaterimg" :src="item.img" alt="" />
-            <div class="avtername">
-              <div class="avtertitle">{{ item.name }}</div>
+        <div v-for="(item, index) in newblog.data[curGrade]">
+          <template v-for="(item2, index) in item">
+            <h2 class="blogtarget">{{ index }}({{ item2.length }})</h2>
+            <div class="blogitembox">
+              <NuxtLink
+                :href="item.userBlog"
+                target="_blank"
+                v-for="(item, index) in item2"
+                :key="Math.random() * 10"
+                class="blogitem"
+              >
+                <img class="avaterimg" :src="item.userPicture" alt="" />
+                <div class="avtername">
+                  <div class="avtertitle">{{ item.userName }}</div>
+                </div>
+              </NuxtLink>
             </div>
-          </NuxtLink>
-        </div>
-        <h2 class="blogtarget">后端({{ blogdata[curGrade].back.length }})</h2>
-        <div class="blogitembox">
-          <NuxtLink
-            v-for="(item, index) in blogdata[curGrade].back"
-            :key="Math.random() * 10"
-            class="blogitem"
-          >
-            <img class="avaterimg" :src="item.img" alt="" />
-            <div class="avtername">
-              <div class="avtertitle">{{ item.name }}</div>
-            </div>
-          </NuxtLink>
+          </template>
         </div>
       </div>
     </div>
@@ -48,263 +37,157 @@
 </template>
 <script setup lang="ts">
 import gsap from "gsap";
+import type { blogRoot } from "~/types/Home";
 //保存选中年级
-const curGrade = ref(0);
-const blogdata = ref([
-  {
-    grade: "2023",
-    forword: [
+const curGrade = ref<string>("2021");
+const newblog = ref<blogRoot>({
+  data: {
+    "2021": [
       {
-        name: "赵子豪",
-        link: "https://www.zzh.fyi",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "张三",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "王五",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-    ],
-    back: [
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+        "前端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            userBlog: "www.zzh.fyi",
+            groupName: "前端",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "张三",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "前端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+        ],
+        "后端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+        ],
       },
     ],
-  },
-  {
-    grade: "2022",
-    forword: [
+    "2022": [
       {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "张三",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "王五",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+        "前端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "张三",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "张三",
+          },
+        ],
+        "后端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+        ],
       },
     ],
-    back: [
+    "2023": [
       {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
+        "前端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "张三",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "张三",
+          },
+        ],
+        "后端": [
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+          {
+            userId: 4,
+            userAccount: "20211544112",
+            userSexVal: "女",
+            groupName: "后端",
+            userBlog: "www.zzh.fyi",
+            userPicture:
+              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
+            userName: "赵子豪",
+          },
+        ],
       },
     ],
   },
-  {
-    grade: "2021",
-    forword: [
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "张三",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "王五",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-    ],
-    back: [
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-    ],
-  },
-  {
-    grade: "2020",
-    forword: [
-      {
-        name: "赵子豪",
-        link: "https://www.zzh.fyi",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "张三",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "王五",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-    ],
-    back: [
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-      {
-        name: "赵子豪",
-        link: "",
-        img: "https://tse1-mm.cn.bing.net/th/id/OIP-C.30Ri-r8Y7dBxlWeaX4o35QHaE2?w=239&h=180&c=7&r=0&o=5&pid=1.7",
-      },
-    ],
-  },
-]);
+});
 onMounted(() => {
   loading();
 });
@@ -329,7 +212,7 @@ function loading() {
       }
     );
 }
-function changegrade(index: number) {
+function changegrade(index: string) {
   if (index == curGrade.value) return;
   curGrade.value = index;
   //等待DOM 渲染完成，在进行动画

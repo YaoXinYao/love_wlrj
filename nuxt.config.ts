@@ -32,25 +32,36 @@ export default defineNuxtConfig({
         {
           rel: "stylesheet",
           type: "text/css",
-          href: "https://unpkg.com/swiper@8/swiper-bundle.css",
+          href: "/staticcss/swiper-bundle.css",
         },
       ],
       script: [
         {
           type: "text/javascript",
-          src: "https://unpkg.com/swiper@8/swiper-bundle.js",
+          src: "/staticjs/swiper-bundle.js",
+        },
+        {
+          type: "text/javascript",
+          src: "/staticjs/font_4330669_qlx1o97szjn.js",
         },
       ],
       noscript: [{ children: "Javascript is required" }],
     },
   },
-  modules: ["@pinia/nuxt", "@element-plus/nuxt"],
+  modules: [
+    "@pinia/nuxt",
+    "@element-plus/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+  ],
+  piniaPersistedstate: {
+    storage: "sessionStorage",
+  },
   build: {
     transpile: ["element-plus/es"],
   },
   nitro: {
     devProxy: {
-      //后台管理
+      //论坛管理
       "/api": {
         target: "http://152.136.54.204:19999/forum",
         changeOrigin: true,
@@ -62,25 +73,45 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-      // 考勤接口
-      "/check":{
-        target:"http://124.222.153.56:19591/attendance/",
-        changeOrigin:true,
-        prependPath:true,
+      //用户接口
+      "/coustom": {
+        target: "http://112.125.120.78:8666/",
+        changeOrigin: true,
+        prependPath: true,
       },
-      "/notice/":{
-        target:"http://152.136.54.204:19998/notice/",
-        changeOrigin:true,
-        prependPath:true,
-      }
+      //用户接口
+      "/zinfo": {
+        target: "http://112.125.120.78:8666",
+        changeOrigin: true,
+        prependPath: true,
+      },
+      "/check": {
+        target: "http://124.222.153.56:19591/attendance/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+      "/notice/": {
+        target: "http://152.136.54.204:19998/notice/",
+        changeOrigin: true,
+        prependPath: true,
+      },
     },
   },
   routeRules: {
     "/admin/**": {
       ssr: false,
     },
-    "/personalInfo/**":{
-      ssr:false,
+    "/personalInfoPage/**": {
+      ssr: false,
+    },
+    "/networkdisk/**": {
+      ssr: false,
+    },
+    "/forum/**": {
+      ssr: false,
+    },
+    "/personalInfo/**": {
+      ssr: false,
     },
   },
 });

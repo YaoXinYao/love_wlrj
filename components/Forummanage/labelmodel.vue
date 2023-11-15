@@ -135,7 +135,7 @@ const handleInputConfirm = async () => {
       } else if (result == 53003) {
         successMessage("标签已经存在", "warning");
       } else {
-        successMessage("添加标签失败", "danger");
+        successMessage("添加标签失败", "error");
       }
     });
   }

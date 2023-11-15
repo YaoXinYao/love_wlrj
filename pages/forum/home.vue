@@ -10,7 +10,12 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { forumStore } from "~/store/forum";
 import { Plus } from "@element-plus/icons-vue";
+let forums = forumStore()
+onMounted(()=>{
+  forums.getUser(8)
+})
 </script>
 
 <style lang="scss" scoped>

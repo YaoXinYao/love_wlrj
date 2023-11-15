@@ -13,7 +13,7 @@ class HYRequest {
   ): Promise<AsyncData<T, Error>> {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
-       //baseURL: baseURL,
+        //baseURL: baseURL,
         method: method,
         ...options,
       };
