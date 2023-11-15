@@ -64,7 +64,7 @@ export default defineNuxtConfig({
       },
       // 考勤接口
       "/check":{
-        target:"http://124.222.153.56:19591/",
+        target:"http://124.222.153.56:19591/attendance/",
         changeOrigin:true,
         prependPath:true,
       },

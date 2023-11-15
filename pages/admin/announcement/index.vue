@@ -11,14 +11,14 @@
             <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%">
                 <template #header>
                     <h1>{{ announcementCon.title }}</h1>
-                    <h4 style="margin-top: 20px;">{{ announcementCon.type }}</h4>
+                    <h4 style="margin-top: 20px;">{{ announcementCon.noticeType }}</h4>
                 </template>
                 <template #footer>
                     <div class="dialogs">
                         <el-form>
                             <el-form-item>
                                 <div class="announceContent">
-                                    {{ announcementCon.content }}
+                                    {{ announcementCon.noticeContent }}
                                 </div>
                                 <!-- <el-input :placeholder="announcementCon.content" /> -->
                             </el-form-item>
