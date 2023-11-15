@@ -210,10 +210,3 @@ type annoucement = {
 export interface Announcement {
   announcementList: annoucement[];
 }
-
-export interface Headertype {
-  height: string;
-  backgroundColor: string;
-  color: string;
-  isSpread: boolean;
-}

@@ -54,3 +54,21 @@ export type FileTyperoot =
   | "yml"
   | "js"
   | "css";
+
+export interface Headertype {
+  height: string;
+  backgroundColor: string;
+  color: string;
+  isSpread: boolean;
+}
+export interface HomeStore {
+  header: Headertype;
+  isRequireanim: boolean;
+  user: HomeStoreuser;
+}
+export interface HomeStoreuser {
+  expiresIn: number;
+  refreshToken: string;
+  token: string;
+  tokenHead: string;
+}

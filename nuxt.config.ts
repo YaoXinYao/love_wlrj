@@ -48,7 +48,14 @@ export default defineNuxtConfig({
       noscript: [{ children: "Javascript is required" }],
     },
   },
-  modules: ["@pinia/nuxt", "@element-plus/nuxt"],
+  modules: [
+    "@pinia/nuxt",
+    "@element-plus/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+  ],
+  piniaPersistedstate: {
+    storage: "sessionStorage",
+  },
   build: {
     transpile: ["element-plus/es"],
   },

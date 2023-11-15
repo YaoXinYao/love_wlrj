@@ -62,10 +62,12 @@
 import "animate.css";
 import { Userloginany } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
+import { useHomestore } from "~/store/home";
 //定义登录的模板
 definePageMeta({
   layout: "custom",
 });
+const Homestore = useHomestore();
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
@@ -107,12 +109,15 @@ async function login() {
         userAccount: username,
         userPassword: password,
       });
-      console.log(res.data.value.data.token);
+      Homestore.Changeuserinfo(res.data.value.data);
       setTimeout(() => {
         loginanimin.value = false;
       }, 2000);
     } else {
-      console.log("信息不全");
+      ElMessage({
+        message: "信息不全",
+        type: "warning",
+      });
       return false;
     }
   });

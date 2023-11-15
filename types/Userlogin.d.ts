@@ -16,3 +16,7 @@ export interface LoginRes {
   token: string;
   tokenHead: string;
 }
+export interface sendEmailparams {
+  email: string;
+  type: number;
+}
