@@ -62,10 +62,19 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+      // 考勤接口
+      "/check": {
+        target: "http://124.222.153.56:19591/",
+        changeOrigin: true,
+        prependPath: true,
+      },
     },
   },
   routeRules: {
     "/admin/**": {
+      ssr: false,
+    },
+    "/personalInfoPage/**": {
       ssr: false,
     },
   },
