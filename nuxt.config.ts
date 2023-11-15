@@ -86,7 +86,7 @@ export default defineNuxtConfig({
         prependPath: true,
       },
       "/check": {
-        target: "http://124.222.153.56:19591/",
+        target: "http://124.222.153.56:19591/attendance/",
         changeOrigin: true,
         prependPath: true,
       },
