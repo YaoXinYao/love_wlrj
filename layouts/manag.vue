@@ -29,7 +29,7 @@
           </el-menu-item>
           <el-menu-item index="/">
             <el-icon><document /></el-icon>
-            <template #title>请假管理</template>
+            <template #title>权限管理</template>
           </el-menu-item>
           <el-menu-item index="/admin/rotationChart">
             <el-icon><document /></el-icon>
@@ -113,7 +113,7 @@ onMounted(() => {
   if (windowWidth.value < 600) {
     isCollapse.value = true;
   }
-  defaultRoute.value = route?.href;
+  defaultRoute.value = route.path;
 });
 
 const handleFold = () => {

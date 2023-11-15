@@ -39,11 +39,11 @@ class HYRequest {
     return this.request<T>(url, "POST", data, options);
   }
   put<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
-    return this.request(url, "PUT", data, options);
+    return this.request<T>(url, "PUT", data, options);
   }
 
   delete<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
-    return this.request(url, "DELETE", params, options);
+    return this.request<T>(url, "DELETE", params, options);
   }
 }
 export default new HYRequest();

@@ -2,23 +2,23 @@
   <div class="Stafftable">
     <el-table
       ref="multipleTableRef"
-      :data="tableData"
+      :data="users"
       :header-cell-style="{ 'text-align': 'center' }"
       :cell-style="{ 'text-align': 'center' }"
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
-      <el-table-column property="grade" label="年级" width="100">
+      <el-table-column property="userGrade" label="年级" width="100">
       </el-table-column>
-      <el-table-column property="code" label="学号" width="180">
+      <el-table-column property="userAccount" label="学号" width="180">
       </el-table-column>
-      <el-table-column property="name" label="姓名" width="120" />
-      <el-table-column property="sex" label="性别" width="60" />
+      <el-table-column property="userName" label="姓名" width="120" />
+      <el-table-column property="userSexVal" label="性别" width="60" />
       <el-table-column label="班级" width="100">
-        <template #default="scope">{{ scope.row.grade }}</template>
+        <template #default="scope">{{ scope.row.userClass }}</template>
       </el-table-column>
-      <el-table-column property="direction" label="方向" width="80" />
+      <el-table-column property="groupName" label="方向" width="80" />
       <el-table-column #default="scope" label="操作">
         <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button
@@ -36,8 +36,9 @@
       :small="small"
       :disabled="disabled"
       :background="background"
+      :page-size="1"
       layout="total, prev, pager, next, jumper"
-      :total="400"
+      :total="total"
       @current-change="handleCurrentChange"
     />
   </div>
@@ -46,101 +47,47 @@
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
 import { ref } from "vue";
-const currentPage = ref(4);
+const currentPage = ref();
 const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
-const satffData = useStaffStore();
-const { deleteModel, editModel } = storeToRefs(satffData);
-interface User {
-  grade: string;
-  name: string;
-  sex: string;
-  class: string;
-  direction: string;
-  code: string;
-}
-const tableData = [
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "后端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "后端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "后端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "前端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "前端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "前端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "前端",
-    code: "CA 90036",
-  },
-  {
-    grade: "2016",
-    name: "Tom",
-    sex: "男",
-    class: "Los Angeles",
-    direction: "前端",
-    code: "CA 90036",
-  },
-];
-const multipleSelection = ref<User[]>([]);
-const handleSelectionChange = (val: User[]) => {
+const staffData = useStaffStore();
+const { deleteModel, editModel, users, grade, group, input, total } =
+  storeToRefs(staffData);
+const multipleSelection = ref<any[]>([]);
+const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
 };
-const handleEdit = (index: number, row: User) => {
+const handleEdit = (index: number, row: any) => {
   console.log(index, row);
   editModel.value = true;
 };
-const handleDelete = (index: number, row: User) => {
+const handleDelete = (index: number, row: any) => {
   console.log(index, row);
   deleteModel.value = true;
 };
 //改变当前页
 const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+  let groupId;
+  if (group.value == "") {
+    groupId = undefined;
+  } else {
+    groupId = Number(group.value);
+  }
+  staffData
+    .getAllUser(val, 7, groupId, input.value, grade.value)
+    .then((res) => {
+      if (res.code == 20000) {
+        users.value = res.data?.records;
+        total.value = res.data?.total;
+      } else if (res.code == 400006) {
+        users.value = [];
+        total.value = 0;
+        ElMessage.success("暂无数据");
+      } else {
+        ElMessage.error("获取人员数据失败");
+      }
+    });
 };
 </script>
 

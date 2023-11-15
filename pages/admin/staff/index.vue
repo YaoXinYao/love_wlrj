@@ -2,20 +2,34 @@
   <div class="staff">
     <div class="header">
       <div>
-        <el-select v-model="select" clearable placeholder="Select">
+        <el-select v-model="grade" clearable placeholder="可选择年级">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in grades"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
-        <el-input v-model="input" placeholder="Please input" clearable />
-        <el-button type="primary" :icon="Search">搜索</el-button>
+        <el-select v-model="group" placeholder="可选组别">
+          <el-option
+            v-for="item in groups"
+            :key="item.groupId"
+            :label="item.groupName"
+            :value="item.groupId"
+          />
+        </el-select>
+        <el-input v-model="input" placeholder="请输入关键字" clearable />
+        <el-button type="primary" :icon="Search" @click="selectStaff(1)"
+          >搜索</el-button
+        >
       </div>
       <div>
-        <el-button type="primary" :icon="Plus" @click="addModel=true">新增</el-button>
-        <el-button type="danger" :icon="Minus" @click="deleteModel=true">删除</el-button>
+        <el-button type="primary" :icon="Plus" @click="addModel = true"
+          >新增</el-button
+        >
+        <el-button type="danger" :icon="Minus" @click="deleteModel = true"
+          >删除</el-button
+        >
         <el-button type="success" :icon="Upload" @click="modelState = true"
           >导入</el-button
         >
@@ -32,32 +46,66 @@ import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
 import { Search, Plus, Minus, Upload } from "@element-plus/icons-vue";
 import { ref } from "vue";
-const select = ref("");
-const input = ref("");
-const options = [
-  {
-    value: "Option1",
-    label: "2023",
-  },
-  {
-    value: "Option2",
-    label: "2022",
-  },
-  {
-    value: "Option3",
-    label: "2021",
-  },
-  {
-    value: "Option4",
-    label: "2020",
-  },
-  {
-    value: "Option5",
-    label: "2019",
-  },
-];
+let groups = ref<any>([]);
 const staffStore = useStaffStore();
-const { modelState,deleteModel,addModel} = storeToRefs(staffStore);
+const {
+  modelState,
+  deleteModel,
+  addModel,
+  grades,
+  grade,
+  group,
+  input,
+  users,
+  total,
+} = storeToRefs(staffStore);
+onMounted(() => {
+  staffStore.getGrades();
+  staffStore.getAllUser(1, 7).then((res) => {
+    if (res.code == 20000) {
+      users.value = res.data?.records;
+      total.value = res.data?.total;
+    } else {
+      ElMessage.error("获取人员数据失败");
+    }
+  });
+});
+watch(grade, (newValue, oldValue) => {
+  group.value = "";
+  if (grade.value) {
+    staffStore.getGroup(grade.value).then((res) => {
+      if (res?.code == 20000) {
+        groups.value = res?.data;
+      } else {
+        ElMessage.error("获取组别失败");
+      }
+    });
+  }
+});
+//检索不同条件下的人员
+function selectStaff(current: number) {
+  let groupId;
+  if (group.value == "") {
+    groupId = undefined;
+  } else {
+    groupId = Number(group.value);
+  }
+  staffStore
+    .getAllUser(current, 7, groupId, input.value, grade.value)
+    .then((res) => {
+      console.log(res);
+      if (res.code == 20000) {
+        users.value = res.data?.records;
+        total.value = res.data?.total;
+      } else if (res.code == 400006) {
+        users.value = [];
+        total.value = 0;
+        ElMessage.success("暂无数据");
+      } else {
+        ElMessage.error("获取人员数据失败");
+      }
+    });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -69,10 +117,17 @@ const { modelState,deleteModel,addModel} = storeToRefs(staffStore);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  width: 960px;
+  .el-select {
+    width: 130px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+  }
   .el-input {
-    width: 200px;
-    margin-left: 20px;
+    width: 180px;
+    margin-bottom: 10px;
+  }
+  .el-button {
+    margin-bottom: 10px;
   }
 }
 .main {
@@ -80,6 +135,6 @@ const { modelState,deleteModel,addModel} = storeToRefs(staffStore);
   border-radius: 5px;
   background-color: white;
   min-height: 200px;
-  min-width: 1000px;
+  min-width: 950px;
 }
 </style>
