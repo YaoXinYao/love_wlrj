@@ -69,6 +69,7 @@ export default defineNuxtConfig({
       // 考勤接口
       "/check": {
         target: "http://124.222.153.56:19591/",
+      },
       //用户接口
       "/coustom": {
         target: "http://112.125.120.78:8666/",
@@ -76,20 +77,21 @@ export default defineNuxtConfig({
         prependPath: true,
       },
       //用户接口
-      "/zinfo":{
+      "/zinfo": {
         target: "http://112.125.120.78:8666",
         changeOrigin: true,
         prependPath: true,
-      "/check":{
-        target:"http://124.222.153.56:19591/",
-        changeOrigin:true,
-        prependPath:true,
       },
-      "/notice/":{
-        target:"http://152.136.54.204:19998/notice/",
-        changeOrigin:true,
-        prependPath:true,
-      }
+      "/check": {
+        target: "http://124.222.153.56:19591/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+      "/notice/": {
+        target: "http://152.136.54.204:19998/notice/",
+        changeOrigin: true,
+        prependPath: true,
+      },
     },
   },
   routeRules: {
@@ -105,8 +107,8 @@ export default defineNuxtConfig({
     "/forum/**": {
       ssr: false,
     },
-    "/personalInfo/**":{
-      ssr:false,
+    "/personalInfo/**": {
+      ssr: false,
     },
   },
 });
