@@ -3,8 +3,8 @@ import { reactive } from 'vue';
     <div class="announcement">
         <div class="content">
             <el-timeline>
-                <template v-for="(item,index) in announcement" :key="index">
-                    <el-timeline-item center placement="top" :timestamp="item.timestamp"  >
+                <template v-for="(item,index) in announcementList.value" :key="item.noticeId">
+                    <el-timeline-item center placement="top" :timestamp="item.noticeTime"  >
                         <el-card @click="con(item)">
                             <h2>{{ item.type }}</h2>
                         </el-card>
@@ -18,6 +18,8 @@ import { reactive } from 'vue';
 
 <script setup lang="ts">
 import {reactive} from 'vue'
+import annoucementStore from '@/store/announcement'
+import {storeToRefs} from 'pinia'
 
 export interface anType {
     title:string,
@@ -25,6 +27,11 @@ export interface anType {
     content: string,
     timestamp: string,
 }
+
+const announceList = annoucementStore()
+handleAnnouncement({pageNo:1,pageSize:9999})
+
+const {announcementList} = storeToRefs(announceList)
 
 
 const announcement = reactive([
@@ -56,8 +63,8 @@ const isShow = ref(true)
 const emit = defineEmits(['ShowClick'])
 
 
-function handleAnnouncement(){
-    
+function handleAnnouncement(query:any){
+    announceList.getAnoucementAction(query)
 }
 
 function con(Props:anType){

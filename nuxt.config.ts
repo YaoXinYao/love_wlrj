@@ -80,6 +80,15 @@ export default defineNuxtConfig({
         target: "http://112.125.120.78:8666",
         changeOrigin: true,
         prependPath: true,
+      "/check":{
+        target:"http://124.222.153.56:19591/",
+        changeOrigin:true,
+        prependPath:true,
+      },
+      "/notice/":{
+        target:"http://152.136.54.204:19998/notice/",
+        changeOrigin:true,
+        prependPath:true,
       }
     },
   },
@@ -91,6 +100,8 @@ export default defineNuxtConfig({
     "/networkdisk/**": {
     "/forum/**": {
       ssr: false,
+    "/personalInfo/**":{
+      ssr:false,
     },
   },
 });

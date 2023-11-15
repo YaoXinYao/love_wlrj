@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
-import {Announcement} from './store'
+import type {Announcement} from './store'
+import {insertNotice, getNotice} from '@/service/announcement/announcement'
 
 
 const annoucementStore = defineStore('annoucementStore',{
@@ -7,10 +8,14 @@ const annoucementStore = defineStore('annoucementStore',{
         announcementList: []
     }),
     actions:{
-        async postAnoucementAction(queryInfo:any){
-            // const postResult = await 
-            // this.announcementList
+        async getAnoucementAction(queryInfo:any){
+            let listResult = await getNotice(queryInfo)
+            console.log(listResult.data.value.data.records)
+            this.announcementList = listResult.data.value.data.records
         },
         
     }
 })
+
+
+export default annoucementStore;
