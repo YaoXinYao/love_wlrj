@@ -98,12 +98,13 @@ export default defineNuxtConfig({
     },
     "/personalInfoPage/**": {
       ssr: false,
-    }
+    },
     "/networkdisk/**": {
       ssr: false,
-    }
+    },
     "/forum/**": {
       ssr: false,
+    },
     "/personalInfo/**":{
       ssr:false,
     },
