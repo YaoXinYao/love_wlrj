@@ -6,6 +6,7 @@ import type {
   sendEmailparams,
 } from "~/types/Userlogin";
 import Hyrequire from "./index";
+import type { Homestoreuserinfo } from "~/types/Home";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
@@ -33,6 +34,16 @@ export function Userloginemail(params: Emailparams) {
     "POST",
     {
       ...params,
+    }
+  );
+}
+//获取用户信息
+export function getUserinfo2(account: any) {
+  return Hyrequire.request<IResultData<Homestoreuserinfo>>(
+    "/coustom/user/user/getLoginUserByPassword",
+    "GET",
+    {
+      account,
     }
   );
 }

@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
+import { jwtDecode } from "jwt-decode";
 import type { HomeStore, HomeStoreuser } from "~/types/Home";
+import { getUserinfo2 } from "~/service/homeApi";
 export const useHomestore = defineStore("home", {
   state(): HomeStore {
     return {
@@ -16,6 +18,24 @@ export const useHomestore = defineStore("home", {
         token: "",
         tokenHead: "",
       },
+      userinfo: {
+        userId: 0,
+        userAccount: "",
+        userPassword: "",
+        userName: "",
+        userSexVal: null,
+        userQq: "",
+        userEmail: "",
+        userPicture: "",
+        userClass: "",
+        userGrade: "",
+        userBlog: "",
+        roleId: 1,
+        roleName: null,
+        enabled: null,
+        roles: null,
+        authorities: [],
+      },
     };
   },
   actions: {
@@ -26,6 +46,9 @@ export const useHomestore = defineStore("home", {
       this.isRequireanim = flag;
     },
     async Changeuserinfo(data: HomeStoreuser) {
+      const tokeninfo = jwtDecode(data.token) as { user_name: string };
+      const res = await getUserinfo2(tokeninfo.user_name);
+      this.userinfo = res.data.value.data;
       this.user = data;
     },
   },
