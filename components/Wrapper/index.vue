@@ -7,7 +7,9 @@
         <div class="header-title EN2">做一个有影响力的人</div>
         <div class="header-title EN3">做一个有影响力的团队</div>
         <div class="header-title EN4">
-          <TransitionButton innertext="了解更多"></TransitionButton>
+          <NuxtLink to="/grouphistory">
+            <TransitionButton innertext="了解更多"></TransitionButton>
+          </NuxtLink>
         </div>
       </div>
     </div>
@@ -42,16 +44,22 @@ import { gsap } from "gsap";
 const carousel = ref();
 const carouselItem = [
   {
-    src: "/images/wallhaven-3l2vm3_1920x1080.png",
+    src: "https://article.biliimg.com/bfs/article/81ea8eaf042608dea429a0e07b8a73c0323404779.jpg",
   },
   {
-    src: "/images/wallhaven-kxj3l1_1920x1080.png",
+    src: "https://article.biliimg.com/bfs/article/7b7b96c30d816afb7066126bc91912c2323404779.jpg",
   },
   {
-    src: "/images/wallhaven-vqeyxl_3840x2160.png",
+    src: "https://article.biliimg.com/bfs/article/a7bd9db95f80fd6e46dc133f40ca4790323404779.jpg",
   },
   {
-    src: "/images/wallhaven-yxkm5k_3840x2160.png",
+    src: "https://article.biliimg.com/bfs/article/3aaa62e88ba9721c37b9a777f46023f5323404779.jpg",
+  },
+  {
+    src: "https://article.biliimg.com/bfs/article/791618eea691490ea892ad05197d9a1d323404779.jpg",
+  },
+  {
+    src: "https://article.biliimg.com/bfs/article/4de0e27efe0632387c31414aa5e14c8e323404779.jpg",
   },
 ];
 onMounted(() => {

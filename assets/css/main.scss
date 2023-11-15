@@ -1,9 +1,17 @@
 // 统一样式的风格
 @import "normalize.css";
-@import "/font_4299098_n64u8tfqtk/iconfont.css";
+@import "//at.alicdn.com/t/c/font_4299098_v2ovof66tct.css";
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 // 不需导入了，在nuxt.config中已经配置自动导入
 // @import "@/assets/css/variables.scss";
 //全局样式
+.icon {
+  width: 2em;
+  height: 2em;
+  vertical-align: -0.5em;
+  fill: currentColor;
+  overflow: hidden;
+}
 .wrapper {
   width: $contentWidth;
   margin: 0 auto;

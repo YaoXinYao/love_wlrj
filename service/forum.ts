@@ -13,7 +13,7 @@ class HYRequest {
   ): Promise<AsyncData<T, Error>> {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
-       //baseURL: baseURL,
+        //baseURL: baseURL,
         method: method,
         ...options,
       };
@@ -21,7 +21,7 @@ class HYRequest {
         newoptions.query = data;
       }
       if (method == "POST" || method == "PUT") {
-        newoptions.body = data;
+        newoptions.params = data;
       }
       useFetch<T>(url, newoptions as any)
         .then((res) => {

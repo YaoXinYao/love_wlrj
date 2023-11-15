@@ -1,8 +1,9 @@
 <template>
-  <div class="rootbox">
+  <div id="top" class="rootbox">
     <app-header class="app-header" />
     <app-header2 class="app-header2"></app-header2>
     <slot></slot>
+    <rocket />
     <app-footer />
   </div>
 </template>

@@ -15,9 +15,11 @@
     "element-plus": "^2.4.1",
     "nuxt": "^3.7.0",
     "sass": "^1.66.1",
-    "scss": "^0.2.4"
+    "scss": "^0.2.4",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.4.11",
     "animate.css": "^4.1.1",
     "axios": "^1.2.0",
