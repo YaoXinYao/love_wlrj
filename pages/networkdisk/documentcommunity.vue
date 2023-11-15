@@ -15,16 +15,25 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column label="文件名" min-width="60" show-overflow-tooltip>
-          <template #default="scope">{{ scope.row.date }}</template>
+          <template #default="scope">
+            <svg class="icon" aria-hidden="true">
+              <use :xlink:href="`#${iconfontType(scope.row.filetype)}`"></use>
+            </svg>
+            {{ scope.row.date }}</template
+          >
         </el-table-column>
-        <el-table-column property="name" label="时间" min-width="60" />
+        <el-table-column property="time" label="时间" min-width="60" />
         <el-table-column
-          property="address"
+          property="uploaduser"
           label="上传者"
           show-overflow-tooltip
         />
         <el-table-column property="address" label="操作" show-overflow-tooltip>
-          <template #default="scope"> </template>
+          <template #default="scope">
+            <ElButton type="primary" plain>下载</ElButton>
+            <ElButton type="info" plain>分享</ElButton>
+            <ElButton type="warning" color="rgb(40,77,213)">收藏</ElButton>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -32,50 +41,64 @@
 </template>
 
 <script setup lang="ts">
-import { getfilelist } from "~/service/disk";
-const res = await getfilelist(1, 10);
+import type { FileTyperoot } from "~/types/Home";
+
 const multipleSelection = ref<any[]>([]);
-console.log(res.data.value.data);
 const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
 };
 const tableData: any[] = [
   {
-    date: "2016-05-032016-05-032016-05-032016-05-032016-05-032016-05-032016-05-032016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los AngelesNo. 189, Grove St, Los Angeles",
+    date: "JDK1.8",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "mp4",
   },
   {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "JDK18",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "exe",
   },
   {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "中国共产党宣言",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "docx",
   },
   {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "马克思主义",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "java",
   },
   {
-    date: "2016-05-08",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "信号与系统",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "PPT",
   },
   {
-    date: "2016-05-06",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "时间简史",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "pdf",
   },
   {
-    date: "2016-05-07",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    date: "三体",
+    time: "Tom",
+    uploaduser: "张三",
+    filetype: "mp3",
   },
 ];
+function iconfontType(val: string) {
+  const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
+  if (FileType[filetype]) {
+    return FileType[filetype];
+  } else {
+    return FileType.other;
+  }
+}
 </script>
 
 <style scoped lang="scss">

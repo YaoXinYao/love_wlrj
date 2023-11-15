@@ -7,7 +7,7 @@
           active-class="activelfetitem"
           class="leftitem"
         >
-          <i class="iconfont icon-wodeshoucang"></i> 文件社区</NuxtLink
+          <i class="iconfont icon-shequ"></i> 文件社区</NuxtLink
         >
         <NuxtLink
           active-class="activelfetitem"
@@ -81,7 +81,6 @@ useHeader();
     }
     .diskright {
       width: 80%;
-      width: auto;
       height: auto;
     }
   }

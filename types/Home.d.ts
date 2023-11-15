@@ -33,3 +33,24 @@ interface item {
   roleId?: number;
   roleName?: any;
 }
+export type FileTyperoot =
+  | "gif"
+  | "mkv"
+  | "rar"
+  | "pdf"
+  | "docx"
+  | "ppt"
+  | "zip"
+  | "exe"
+  | "doc"
+  | "jpg"
+  | "png"
+  | "html"
+  | "xlsx"
+  | "mp4"
+  | "7z"
+  | "other"
+  | "txt"
+  | "yml"
+  | "js"
+  | "css";
