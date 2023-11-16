@@ -95,6 +95,13 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+
+      //websocket
+      "/ws": {
+        target: "ws://152.136.54.204:19999/",
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
   routeRules: {
