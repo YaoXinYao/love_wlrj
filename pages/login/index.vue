@@ -157,7 +157,7 @@ async function login() {
             message: "登录成功",
             type: "success",
           });
-          //navigateTo("/");
+          navigateTo("/");
           break;
         case 52002:
           error();
