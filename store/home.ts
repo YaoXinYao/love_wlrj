@@ -30,7 +30,7 @@ export const useHomestore = defineStore("home", {
         userClass: "",
         userGrade: "",
         userBlog: "",
-        roleId: 1,
+        roleId: 1, // 用户权限参数，1 大一，2大二，3大三，老师
         roleName: null,
         enabled: null,
         roles: null,

@@ -14,7 +14,7 @@
           <h2 class="animate__animated animate__bounceInDown">登录</h2>
           <el-form
             ref="ruleFormRef"
-            :model="ruleForm"
+            :model="loginmodel == 0 ? ruleForm : Emailrules"
             status-icon
             :rules="rules"
             style="width: 90%"
@@ -24,22 +24,38 @@
               <el-input
                 class="elinput"
                 v-model="ruleForm.username"
-                placeholder="请输入学号"
+                :placeholder="loginmodel == 0 ? '请输入学号' : '请输入你的邮箱'"
                 autocomplete="off"
               />
             </el-form-item>
-            <el-form-item prop="password">
+            <el-form-item v-if="loginmodel == 0" prop="password">
+              <!-- 密码输入框 -->
               <el-input
                 class="elinput"
-                prefix="密码"
                 v-model="ruleForm.password"
                 type="password"
+                prefix="密码"
+                show-password
                 @focus="() => changeback(true)"
                 @blur="() => changeback(false)"
                 placeholder="请输入密码"
-                show-password
                 autocomplete="off"
-              />
+              >
+              </el-input>
+            </el-form-item>
+            <!-- 验证码输入框 -->
+            <el-form-item v-if="loginmodel == 1" props="code">
+              <el-input
+                class="elinput"
+                v-model="ruleForm.code"
+                type="text"
+                placeholder="请输入验证码"
+                autocomplete="off"
+              >
+                <template v-slot:suffix>
+                  <el-button type="primary">发送验证码</el-button>
+                </template>
+              </el-input>
             </el-form-item>
           </el-form>
           <div class="loginbt" @click="login">
@@ -68,13 +84,14 @@ definePageMeta({
   layout: "custom",
 });
 const Homestore = useHomestore();
-
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
+const loginmodel = ref(0); // 0 账号密码登录，1邮箱验证码登录
 const ruleForm = ref({
   username: "",
   password: "",
+  code: "",
 });
 const validatePass = (rule: any, value: string, callback: any) => {
   if (value.length !== 11) {
@@ -90,9 +107,29 @@ const validatePass2 = (rule: any, value: any, callback: any) => {
     callback();
   }
 };
+const EmaildatePass = (rule: any, value: string, callback: any) => {
+  const emailreg =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (emailreg.test(value)) {
+    callback();
+  } else {
+    callback(new Error("邮箱格式不正确"));
+  }
+};
+const Emaildatecode = (rule: any, value: string, callback: any) => {
+  if (!value) {
+    callback(new Error("验证码不能为空"));
+  } else {
+    callback();
+  }
+};
 const rules = reactive<FormRules<typeof ruleForm>>({
   username: [{ validator: validatePass, trigger: "blur" }],
   password: [{ validator: validatePass2, trigger: "blur" }],
+});
+const Emailrules = reactive<FormRules<typeof ruleForm>>({
+  username: [{ validator: EmaildatePass, trigger: "blur" }],
+  password: [{ validator: Emaildatecode, trigger: "blur" }],
 });
 function error() {
   loginanimin.value = true;
@@ -104,7 +141,6 @@ function changeback(val: boolean) {
   isshow.value = val;
 }
 async function login() {
-  //loginanimin.value = true;
   if (!ruleFormRef) return;
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {

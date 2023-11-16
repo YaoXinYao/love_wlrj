@@ -15,6 +15,10 @@ class HYRequest {
       const newoptions: UseFetchOptions<T> = {
         //baseURL: baseURL,
         method: method,
+        headers: {
+          "Authorization": Authtoken(),
+          ...options?.headers,
+        },
         ...options,
       };
       if (method == "GET" || method == "DELETE") {
