@@ -87,7 +87,7 @@ const Homestore = useHomestore();
 const ruleFormRef = ref<FormInstance>();
 const isshow = ref(false);
 const loginanimin = ref(false);
-const loginmodel = ref(1); // 0 账号密码登录，1邮箱验证码登录
+const loginmodel = ref(0); // 0 账号密码登录，1邮箱验证码登录
 const ruleForm = ref({
   username: "",
   password: "",
@@ -157,7 +157,7 @@ async function login() {
             message: "登录成功",
             type: "success",
           });
-          navigateTo("/");
+          //navigateTo("/");
           break;
         case 52002:
           error();

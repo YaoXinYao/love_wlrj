@@ -10,6 +10,10 @@ class Hyrequest {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
         method: method,
+        headers: {
+          "Authorization": Authtoken(),
+          ...options?.headers,
+        },
         ...options,
       };
       if (method == "GET") {
