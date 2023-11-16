@@ -24,14 +24,10 @@
         >
       </div>
       <div>
-        <el-button type="primary" :icon="Plus" @click="addModel = true"
-          >新增</el-button
-        >
-        <el-button type="danger" :icon="Minus" @click="deleteModel = true"
-          >删除</el-button
-        >
-        <el-button type="success" :icon="Upload" @click="modelState = true"
-          >导入</el-button
+        <el-button type="danger" @click="deleteModel = true">删除</el-button>
+        <el-button type="success" @click="modelState = true">导入</el-button>
+        <el-button type="primary" @click="downTemplate" class="downfile"
+          >下载导入模板</el-button
         >
       </div>
     </div>
@@ -44,21 +40,13 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
-import { Search, Plus, Minus, Upload } from "@element-plus/icons-vue";
+import { Search } from "@element-plus/icons-vue";
 import { ref } from "vue";
 let groups = ref<any>([]);
+let downLink = ref("");
 const staffStore = useStaffStore();
-const {
-  modelState,
-  deleteModel,
-  addModel,
-  grades,
-  grade,
-  group,
-  input,
-  users,
-  total,
-} = storeToRefs(staffStore);
+const { modelState, deleteModel, grades, grade, group, input, users, total } =
+  storeToRefs(staffStore);
 onMounted(() => {
   staffStore.getGrades();
   staffStore.getAllUser(1, 7).then((res) => {
@@ -105,6 +93,21 @@ function selectStaff(current: number) {
         ElMessage.error("获取人员数据失败");
       }
     });
+}
+//下载模板
+function downTemplate() {
+  let downloading = false;
+  if (!downloading) {
+    downloading = true;
+    staffStore.download().then((res) => {
+      const link = document.createElement("a");
+      link.href = res;
+      link.setAttribute("download", "用户导入模板.xlsx"); // 设置文件名
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
 }
 </script>
 

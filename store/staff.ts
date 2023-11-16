@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { selectAllGrade, selectGroup, selectAllUser } from "~/service/staff";
+import {
+  selectAllGrade,
+  selectGroup,
+  selectAllUser,
+  exportTemplate,
+  importUser,
+} from "~/service/staff";
 export interface staffForm {
   name: string;
   code: string;
@@ -12,29 +18,29 @@ export interface staffForm {
 }
 export interface Staffs {
   modelState: boolean;
-  addModel: boolean;
   editModel: boolean;
   deleteModel: boolean;
   grades: any[];
-  grade :string;
-  group:string;
-  input:string;
-  users:any[];
-  total:number
+  grade: string;
+  group: string;
+  input: string;
+  users: any[];
+  total: number;
+  signleInfo: any;
 }
 export const useStaffStore = defineStore("staff", {
   state: (): Staffs => {
     return {
       modelState: false,
-      addModel: false,
       editModel: false,
       deleteModel: false,
       grades: [],
-      grade:"",
-      group:'',
-      input:"",
-      users:[],
-      total:0
+      grade: "",
+      group: "",
+      input: "",
+      users: [],
+      total: 0,
+      signleInfo: {},
     };
   },
   actions: {
@@ -63,7 +69,19 @@ export const useStaffStore = defineStore("staff", {
         search,
         userGrade
       );
-      return data.value
+      return data.value;
+    },
+    //下载导入模板
+    async download() {
+      let { data } = await exportTemplate();
+      let fileBolb = new Blob([data.value], { type: data.value.type });
+      const url = window.URL.createObjectURL(fileBolb);
+      return url;
+    },
+    //导入用户
+    async addUser(params: FormData) {
+      let { data } = await importUser(params);
+      console.log("导入用户", data.value);
     },
   },
 });

@@ -29,3 +29,11 @@ export const selectAllUser = (
     userGrade,
   });
 };
+//下载导入模板
+export const exportTemplate = ()=>{
+  return hyRequest.request("/zinfo/user/user/exportTemplate","GET",{responseType:'blob'})
+}
+//导入用户
+export const importUser =(params:FormData)=>{
+  return hyRequest.request("/zinfo/user/user/importUser","POST",params)
+}

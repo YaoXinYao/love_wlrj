@@ -20,8 +20,8 @@
       </el-table-column>
       <el-table-column property="groupName" label="方向" width="80" />
       <el-table-column #default="scope" label="操作">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button
+        <el-button size="small" @click="handleEdit(scope.row)"
+          >查看</el-button
         >
         <el-button
           size="small"
@@ -36,7 +36,7 @@
       :small="small"
       :disabled="disabled"
       :background="background"
-      :page-size="1"
+      :page-size="7"
       layout="total, prev, pager, next, jumper"
       :total="total"
       @current-change="handleCurrentChange"
@@ -52,14 +52,22 @@ const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
 const staffData = useStaffStore();
-const { deleteModel, editModel, users, grade, group, input, total } =
-  storeToRefs(staffData);
+const {
+  deleteModel,
+  editModel,
+  users,
+  grade,
+  group,
+  input,
+  total,
+  signleInfo,
+} = storeToRefs(staffData);
 const multipleSelection = ref<any[]>([]);
 const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
 };
-const handleEdit = (index: number, row: any) => {
-  console.log(index, row);
+const handleEdit = (row: any) => {
+  signleInfo.value = row;
   editModel.value = true;
 };
 const handleDelete = (index: number, row: any) => {
