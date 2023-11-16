@@ -52,7 +52,7 @@ let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null;
 
 onMounted(() => {
   // 创建 socket 实例
-  socket = io(`/ws/forum/websocket/4`);
+  socket = io(`ws://152.136.54.204:19999/forum/websocket/4`);
 
   // 监听连接的建立与关闭
   socket.on("connect", () => {
