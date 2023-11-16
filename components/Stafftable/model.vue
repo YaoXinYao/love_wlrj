@@ -24,41 +24,6 @@
       </span>
     </template>
   </el-dialog>
-  <!-- 添加成员 -->
-  <el-dialog v-model="addModel" title="新增成员" width="440px">
-    <el-form :model="staffInfo">
-      <el-form-item label="姓名" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.name" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-select v-model="staffInfo.sex" placeholder="请选择你的性别">
-          <el-option label="男" value="男" />
-          <el-option label="女" value="女" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="学号" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.code" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="院系" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.coolege" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="年级" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.grade" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="班级" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.class" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="方向" :label-width="formLabelWidth">
-        <el-input v-model="staffInfo.direction" autocomplete="off" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="addModel = false"> 添加 </el-button>
-        <el-button @click="addModel = false">取消</el-button>
-      </span>
-    </template>
-  </el-dialog>
   <!-- 删除弹窗 -->
   <el-dialog v-model="deleteModel" title="提示信息" width="400px">
     <span>确定要删除此成员数据？</span>
@@ -70,34 +35,34 @@
     </template>
   </el-dialog>
   <!-- 编辑成员信息 -->
-  <el-dialog v-model="editModel" title="成员信息" width="400px">
-    <el-form :model="editInfo">
+  <el-dialog v-model="editModel" title="成员信息" width="400px" class="edit">
+    <el-form>
       <el-form-item label="姓名" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.name" autocomplete="off" />
+        <el-input v-bind:value="signleInfo.userName" disabled/>
       </el-form-item>
       <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-select v-model="editInfo.sex" placeholder="请选择你的性别">
-          <el-option label="男" value="男" />
-          <el-option label="女" value="女" />
-        </el-select>
+        <el-input v-bind:value="signleInfo.userSexVal" disabled/>
       </el-form-item>
       <el-form-item label="学号" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.code" autocomplete="off" />
+        <el-input v-bind:value="signleInfo.userAccount" disabled/>
       </el-form-item>
-      <el-form-item label="院系" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.coolege" autocomplete="off" />
+      <el-form-item label="邮箱" :label-width="formLabelWidth">
+        <el-input v-bind:value="signleInfo.userEmail" disabled/>
+      </el-form-item>
+      <el-form-item label="QQ" :label-width="formLabelWidth">
+        <el-input v-bind:value="signleInfo.userQq" disabled/>
       </el-form-item>
       <el-form-item label="年级" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.grade" autocomplete="off" />
+        <el-input v-bind:value="signleInfo.userGrade" disabled/>
       </el-form-item>
       <el-form-item label="班级" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.class" autocomplete="off" />
+        <el-input v-bind:value="signleInfo.userClass" disabled/>
       </el-form-item>
       <el-form-item label="方向" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.direction" autocomplete="off" />
+        <el-input v-bind:value="signleInfo.groupName" disabled/>
       </el-form-item>
-      <el-form-item label="博客" :label-width="formLabelWidth">
-        <el-input v-model="editInfo.blog" autocomplete="off" />
+      <el-form-item label="博客链接" :label-width="formLabelWidth">
+        <el-input v-bind:value="signleInfo.userBlog" disabled/>
       </el-form-item>
       <el-form-item label="成绩" :label-width="formLabelWidth">
         <el-button type="success">成绩详情</el-button>
@@ -105,8 +70,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="editModel = false"> 修改 </el-button>
-        <el-button @click="editModel = false">取消</el-button>
+        <el-button @click="editModel = false">关闭</el-button>
       </span>
     </template>
   </el-dialog>
@@ -119,7 +83,7 @@ import type { UploadInstance } from "element-plus";
 const formLabelWidth = "80px";
 const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
-let { modelState, deleteModel, addModel, editModel } = storeToRefs(staffStore);
+let { modelState, deleteModel, editModel,signleInfo} = storeToRefs(staffStore);
 let formData: any = new FormData();
 //导入文件
 function handelUpload(file: any) {
@@ -166,20 +130,8 @@ let staffInfo: staffForm = reactive({
 function deleteStaff() {
   deleteModel.value = false;
 }
-//编辑成员
-let editInfo = reactive({
-  id: "000000",
-  name: "111",
-  code: "22",
-  class: "3333",
-  coolege: "4444",
-  blog: "555",
-  direction: "66666",
-  grade: "66666",
-  sex: "男",
-});
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .el-button--text {
   margin-right: 15px;
 }
@@ -191,5 +143,12 @@ let editInfo = reactive({
 }
 .dialog-footer button:first-child {
   margin-right: 10px;
+}
+.el-input.is-disabled .el-input__wrapper{
+  background-color: white;
+  .el-input__inner{
+    color: #606266;
+    -webkit-text-fill-color:#606266;
+  }
 }
 </style>
