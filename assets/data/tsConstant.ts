@@ -7,8 +7,6 @@ export const COLORS = [
   "36,136,248",
 ];
 
-export const PASSWORDREG =
-  /w[-w.+]*@([A-Za-z0-9][-A-Za-z0-9]+.)+[A-Za-z]{2,14}/;
+export const PASSWORDREG = /^[^\s]{6,12}$/;
 
-  export const EMAILREG =
-  /w[-w.+]*@([A-Za-z0-9][-A-Za-z0-9]+.)+[A-Za-z]{2,14}/;
+export const EMAILREG = /[\w-]+@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;

@@ -3,7 +3,7 @@
     <div class="btn">
       <!-- <el-button type="primary">修改</el-button>
       <el-button type="success">保存</el-button> -->
-      <el-button type="danger">清空</el-button>
+      <!-- <el-button type="danger">清空</el-button> -->
     </div>
 
     <Timetable :isEditCourse="true" />

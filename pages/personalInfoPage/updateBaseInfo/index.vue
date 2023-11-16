@@ -15,8 +15,11 @@
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="baseInfo.email" autocomplete="off" />
       </el-form-item>
+      <el-form-item label="博客" prop="blog">
+        <el-input v-model="baseInfo.blog" autocomplete="off" />
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm(baseInfoRef)"
+        <el-button type="primary" @click="updateSelfInformation(baseInfoRef)"
           >确认</el-button
         >
       </el-form-item>
@@ -30,16 +33,16 @@
       label-width="120px"
       class="demo-baseInfo"
     >
-      <el-form-item label="新密码" prop="pass">
+      <el-form-item label="新密码" prop="newPassword">
         <el-input
-          v-model="updatePassInfo.pass"
+          v-model="updatePassInfo.newPassword"
           type="password"
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="确认密码" prop="checkPass">
+      <el-form-item label="确认密码" prop="againPassword">
         <el-input
-          v-model="updatePassInfo.checkPass"
+          v-model="updatePassInfo.againPassword"
           type="password"
           autocomplete="off"
         />
@@ -54,7 +57,7 @@
             autocomplete="off"
           /><el-button
             type="primary"
-            @click="submitForm(baseInfoRef)"
+            @click="sendCode"
             plain
             style="margin-left: 10px"
             >发送验证码</el-button
@@ -62,7 +65,7 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm(baseInfoRef)"
+        <el-button type="primary" @click="updatePassword(baseInfoRef)"
           >确认</el-button
         >
       </el-form-item>
@@ -73,7 +76,16 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { PASSWORDREG } from '../../../assets/data/tsConstant';
+import { EMAILREG, PASSWORDREG } from "../../../assets/data/tsConstant";
+import {
+  updateUserSelfInformation,
+  getLoginUser,
+  sendEmail,
+  updateUserPassword,
+} from "~/service/user";
+//获取当前登录用户信息
+let userData = await getLoginUser();
+let userInfo = userData.data.value.data;
 
 const baseInfoRef = ref<FormInstance>();
 
@@ -88,32 +100,45 @@ const checkNullContent = (rule: any, value: any, callback: any) => {
 const validatePass = (rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error("请输入密码"));
+  } else if (!PASSWORDREG.test(value)) {
+    callback(new Error("密码格式不正确"));
   } else {
-    if (updatePassInfo.pass.trim() !== "") {
+    if (updatePassInfo.newPassword.trim() !== "") {
       if (!updatePassInfoRef.value) return;
-      updatePassInfoRef.value.validateField("pass", () => null);
+      updatePassInfoRef.value.validateField("newPassword", () => null);
     }
     callback();
   }
 };
-const validatePass2 = (rule: any, value: any, callback: any) => {
+const validateCheckPass = (rule: any, value: any, callback: any) => {
   if (value.trim() === "") {
     callback(new Error("请再次输入密码！"));
-  } else if (value !== updatePassInfo.checkPass) {
+  } else if (value !== updatePassInfo.newPassword) {
     callback(new Error("两次输入密码不匹配！"));
   } else {
     callback();
   }
 };
 
+const validateEmail = (rule: any, value: any, callback: any) => {
+  if (value.trim() === "") {
+    callback(new Error("请输入邮箱"));
+  } else if (!EMAILREG.test(value)) {
+    callback(new Error("邮箱格式不正确"));
+  } else {
+    callback();
+  }
+};
+
 const baseInfo = reactive({
-  qq: "",
-  email: "",
+  qq: userInfo.userQq,
+  email: userInfo.userEmail,
+  blog: userInfo.userBlog,
 });
 
 const updatePassInfo = reactive({
-  pass: "",
-  checkPass: "",
+  newPassword: "",
+  againPassword: "",
   email: "",
   code: "",
 });
@@ -121,23 +146,87 @@ const updatePassInfo = reactive({
 const rules = reactive<FormRules<typeof baseInfo>>({
   qq: [{ validator: checkNullContent, trigger: "blur" }],
   email: [{ validator: checkNullContent, trigger: "blur" }],
+  blog: [{ validator: checkNullContent, trigger: "blur" }],
 });
 const rules2 = reactive<FormRules<typeof updatePassInfo>>({
-  pass: [{ validator: validatePass, trigger: "blur" }],
-  checkPass: [{ validator: validatePass2, trigger: "blur" }],
-  email: [{ validator: checkNullContent, trigger: "blur" }],
+  newPassword: [{ validator: validatePass, trigger: "blur" }],
+  againPassword: [{ validator: validateCheckPass, trigger: "blur" }],
+  email: [{ validator: validateEmail, trigger: "blur" }],
   code: [{ validator: checkNullContent, trigger: "blur" }],
 });
-const submitForm = (formEl: FormInstance | undefined) => {
+
+const updateSelfInformation = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     if (valid) {
-      console.log("submit!");
+      let res = await updateUserSelfInformation(baseInfo);
+      if (res.data.value.code == 20000) {
+        ElMessage({
+          type: "success",
+          message: "修改成功",
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "修改失败",
+        });
+      }
     } else {
-      console.log("error submit!");
+      ElMessage({
+        type: "warning",
+        message: "表单内容不符合规范",
+      });
       return false;
     }
   });
+};
+
+const updatePassword = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.validate(async (valid) => {
+    if (valid) {
+      let res = await updateUserPassword(updatePassInfo);
+      if (res.data.value.code == 20000) {
+        ElMessage({
+          type: "success",
+          message: "发送成功",
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "发送失败",
+        });
+      }
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "表单内容不符合规范",
+      });
+      return false;
+    }
+  });
+};
+
+const sendCode = async () => {
+  if (EMAILREG.test(updatePassInfo.email)) {
+    let res = await sendEmail({ email: updatePassInfo.email, type: 1 });
+    if (res.data.value.code == 20000) {
+      ElMessage({
+        type: "success",
+        message: "发送成功",
+      });
+    } else {
+      ElMessage({
+        type: "error",
+        message: "发送失败",
+      });
+    }
+  } else {
+    ElMessage({
+      type: "warning",
+      message: "请输入正确的邮箱",
+    });
+  }
 };
 </script>
 
