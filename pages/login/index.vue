@@ -14,9 +14,9 @@
           <h2 class="animate__animated animate__bounceInDown">登录</h2>
           <el-form
             ref="ruleFormRef"
-            :model="loginmodel == 0 ? ruleForm : Emailrules"
+            :model="ruleForm"
             status-icon
-            :rules="rules"
+            :rules="loginmodel == 0 ? rules : Emailrules"
             style="width: 90%"
             class="demo-ruleForm"
           >
@@ -28,7 +28,7 @@
                 autocomplete="off"
               />
             </el-form-item>
-            <el-form-item v-if="loginmodel == 0" prop="password">
+            <el-form-item v-show="loginmodel == 0" prop="password">
               <!-- 密码输入框 -->
               <el-input
                 class="elinput"
@@ -44,11 +44,10 @@
               </el-input>
             </el-form-item>
             <!-- 验证码输入框 -->
-            <el-form-item v-if="loginmodel == 1" props="code">
+            <el-form-item v-show="loginmodel == 1" props="code">
               <el-input
                 class="elinput"
                 v-model="ruleForm.code"
-                type="text"
                 placeholder="请输入验证码"
                 autocomplete="off"
               >
@@ -93,6 +92,7 @@ const ruleForm = ref({
   password: "",
   code: "",
 });
+//账号密码验证规则
 const validatePass = (rule: any, value: string, callback: any) => {
   if (value.length !== 11) {
     callback(new Error("请输入11位学号"));
@@ -117,19 +117,21 @@ const EmaildatePass = (rule: any, value: string, callback: any) => {
   }
 };
 const Emaildatecode = (rule: any, value: string, callback: any) => {
-  if (!value) {
+  console.log("🚀 ~ file: index.vue:121 ~ Emaildatecode ~ val:", value);
+  if (value.length === 0) {
     callback(new Error("验证码不能为空"));
   } else {
     callback();
   }
 };
+// ==============================================
 const rules = reactive<FormRules<typeof ruleForm>>({
   username: [{ validator: validatePass, trigger: "blur" }],
   password: [{ validator: validatePass2, trigger: "blur" }],
 });
 const Emailrules = reactive<FormRules<typeof ruleForm>>({
   username: [{ validator: EmaildatePass, trigger: "blur" }],
-  password: [{ validator: Emaildatecode, trigger: "blur" }],
+  code: [{ validator: Emaildatecode, trigger: "blur" }],
 });
 function error() {
   loginanimin.value = true;
