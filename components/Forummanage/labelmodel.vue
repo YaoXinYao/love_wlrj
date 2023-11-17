@@ -82,7 +82,7 @@ import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
 const tagTypes = ["success", "info", "warning", "danger", ""];
 let manage = forumManage();
-let { labelModel, subfieldModel, labels, subfields } = storeToRefs(manage);
+let { labelModel, subfieldModel, labels, subfields} = storeToRefs(manage);
 let ids = 0;
 let deleteNews = ref(false);
 let inputLabel = ref("");

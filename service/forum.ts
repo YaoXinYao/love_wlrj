@@ -41,7 +41,6 @@ class HYRequest {
   put<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "PUT", data, options);
   }
-
   delete<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "DELETE", params, options);
   }
