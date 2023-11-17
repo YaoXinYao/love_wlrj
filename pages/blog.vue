@@ -37,157 +37,133 @@
 </template>
 <script setup lang="ts">
 import gsap from "gsap";
+import { storeToRefs } from "pinia";
+import { getAllblog } from "~/service/homeApi";
+import { useHomestore } from "~/store/home";
 import type { blogRoot } from "~/types/Home";
 //保存选中年级
 const curGrade = ref<string>("2021");
+const homestore = useHomestore();
+const { Allblog } = storeToRefs(homestore);
+const res = await getAllblog();
+homestore.updateblog();
 const newblog = ref<blogRoot>({
   data: {
     "2021": [
       {
         "前端": [
           {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            userBlog: "www.zzh.fyi",
-            groupName: "前端",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "张三",
+            "userId": 4,
+            "userAccount": "20211514126",
+            "userName": "姚欣瑶",
+            "userSexVal": "女",
+            "userQq": "3190493163",
+            "userEmail": "3190493163@qq.com",
+            "userPicture": "未设置",
+            "userClass": "计科211",
+            "userGrade": "2021",
+            "userBlog": "https://www.neflibata.cn/",
+            "groupId": 1,
+            "groupName": "前端",
+            "roleId": 2,
+            "roleName": "大二",
           },
           {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "前端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
-          },
-        ],
-        "后端": [
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
+            "userId": 6,
+            "userAccount": "20211524220",
+            "userName": "郑龙龙",
+            "userSexVal": "男",
+            "userQq": "1878856344",
+            "userEmail": "1878856344@qq.com",
+            "userPicture": "未设置",
+            "userClass": "信工212",
+            "userGrade": "2021",
+            "userBlog": "未设置",
+            "groupId": 1,
+            "groupName": "前端",
+            "roleId": 2,
+            "roleName": "大二",
           },
           {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
+            "userId": 7,
+            "userAccount": "20211544112",
+            "userName": "赵子豪",
+            "userSexVal": "男",
+            "userQq": "1090649095",
+            "userEmail": "1090649095@qq.com",
+            "userPicture": "未设置",
+            "userClass": "通信211",
+            "userGrade": "2021",
+            "userBlog": "未设置",
+            "groupId": 1,
+            "groupName": "前端",
+            "roleId": 2,
+            "roleName": "大二",
+          },
+          {
+            "userId": 8,
+            "userAccount": "20211514330",
+            "userName": "张方方",
+            "userSexVal": "女",
+            "userQq": "2794957189",
+            "userEmail": "2794957189@qq.com",
+            "userPicture": "未设置",
+            "userClass": "计科213",
+            "userGrade": "2021",
+            "userBlog": "未设置",
+            "groupId": 1,
+            "groupName": "前端",
+            "roleId": 2,
+            "roleName": "大二",
           },
         ],
       },
-    ],
-    "2022": [
       {
-        "前端": [
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "张三",
-          },
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "张三",
-          },
-        ],
         "后端": [
           {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
-          },
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
+            "userId": 5,
+            "userAccount": "20211574205",
+            "userName": "赵容庆",
+            "userSexVal": "男",
+            "userQq": "1002800982",
+            "userEmail": "1002800982@qq.com",
+            "userPicture": "未设置",
+            "userClass": "数据212",
+            "userGrade": "2021",
+            "userBlog": "未设置",
+            "groupId": 2,
+            "groupName": "后端",
+            "roleId": 2,
+            "roleName": "大二",
           },
         ],
       },
     ],
     "2023": [
       {
-        "前端": [
+        "第一组": [
           {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "张三",
-          },
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "张三",
-          },
-        ],
-        "后端": [
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
-          },
-          {
-            userId: 4,
-            userAccount: "20211544112",
-            userSexVal: "女",
-            groupName: "后端",
-            userBlog: "www.zzh.fyi",
-            userPicture:
-              "https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp",
-            userName: "赵子豪",
+            "userId": 3,
+            "userAccount": "20211514319",
+            "userName": "李孟瑶",
+            "userSexVal": "女",
+            "userQq": "2801256650",
+            "userEmail": "2801256650@qq.com",
+            "userPicture": "未设置",
+            "userClass": "计科213",
+            "userGrade": "2023",
+            "userBlog": "未设置",
+            "groupId": 3,
+            "groupName": "第一组",
+            "roleId": 2,
+            "roleName": "大二",
           },
         ],
       },
     ],
   },
 });
+newblog.value.data = Allblog?.value as any;
 onMounted(() => {
   loading();
 });

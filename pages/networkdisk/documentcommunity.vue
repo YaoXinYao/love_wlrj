@@ -7,24 +7,20 @@
       </div>
     </div>
     <div class="filelist">
-      <el-table
-        ref="multipleTableRef"
-        :data="tableData"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" />
+      <el-table ref="multipleTableRef" :data="tableData" style="width: 100%">
         <el-table-column label="文件名" min-width="60" show-overflow-tooltip>
           <template #default="scope">
             <svg class="icon" aria-hidden="true">
-              <use :xlink:href="`#${iconfontType(scope.row.filetype)}`"></use>
+              <use
+                :xlink:href="`#${iconfontType(filetype(scope.row.name))}`"
+              ></use>
             </svg>
-            {{ scope.row.date }}</template
+            {{ scope.row.name }}</template
           >
         </el-table-column>
-        <el-table-column property="time" label="时间" min-width="60" />
+        <el-table-column property="uploadDate" label="时间" min-width="60" />
         <el-table-column
-          property="uploaduser"
+          property="uploaderId"
           label="上传者"
           show-overflow-tooltip
         />
@@ -35,74 +31,84 @@
         />
         <el-table-column property="address" label="操作" show-overflow-tooltip>
           <template #default="scope">
-            <ElButton type="primary" plain>下载</ElButton>
-            <ElButton type="info" plain>分享</ElButton>
-            <ElButton type="warning" color="rgb(40,77,213)">收藏</ElButton>
+            <ElButton
+              type="primary"
+              plain
+              @click="() => exportFile(scope.row.url, scope.row.name)"
+              >下载</ElButton
+            >
+            <ElButton
+              type="info"
+              @click="() => copyToClipboard(scope.row.url)"
+              plain
+              >分享</ElButton
+            >
+            <ElButton
+              @click="() => Favoritefilesend(scope.row.id)"
+              type="warning"
+              color="rgb(40,77,213)"
+              >收藏</ElButton
+            >
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="10"
+        :total="1000"
+      />
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import type { FileTyperoot } from "~/types/Home";
-
-const multipleSelection = ref<any[]>([]);
-const handleSelectionChange = (val: any[]) => {
-  multipleSelection.value = val;
-};
-const tableData: any[] = [
+import { Favoritefile } from "~/service/homeApi";
+import type { FileTyperoot, Fileprops } from "~/types/Home";
+function filetype(val: string) {
+  const reg = /\.([a-zA-Z0-9]+)$/;
+  return val.match(reg)![1];
+}
+const tableData: Fileprops[] = [
   {
-    date: "JDK1.8",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "mp4",
-    fileSize: "600kb",
+    id: 28,
+    name: "网易云音乐商城-接口文档.md",
+    format: "other",
+    types: ["Java", "后端"],
+    uploaderId: 7,
+    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
+    collections: 0,
+    isPublic: "公开",
+    uploadDate: "2023-11-17 21:06:59",
   },
   {
-    date: "JDK18",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "exe",
-    fileSize: "600kb",
+    id: 28,
+    name: "网易云音乐商城-接口文档.md",
+    format: "other",
+    types: ["Java", "后端"],
+    uploaderId: 7,
+    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
+    collections: 0,
+    isPublic: "公开",
+    uploadDate: "2023-11-17 21:06:59",
   },
   {
-    date: "中国共产党宣言",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "docx",
-    fileSize: "600kb",
-  },
-  {
-    date: "马克思主义",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "java",
-    fileSize: "600kb",
-  },
-  {
-    date: "信号与系统",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "PPT",
-    fileSize: "600kb",
-  },
-  {
-    date: "时间简史",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "pdf",
-    fileSize: "600kb",
-  },
-  {
-    date: "三体",
-    time: "Tom",
-    uploaduser: "张三",
-    filetype: "mp3",
-    fileSize: "600kb",
+    id: 28,
+    name: "网易云音乐商城-接口文档.md",
+    format: "other",
+    types: ["Java", "后端"],
+    uploaderId: 7,
+    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
+    collections: 0,
+    isPublic: "公开",
+    uploadDate: "2023-11-17 21:06:59",
   },
 ];
+async function Favoritefilesend(id: number) {
+  const res = await Favoritefile(id);
+  if (res.data.value.data === 20000) {
+    ElMessage({ message: res.data.value.message });
+  }
+}
 function iconfontType(val: string) {
   const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
   if (FileType[filetype]) {
@@ -112,10 +118,11 @@ function iconfontType(val: string) {
   }
 }
 </script>
-
 <style scoped lang="scss">
 .documentcommunity {
+  display: flex;
   width: 100%;
+  flex-direction: column;
   height: 100%;
   .documentheader {
     padding-inline: 0.2rem;
@@ -152,6 +159,14 @@ function iconfontType(val: string) {
         transform: translateY(-50%);
       }
     }
+  }
+  .filelist {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>

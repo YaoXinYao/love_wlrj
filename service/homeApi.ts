@@ -6,7 +6,7 @@ import type {
   sendEmailparams,
 } from "~/types/Userlogin";
 import Hyrequire from "./index";
-import type { Homestoreuserinfo } from "~/types/Home";
+import type { blogitem, blogRoot, Homestoreuserinfo } from "~/types/Home";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
@@ -46,4 +46,23 @@ export function getUserinfo2(account: any) {
       account,
     }
   );
+}
+//获取全部博客
+export function getAllblog() {
+  return Hyrequire.request<
+    IResultData<{
+      [key: string]: blogitem[];
+    }>
+  >("/coustom/user/user/selectBlog", "GET");
+}
+//查询所有标签
+export function getAlltag() {
+  return Hyrequire.request("/disk/disk/type/selectAllTypes", "GET");
+}
+//收藏文件
+export function Favoritefile(fileId: number) {
+  return Hyrequire.request("/disk/disk/file/collectionFile", "put", {
+    fileId,
+    userId: Authuserid(),
+  });
 }
