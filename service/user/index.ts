@@ -53,3 +53,41 @@ export const deleteTimetable = (id: string) => {
     }
   );
 };
+
+//修改用户基本信息
+export const updateUserSelfInformation = (props: {
+  blog: string;
+  email: string;
+  qq: string;
+}) => {
+  return hyRequest.put<IResultData<any>>(
+    `/coustom/user/user/updateSelfInformation`,
+    {
+      ...props,
+    }
+  );
+};
+
+//获取当前登录用户
+export const getLoginUser = () => {
+  return hyRequest.get<IResultData<any>>(`/coustom/user/user/getLoginUser`);
+};
+
+//发送验证码（type为0是登陆，1是修改密码）
+export const sendEmail = (props: { email: string; type: number }) => {
+  return hyRequest.post<IResultData<any>>(`/coustom/user/user/sendEmail`, {
+    ...props,
+  });
+};
+
+//修改密码
+export const updateUserPassword = (props: {
+  againPassword: string;
+  code: string;
+  email: string;
+  newPassword: string;
+}) => {
+  return hyRequest.put<IResultData<any>>(`/coustom/user/user/updatePassword`, {
+    ...props,
+  });
+};

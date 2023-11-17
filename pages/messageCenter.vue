@@ -42,8 +42,39 @@
 
 <script setup lang="ts">
 import "animate.css";
+import { onMounted, onBeforeUnmount } from "vue";
+import { Socket, io } from "socket.io-client";
+import type { DefaultEventsMap } from "@socket.io/component-emitter";
+import { useRoute } from "vue-router";
+
 const route = useRoute();
-console.log(route.path);
+let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null;
+
+onMounted(() => {
+  // 创建 socket 实例
+  socket = io(`ws://152.136.54.204:19999/forum/websocket/4`);
+
+  // 监听连接的建立与关闭
+  socket.on("connect", () => {
+    console.log("connect: WebSocket 连接成功~");
+  });
+
+  // 关闭连接的事件
+  socket.on("disconnect", () => {
+    console.log("disconnect: WebSocket 连接关闭！");
+  });
+
+  // 接收服务器发送的消息
+  socket.on("message", (msg) => {
+    console.log(msg);
+  });
+});
+
+onBeforeUnmount(() => {
+  // 销毁实例
+  socket?.close();
+  socket = null;
+});
 </script>
 
 <style lang="scss" scoped>

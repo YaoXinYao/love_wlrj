@@ -325,54 +325,65 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
         type: "warning",
         message: "请填写完整信息",
       });
+    } else {
+      course.editCourse(
+        currentEditCourse.info,
+        currentEditCourse.courseOrder,
+        currentEditCourse.week
+      );
+
+      let { courseBeginDate, courseEndDate, courseIsDouble, courseName } =
+        currentEditCourse.info;
+
+      let courseWeek = weekDay.indexOf(currentEditCourse.week) as number;
+      let props = {
+        courseId: null,
+        courseBeginDate,
+        courseEndDate,
+        courseIsDouble,
+        courseIsDelete: false,
+        courseName,
+        courseOrder: currentEditCourse.courseOrder * 1 + 1,
+        courseWeek,
+        courseUserId: "4",
+      };
+      if (currentEditCourse.info.courseId == "-1") {
+        addTimetable(props).then(async (res) => {
+          if (res.data.value.code === 20000) {
+            ElMessage({
+              type: "success",
+              message: "添加成功",
+            });
+            timetableList.value = await useGetTimetable("4");
+            isEdit.value = false;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "修改失败",
+            });
+          }
+        });
+      } else {
+        updateTimetable({ ...currentEditCourse.info, courseUserId: "4" }).then(
+          async (res) => {
+            if (res.data.value.code === 20000) {
+              ElMessage({
+                type: "success",
+                message: "修改成功",
+              });
+              timetableList.value = await useGetTimetable("4");
+              isEdit.value = false;
+            } else {
+              ElMessage({
+                type: "error",
+                message: "修改失败",
+              });
+            }
+          }
+        );
+      }
     }
   });
-  if (!formValidate) return;
-  isEdit.value = false;
-  course.editCourse(
-    currentEditCourse.info,
-    currentEditCourse.courseOrder,
-    currentEditCourse.week
-  );
-
-  let { courseBeginDate, courseEndDate, courseIsDouble, courseName } =
-    currentEditCourse.info;
-
-  let courseWeek = weekDay.indexOf(currentEditCourse.week) as number;
-  let props = {
-    courseId: null,
-    courseBeginDate,
-    courseEndDate,
-    courseIsDouble,
-    courseIsDelete: false,
-    courseName,
-    courseOrder: currentEditCourse.courseOrder * 1 + 1,
-    courseWeek,
-    courseUserId: "4",
-  };
-  if (currentEditCourse.info.courseId == "-1") {
-    addTimetable(props).then(async (res) => {
-      if (res.data.value.code === 20000) {
-        ElMessage({
-          type: "success",
-          message: "添加成功",
-        });
-        timetableList.value = await useGetTimetable("4");
-      }
-    });
-  } else {
-    updateTimetable({ ...currentEditCourse.info, courseUserId: "4" }).then(
-      async (res) => {
-        if (res.data.value.code === 20000) {
-          ElMessage({
-            type: "success",
-            message: "修改成功",
-          });
-          timetableList.value = await useGetTimetable("4");
-        }
-      }
-    );
-  }
 };
 
 const cellContentStyle = (row: any) => {

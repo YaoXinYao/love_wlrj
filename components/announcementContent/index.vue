@@ -3,15 +3,13 @@ import { reactive } from 'vue';
     <div class="announcement">
         <div class="content">
             <el-timeline>
-                <template v-for="(item,index) in announcementList.value" :key="item.noticeId">
-                    <el-timeline-item center placement="top" :timestamp="item.noticeTime"  >
+                    <el-timeline-item center placement="top" v-for="item in announcementList" :key="item.noticeId" :timestamp="item.noticeTime"  >
                         <el-card @click="con(item)">
-                            <h2>{{ item.type }}</h2>
+                            <h2>{{ item.noticeType }}</h2>
                         </el-card>
                     </el-timeline-item>
-                </template>
             </el-timeline>
-        </div>
+        </div> 
 
     </div>
 </template>
