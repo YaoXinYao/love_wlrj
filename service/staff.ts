@@ -33,7 +33,11 @@ export const selectAllUser = (
 export const exportTemplate = ()=>{
   return hyRequest.request("/zinfo/user/user/exportTemplate","GET",{responseType:'blob'})
 }
-//导入用户
-export const importUser =(params:FormData)=>{
-  return hyRequest.request("/zinfo/user/user/importUser","POST",params)
+//删除单个用户
+export const deleteUser =(userId:number)=>{
+  return hyRequest.request("/zinfo/user/user/deleteUser","DELETE",{userId})
+}
+//删除多个用户
+export const deleteMoreUser =(ids:number[])=>{
+  return hyRequest.request("/zinfo/user/user/deleteMoreUser","DELETE",{ids})
 }

@@ -26,7 +26,7 @@
         <el-button
           size="small"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+          @click="handleDelete(scope.row)"
           >删除</el-button
         >
       </el-table-column>
@@ -61,17 +61,27 @@ const {
   input,
   total,
   signleInfo,
+  signleDelete,
+  isSignle,
+  moreDelete
 } = storeToRefs(staffData);
 const multipleSelection = ref<any[]>([]);
+//选择项改变触发
 const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
+  moreDelete.value = []
+  isSignle.value = true
+  for(let i = 0;i<val.length;i++){
+    moreDelete.value[i] = val[i].userId
+  }
 };
 const handleEdit = (row: any) => {
   signleInfo.value = row;
   editModel.value = true;
 };
-const handleDelete = (index: number, row: any) => {
-  console.log(index, row);
+const handleDelete = ( row: any) => {
+  signleDelete.value = row.userId
+  isSignle.value= false
   deleteModel.value = true;
 };
 //改变当前页

@@ -4,18 +4,9 @@ import {
   selectGroup,
   selectAllUser,
   exportTemplate,
-  importUser,
+  deleteMoreUser,
+  deleteUser,
 } from "~/service/staff";
-export interface staffForm {
-  name: string;
-  code: string;
-  class: string;
-  coolege: string;
-  blog: string;
-  direction: string;
-  grade: string;
-  sex: string;
-}
 export interface Staffs {
   modelState: boolean;
   editModel: boolean;
@@ -27,6 +18,9 @@ export interface Staffs {
   users: any[];
   total: number;
   signleInfo: any;
+  signleDelete:number;
+  moreDelete:number[];
+  isSignle:boolean
 }
 export const useStaffStore = defineStore("staff", {
   state: (): Staffs => {
@@ -41,6 +35,9 @@ export const useStaffStore = defineStore("staff", {
       users: [],
       total: 0,
       signleInfo: {},
+      signleDelete:0,
+      moreDelete:[],
+      isSignle:false
     };
   },
   actions: {
@@ -78,10 +75,16 @@ export const useStaffStore = defineStore("staff", {
       const url = window.URL.createObjectURL(fileBolb);
       return url;
     },
-    //导入用户
-    async addUser(params: FormData) {
-      let { data } = await importUser(params);
-      console.log("导入用户", data.value);
+    //删除单个用户
+    async deleteSignle(userId: number) {
+      let { data } = await deleteUser(userId);
+      return data.value.code
+    },
+    //删除多个用户
+    async deleteMore(ids: number[]) {
+      let { data } = await deleteMoreUser(ids);
+      console.log("删除多个用户", data.value)
+      return data.value.code
     },
   },
 });
