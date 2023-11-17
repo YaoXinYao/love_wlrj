@@ -1,16 +1,16 @@
 <template>
     <div class="content" >
         <div class="header">
-            <Header></Header>
+            <Header @new-value="handleNewValueClick"></Header>
         </div>
         <div class="announcementl">
-            <Content @show-click="handleChangesClick" ></Content>
+            <Content @show-click="handleChangesClick" ref="contentRef" ></Content>
         </div>
         
         <ClientOnly>
             <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%">
                 <template #header>
-                    <h1>{{ announcementCon.title }}</h1>
+                    <h1>{{ announcementCon.noticeTitle ? announcementCon.noticeTitle: announcementCon.noticeType }}</h1>
                     <h4 style="margin-top: 20px;">{{ announcementCon.noticeType }}</h4>
                 </template>
                 <template #footer>
@@ -52,7 +52,7 @@ let announcementCon = ref<anType>({
 })
 
 // announcementCon = handleChangesClick
-
+const contentRef = ref<InstanceType<typeof Content>>()
 
 interface IProps {
     title: string
@@ -69,6 +69,10 @@ function handleChangesClick(flag:any){
     // return flag
 }
 
+function handleNewValueClick(query:any){
+    console.log(query)
+    contentRef.value?.handleAnnouncement(query)
+}
 
 
 useHead({

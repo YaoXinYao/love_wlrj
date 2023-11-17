@@ -27,10 +27,6 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/">
-            <el-icon><document /></el-icon>
-            <template #title>请假管理</template>
-          </el-menu-item>
           <el-menu-item index="/admin/rotationChart">
             <el-icon><document /></el-icon>
             <template #title
@@ -55,11 +51,19 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="7">
+          <el-menu-item index="/admin/leaveling">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/leaveling" @click="skipAdd($event)"
                 >请假管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
+          <el-menu-item index="/admin/attendanceTime">
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/attendanceTime" @click="skipAdd($event)"
+                >考勤时间管理</NuxtLink
               ></template
             >
           </el-menu-item>

@@ -12,6 +12,15 @@ const annoucementStore = defineStore('annoucementStore',{
             let listResult = await getNotice(queryInfo)
             console.log(listResult.data.value.data.records)
             this.announcementList = listResult.data.value.data.records
+            console.log(this.announcementList)
+            for(let item in this.announcementList){
+                let time = this.announcementList[item].noticeTime
+                let times = new Date(time)
+                // console.log(times)
+                time  = times.getFullYear() +'-' + (times.getMonth()+1)+ '-' + times.getDate();
+                // console.log(time)
+                this.announcementList[item].noticeTime = time
+            }
         },
         
     }

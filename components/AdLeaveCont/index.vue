@@ -2,54 +2,68 @@
     <ClientOnly>
         <div class="adLeaveContent">
             <el-table :border="true" :data="checkList">
-                <el-table-column prop="leaveUserId" label="申请人" align="center" width="120px">
+                <el-table-column prop="user.userName" label="申请人" align="center" width="120px">
 
                 </el-table-column>
-                <el-table-column prop="leaveReason" label="请假理由" align="center" >
+                <el-table-column prop="leave.leaveReason" label="请假理由" align="center" >
 
                 </el-table-column>
-                <el-table-column prop="leaveStatus" label="请假类型" align="center" width="100px">
+                <el-table-column prop="leave.leaveType" label="请假类型" align="center" width="100px">
                     <template #default="scope">
-                        <el-tag v-show="scope.row.leaveType == 1" class="ml-1" >病假</el-tag>
-                        <el-tag v-show="scope.row.leaveType == 2" class="ml-1" type="warning">事假</el-tag>
-                        <el-tag v-show="scope.row.leaveType == 3" class="ml-1" type="success">其他</el-tag>
+                        <el-tag  
+                            class="ml-1" 
+                            :type="scope.row.leave.leaveType == 1 ? '': (scope.row.leave.leaveType == 2 ? 'warning' : 'success')" 
+                        >
+                           {{ scope.row.leave.leaveType == 1 ? '病假':
+                              (scope.row.leave.leaveType == 2 ? '事假' : '其他')
+                           }}
+                        </el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="leaveBeginTime" label="请假时间" align="center" >
                     <template #default="scope">
-                        {{ scope.row.leaveBeginTime  }}<br>
+                        {{ scope.row.leave.leaveBeginTime  }}<br>
                         至 <br>
-                        {{ scope.row.leaveEndTime }}
+                        {{ scope.row.leave.leaveEndTime }}
                     </template>
                 </el-table-column>
-                <el-table-column prop="leaveApprovalId" label="审批人" align="center" width="100px">
-                    
-                </el-table-column>
-                <el-table-column prop="leaveType" label="审批状态" align="center" width="120px">
+                <el-table-column prop="approvalUser.userName" label="审批人" align="center" width="100px">
                     <template #default="scope">
-                        <el-tag v-show="scope.row.leaveStatus == 1" class="ml-1" >审核通过</el-tag>
-                        <el-tag v-show="scope.row.leaveStatus == 2" class="ml-1" type="danger">未通过</el-tag>
-                        <el-tag v-show="scope.row.leaveStatus == 0" class="ml-1" type="success">审核中</el-tag>
+                        {{ scope.row.leave.leaveApprovalId == null ? '暂无' : scope.row.approvalUser.userName }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="leave.leaveStatus" label="审批状态" align="center" width="120px">
+                    <template #default="scope">
+                        <el-tag  
+                            class="ml-1" 
+                            :type="scope.row.leave.leaveStatus == 1 ? '': (scope.row.leave.leaveStatus == 2 ? 'warning' : 'success')" 
+                        >
+                           {{ scope.row.leave.leaveStatus == 1 ? '审核通过':
+                              (scope.row.leave.leaveStatus == 2 ? '未通过' : '审核中')
+                           }}
+                        </el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column label="审批" align="center" width="180px">
                     <template #default="scope">
-                        <template v-if="scope.row.leaveStatus == 1">
-                            <el-button  type="primary" :icon="CircleCheck" size="small" disabled  @click="handleEditBtnClick(scope.row)">
+                            <el-button  
+                                type="primary" 
+                                :icon="CircleCheck" 
+                                size="small" 
+                                :disabled="scope.row.leave.leaveStatus == 1 || scope.row.leave.leaveUserId === userinfo.userId || scope.row.leave.leaveStatus == 2 ? true : false"  
+                                @click="handleEditBtnClick(scope.row)"
+                            >
                                 通过
                             </el-button>
-                            <el-button  type="danger" :icon="CircleClose" size="small" disabled  @click="handleDeleteBtnClick(scope.row)">
+                            <el-button  
+                                type="danger" 
+                                :icon="CircleClose" 
+                                size="small" 
+                                :disabled="scope.row.leave.leaveStatus == 1 || scope.row.leave.leaveUserId === userinfo.userId || scope.row.leave.leaveStatus == 2 ? true : false"  
+                                @click="handleDeleteBtnClick(scope.row)"
+                            >
                                 驳回
                             </el-button>
-                        </template>
-                        <template v-if="scope.row.leaveStatus == 0">
-                            <el-button  type="primary" :icon="CircleCheck" size="small"   @click="handleEditBtnClick(scope.row)">
-                                通过
-                            </el-button>
-                            <el-button  type="danger" :icon="CircleClose" size="small"   @click="handleDeleteBtnClick(scope.row)">
-                                驳回
-                            </el-button>
-                        </template>
                     </template>
                 </el-table-column>
             </el-table>
@@ -75,6 +89,7 @@
 
 import {storeToRefs} from 'pinia'
 import checkStore from '@/store/check'
+import {useHomestore} from '@/store/home'
 import {CircleCheck,CircleClose} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import {updateLeave} from '@/service/check/check'
@@ -85,10 +100,13 @@ const small = ref(false)
 const background = ref(false)
 const disabled = ref(false)
 const checklist = checkStore()
+const user = useHomestore()
+
+const {userinfo}  = storeToRefs(user)
+console.log(userinfo.value.userId)
 fetchUserListData({pageIndex:1,pageSize:5,idDesc:true})
 const {allPage,allCount,checkList,pageSize,pageIndex} = storeToRefs(checklist)
-console.log(checkList.value)
-
+console.log(userinfo.value.userId)
 
 const handleSizeChange = (val: number) => {
     let checkList = checklist.currentQuery
@@ -106,6 +124,7 @@ const handleCurrentChange = (val: number) => {
 
 
 
+
 function fetchUserListData(query:any){
 
 checklist.getCheckList(query);
@@ -114,7 +133,7 @@ checklist.getCheckList(query);
 
 
 function handleEditBtnClick(data:any){
-    console.log(data.leaveId)
+    // console.log(data.leave.leaveUserId)
     let query = {
         leaveApprovalId:1,
         leaveId : data.leaveId,
