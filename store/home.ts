@@ -36,6 +36,11 @@ export const useHomestore = defineStore("home", {
         roles: null,
         authorities: [],
       },
+      sendTime: {
+        countdown: 0,
+        CodeStatus: false,
+        time: 0,
+      },
     };
   },
   actions: {

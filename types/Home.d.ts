@@ -66,6 +66,11 @@ export interface HomeStore {
   isRequireanim: boolean;
   user: HomeStoreuser;
   userinfo: Homestoreuserinfo;
+  sendTime: {
+    countdown: number;
+    CodeStatus: boolean;
+    time: number;
+  };
 }
 export interface HomeStoreuser {
   expiresIn: number;

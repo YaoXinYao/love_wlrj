@@ -20,7 +20,7 @@ export function Userloginany(logininfo: loginparams) {
 //发送验证码
 export function sendEmeil(params: sendEmailparams) {
   return Hyrequire.request<IResultData<any>>(
-    "/coustom​/user​/user​/sendEmail",
+    "/coustom/user/user/sendEmail",
     "POST",
     {
       ...params,
