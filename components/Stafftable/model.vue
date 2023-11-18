@@ -10,7 +10,7 @@
       :auto-upload="false"
       accept=".xls,.xlsx"
       drag
-      :headers="{ Authorization: Authtoken() }"
+      :headers="{ c }"
       :before-upload="handelUpload"
       :on-error="errorFun"
       :on-success="successFun"
