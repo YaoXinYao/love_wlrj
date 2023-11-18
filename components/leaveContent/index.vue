@@ -1,40 +1,49 @@
 <template>
     <ClientOnly>
-      <el-table :data="checkList" border >
-        <el-table-column prop="leaveReason" label="请假理由"  align="center" width="200" :cell-style="{'height':'80px','overflow':'auto'}" >
+      <el-table :data="checkList" border  >
+        <el-table-column prop="leave.leaveReason" label="请假理由"  align="center" width="200" :cell-style="{'height':'80px','overflow':'auto'}" >
           <template #default="scope">
                   <span style="display: inline-block;height: max-content;white-space: wrap;line-height: 20px;width: 100%;">
-                      {{ scope.row.leaveReason }}
+                      {{ scope.row.leave.leaveReason }}
                   </span>
           </template>
         </el-table-column>
         <el-table-column style=""  label="请假类型"  align="center" width="100px">
           <template #default="scope">
-              <el-tag class="ml-2" v-if="scope.row.leaveType === 2">事假</el-tag>
-              <el-tag class="ml-2" v-if="scope.row.leaveType === 1">病假</el-tag>
-              <el-tag class="ml-2" v-if="scope.row.leaveType === 3">其他</el-tag>
+            <el-tag  
+                class="ml-1" 
+                :type="scope.row.leave.leaveType == 1 ? '': (scope.row.leave.leaveType == 2 ? 'warning' : 'success')" 
+            >
+                {{ scope.row.leave.leaveType == 1 ? '病假':
+                  (scope.row.leave.leaveType == 2 ? '事假' : '其他')
+                }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column  prop="leaveBeginTime" label="开始时间"  align="center">
           <template #default="scope">
-              {{ scope.row.leaveBeginTime }} <br>
-              至  <br> 
-              {{ scope.row.leaveEndTime  }}
+              {{ scope.row.leave.leaveBeginTime }}
+              至  
+              {{ scope.row.leave.leaveEndTime  }}
           </template>
         </el-table-column>
         <!-- <el-table-column  prop="date2" label="结束时间" align="center" /> -->
-        <el-table-column prop="city" label="批准人" align="center" width="100px">
+        <el-table-column  label="批准人" align="center" width="100px">
           <template #default="scope">
-            <span v-if="scope.row.leaveApprovalId">{{ scope.row.leaveApprovalId }}</span>
-            <span v-else="scope.row.leaveApprovalId">暂无</span>
+            {{ scope.row.leave.leaveApprovalId == null ? '暂无' : scope.row.approvalUser.userName }}
           </template>
         </el-table-column>
         <el-table-column prop="leaveStatus" label="审批" align="center" width="100px">
           <template #default="scope">
               <!-- {{ scope.row[5]}} -->
-              <el-tag class="ml-2" v-if="scope.row.leaveStatus === 0" >审批中</el-tag>
-              <el-tag class="ml-2" v-if="scope.row.leaveStatus === 1" >通过</el-tag>
-              <el-tag class="ml-2" v-if="scope.row.leaveStatus === 2" >驳回</el-tag>
+              <el-tag  
+                  class="ml-1" 
+                  :type="scope.row.leave.leaveStatus == 1 ? '': (scope.row.leave.leaveStatus == 2 ? 'warning' : 'success')" 
+              >
+                  {{ scope.row.leave.leaveStatus == 1 ? '审核通过':
+                    (scope.row.leave.leaveStatus == 2 ? '未通过' : '审核中')
+                  }}
+              </el-tag>
           </template>
         </el-table-column>
 
@@ -57,9 +66,14 @@
 <script lang="ts" setup>
 import {storeToRefs} from 'pinia'
 import checkStore from '@/store/check'
+import {useHomestore} from '@/store/home'
 
 const checklist = checkStore()
-fetchUserListData({pageIndex:1,pageSize:5,idDesc:true})
+const user = useHomestore()
+
+const {userinfo}  = storeToRefs(user)
+console.log(userinfo.value.userId)
+fetchUserListData({userId:userinfo.value.userId,pageIndex:1,pageSize:5,idDesc:true})
 
 const {checkList,allCount,allPage,pageIndex,pageSize,currentQuery}  = storeToRefs(checklist)
 console.log(checkList)
@@ -90,6 +104,8 @@ const handleCurrentChange = (val: number) => {
   fetchUserListData(current)
 }
 
+
+defineExpose({fetchUserListData})
 
 
 </script>
