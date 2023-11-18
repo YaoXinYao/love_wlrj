@@ -2,7 +2,7 @@ import type { UpdatePassType, UserBaseInfoType } from "~/types/User";
 import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 import type { CourseType } from "~/types/Course";
-import type { AddAccessType } from "~/types/Access";
+import type { AddAccessType, MyObject } from "~/types/Access";
 const BASEURL = "http://124.222.153.56:19591";
 //添加课表
 export const addTimetable = (props: CourseType) => {
@@ -88,13 +88,19 @@ export const getAllTypes = () => {
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
-  return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, {
-    ...props,
-  });
+  let obj: MyObject = props;
+  for (let i = 0; i < props.types.length; i++) {
+    obj[`types[${i}].name`] = props.types[i].name;
+    obj[`types[${i}].rate`] = props.types[i].rate;
+  }
+  delete obj["types"];
+
+  return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, obj);
 };
 
 //获取考核数据
 export const getAllAccessService = (props: {
+  name?: string;
   nodePage: number;
   pageSize: number;
 }) => {
@@ -105,7 +111,7 @@ export const getAllAccessService = (props: {
 
 //删除考核
 export const deleteAccessService = (ids: Array<number>) => {
-  return hyRequest.get<IResultData<any>>(`/access/studyPlan/page`, {
+  return hyRequest.delete<IResultData<any>>(`/access/studyPlan/delete`, {
     ids,
   });
 };

@@ -98,16 +98,15 @@ export default defineNuxtConfig({
 
       //考核模块
       "/access": {
-        target: "http://115.159.84.43:8677/assess/",
+        target: "http://115.159.84.43:19491/assess/swagger/assess/",
         changeOrigin: true,
         prependPath: true,
       },
-      //websocket
-      // "/ws": {
-      //   target: "ws://152.136.54.204:19999/",
-      //   ws: true,
-      //   changeOrigin: true,
-      // },
+      "/ws": {
+        target: "ws://115.159.84.43:19491/",
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
   routeRules: {

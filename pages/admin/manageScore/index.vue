@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <AddAccessInfo :dialogVisible="dialogVisible" @addAlert="addAlertHandle" />
+    <AddAccessInfo
+      :dialogVisible="dialogVisible"
+      @addAlert="addAlertHandle"
+      @update_event="updateEvent"
+    />
     <el-form :inline="true" :model="searchKeys">
       <el-form-item label="考核名称"
         ><el-input
@@ -8,7 +12,7 @@
           placeholder="考核名称"
           clearable
       /></el-form-item>
-      <el-form-item label="考核类型"
+      <!-- <el-form-item label="考核类型"
         ><el-select v-model="searchKeys.accessType" placeholder="类型">
           <el-option
             v-for="item in searchKeys.accessType"
@@ -17,8 +21,8 @@
             :value="item.value"
             :disabled="item.disabled"
           /> </el-select
-      ></el-form-item>
-      <el-form-item label="考核类别"
+      ></el-form-item> -->
+      <!-- <el-form-item label="考核类别"
         ><el-select v-model="searchKeys.accessType" placeholder="类别">
           <el-option
             v-for="item in searchKeys.accessType"
@@ -46,14 +50,18 @@
           v-model="searchKeys.accessTarget"
           placeholder="考核对象"
           clearable
-      /></el-form-item>
+      /></el-form-item> -->
       <el-form-item>
         <el-button type="primary">搜索</el-button>
-        <el-button type="warning">重置</el-button>
+        <el-button type="warning" @click="resetInfo">重置</el-button>
         <el-button type="success" @click="addAlert">新增</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="accessInfo" :border="parentBorder" style="width: 100%">
+    <el-table
+      :data="accessInfo.data"
+      :border="parentBorder"
+      style="width: 100%"
+    >
       <el-table-column type="expand">
         <template #default="props">
           <div class="accessInfo">
@@ -118,17 +126,11 @@
       <el-table-column label="操作">
         <template #default="scope">
           <el-button
-            type="warning"
-            plain
-            size="small"
-            style="width: 55px; height: 32px"
-            >编辑</el-button
-          >
-          <el-button
             type="danger"
             plain
             size="small"
             style="width: 55px; height: 32px"
+            @click="deleteAccess(scope.row.id)"
             >删除</el-button
           >
         </template>
@@ -136,46 +138,78 @@
     </el-table>
     <el-pagination
       style="margin-top: 20px"
-      v-model:current-page="pageInfo.currentPage"
-      v-model:page-size="pageInfo.pageSize"
+      v-model:current-page="pageInfo.value.currentPage"
+      v-model:page-size="pageInfo.value.pageSize"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="pageInfo.total"
-      @size-change="handleChange"
-      @current-change="handleChange"
+      :total="pageInfo.value.total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurChange"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { getAllAccessService } from "~/service/user";
+import { deleteAccessService, getAllAccessService } from "~/service/user";
+import { useAccessPageInfoStore } from "~/store/accessPageInfo";
+import { storeToRefs } from "pinia";
 definePageMeta({
   layout: "manag",
 });
 
+const AccessPageInfoStore = useAccessPageInfoStore();
 const dialogVisible = ref(false);
-const pageInfo = reactive({
-  currentPage: 0,
-  pageSize: 2,
-  total: 20,
-});
+const { pageInfo } = storeToRefs(AccessPageInfoStore);
 
-const accessInfoRes = await getAllAccessService({
-  nodePage: pageInfo.currentPage,
-  pageSize: pageInfo.pageSize,
-});
-console.log(accessInfoRes.data.value.data);
-
-let accessInfo = reactive(accessInfoRes.data.value.data.records);
-
-const handleChange = async (val: number) => {
-  let res = await getAllAccessService({
-    nodePage: pageInfo.currentPage,
-    pageSize: pageInfo.pageSize,
+let accessInfo = reactive({ data: undefined });
+const getAccessInfo = async (props: {
+  keyword?: string;
+  currentPage: number;
+  pageSize: number;
+}) => {
+  const accessInfoRes = await getAllAccessService({
+    name: props.keyword,
+    nodePage: props.currentPage,
+    pageSize: props.pageSize,
   });
-  accessInfo = reactive(res.data.value.data.records);
+
+  accessInfo.data = accessInfoRes.data.value.data.records;
+  pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
+  pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
+  pageInfo.value.total = accessInfoRes.data.value.data.total;
+};
+
+const resetInfo = () => {
+  pageInfo.value.currentPage = 1;
+  getAccessInfo({
+    currentPage: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+  });
+};
+
+getAccessInfo({
+  currentPage: pageInfo.value.currentPage,
+  pageSize: pageInfo.value.pageSize,
+});
+
+const handleSizeChange = async (val: number) => {
+  console.log("当前每页大小:", val);
+
+  pageInfo.value.pageSize = val;
+  getAccessInfo({
+    currentPage: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+  });
+};
+const handleCurChange = async (val: number) => {
+  console.log("当前页数", val);
+  pageInfo.value.currentPage = val;
+  getAccessInfo({
+    currentPage: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+  });
 };
 
 let searchKeys = reactive({
@@ -439,6 +473,46 @@ const addAlert = () => {
 
 const addAlertHandle = (props: boolean) => {
   dialogVisible.value = props;
+};
+const updateEvent = (props: boolean) => {
+  if (props) {
+    getAccessInfo({
+      currentPage: pageInfo.value.currentPage,
+      pageSize: pageInfo.value.pageSize,
+    });
+  }
+};
+const deleteAccess = (ids: Array<number>) => {
+  ElMessageBox.confirm("确认要删除该课程吗", "提示", {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+    type: "warning",
+  })
+    .then(async () => {
+      let res = await deleteAccessService(ids);
+      console.log(res);
+      if (res.data.value.code === 20000) {
+        ElMessage({
+          type: "success",
+          message: "删除成功",
+        });
+        getAccessInfo({
+          currentPage: pageInfo.value.currentPage,
+          pageSize: pageInfo.value.pageSize,
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "删除失败",
+        });
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消删除操作",
+      });
+    });
 };
 </script>
 
