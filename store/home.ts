@@ -1,12 +1,8 @@
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 import type { HomeStore, HomeStoreuser } from "~/types/Home";
-<<<<<<< HEAD
 import { getAllblog, getUserinfo2 } from "~/service/homeApi";
 import { getLoginUser } from "~/service/user";
-=======
-import { getAllblog, getUserinfo2 } from "~/service/homeApi";
->>>>>>> origin/master
 export const useHomestore = defineStore("home", {
   state(): HomeStore {
     return {
