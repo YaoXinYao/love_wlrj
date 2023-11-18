@@ -95,6 +95,13 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+
+      //考核模块
+      "/access": {
+        target: "http://115.159.84.43:8677/assess/",
+        changeOrigin: true,
+        prependPath: true,
+      },
       //websocket
       // "/ws": {
       //   target: "ws://152.136.54.204:19999/",
