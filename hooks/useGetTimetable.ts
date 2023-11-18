@@ -1,36 +1,14 @@
 import { getTimetable } from "~/service/user";
 let weekDay = [
-  "sunday",
   "monday",
   "tuesday",
   "wednesday",
   "thursday",
   "friday",
   "saturday",
+  "sunday",
 ];
 
-interface Course {
-  date: number;
-  monday: CourseDetail;
-  tuesday: CourseDetail;
-  wednesday: CourseDetail;
-  thursday: CourseDetail;
-  friday: CourseDetail;
-  saturday: CourseDetail;
-  sunday: CourseDetail;
-}
-
-interface CourseDetail {
-  courseId: string;
-  courseUserId: number;
-  courseWeek: number;
-  courseName: string;
-  courseOrder: number;
-  courseBeginDate: string;
-  courseEndDate: string;
-  courseIsDouble: string;
-  courseIsDelete: boolean;
-}
 export const useGetTimetable = async (userId: string) => {
   let res = await getTimetable(userId);
   let timetableData: any = res.data.value.data;
@@ -39,7 +17,7 @@ export const useGetTimetable = async (userId: string) => {
   for (let i = 0; i < timetableData.length; i++) {
     tableInfo[i].date = i;
     for (let j = 0; j < timetableData[i].length; j++) {
-      tableInfo[i][weekDay[timetableData[i][j].courseWeek]] =
+      tableInfo[i][weekDay[timetableData[i][j].courseWeek-1]] =
         timetableData[i][j];
     }
 

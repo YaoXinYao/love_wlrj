@@ -7,70 +7,75 @@
         width="30%"
         draggable
       >
-        <el-form ref="formRef" :model="accessValidateForm" class="demo-dynamic">
-          <el-form-item
-            prop="name"
-            label="考核名称"
-            :rules="[
-              {
-                required: true,
-                message: '请输入考核名称',
-                trigger: 'blur',
-              },
-            ]"
-          >
-            <el-input v-model="accessValidateForm.name" />
+        <el-form
+          ref="accessInfoRef"
+          :model="accessInfo"
+          class="demo-dynamic"
+          :rules="rules"
+        >
+          <el-form-item prop="plan" label="考核名称">
+            <el-input v-model="accessInfo.plan" placeholder="20字以内" />
           </el-form-item>
-          <el-form-item
-            prop="type"
-            label="考核类型"
-            :rules="[
-              {
-                required: true,
-                message: '请选择考核类型',
-                trigger: 'blur',
-              },
-            ]"
-          >
-            <el-input v-model="accessValidateForm.type" />
+
+          <el-form-item prop="type" label="考核类别">
+            <el-select v-model="accessInfo.type">
+              <el-option label="笔试" value="笔试" />
+              <el-option label="面试" value="面试" />
+            </el-select>
           </el-form-item>
-          <el-form-item
-            prop="accessType"
-            label="考核类别"
-            :rules="[
-              {
-                required: true,
-                message: '请输入考核类别',
-                trigger: 'blur',
-              },
-            ]"
-          >
-            <el-input v-model="accessValidateForm.accessType" />
+          <el-form-item prop="typeId" label="考核类型">
+            <el-select v-model="accessInfo.typeId">
+              <el-option
+                v-for="(t, index) in typeList"
+                :key="index"
+                :label="t.typeName"
+                :value="t.id"
+              />
+            </el-select>
           </el-form-item>
-          <el-form-item
-            prop="accessTime"
-            label="考核时间"
-            :rules="[
-              {
-                required: true,
-                message: '请输入考核时间',
-                trigger: 'blur',
-              },
-            ]"
+          <el-form-item prop="subscribers" label="考核对象">
+            <el-select v-model="accessInfo.subscribers">
+              <el-option
+                v-for="(g, index) in allGrade"
+                :key="index"
+                :label="g"
+                :value="g"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="deadline" label="考核时间"
             ><el-date-picker
-              v-model="accessValidateForm.accessTime"
+              v-model="accessInfo.deadline"
               type="datetime"
               placeholder="请选择考核时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              date-format="YYYY/MM/DD ddd"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              time-format="A hh:mm:ss"
+            />
+          </el-form-item>
+          <el-form-item prop="additional" label="补充说明">
+            <el-input
+              v-model="accessInfo.additional"
+              :rows="2"
+              type="textarea"
+              placeholder="补充..."
             />
           </el-form-item>
           <el-form-item
-            v-for="(item, index) in accessValidateForm.items"
-            :key="item.key"
-            :prop="'items' + index + '.value'"
+            v-for="(item, index) in JSON.parse(accessInfo.types)"
+            :key="item.name"
+            prop="additional"
+            :label="`考核项${index + 1}`"
+            :rules="{
+              required: true,
+              message: '内容不能为空',
+              trigger: 'blur',
+            }"
           >
             <div class="accessInfoInputs">
-              <el-input v-model="item.key" />
-              <el-input v-model="item.value" />
+              <el-input v-model="item.name" />
+              <el-input v-model="item.rate" />
               <span
                 class="mt-2"
                 style="display: inline-block; width: max-content"
@@ -92,7 +97,7 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="submitForm(formRef)"
+            <el-button type="primary" @click="submitForm(accessInfoRef)"
               >完成</el-button
             >
           </span>
@@ -104,7 +109,26 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import type { FormInstance } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
+import { addAccessService, getAllGrade, getAllTypes } from "~/service/user";
+import type {
+  AccessTypesType,
+  AccessItem,
+  AddAccessType,
+} from "~/types/Access";
+let allGrade: Array<string>;
+let typeList: Array<AccessTypesType>;
+onMounted(() => {
+  getAllGrade().then((res) => {
+    console.log(res);
+    allGrade = res.data.value.data;
+  });
+
+  getAllTypes().then((res) => {
+    console.log(res.data.value.data);
+    typeList = res.data.value.data;
+  });
+});
 
 const props = defineProps({
   dialogVisible: {
@@ -124,61 +148,117 @@ watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
 });
-const formRef = ref<FormInstance>();
-const accessValidateForm = reactive<{
-  items: AccessItem[];
-  name: string;
-  accessType: string;
-  type: string;
-  accessTime: string;
-}>({
-  name: "",
-  accessType: "笔试",
-  type: "头脑风暴",
-  accessTime: "2023-11-02",
-  items: [
+
+const accessInfoRef = ref<FormInstance>();
+const accessInfo = reactive<AddAccessType>({
+  plan: "",
+  typeId: undefined,
+  type: "笔试",
+  deadline: "",
+  subscribers: "",
+  additional: "",
+  types: JSON.stringify([
     {
-      key: "选择",
-      value: "",
+      name: "选择",
+      rate: 0,
     },
     {
-      key: "填空",
-      value: "",
+      name: "填空",
+      rate: 0,
     },
     {
-      key: "简答",
-      value: "",
+      name: "简答",
+      rate: 0,
     },
-  ],
+  ]),
 });
 
-interface AccessItem {
-  key: string;
-  value: string;
-}
+const validateTypes = (rule: any, value: any, callback: any) => {
+  if (value.length === 0) {
+    callback(new Error("请添加考核项"));
+  } else {
+    let flag = false;
+    for (let i = 0; i < value.length; i++) {
+      if (value[i].name.trim() != "" && value[i].rate.trim() != "") {
+        flag = true;
+      }
+    }
+    if (!flag) {
+      callback(new Error("考核项内容不能为空"));
+    } else {
+      callback();
+    }
+  }
+};
+
+const validateNull = (rule: any, value: any, callback: any) => {
+  if (value.trim() == "") {
+    callback(new Error("内容不能为空"));
+  } else {
+    callback();
+  }
+};
+
+const validateNumberNull = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    callback(new Error("内容不能为空"));
+  } else {
+    callback();
+  }
+};
+
+const validateNameNull = (rule: any, value: any, callback: any) => {
+  if (value.trim() == "") {
+    callback(new Error("内容不能为空"));
+  } else if (value.trim().length > 20) {
+    callback(new Error("超出最大限度"));
+  } else {
+    callback();
+  }
+};
+
+//校验
+const rules = reactive<FormRules<typeof accessInfo>>({
+  types: [{ validator: validateTypes, trigger: "blur" }],
+  plan: [{ validator: validateNameNull, trigger: "blur" }],
+  type: [{ validator: validateNull, trigger: "blur" }],
+  typeId: [{ validator: validateNumberNull, trigger: "blur" }],
+  deadline: [{ validator: validateNull, trigger: "blur" }],
+  subscribers: [{ validator: validateNull, trigger: "blur" }],
+  additional: [{ validator: validateNull, trigger: "blur" }],
+});
 
 const removeDomain = (item: AccessItem) => {
-  const index = accessValidateForm.items.indexOf(item);
+  const index = JSON.parse(accessInfo.types).indexOf(item);
   if (index !== -1) {
-    accessValidateForm.items.splice(index, 1);
+    JSON.parse(accessInfo.types).splice(index, 1);
   }
 };
 
 const addAccess = () => {
-  accessValidateForm.items.push({
-    key: "",
-    value: "",
+  JSON.parse(accessInfo.types).push({
+    name: "",
+    rate: 0,
   });
 };
 
 const submitForm = (formEl: FormInstance | undefined) => {
+  console.log(accessInfo);
+
   if (!formEl) return;
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     if (valid) {
-      console.log(accessValidateForm);
-      dialogVisible.value = false;
+      console.log(accessInfo);
+
+      let res = await addAccessService(accessInfo);
+      console.log(res);
+
+      // dialogVisible.value = false;
     } else {
-      console.log("error submit!");
+      ElMessage({
+        type: "warning",
+        message: "请完善表单",
+      });
       return false;
     }
   });

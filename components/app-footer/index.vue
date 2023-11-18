@@ -56,9 +56,9 @@
           <p class="tel">1090649095@qq.com</p>
         </div>
         <div class="wetchat">
-          <img src="/images/微信.PNG" alt="" />
+          <img src="/images/111112323.png" alt="" />
           <div class="popbox">
-            <img src="/images/IMG_0273(20231031-211230).JPG" alt="" />
+            <img src="/images/123213213.jpg" alt="" />
           </div>
         </div>
       </div>

@@ -53,7 +53,7 @@
         <el-button type="success" @click="addAlert">新增</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="tableData" :border="parentBorder" style="width: 100%">
+    <el-table :data="accessInfo" :border="parentBorder" style="width: 100%">
       <el-table-column type="expand">
         <template #default="props">
           <div class="accessInfo">
@@ -93,51 +93,89 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="考核名称" prop="name" />
-      <el-table-column label="考核类型" prop="type">
+      <el-table-column label="考核名称" prop="plan" />
+      <el-table-column label="类别" prop="type">
         <template #default="scope"
           ><el-tag size="large">{{ scope.row.type }}</el-tag></template
         >
       </el-table-column>
-      <el-table-column label="考核类别" prop="assessType">
+      <!-- <el-table-column label="考核类型" prop="assessType">
         <template #default="scope"
           ><el-tag size="large" type="success">{{
             scope.row.assessType
           }}</el-tag></template
         >
+      </el-table-column> -->
+      <el-table-column label="发起者" prop="publisher" />
+      <el-table-column label="考核对象" prop="subscribers" />
+      <el-table-column label="考核时间" prop="deadline" />
+      <el-table-column label="描述" prop="additional">
+        <template #default="scope">
+          <span v-if="scope.row.additional">{{ scope.row.additional }}</span>
+          <span v-if="!scope.row.additional">暂无描述</span>
+        </template>
       </el-table-column>
-      <el-table-column label="考核发起者" prop="accessPromoter" />
-      <el-table-column label="考核对象" prop="accessTarget" />
-      <el-table-column label="考核时间" prop="date" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button
+            type="warning"
+            plain
+            size="small"
+            style="width: 55px; height: 32px"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            style="width: 55px; height: 32px"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       style="margin-top: 20px"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
+      v-model:current-page="pageInfo.currentPage"
+      v-model:page-size="pageInfo.pageSize"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="40"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      :total="pageInfo.total"
+      @size-change="handleChange"
+      @current-change="handleChange"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { getAllAccessService } from "~/service/user";
 definePageMeta({
   layout: "manag",
 });
 
 const dialogVisible = ref(false);
-const currentPage = ref(4);
-const pageSize = ref(10);
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
-};
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+const pageInfo = reactive({
+  currentPage: 0,
+  pageSize: 2,
+  total: 20,
+});
+
+const accessInfoRes = await getAllAccessService({
+  nodePage: pageInfo.currentPage,
+  pageSize: pageInfo.pageSize,
+});
+console.log(accessInfoRes.data.value.data);
+
+let accessInfo = reactive(accessInfoRes.data.value.data.records);
+
+const handleChange = async (val: number) => {
+  let res = await getAllAccessService({
+    nodePage: pageInfo.currentPage,
+    pageSize: pageInfo.pageSize,
+  });
+  accessInfo = reactive(res.data.value.data.records);
 };
 
 let searchKeys = reactive({
@@ -164,236 +202,236 @@ let searchKeys = reactive({
 
 const parentBorder = ref(false);
 const childBorder = ref(false);
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "头脑风暴",
-    type: "笔试",
-    assessType: "头脑风暴",
-    accessTarget: "2023级",
-    accessPromoter: "2022级",
-    sonTable: [
-      {
-        姓名: "张三",
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-        comments: [
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-        ],
-      },
-      {
-        姓名: "张三",
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-        comments: [
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-        ],
-      },
-      {
-        姓名: "张三",
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-        comments: [
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-        ],
-      },
-      {
-        姓名: "张三",
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-        comments: [
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-          {
-            name: "person1",
-            commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    date: "2016-05-03",
-    name: "头脑风暴",
-    type: "笔试",
-    assessType: "头脑风暴",
-    accessTarget: "2023级",
-    accessPromoter: "2022级",
-    sonTable: [
-      {
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-      },
-    ],
-  },
-  {
-    date: "2016-05-03",
-    name: "头脑风暴",
-    type: "笔试",
-    assessType: "头脑风暴",
-    accessTarget: "2023级",
-    accessPromoter: "2022级",
-    sonTable: [
-      {
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-      },
-    ],
-    comments: [
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-    ],
-  },
-  {
-    date: "2016-05-03",
-    name: "头脑风暴",
-    type: "笔试",
-    assessType: "头脑风暴",
-    accessTarget: "2023级",
-    accessPromoter: "2022级",
-    sonTable: [
-      {
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-      },
-    ],
-    comments: [
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-    ],
-  },
-  {
-    date: "2016-05-03",
-    name: "头脑风暴",
-    type: "笔试",
-    assessType: "头脑风暴",
-    accessTarget: "2023级",
-    accessPromoter: "2022级",
-    sonTable: [
-      {
-        代码: 0,
-        完成度: 0,
-        基础知识: 0,
-        平时分: 0,
-      },
-    ],
-    comments: [
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-      {
-        name: "person1",
-        commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-      },
-    ],
-  },
-];
+// const accessInfo = [
+//   {
+//     date: "2016-05-03",
+//     name: "头脑风暴",
+//     type: "笔试",
+//     assessType: "头脑风暴",
+//     accessTarget: "2023级",
+//     accessPromoter: "2022级",
+//     sonTable: [
+//       {
+//         姓名: "张三",
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//         comments: [
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//         ],
+//       },
+//       {
+//         姓名: "张三",
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//         comments: [
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//         ],
+//       },
+//       {
+//         姓名: "张三",
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//         comments: [
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//         ],
+//       },
+//       {
+//         姓名: "张三",
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//         comments: [
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//           {
+//             name: "person1",
+//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     date: "2016-05-03",
+//     name: "头脑风暴",
+//     type: "笔试",
+//     assessType: "头脑风暴",
+//     accessTarget: "2023级",
+//     accessPromoter: "2022级",
+//     sonTable: [
+//       {
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//       },
+//     ],
+//   },
+//   {
+//     date: "2016-05-03",
+//     name: "头脑风暴",
+//     type: "笔试",
+//     assessType: "头脑风暴",
+//     accessTarget: "2023级",
+//     accessPromoter: "2022级",
+//     sonTable: [
+//       {
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//       },
+//     ],
+//     comments: [
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//     ],
+//   },
+//   {
+//     date: "2016-05-03",
+//     name: "头脑风暴",
+//     type: "笔试",
+//     assessType: "头脑风暴",
+//     accessTarget: "2023级",
+//     accessPromoter: "2022级",
+//     sonTable: [
+//       {
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//       },
+//     ],
+//     comments: [
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//     ],
+//   },
+//   {
+//     date: "2016-05-03",
+//     name: "头脑风暴",
+//     type: "笔试",
+//     assessType: "头脑风暴",
+//     accessTarget: "2023级",
+//     accessPromoter: "2022级",
+//     sonTable: [
+//       {
+//         代码: 0,
+//         完成度: 0,
+//         基础知识: 0,
+//         平时分: 0,
+//       },
+//     ],
+//     comments: [
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//       {
+//         name: "person1",
+//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+//       },
+//     ],
+//   },
+// ];
 
 const addAlert = () => {
   dialogVisible.value = !dialogVisible.value;

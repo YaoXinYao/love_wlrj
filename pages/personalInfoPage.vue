@@ -8,22 +8,21 @@
       <div class="userAvatar">
         <el-upload
           class="avatar-uploader"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+          action="/coustom/user/user/updatePictureSelf"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
+          :on-error="handleAvatarError"
+          method="put"
+          :headers="{ Authorization: Authtoken() }"
         >
-          <img
-            v-if="imageUrl"
-            src="https://article.biliimg.com/bfs/article/2e4c0a3f6bfbc348feb3634f017ad8651733516338.png"
-            class="avatar"
-          />
+          <img v-if="imageUrl" :src="userinfo.userPicture" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
       </div>
       <div class="userBase">
-        <span class="userName">用户名</span>
-        <span>班级||性别</span>
+        <span class="userName">{{ userinfo.userName }}</span>
+        <span>{{ userinfo.userClass }}|{{ userinfo.userClass }}</span>
       </div>
 
       <!-- 个人信息、课表、成绩、请假、最新公告 -->
@@ -39,20 +38,33 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { Plus } from "@element-plus/icons-vue";
-import { ElMessage, type UploadProps } from "element-plus";
+import {
+  ElMessage,
+  type UploadFile,
+  type UploadFiles,
+  type UploadProps,
+} from "element-plus";
+import { getLoginUser } from "~/service/user";
+import { useHomestore } from "~/store/home";
+import { storeToRefs } from "pinia";
 definePageMeta({
   layout: "person",
 });
+getLoginUser().then((res) => {
+  console.log(res);
+});
 
-const imageUrl = ref(
-  "https://article.biliimg.com/bfs/article/2e4c0a3f6bfbc348feb3634f017ad8651733516338.png"
-);
+const homeStore = useHomestore();
+let { userinfo, user } = storeToRefs(homeStore);
+const imageUrl = ref(userinfo.value.userPicture);
 
-const handleAvatarSuccess: UploadProps["onSuccess"] = (
+const handleAvatarSuccess: UploadProps["onSuccess"] = async (
   response,
   uploadFile
 ) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
+  homeStore.updateUserInfo();
+  ElMessage.success("上传成功");
 };
 
 const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
@@ -62,10 +74,19 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
     ElMessage.error("图片格式只能为jpg、png、webp格式！");
     return false;
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error("Avatar picture size can not exceed 2MB!");
+    ElMessage.error("图片大小不能超过2MB");
     return false;
   }
   return true;
+};
+
+const handleAvatarError = (
+  error: Error,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
+  ElMessage.error("上传失败");
+  console.log(error);
 };
 </script>
 <style lang="scss" scoped>

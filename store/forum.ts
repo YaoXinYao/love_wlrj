@@ -6,6 +6,7 @@ import {
   getSubfield,
   postSubfield,
   deleteSubfield,
+  deletePost
 } from "~/service/forums/admin";
 import {
   addpost,
@@ -57,6 +58,10 @@ export interface forums {
   deleteModel: boolean;
   labels: label[];
   subfields: subfield[];
+  mdatas: any;
+  mtotal:number;
+  postInfos:any;
+  deleteId:number[]
 }
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
@@ -186,14 +191,24 @@ export const forumStore = defineStore("forumInfo", {
       let likes = false;
       let collect = false;
       //判断用户是否点赞
-      const result = await this.addlike(single.postId, 1, "Like", this.userInfo.userId);
+      const result = await this.addlike(
+        single.postId,
+        1,
+        "Like",
+        this.userInfo.userId
+      );
       if (result == 20000) {
         await this.addlike(single.postId, 0, "Like", this.userInfo.userId);
       } else if (result == 53003) {
         likes = true;
       }
       //判断用户是否收藏
-      const res = await this.addlike(single.postId, 1, "Collect", this.userInfo.userId);
+      const res = await this.addlike(
+        single.postId,
+        1,
+        "Collect",
+        this.userInfo.userId
+      );
       if (res == 20000) {
         await this.addlike(single.postId, 0, "Collect", this.userInfo.userId);
       } else if (res == 53003) {
@@ -241,6 +256,10 @@ export const forumManage = defineStore("manage", {
       deleteModel: false,
       labels: [],
       subfields: [],
+      mdatas: [],
+      mtotal:0,
+      postInfos:{},
+      deleteId:[],
     };
   },
   actions: {
@@ -256,14 +275,13 @@ export const forumManage = defineStore("manage", {
       return code;
     },
     //删除标签
-    async labelDelete(ids: number) {
+    async labelDelete(ids: any) {
       const { data } = await deleteLabel(ids);
       const code = data.value?.code;
       return code;
     },
-
-    async subfieldInfo(pageNo: number, pageSize: number) {
-      const { data } = await getSubfield(pageNo, pageSize);
+    async subfieldInfo(pageNo: number, pageSize: number,subfieldId?:number) {
+      const { data } = await getSubfield(pageNo, pageSize,subfieldId);
       this.subfields = data.value?.data.records || [];
     },
     async addSubfield(subName: string) {
@@ -271,10 +289,55 @@ export const forumManage = defineStore("manage", {
       const code = data.value?.code;
       return code;
     },
-    async subfieldDelete(ids: number) {
+    async subfieldDelete(ids: any) {
       const { data } = await deleteSubfield(ids);
       const code = data.value?.code;
       return code;
     },
+    //用于查询发帖用户信息
+    async getUser(id: number) {
+      const { data } = await getUserInfo(id);
+      return data.value?.data;
+    },
+    //查询帖子
+    async getPosts(
+      pageNo: number,
+      pageSize: number,
+      postTitle?: string,
+      postSubId?: number,
+      postContent?: string,
+      postUserId?: number
+    ) {
+      const { data } = await getPost(
+        pageNo,
+        pageSize,
+        postTitle,
+        postSubId,
+        postContent,
+        postUserId
+      );
+      this.mtotal = data.value?.data.total
+      this.mdatas = [];
+      let dataArr = data.value?.data.records || [];
+      for (let i = 0; i < dataArr.length; i++) {
+        const { postImg, ...postData } = dataArr[i];
+        let img: string = dataArr[i].postImg;
+        //分割图片
+        let photos: string[] = img ? img.split(",") : [];
+        //查询分栏
+        const {data} = await getSubfield(1,1,dataArr[i].postSubId)
+        const subName = data.value.data.records[0].subName
+        //查询用户
+        const use = await this.getUser(dataArr[i].postUserId);
+        let userName = use.userName;
+        this.mdatas[i] = { ...postData,userName,subName,photos};
+      }
+    },
+    //删除帖子
+    async deletePosts(ids:number[]){
+    let{data}= await deletePost(ids)
+    console.log("删除帖子",data.value);
+    return data.value?.code
+    }
   },
 });

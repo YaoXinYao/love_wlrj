@@ -5,17 +5,19 @@
       class="userInfoModule animate__animated animate__lightSpeedInLeft"
     >
       <div class="classInfo">
-        <span>班级</span>
-        <span>计科211</span>
+        <span>账号</span>
+        <span>{{ userinfo.userAccount }}</span>
       </div>
+      <div class="qqAccount">
+        <span>qq</span>
+        <span>{{ userinfo.userQq }}</span>
+      </div>
+
       <div class="levelInfo">
         <span>级别</span>
-        <span>2021</span>
+        <span>{{ userinfo.userGrade }}</span>
       </div>
-      <div class="sexInfo">
-        <span>性别</span>
-        <span>女</span>
-      </div>
+
       <div class="otherInfo">
         <span>其它</span>
         <span
@@ -58,6 +60,10 @@
 <script setup lang="ts">
 import { Right } from "@element-plus/icons-vue";
 import "animate.css";
+import { useHomestore } from "../../../store/home";
+import { storeToRefs } from "pinia";
+const homeStore = useHomestore();
+const { userinfo } = storeToRefs(homeStore);
 </script>
 
 <style lang="scss" scoped>
@@ -85,7 +91,7 @@ import "animate.css";
 
   .classInfo,
   .levelInfo,
-  .sexInfo,
+  .qqAccount,
   .otherInfo {
     display: flex;
     flex-direction: column;
