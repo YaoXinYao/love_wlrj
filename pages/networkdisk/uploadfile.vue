@@ -1,9 +1,145 @@
 <template>
-  <div>
-    <h1>上传文件</h1>
+  <div class="upload">
+    <div
+      :class="`uploadfilearea ${isActive ? 'uploadareaActive' : ''}`"
+      @dragenter="handleDragEnter"
+      @dragleave="handleDragOver"
+      @drop="handleDrop"
+      @click="openFile"
+    >
+      <svg
+        t="1700298662718"
+        class="upload-icon"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        p-id="1924"
+        width="100px"
+        height="100px"
+      >
+        <path
+          d="M324.6592 352.13312c7.1168 0 13.34272-2.66752 18.688-8.00768l141.50656-141.51168v443.2128c0 15.12448 11.5712 26.70592 26.7008 26.70592s26.7008-11.58144 26.7008-26.70592V202.61376l141.50656 141.51168c5.34528 5.34016 12.4672 8.00768 18.688 8.00768 6.23616 0 13.35296-2.66752 18.69312-8.00768 10.68032-10.68032 10.68032-27.59168 0-37.38112l-186.9056-186.89536c-0.88576-0.89088-2.66752-2.66752-4.44416-3.5584-0.88576 0-1.77664-0.89088-1.77664-0.89088-0.896-0.88576-1.78688-0.88576-2.67776-1.77664-0.89088 0-1.77664-0.89088-2.66752-0.89088-0.896 0-1.77664-0.89088-2.66752-0.89088a21.67296 21.67296 0 0 0-10.68032 0c-0.89088 0-1.77664 0.89088-2.66752 0.89088-0.89088 0-1.78176 0.89088-2.67264 0.89088-0.89088 0-1.77664 0.89088-2.66752 1.77664-0.89088 0-1.77664 0.89088-1.77664 0.89088-1.78176 0.89088-2.66752 1.78176-4.4544 3.5584L304.18944 306.74432c-10.68032 10.68032-10.68032 27.59168 0 37.38112 7.1168 5.34016 13.34784 8.00768 20.46976 8.00768z"
+          fill="#333333"
+          p-id="1925"
+        ></path>
+        <path
+          d="M929.84832 556.83072c-15.1296 0-26.7008 11.5712-26.7008 26.7008v206.47936c0 38.272-31.15008 69.42208-69.41696 69.42208H189.37856c-38.26688 0-69.41696-31.15008-69.41696-69.42208v-206.47936c0-15.1296-11.5712-26.7008-26.7008-26.7008s-26.69568 11.5712-26.69568 26.7008v206.47936c0 67.6352 55.17824 122.81856 122.81856 122.81856h645.23776c67.64544 0 122.82368-55.18336 122.82368-122.81856v-206.47936c-0.896-15.1296-12.4672-26.7008-27.5968-26.7008z"
+          fill="#333333"
+          p-id="1926"
+        ></path>
+      </svg>
+      <p class="uploadtip">拖拽到此处也可上传</p>
+      <div class="uploadbt">
+        <TransitionButton innertext="上传文件" />
+      </div>
+      <input
+        ref="input"
+        @change="loadingfile"
+        class="uploadinput"
+        type="file"
+        accept="*"
+      />
+    </div>
+    <div class="uploadarea">
+      <Uploaditem
+        v-for="(item, index) in filequeue"
+        :key="index"
+        :file="item"
+      />
+    </div>
   </div>
 </template>
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+import { useDiskstore } from "~/store/disk";
+const input = ref<HTMLInputElement>();
+const isActive = ref(false);
+const disstore = useDiskstore();
+const { filequeue } = storeToRefs(disstore);
+function loadingfile(event: Event) {
+  const inputElement = event.target as HTMLInputElement;
+  const selectedFile = inputElement.files?.[0];
+  if (selectedFile) {
+    disstore.changequeue(selectedFile);
+  }
+}
+function openFile() {
+  input.value?.click();
+}
+function handleDragEnter(event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation(); // 阻止事件冒泡
+  isActive.value = true;
+}
 
-<script setup lang="ts"></script>
+function handleDragOver(event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation(); // 阻止事件冒泡
+  isActive.value = false;
+}
+function handleDrop(event: DragEvent) {
+  event.preventDefault(); // 阻止浏览器默认的拖放行为
+  event.stopPropagation(); // 阻止事件冒泡
+  const files = event.dataTransfer?.files;
+  if (files && files.length > 0) {
+    const selectedFile = files[0];
+    disstore.changequeue(selectedFile);
+  }
+}
+</script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.upload {
+  height: 100%;
+  width: 100%;
+  padding-top: 0.3rem;
+  .uploadfilearea {
+    z-index: 9999;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    padding-top: 0.4rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    width: 70%;
+    height: 3rem;
+    border: 2px dashed #ccc;
+    .upload-icon {
+      margin-bottom: 0.2rem;
+      width: 30px;
+      height: 30px;
+      color: #999;
+      fill: currentColor;
+      vertical-align: -0.15em;
+      overflow: hidden;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    .uploadtip {
+      font-size: 0.14rem;
+      color: #9e9e9e;
+      margin-bottom: 0.2rem;
+    }
+    .uploadbt {
+      margin-top: 0.2;
+      width: 2.3rem;
+      height: 0.6rem;
+    }
+    .uploadinput {
+      display: none;
+    }
+  }
+  .uploadareaActive {
+    border: 2px dashed rgb(40, 77, 213) !important;
+  }
+  .uploadarea {
+    width: 70%;
+    overflow: hidden;
+    min-height: 3rem;
+    margin: auto;
+    height: auto;
+  }
+}
+</style>

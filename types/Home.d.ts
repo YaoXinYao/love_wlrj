@@ -100,6 +100,13 @@ export interface Homestoreuserinfo {
   roles: any;
   authorities: any;
 }
+export interface Filelist {
+  allPage: number;
+  count: number;
+  dataList: Fileprops[];
+  index: number;
+  pageSize: number;
+}
 //文件列表item
 export interface Fileprops {
   id: number;
@@ -111,4 +118,25 @@ export interface Fileprops {
   collections: number;
   isPublic: any;
   uploadDate: string;
+  uploadName: string;
+}
+//标签类型
+export interface Filetag {
+  typeId: number;
+  typeName: string;
+}
+export interface Filetag2 {
+  value: number;
+  label: string;
+}
+//获取文件列表参数
+export interface Filelistprops {
+  index: number;
+  pageSize: number;
+}
+//标签筛选参数
+export interface Tagparams {
+  index: number;
+  pageSize: number;
+  types: string;
 }

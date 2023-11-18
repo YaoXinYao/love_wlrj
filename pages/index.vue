@@ -13,6 +13,9 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useHomestore } from "~/store/home";
+const usehomestore = useHomestore();
+usehomestore.ChangeisRequireanim(true);
 /* useHead({
   script: [
     { src: "https://api.vvhan.com/api/denglong2", async: true },

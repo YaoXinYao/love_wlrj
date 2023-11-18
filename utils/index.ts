@@ -19,42 +19,53 @@ export function debounce<T extends (...args: any[]) => void>(
     }, delay);
   };
 }
-export const exportFile = (
+export const exportFile = async (
   data: string,
   fileName: string,
   _this?: any
-): void => {
+): Promise<void> => {
   // 地址不存在时，禁止操作
   if (!data) return;
-  // 提取文件后缀的正则表达式
-  const extensionPattern = /\.([a-zA-Z0-9]+)$/;
-  const match = fileName.match(extensionPattern);
-  const fileExtension = match ? match[1] : "";
-  // 下载文件并保存到本地
-  const callback = (data: Blob): void => {
+
+  try {
+    // 发起 Fetch 请求获取文件内容
+    const response = await fetch(data);
+
+    // 检查请求是否成功
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    // 提取文件后缀
+    const extensionPattern = /\.([a-zA-Z0-9]+)$/;
+    const match = fileName.match(extensionPattern);
+    const fileExtension = match ? match[1] : "";
+
+    // 下载文件并保存到本地
+    const blob = await response.blob();
+
     // 创建a标签，使用 html5 download 属性下载
     const link = document.createElement("a");
+
     // 创建url对象
-    const objectUrl = window.URL.createObjectURL(new Blob([data]));
+    const objectUrl = window.URL.createObjectURL(blob);
+
     link.style.display = "none";
     link.href = objectUrl;
+
     // 自定义文件名称， fileName
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
+
     // 适当释放url
     window.URL.revokeObjectURL(objectUrl);
-  };
-  // 把接口返回的url地址转换为 blob
-  const xhr = new XMLHttpRequest();
-  xhr.open("get", data, true);
-  xhr.responseType = "blob";
-  xhr.onload = (): void => {
-    // 返回文件流，进行下载处理
-    callback(xhr.response);
-  };
-  xhr.send(); // 不要忘记发送
+  } catch (error) {
+    console.error("Error during file export:", error);
+    // 在实际应用中，你可能希望提供用户有关错误的更详细信息
+  }
 };
+
 export const copyToClipboard = async (text: string): Promise<void> => {
   try {
     // 使用 Clipboard API 将文本复制到剪贴板
@@ -66,3 +77,7 @@ export const copyToClipboard = async (text: string): Promise<void> => {
     ElMessage({ message: "复制连接失败", type: "error" });
   }
 };
+export function filetype2(val: string) {
+  const reg = /\.([a-zA-Z0-9]+)$/;
+  return val.match(reg)![1];
+}

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 import type { HomeStore, HomeStoreuser } from "~/types/Home";
-import { getAllblog, getUserinfo2 } from "~/service/homeApi";
+import { getAllblog, getAlltag, getUserinfo2 } from "~/service/homeApi";
 import { getLoginUser } from "~/service/user";
 export const useHomestore = defineStore("home", {
   state(): HomeStore {
@@ -58,7 +58,6 @@ export const useHomestore = defineStore("home", {
       this.userinfo = res.data.value.data;
       this.user = data;
     },
-
     //更新userinfo
     async updateUserInfo() {
       const res = await getLoginUser();

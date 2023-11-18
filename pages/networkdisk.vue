@@ -58,8 +58,11 @@ useHeader();
       width: 2.5rem;
       padding-inline: 0.1rem;
       display: flex;
+      position: relative;
       padding-block: 0.2rem;
       flex-direction: column;
+      z-index: 99;
+      box-shadow: rgba(0, 0, 0, 0.06) -7px 3px 10px 0px;
       .leftitem {
         cursor: pointer;
         transition-duration: 0.3s;
@@ -81,8 +84,8 @@ useHeader();
       }
     }
     .diskright {
-      width: 80%;
       height: auto;
+      width: 85%;
     }
   }
 }

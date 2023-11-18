@@ -6,7 +6,14 @@ import type {
   sendEmailparams,
 } from "~/types/Userlogin";
 import Hyrequire from "./index";
-import type { blogitem, blogRoot, Homestoreuserinfo } from "~/types/Home";
+import type {
+  blogitem,
+  Filelistprops,
+  Filetag,
+  Homestoreuserinfo,
+  Tagparams,
+} from "~/types/Home";
+import type { Filelist } from "~/types/disk";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
@@ -57,7 +64,10 @@ export function getAllblog() {
 }
 //查询所有标签
 export function getAlltag() {
-  return Hyrequire.request("/disk/disk/type/selectAllTypes", "GET");
+  return Hyrequire.request<IResultData<Filetag[]>>(
+    "/disk/disk/type/selectAllTypes",
+    "GET"
+  );
 }
 //收藏文件
 export function Favoritefile(fileId: number) {
@@ -65,4 +75,22 @@ export function Favoritefile(fileId: number) {
     fileId,
     userId: Authuserid(),
   });
+}
+//获取文件列表
+export function getFilelist(params: Filelistprops) {
+  return Hyrequire.request<IResultData<Filelist>>(
+    "/disk/disk/file/getAllUploadFileList",
+    "GET",
+    {
+      ...params,
+    }
+  );
+}
+//标签筛选
+export function getFileTaglist(params: Tagparams) {
+  console.log(params.types);
+  return Hyrequire.request<IResultData<Filelist>>(
+    `/disk//disk/file/getFileListByTypes?${params.types}&pageSize=${params.pageSize}&index=${params.index}`,
+    "GET"
+  );
 }
