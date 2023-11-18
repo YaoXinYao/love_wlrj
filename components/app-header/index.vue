@@ -96,7 +96,9 @@
           <span>公告</span>
         </div>
         <div class="HeaderNavItem">
-          <span>论坛</span>
+          <NuxtLink to="/forum/home">
+            <span>论坛</span>
+          </NuxtLink>
         </div>
         <div class="HeaderNavItem">
           <span
@@ -121,28 +123,37 @@
       </nav>
 
       <div class="login">
-        <NuxtLink to="/login">
+        <NuxtLink v-if="user.token == ''" to="/login">
           <TransitionButton innertext="登录"></TransitionButton>
         </NuxtLink>
-        <!--  <el-dropdown :hide-on-click="false">
+        <el-dropdown v-if="user.token !== ''" :hide-on-click="false">
           <div class="loginbox" style="">
             <div
               class="boximg"
-              style="
-                background-image: url(https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~80x80.awebp);
-              "
+              :style="{
+                backgroundImage: `url(${
+                  userinfo.userPicture ||
+                  'https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~120x120.awebp'
+                })`,
+              }"
             ></div>
           </div>
 
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item>我的网盘</el-dropdown-item>
-              <el-dropdown-item>上传文件</el-dropdown-item>
-              <el-dropdown-item>退出登录</el-dropdown-item>
+              <el-dropdown-item>
+                <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <NuxtLink to="/networkdisk"> 我的网盘 </NuxtLink>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <NuxtLink to="/admin/staff"> 进入后台 </NuxtLink>
+              </el-dropdown-item>
+              <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
-        </el-dropdown> -->
+        </el-dropdown>
       </div>
     </div>
   </div>
@@ -153,13 +164,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 const homestore = useHomestore(); //获取顶部状态
-const { header, isRequireanim } = storeToRefs(homestore);
+const { header, isRequireanim, user, userinfo } = storeToRefs(homestore);
 const headertype = {
   height: "0.8rem",
   backgroundColor: "white",
   color: "black",
   boxShadow: "-7px 3px 10px 0 rgba(0, 0, 0, 0.06)",
   isSpread: false,
+};
+const exit = () => {
+  homestore.exitlogin();
 };
 //注册插件
 gsap.registerPlugin(ScrollTrigger);

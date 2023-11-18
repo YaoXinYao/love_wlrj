@@ -27,6 +27,7 @@ interface item {
   userEmail?: string;
   userPicture?: string;
   userClass?: string;
+  groupId?: number;
   userGrade?: string;
   userBlog?: string;
   groupName?: string;
@@ -66,6 +67,14 @@ export interface HomeStore {
   isRequireanim: boolean;
   user: HomeStoreuser;
   userinfo: Homestoreuserinfo;
+  sendTime: {
+    countdown: number;
+    CodeStatus: boolean;
+    time: number;
+  };
+  Allblog: {
+    [key: string]: blogitem[];
+  };
 }
 export interface HomeStoreuser {
   expiresIn: number;
@@ -90,4 +99,16 @@ export interface Homestoreuserinfo {
   roleName: any;
   roles: any;
   authorities: any;
+}
+//文件列表item
+export interface Fileprops {
+  id: number;
+  name: string;
+  format: string;
+  types: string[];
+  uploaderId: number;
+  url: string;
+  collections: number;
+  isPublic: any;
+  uploadDate: string;
 }

@@ -45,6 +45,7 @@ useHeader();
 <style scoped lang="scss">
 .networkdisk {
   padding-block: 0.8rem;
+  padding-bottom: 0.1rem;
   padding-top: 1rem;
   height: auto;
   width: 100%;
@@ -52,7 +53,7 @@ useHeader();
   .Mydisk {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: 85vh;
     .diskleft {
       width: 2.5rem;
       padding-inline: 0.1rem;
