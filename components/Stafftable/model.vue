@@ -87,6 +87,8 @@ import type { UploadFile, UploadFiles, UploadInstance } from "element-plus";
 const formLabelWidth = "80px";
 const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
+let formData: any = new FormData();
+//导入文件
 let {
   modelState,
   deleteModel,

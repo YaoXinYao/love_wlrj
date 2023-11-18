@@ -54,7 +54,7 @@ export default defineNuxtConfig({
     "@pinia-plugin-persistedstate/nuxt",
   ],
   piniaPersistedstate: {
-    storage: "sessionStorage",
+    storage: "localStorage",
   },
   build: {
     transpile: ["element-plus/es"],
@@ -92,6 +92,13 @@ export default defineNuxtConfig({
       },
       "/notice/": {
         target: "http://152.136.54.204:19998/notice/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+
+      //考核模块
+      "/access": {
+        target: "http://115.159.84.43:8677/assess/",
         changeOrigin: true,
         prependPath: true,
       },

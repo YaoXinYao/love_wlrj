@@ -19,39 +19,17 @@ import {reactive} from 'vue'
 import annoucementStore from '@/store/announcement'
 import {storeToRefs} from 'pinia'
 
-export interface anType {
-    title:string,
-    type:string,
-    content: string,
-    timestamp: string,
-}
+// export interface anType {
+//     title:string,
+//     type:string,
+//     content: string,
+//     timestamp: string,
+// }
 
 const announceList = annoucementStore()
 handleAnnouncement({pageNo:1,pageSize:9999})
 
 const {announcementList} = storeToRefs(announceList)
-
-
-const announcement = reactive([
-    {
-        title:'考试',
-        type:'考核通知',
-        content: '这次将对你们进行学习计划的第一次考核',
-        timestamp: '2018-04-15',
-    },
-    {
-        title:'会议',
-        type:'会议通知',
-        content: 'Approved',
-        timestamp: '2018-04-13',
-    },
-    {
-        title:'讲课',
-        type:'讲课通知',
-        content: 'Success',
-        timestamp: '2018-04-11',
-    },
-])
 
 
 const isShow = ref(true)
@@ -65,13 +43,13 @@ function handleAnnouncement(query:any){
     announceList.getAnoucementAction(query)
 }
 
-function con(Props:anType){
-    // console.log(Props.content,Props.timestamp,Props.title)
+function con(Props:any){
     console.log(Props)
     emit('ShowClick',Props)
-    // isShow.value = !isShow.value
-    // console.log(isShow.value)
 }
+
+
+defineExpose({handleAnnouncement})
 </script>
 
 <style scoped lang="scss">
@@ -79,6 +57,7 @@ function con(Props:anType){
     overflow: hidden;
     padding: 24px;
     width: 90%;
+    height: 600px;
     display: flex;
     flex-direction: column;
     border: 1px solid #e3e8f7;

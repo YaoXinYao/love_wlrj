@@ -19,7 +19,7 @@ class Hyrequest {
       if (method == "GET") {
         newoptions.query = data || {};
       }
-      if (method == "POST") {
+      if (method == "POST" || method == "put") {
         newoptions.params = data || {};
       }
       useFetch<T>(url, newoptions as any)

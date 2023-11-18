@@ -21,6 +21,7 @@
   "dependencies": {
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.4.11",
+    "@vueuse/core": "^10.6.1",
     "animate.css": "^4.1.1",
     "axios": "^1.2.0",
     "echarts": "^5.4.3",

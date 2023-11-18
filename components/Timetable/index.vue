@@ -203,18 +203,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import { useCourseStore } from "@/store/course";
-import { storeToRefs } from "pinia";
 import { useGetTimetable } from "@/hooks/useGetTimetable";
-import {
-  addTimetable,
-  deleteTimetable,
-  getTimetable,
-  updateTimetable,
-} from "~/service/user";
+import { addTimetable, deleteTimetable, updateTimetable } from "~/service/user";
 import type { FormInstance } from "element-plus/es/components/form";
-
-const course = useCourseStore();
+import type { Course, CourseDetail, DayOfWeekString } from "~/types/Course";
 let isEdit = ref(false);
 const ruleFormRef = ref<FormInstance>();
 
@@ -224,33 +216,19 @@ const props = defineProps({
   othersInfo: Array<CourseDetail[]>,
 });
 
-interface Course {
-  date: number;
-  monday: CourseDetail;
-  tuesday: CourseDetail;
-  wednesday: CourseDetail;
-  thursday: CourseDetail;
-  friday: CourseDetail;
-  saturday: CourseDetail;
-  sunday: CourseDetail;
-}
-
-interface CourseDetail {
-  courseId: string;
-  courseUserId: number;
-  courseWeek: number;
-  courseName: string;
-  courseOrder: number;
-  courseBeginDate: string;
-  courseEndDate: string;
-  courseIsDouble: boolean;
-  courseIsDelete: boolean;
-}
-
 const timetableList = ref<Course[]>([]);
 useGetTimetable("4").then((res) => {
   timetableList.value = res;
 });
+let weekDay = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
 
 let currentEditCourse = reactive({
   courseOrder: 0,
@@ -267,13 +245,6 @@ let currentEditCourse = reactive({
     courseIsDelete: false,
   },
 });
-type DayOfWeekString =
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday"
-  | "saturday";
 
 const handleCellClick = (row: any, column: any, event: any) => {
   if (!props.isEditCourse) {
@@ -292,15 +263,6 @@ const handleCellClick = (row: any, column: any, event: any) => {
     isEdit.value = true;
   }
 };
-let weekDay = [
-  "sunday",
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-];
 
 //表单校验
 const rules = ref({
@@ -326,16 +288,11 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
         message: "请填写完整信息",
       });
     } else {
-      course.editCourse(
-        currentEditCourse.info,
-        currentEditCourse.courseOrder,
-        currentEditCourse.week
-      );
-
       let { courseBeginDate, courseEndDate, courseIsDouble, courseName } =
         currentEditCourse.info;
 
       let courseWeek = weekDay.indexOf(currentEditCourse.week) as number;
+      courseWeek++;
       let props = {
         courseId: null,
         courseBeginDate,
@@ -349,6 +306,8 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
       };
       if (currentEditCourse.info.courseId == "-1") {
         addTimetable(props).then(async (res) => {
+          console.log(res);
+
           if (res.data.value.code === 20000) {
             ElMessage({
               type: "success",

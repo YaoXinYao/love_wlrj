@@ -202,9 +202,12 @@ export interface PlaceholderLabel {
 }
 
 type annoucement = {
-  title: string;
-  content: string;
-  type: string;
+  noticeTitle: string;
+  noticeContent: string;
+  noticeType: string;
+  noticeImg?:string,
+  noticeTime:string,
+  noticeId:number,
 };
 // 公告类型
 export interface Announcement {
