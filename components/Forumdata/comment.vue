@@ -5,52 +5,31 @@
         <div class="cardTop">
           <div class="userInfo">
             <div>
-              <!-- <img v-if="item.head" :src="item.head" /> -->
               <img
-                src="https://img0.baidu.com/it/u=1435639120,2241364006&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"
+                :src="
+                  item.head
+                    ? item.head
+                    : 'https://img0.baidu.com/it/u=1435639120,2241364006&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500'
+                "
                 alt=""
               />
             </div>
             <div>
-              <p>迷雾</p>
-              <p class="time">2023-11-14</p>
+              <p>{{ item.comUserName }}</p>
+              <p class="time">{{ item.comTime }}</p>
             </div>
           </div>
         </div>
         <div class="cardContent">
-          background-image: url("/assets/image/暂无数据.svg");
-          background-repeat: no-repeat;
+          {{ item.comContent }}
         </div>
         <div class="cardImage">
-          <!-- <img v-for="(u, o) in item.photo" :key="o" :src="u" /> -->
-          <img
-            src="https://img0.baidu.com/it/u=1435639120,2241364006&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"
-            alt=""
-          />
+          <img v-for="(u, o) in item.photos" :key="o" :src="u" />
         </div>
         <div class="icon">
-          <el-icon><ChatDotRound color="black" /></el-icon>
-          <!-- <svg
-                  v-if="item.likes == true"
-                  @click="item.likes = false"
-                  t="1699003181186"
-                  class="icon"
-                  viewBox="0 0 1024 1024"
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  p-id="1536"
-                  width="18"
-                  height="18"
-                >
-                  <path
-                    d="M981.714286 250.971429a297.188571 297.188571 0 0 0-65.028572-94.628572 302.171429 302.171429 0 0 0-96-63.428571A303.245714 303.245714 0 0 0 703.657143 69.714286c-56.342857 0-111.314286 15.428571-159.085714 44.571428-11.428571 6.971429-22.285714 14.628571-32.571429 22.971429-10.285714-8.342857-21.142857-16-32.571429-22.971429-47.771429-29.142857-102.742857-44.571429-159.085714-44.571428-40.571429 0-79.885714 7.771429-117.028571 23.2-35.885714 14.857143-68.228571 36.228571-96 63.428571a295.36 295.36 0 0 0-65.028572 94.628572c-15.885714 36.914286-24 76.114286-24 116.457142 0 38.057143 7.771429 77.714286 23.2 118.057143 12.914286 33.714286 31.428571 68.685714 55.085715 104 37.485714 55.885714 89.028571 114.171429 153.028571 173.257143 106.057143 97.942857 211.085714 165.6 215.542857 168.342857l27.085714 17.371429c12 7.657143 27.428571 7.657143 39.428572 0l27.085714-17.371429c4.457143-2.857143 109.371429-70.4 215.542857-168.342857 64-59.085714 115.542857-117.371429 153.028572-173.257143 23.657143-35.314286 42.285714-70.285714 55.085714-104 15.428571-40.342857 23.2-80 23.2-118.057143 0.114286-40.342857-8-79.542857-23.885714-116.457142z"
-                    p-id="1537"
-                    fill="#d81e06"
-                  ></path>
-                </svg> -->
           <svg
             t="1699003334612"
-            class="icon"
+            class="icons"
             viewBox="0 0 1024 1024"
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +49,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ChatDotRound } from "@element-plus/icons-vue";
 const props = defineProps({
   cimmentData: {
     type: Array as () => any[],
@@ -85,11 +63,11 @@ const props = defineProps({
   min-height: 100px;
   list-style: none;
   margin-top: 20px;
+  margin-left: 25px;
   li {
-    min-height: 100px;
+    min-height: 90px;
     width: 98%;
     margin: auto;
-    margin-top: 15px;
     padding-bottom: 15px;
     .cardTop {
       height: 50px;
@@ -124,13 +102,14 @@ const props = defineProps({
     .cardImage {
       img {
         width: 300px;
-        height: 200px;
+        max-height: 500px;
         object-fit: cover;
       }
     }
     .icon {
       overflow: hidden;
       margin-top: 3px;
+      width: 70px;
 
       i {
         font-size: 18px;
