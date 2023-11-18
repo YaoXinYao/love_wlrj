@@ -80,7 +80,7 @@ const hide = ref(true)
 const user = useHomestore()
 const checklist = checkStore()
 const {userinfo}  = storeToRefs(user)
-const {checkList,allCount,allPage,pageIndex,pageSize,currentQuery}  = storeToRefs(checklist)
+const {currentQuery}  = storeToRefs(checklist)
 const contentRef = ref<InstanceType<typeof leaveContent>>()
 console.log(userinfo.value.userId)
 
@@ -172,8 +172,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             forms[item] = dateFormat(beginTime)
         }
     }
-    console.log(forms)
-    console.log(currentQuery)
+    // console.log(forms)
+    // console.log(currentQuery)
     createLeave(forms).then(res=>{
         let code = res.data.value.code
         console.log(code)
