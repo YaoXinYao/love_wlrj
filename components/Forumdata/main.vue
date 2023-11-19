@@ -203,7 +203,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
         if (res == 20000) {
           pagesData.value[index].likes = false;
           ElMessage.success("取消点赞");
-        } else if (res == 53003) {
+        } else if (res == 53004) {
           ElMessage.warning("请勿重复取消");
         } else {
           ElMessage.error("取消点赞失败");
@@ -212,7 +212,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
         if (res == 20000) {
           pagesData.value[index].collect = false;
           ElMessage.success("取消收藏");
-        } else if (res == 53003) {
+        } else if (res == 53004) {
           ElMessage.warning("请勿重复取消");
         } else {
           ElMessage.error("取消收藏失败");

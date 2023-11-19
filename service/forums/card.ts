@@ -51,3 +51,11 @@ export const getComment = (postId: number) => {
 export const postComment = (query:any,params: FormData) => {
   return hyRequest.post<IResultData<any>>("/api/comment/insert",query,{body:params});
 };
+//删除评论
+export const deleteComment = (ids:number[])=>{
+  return hyRequest.delete<IResultData<any>>("/api/comment/delete",{ids})
+}
+//评论点赞
+export const likeComment =(comId:number,status:number,userId:number)=>{
+  return hyRequest.post<IResultData<any>>("/api/comment/likeOrCancel",{comId,status,userId})
+}

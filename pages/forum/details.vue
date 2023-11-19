@@ -20,9 +20,10 @@
           <h4>欢迎大家进行交流</h4>
           <el-input
             type="textarea"
-            v-model="commentNews.comContent"
+            v-model="conten"
             maxlength="600"
             placeholder="留言评论"
+            show-word-limit
             :autosize="{ minRows: 5, maxRows: 8 }"
             input-style="margin-top:10px"
           />
@@ -62,13 +63,13 @@
             </template>
           </el-upload>
           <div class="btn">
-            <el-button type="primary" @click="submitData">提交</el-button>
+            <el-button type="primary" @click="submitData(0, 0)">提交</el-button>
             <el-button type="info" @click="cleardata()">清空</el-button>
           </div>
         </div>
       </div>
     </div>
-    <div class="comment">
+    <div class="comments">
       <div class="disscussHead"><span>评论</span></div>
       <div class="discussNull" v-if="discuss.length == 0">
         <div></div>
@@ -100,10 +101,30 @@
             <img v-for="(u, o) in item.photos" :key="o" :src="u" />
           </div>
           <div class="icon">
-            <el-icon><ChatDotRound color="black" /></el-icon>
+            <el-icon
+              ><ChatDotRound color="black" @click="addCom(item.comId)"
+            /></el-icon>
             <svg
+              v-if="item.likes == true"
+              @click="comLike(item.comId,0,index)"
+              t="1699003181186"
+              class="icon"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="1536"
+            >
+              <path
+                d="M981.714286 250.971429a297.188571 297.188571 0 0 0-65.028572-94.628572 302.171429 302.171429 0 0 0-96-63.428571A303.245714 303.245714 0 0 0 703.657143 69.714286c-56.342857 0-111.314286 15.428571-159.085714 44.571428-11.428571 6.971429-22.285714 14.628571-32.571429 22.971429-10.285714-8.342857-21.142857-16-32.571429-22.971429-47.771429-29.142857-102.742857-44.571429-159.085714-44.571428-40.571429 0-79.885714 7.771429-117.028571 23.2-35.885714 14.857143-68.228571 36.228571-96 63.428571a295.36 295.36 0 0 0-65.028572 94.628572c-15.885714 36.914286-24 76.114286-24 116.457142 0 38.057143 7.771429 77.714286 23.2 118.057143 12.914286 33.714286 31.428571 68.685714 55.085715 104 37.485714 55.885714 89.028571 114.171429 153.028571 173.257143 106.057143 97.942857 211.085714 165.6 215.542857 168.342857l27.085714 17.371429c12 7.657143 27.428571 7.657143 39.428572 0l27.085714-17.371429c4.457143-2.857143 109.371429-70.4 215.542857-168.342857 64-59.085714 115.542857-117.371429 153.028572-173.257143 23.657143-35.314286 42.285714-70.285714 55.085714-104 15.428571-40.342857 23.2-80 23.2-118.057143 0.114286-40.342857-8-79.542857-23.885714-116.457142z"
+                p-id="1537"
+                fill="#d81e06"
+              ></path>
+            </svg>
+            <svg
+              v-if="item.likes == false"
+              @click="comLike(item.comId,1,index)"
               t="1699003334612"
-              class="icons"
+              class="icon"
               viewBox="0 0 1024 1024"
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
@@ -115,8 +136,13 @@
                 p-id="1744"
               ></path>
             </svg>
-            <span>展开全部</span>
-            <sapn>删除</sapn>
+            <span style="margin: 0">{{ item.comLike }}</span>
+            <span v-if="item.children.length != 0">展开全部</span>
+            <span
+              v-if="(item.comUserId = userInfo.userId)"
+              @click="deleteCom(item.comId)"
+              >删除</span
+            >
           </div>
           <ForumdataComment
             v-if="item.children.length != 0"
@@ -127,6 +153,57 @@
     </div>
     <el-dialog v-model="dialogVisible" style="max-width: 400px">
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
+    </el-dialog>
+    <el-dialog v-model="commentVisible" style="max-width: 450px">
+      <h4>欢迎大家进行交流</h4>
+      <el-input
+        type="textarea"
+        v-model="conten"
+        maxlength="600"
+        placeholder="留言评论"
+        show-word-limit
+        :autosize="{ minRows: 5, maxRows: 8 }"
+        input-style="margin-top:10px"
+      />
+      <el-upload
+        class="uploadimg"
+        action=""
+        list-type="picture-card"
+        :auto-upload="false"
+        :multiple="true"
+        accept="image/*"
+        v-model:file-list="formImage.files"
+      >
+        <el-icon><Plus /></el-icon>
+        <template #file="{ file }">
+          <div>
+            <img
+              class="el-upload-list__item-thumbnail"
+              :src="file.url"
+              alt=""
+            />
+            <span class="el-upload-list__item-actions">
+              <span
+                class="el-upload-list__item-preview"
+                @click="handlePictureCardPreview(file)"
+              >
+                <el-icon><zoom-in /></el-icon>
+              </span>
+              <span
+                v-if="!disabled"
+                class="el-upload-list__item-delete"
+                @click="handleRemove(file)"
+              >
+                <el-icon><Delete /></el-icon>
+              </span>
+            </span>
+          </div>
+        </template>
+      </el-upload>
+      <div class="btn">
+        <el-button type="primary" @click="sureCom">提交</el-button>
+        <el-button type="info" @click="cleardata()">清空</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -143,6 +220,7 @@ let commentNews = reactive<any>({
   comRootId: 0,
   comUserId: 8,
 });
+let conten = ref("");
 let formImage = reactive<any>({
   files: [],
 });
@@ -150,15 +228,18 @@ let comImg = ref<any[]>([]);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
+let commentVisible = ref(false);
 let forums = forumStore();
-const { singleData, discuss } = storeToRefs(forums);
+const { singleData, discuss, userInfo } = storeToRefs(forums);
 let data = useRoute().query.data;
 commentNews.comPostId = data;
 onMounted(() => {
   let id = Number(data);
   forums.getUser(8);
   forums.getSingle(id);
-  forums.selectComment(id);
+  setTimeout(() => {
+    forums.selectComment(id);
+  }, 1000);
 });
 //删除图片
 const handleRemove = (file: UploadFile) => {
@@ -176,40 +257,104 @@ const handlePictureCardPreview = (file: UploadFile) => {
 };
 //清空数据
 function cleardata() {
-  commentNews.comContent = "";
+  conten.value = "";
   comImg.value = [];
   formImage.files = [];
 }
-//查询评论
-function getCommend() {
-  forums.selectComment(Number(data));
-}
 //发布评论
-const submitData = () => {
+const submitData = (comFatherId: number, comRootId: number) => {
   let jage = true;
   let formData = new FormData();
   comImg.value = [];
-  for (let i = 0; i < formImage.files.length; i++) {
-    jage = formImage.files[i].raw.type.startsWith("image/");
-    if (!jage) {
-      ElMessage.warning("文件类型错误");
-      i = formImage.files.length;
+  let reg = /^\s+$/g;
+  if (!reg.test(conten.value)) {
+    if (formImage.files.length == 0 && conten.value == "") {
+      ElMessage.warning("评论数据为空");
     } else {
-      comImg.value.push(formImage.files[i].raw);
-      formData.append(`comImg[${i}]`, formImage.files[i].raw);
-    }
-  }
-  if (jage) {
-    forums.addComment(commentNews, formData).then((res) => {
-      if (res == 20000) {
-        ElMessage.success("评论成功");
-        getCommend();
-      } else {
-        ElMessage.error("评论失败");
+      for (let i = 0; i < formImage.files.length; i++) {
+        jage = formImage.files[i].raw.type.startsWith("image/");
+        if (!jage) {
+          ElMessage.warning("文件类型错误");
+          i = formImage.files.length;
+        } else {
+          comImg.value.push(formImage.files[i].raw);
+          formData.append(`comImg[${i}]`, formImage.files[i].raw);
+        }
       }
-    });
+      if (jage) {
+        commentNews.comContent = conten.value;
+        commentNews.comRootId = comRootId;
+        commentNews.comFatherId = comFatherId;
+        forums.addComment(commentNews, formData).then((res) => {
+          if (res == 20000) {
+            ElMessage.success("评论成功");
+            forums.selectComment(Number(data));
+            conten.value = "";
+            comImg.value = [];
+            formImage.files = [];
+          } else {
+            ElMessage.error("评论失败");
+          }
+        });
+      }
+    }
+  } else {
+    ElMessage.warning("输入的内容为空格");
   }
 };
+//删除评论
+const deleteCom = (ids: number) => {
+  let arr = [];
+  arr.push(ids);
+  forums.deleteComments(arr).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("删除成功");
+      let index = discuss.value.findIndex((item) => {
+        if (item.comId == ids) {
+          return true;
+        }
+      });
+      discuss.value.splice(index, 1);
+    } else {
+      ElMessage.error("删除失败");
+    }
+  });
+};
+//添加评论弹窗
+const addCom = (id: number) => {
+  commentVisible.value = true;
+  commentNews.comFatherId = id;
+  commentNews.comRootId = id;
+};
+//确认添加
+const sureCom = () => {
+  submitData(commentNews.comFatherId, commentNews.comRootId);
+  commentVisible.value = false;
+};
+//点赞
+function comLike(comId: number, status: number, index: number) {
+  forums.LikesComment(comId, status, userInfo.value.userId).then((res) => {
+    if (status == 1) {
+      if (res == 20000) {
+        discuss.value[index].likes = true;
+        ElMessage.success("点赞成功");
+      } else if (res == 53003) {
+        ElMessage.warning("请勿重复点赞");
+      } else {
+        ElMessage.error("点赞失败");
+      }
+    } else {
+      if (res == 20000) {
+        discuss.value[index].likes = false;
+        ElMessage.success("取消点赞");
+      } else if (res == 53004) {
+        ElMessage.warning("请勿重复取消");
+      } else {
+        ElMessage.error("取消点赞失败");
+      }
+    }
+  });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -288,7 +433,7 @@ const submitData = () => {
     background-position: center;
   }
 }
-.comment {
+.comments {
   max-width: 1100px;
   margin: 0px auto;
   padding: 0 20px 0 20px;
@@ -370,6 +515,9 @@ const submitData = () => {
           margin-left: 20px;
           cursor: pointer;
         }
+        span:hover {
+          color: #03a4f6;
+        }
       }
     }
   }
@@ -378,6 +526,11 @@ const submitData = () => {
   overflow: hidden;
   img {
     width: 100%;
+  }
+  .uploadimg {
+    margin: 10px 10px 10px 0;
+    max-width: 90%;
+    overflow: hidden;
   }
 }
 </style>
