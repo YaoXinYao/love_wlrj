@@ -30,6 +30,17 @@ export const useDiskstore = defineStore("disk", {
       curIndex2: 1,
       //上传文件
       filequeue: [],
+      //进度
+      down: {
+        isOpen: false,
+        downProgress: 1,
+        //文件大小
+        downSize: "",
+        //下载速度
+        downSpend: "",
+        //正在下载的文件信息
+        downfile: "",
+      },
     };
   },
   actions: {
@@ -54,7 +65,6 @@ export const useDiskstore = defineStore("disk", {
       });
       this.Filelist = res.data.value.data;
       this.Loading = false;
-      console.log(this.Filelist);
     },
     async getNameFile() {
       this.Loading2 = true;
@@ -67,18 +77,29 @@ export const useDiskstore = defineStore("disk", {
     },
     async changequeue(file: File) {
       if (this.filequeue.length >= 5) {
-        ElMessage({ message: "不能超过五个", type: "warning" });
+        ElMessage({ message: "不能超过五个", type: "info" });
       } else {
         this.filequeue.push(file);
+        ElMessage({
+          message: `${file.name}已添加`,
+          type: "success",
+          offset: 64,
+        });
       }
     },
     async deletequeue(filename: string) {
-      const copyqueue = this.filequeue;
-      const newarr = copyqueue.filter((item) => {
-        if (item.name !== filename) return true;
+      const copyQueue = [...this.filequeue]; // 使用扩展运算符复制数组以避免直接修改原始数组
+      const newArr = copyQueue.filter((item) => {
+        return item.name !== filename;
       });
-      console.log(newarr);
-      this.filequeue = newarr;
+      this.filequeue = newArr;
+    },
+    async changeProgress(val: number) {
+      if (val >= 100) {
+        this.down.isOpen = false;
+        this.down.downProgress = 0;
+        ElMessage({ message: "下载完成", type: "success" });
+      }
     },
   },
 });

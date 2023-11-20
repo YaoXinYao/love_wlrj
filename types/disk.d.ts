@@ -11,6 +11,13 @@ export interface Diskstore {
   Loading2: boolean;
   curIndex2: number;
   filequeue: File[];
+  down: {
+    isOpen: boolean;
+    downProgress: number;
+    downSize: string;
+    downSpend: string;
+    downfile: string;
+  };
 }
 //文件列表item
 export interface Filelist {
@@ -23,4 +30,9 @@ export interface Filelist {
 export interface Filetag2 {
   value: number;
   label: string;
+}
+export interface uploadfileType {
+  fileTypeIdList: number[];
+  uploaderId: number;
+  uploadName: string;
 }

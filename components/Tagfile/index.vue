@@ -32,7 +32,7 @@
           <ElButton
             type="primary"
             plain
-            @click="() => exportFile('scope.row.url', scope.row.name)"
+            @click="() => downFile(scope.row.url, scope.row.name)"
             >下载</ElButton
           >
           <ElButton
@@ -58,6 +58,7 @@
       layout="sizes, prev, pager, next"
       :total="Filelist.count"
     />
+    <DownCom />
   </div>
 </template>
 
@@ -67,7 +68,7 @@ import { Favoritefile } from "~/service/homeApi";
 import { storeToRefs } from "pinia";
 import { useDiskstore } from "~/store/disk";
 const diskstore = useDiskstore();
-const { Filelist, Pagesize, Loading, curIndex } = storeToRefs(diskstore);
+const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
 function iconfontType(val: string) {
   const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
   if (FileType[filetype]) {
@@ -86,8 +87,26 @@ function filetype(val: string) {
   const reg = /\.([a-zA-Z0-9]+)$/;
   return val.match(reg)![1];
 }
+function downFile(url: string, name: string) {
+  down.value.isOpen = true;
+  exportFile(
+    url,
+    name,
+    (progress, spend) => {
+      down.value.downSpend = Math.floor(spend / 1024) + " kb/s";
+      diskstore.changeProgress(progress);
+      down.value.downProgress = Math.floor(progress);
+      if (progress >= 100) {
+        down.value.isOpen = false;
+      }
+    },
+    //文件大小
+    (size) => {
+      down.value.downSize = size;
+    }
+  );
+}
 </script>
-
 <style scoped lang="scss">
 .filelist {
   display: flex;

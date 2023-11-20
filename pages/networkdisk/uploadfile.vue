@@ -4,7 +4,8 @@
       :class="`uploadfilearea ${isActive ? 'uploadareaActive' : ''}`"
       @dragenter="handleDragEnter"
       @dragleave="handleDragOver"
-      @drop="handleDrop"
+      @drop.prevent="handleDrop"
+      @dragover.prevent
       @click="openFile"
     >
       <svg
@@ -28,15 +29,16 @@
           p-id="1926"
         ></path>
       </svg>
-      <p class="uploadtip">拖拽到此处也可上传</p>
+      <p class="uploadtip">拖拽到此处也可添加</p>
       <div class="uploadbt">
-        <TransitionButton innertext="上传文件" />
+        <TransitionButton innertext="添加文件" />
       </div>
       <input
         ref="input"
         @change="loadingfile"
         class="uploadinput"
         type="file"
+        multiple
         accept="*"
       />
     </div>
@@ -47,10 +49,14 @@
         :file="item"
       />
     </div>
+    <div class="uploadbt2" @click="uploadBt" v-show="filequeue.length !== 0">
+      <TransitionButton innertext="开始上传" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { uploadfile } from "~/service/disk";
 import { useDiskstore } from "~/store/disk";
 const input = ref<HTMLInputElement>();
 const isActive = ref(false);
@@ -58,36 +64,49 @@ const disstore = useDiskstore();
 const { filequeue } = storeToRefs(disstore);
 function loadingfile(event: Event) {
   const inputElement = event.target as HTMLInputElement;
-  const selectedFile = inputElement.files?.[0];
+  const selectedFile = inputElement.files;
   if (selectedFile) {
-    disstore.changequeue(selectedFile);
+    let len = selectedFile.length;
+    for (let i = 0; i < len; i++) {
+      disstore.changequeue(selectedFile[i]);
+    }
   }
 }
 function openFile() {
   input.value?.click();
 }
 function handleDragEnter(event: DragEvent) {
-  event.preventDefault();
-  event.stopPropagation(); // 阻止事件冒泡
   isActive.value = true;
 }
-
 function handleDragOver(event: DragEvent) {
-  event.preventDefault();
-  event.stopPropagation(); // 阻止事件冒泡
   isActive.value = false;
 }
 function handleDrop(event: DragEvent) {
   event.preventDefault(); // 阻止浏览器默认的拖放行为
-  event.stopPropagation(); // 阻止事件冒泡
   const files = event.dataTransfer?.files;
   if (files && files.length > 0) {
-    const selectedFile = files[0];
-    disstore.changequeue(selectedFile);
+    let len = files.length;
+    for (let i = 0; i < len; i++) {
+      disstore.changequeue(files[i]);
+    }
   }
+  isActive.value = false;
 }
+function progress(obj: any) {
+  console.log(obj);
+}
+const uploadBt = async () => {
+  const res = await uploadfile(
+    {
+      uploaderId: 7,
+      uploadName: "赵子豪",
+      fileTypeIdList: [1, 2],
+    },
+    filequeue.value[0],
+    progress
+  );
+};
 </script>
-
 <style scoped lang="scss">
 .upload {
   height: 100%;
@@ -136,10 +155,13 @@ function handleDrop(event: DragEvent) {
   }
   .uploadarea {
     width: 70%;
-    overflow: hidden;
-    min-height: 3rem;
+    min-height: 2rem;
+    overflow-y: auto;
     margin: auto;
-    height: auto;
+  }
+  .uploadbt2 {
+    width: 3rem;
+    margin: auto;
   }
 }
 </style>

@@ -42,7 +42,7 @@ export default defineNuxtConfig({
         },
         {
           type: "text/javascript",
-          src: "/staticjs/font_4330669_qlx1o97szjn.js",
+          src: "/staticjs/font_4330669_ng1m4irqeb.js",
         },
       ],
       noscript: [{ children: "Javascript is required" }],
