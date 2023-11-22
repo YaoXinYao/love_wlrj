@@ -1,19 +1,37 @@
 <template>
-  <div class="main" @scroll="handleScroll">
+  <div class="main">
     <div class="title">相关帖子</div>
     <ul class="posts">
       <li class="card" v-for="(item, index) in pagesData" :key="index">
         <div class="cardPhotos">
-          <NuxtLink @click="navigateTo({path:'/forum/details',query:{data:item.postId}})">
+          <NuxtLink
+            @click="
+              navigateTo({
+                path: '/forum/details',
+                query: { data: item.postId },
+              })
+            "
+          >
             <img
-              :src="item.photos.length ? item.photos[0] : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'"
+              :src="
+                item.photos.length
+                  ? item.photos[0]
+                  : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'
+              "
             />
           </NuxtLink>
         </div>
         <div class="cardInfo">
-          <NuxtLink @click="navigateTo({path:'/forum/details',query:{data:item.postId}})" class="cardTitle">{{
-            item.postTitle
-          }}</NuxtLink>
+          <NuxtLink
+            @click="
+              navigateTo({
+                path: '/forum/details',
+                query: { data: item.postId },
+              })
+            "
+            class="cardTitle"
+            >{{ item.postTitle }}</NuxtLink
+          >
           <div class="cardUser">
             发表于<span>{{ item.postTime }}</span
             >|<span>{{ item.userName }}</span>
@@ -80,16 +98,13 @@
               <span>{{ item.postCollect }}</span>
             </li>
             <li>
-              <el-icon><Sunny color="#ca5120"/></el-icon
+              <el-icon><Sunny color="#ca5120" /></el-icon
               ><span>{{ item.postView }}</span>
             </li>
           </ul>
         </div>
       </li>
     </ul>
-    <div class="footer">
-      <span>{{ textLoading }}</span>
-    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -97,15 +112,21 @@ import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource,userInfo } =
+const { datas, pages, uploadRender, postSubId, postSource, userInfo } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
-let isLoading = ref(false);
-let textLoading = ref("加载中...");
+let isLoading = ref(true);
 onMounted(() => {
-  fetchData();
+  forums.getUser(8)
+  setTimeout(()=>{
+    fetchData();
+  },1000)
+  window.addEventListener("scroll",handleScroll)
 });
+onBeforeUnmount(()=>{
+  window.removeEventListener("scroll",handleScroll)
+})
 //查询帖子
 function fetchData() {
   if (postSource.value && postSubId.value != 0) {
@@ -115,47 +136,48 @@ function fetchData() {
         if (res) {
           pagesData.value = [...pagesData.value, ...res];
         }
+        isLoading.value = false;
       });
   } else if (!postSource.value && postSubId.value != 0) {
     forums.selectPost(pageNo.value, 10, "", postSubId.value).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
+      isLoading.value = false;
     });
   } else if (postSource.value && postSubId.value == 0) {
     forums.selectPost(pageNo.value, 10, postSource.value).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
+      isLoading.value = false;
     });
   } else if (!postSource.value && postSubId.value == 0) {
     forums.selectPost(pageNo.value, 10).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
+      isLoading.value = false;
     });
   }
   pageNo.value++;
-  isLoading.value = false;
   if (pageNo.value > pages.value) {
     isLoading.value = true;
-    setTimeout(() => {
-      textLoading.value = "已经到底了";
-    }, 4000);
   }
 }
-const handleScroll = () => {
+function handleScroll(){
   const scrollY = window.scrollY;
   const scrollHeight = document.documentElement.scrollHeight;
   const windowHeight = window.innerHeight;
-  if (scrollHeight - (scrollY + windowHeight) < 20 && !isLoading.value) {
-    isLoading.value = true;
+  let distanceToBottom =scrollHeight - (scrollY + windowHeight) 
+  
+  if (distanceToBottom < 100 && !isLoading.value) {
     fetchData();
   }
 };
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
-  forums.addlike(postId, status, type,userInfo.value.userId).then((res) => {
+  forums.addlike(postId, status, type, userInfo.value.userId).then((res) => {
     if (status == 1) {
       if (type == "Like") {
         if (res == 20000) {
@@ -181,7 +203,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
         if (res == 20000) {
           pagesData.value[index].likes = false;
           ElMessage.success("取消点赞");
-        } else if (res == 53003) {
+        } else if (res == 53004) {
           ElMessage.warning("请勿重复取消");
         } else {
           ElMessage.error("取消点赞失败");
@@ -190,7 +212,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
         if (res == 20000) {
           pagesData.value[index].collect = false;
           ElMessage.success("取消收藏");
-        } else if (res == 53003) {
+        } else if (res == 53004) {
           ElMessage.warning("请勿重复取消");
         } else {
           ElMessage.error("取消收藏失败");
@@ -235,6 +257,7 @@ watch(datas, (newValue, oldValue) => {
   width: 100%;
   min-height: 100px;
   list-style: none;
+  margin-bottom: 40px;
   .card {
     width: 98%;
     min-height: 16em;
@@ -272,7 +295,7 @@ watch(datas, (newValue, oldValue) => {
         cursor: pointer;
       }
       .cardUser {
-        color: rgb(251 253 255 / 75%);
+        color: rgb(125 2 2 / 75%);
         font-size: 14px;
         span {
           margin: 0 4px;
@@ -303,11 +326,10 @@ watch(datas, (newValue, oldValue) => {
           margin-top: 5px;
           cursor: pointer;
         }
-        svg{
+        svg {
+          width: 18px;
+          height: 18px;
           cursor: pointer;
-        }
-        .icon {
-          margin-top: 4px;
         }
       }
     }
@@ -326,7 +348,7 @@ watch(datas, (newValue, oldValue) => {
   }
 }
 @media (max-width: 1015px) {
-  .cardPhotos{
+  .cardPhotos {
     width: 100% !important;
     border-radius: 15px 15px 0 0 !important;
   }
