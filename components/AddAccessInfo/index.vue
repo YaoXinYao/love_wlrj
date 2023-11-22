@@ -63,15 +63,9 @@
             />
           </el-form-item>
           <el-form-item
-            v-for="(item, index) in JSON.parse(accessInfo.types)"
-            :key="item.name"
-            prop="additional"
+            v-for="(item, index) in accessInfo.types"
+            :key="index"
             :label="`考核项${index + 1}`"
-            :rules="{
-              required: true,
-              message: '内容不能为空',
-              trigger: 'blur',
-            }"
           >
             <div class="accessInfoInputs">
               <el-input v-model="item.name" />
@@ -143,7 +137,7 @@ watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
 });
 
-const emit = defineEmits(["addAlert"]);
+const emit = defineEmits(["addAlert", "update_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
@@ -157,7 +151,7 @@ const accessInfo = reactive<AddAccessType>({
   deadline: "",
   subscribers: "",
   additional: "",
-  types: JSON.stringify([
+  types: [
     {
       name: "选择",
       rate: 0,
@@ -170,26 +164,8 @@ const accessInfo = reactive<AddAccessType>({
       name: "简答",
       rate: 0,
     },
-  ]),
+  ],
 });
-
-const validateTypes = (rule: any, value: any, callback: any) => {
-  if (value.length === 0) {
-    callback(new Error("请添加考核项"));
-  } else {
-    let flag = false;
-    for (let i = 0; i < value.length; i++) {
-      if (value[i].name.trim() != "" && value[i].rate.trim() != "") {
-        flag = true;
-      }
-    }
-    if (!flag) {
-      callback(new Error("考核项内容不能为空"));
-    } else {
-      callback();
-    }
-  }
-};
 
 const validateNull = (rule: any, value: any, callback: any) => {
   if (value.trim() == "") {
@@ -217,9 +193,19 @@ const validateNameNull = (rule: any, value: any, callback: any) => {
   }
 };
 
+const validateTypesNull = (rule: any, value: any, callback: any) => {
+  for (let i = 0; i < value.length; i++) {
+    if (value[i].name.trim() === "" || value[i].rate < 0) {
+      callback(new Error("内容不能为空"));
+      return;
+    }
+  }
+  callback();
+};
+
 //校验
 const rules = reactive<FormRules<typeof accessInfo>>({
-  types: [{ validator: validateTypes, trigger: "blur" }],
+  types: [{ validator: validateTypesNull, trigger: "blur" }],
   plan: [{ validator: validateNameNull, trigger: "blur" }],
   type: [{ validator: validateNull, trigger: "blur" }],
   typeId: [{ validator: validateNumberNull, trigger: "blur" }],
@@ -229,31 +215,46 @@ const rules = reactive<FormRules<typeof accessInfo>>({
 });
 
 const removeDomain = (item: AccessItem) => {
-  const index = JSON.parse(accessInfo.types).indexOf(item);
+  const index = accessInfo.types.indexOf(item);
   if (index !== -1) {
-    JSON.parse(accessInfo.types).splice(index, 1);
+    accessInfo.types.splice(index, 1);
   }
 };
 
 const addAccess = () => {
-  JSON.parse(accessInfo.types).push({
+  accessInfo.types.push({
     name: "",
     rate: 0,
   });
 };
 
-const submitForm = (formEl: FormInstance | undefined) => {
-  console.log(accessInfo);
+const submitForm = async (formEl: FormInstance | undefined) => {
+  // console.log(accessInfo);
 
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
       console.log(accessInfo);
+      console.log(accessInfo.plan);
 
       let res = await addAccessService(accessInfo);
       console.log(res);
 
-      // dialogVisible.value = false;
+      if (res.data.value.code === 20000) {
+        ElMessage({
+          type: "success",
+          message: "添加成功",
+        });
+        formEl.resetFields();
+        emit("update_event", true);
+      } else {
+        ElMessage({
+          type: "error",
+          message: "添加失败，请检查网络",
+        });
+      }
+
+      dialogVisible.value = false;
     } else {
       ElMessage({
         type: "warning",
@@ -262,6 +263,20 @@ const submitForm = (formEl: FormInstance | undefined) => {
       return false;
     }
   });
+
+  // const result = await formEl.validate((valid, fields) => {
+  //   if (valid) {
+  //     console.log("submit");
+  //     return true;
+  //   } else {
+  //     console.log("error", fields);
+  //     return false;
+  //   }
+  // });
+
+  // if (result) {
+  //   console.log(accessInfo);
+  // }
 };
 </script>
 

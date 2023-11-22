@@ -1,4 +1,5 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
+// import { Authtoken } from "~/composables/useAuth";
 type Methods = "GET" | "POST" | "DELETE" | "PUT";
 export interface IResultData<T> {
   code: number;
@@ -9,14 +10,14 @@ class HYRequest {
     url: string,
     method: Methods,
     data?: any,
-    options?: UseFetchOptions<T>
+    options?: UseFetchOptions<T>,
   ): Promise<AsyncData<T, Error>> {
     return new Promise((resolve, reject) => {
       const newoptions: UseFetchOptions<T> = {
         //baseURL: baseURL,
         method: method,
         headers: {
-          "Authorization": Authtoken(),
+          Authorization: Authtoken(),
           ...options?.headers,
         },
         ...options,
@@ -25,7 +26,7 @@ class HYRequest {
         newoptions.query = data;
       }
       if (method == "POST" || method == "PUT") {
-        newoptions.params = data;
+          newoptions.params=data
       }
       useFetch<T>(url, newoptions as any)
         .then((res) => {

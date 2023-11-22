@@ -390,7 +390,7 @@ const deleteCourseFun = () => {
     .catch(() => {
       ElMessage({
         type: "info",
-        message: "Delete canceled",
+        message: "已取消删除操作",
       });
     });
 };

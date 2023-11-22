@@ -2,7 +2,7 @@ import HYRquest from '../forum'
 
 
 export const getLeave = (query:any) => {
-    console.log(query)
+    // console.log(query)
     return HYRquest.get('/check/leave/getLeave',query)
 }
 

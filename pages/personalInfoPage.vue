@@ -22,7 +22,7 @@
       </div>
       <div class="userBase">
         <span class="userName">{{ userinfo.userName }}</span>
-        <span>{{ userinfo.userClass }}|{{ userinfo.userClass }}</span>
+        <span>{{ userinfo.userClass }}</span>
       </div>
 
       <!-- 个人信息、课表、成绩、请假、最新公告 -->
