@@ -17,7 +17,7 @@ class HYRequest {
         //baseURL: baseURL,
         method: method,
         headers: {
-          "Authorization": Authtoken(),
+          Authorization: Authtoken(),
           ...options?.headers,
         },
         ...options,

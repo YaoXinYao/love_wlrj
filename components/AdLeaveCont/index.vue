@@ -1,7 +1,7 @@
 <template>
     <ClientOnly>
         <div class="adLeaveContent">
-            <el-table :border="true" :data="checkList">
+            <el-table :border="true" :data="checkList" v-loading="loading">
                 <el-table-column prop="user.userName" label="申请人" align="center" width="120px">
 
                 </el-table-column>
@@ -96,6 +96,8 @@ import {updateLeave} from '@/service/check/check'
 import {ElMessageBox } from 'element-plus'
 
 
+
+
 const small = ref(false)
 const background = ref(false)
 const disabled = ref(false)
@@ -105,7 +107,7 @@ const user = useHomestore()
 const {userinfo}  = storeToRefs(user)
 console.log(userinfo.value.userId)
 fetchUserListData({pageIndex:1,pageSize:5,idDesc:true})
-const {allPage,allCount,checkList,pageSize,pageIndex} = storeToRefs(checklist)
+const {allPage,allCount,checkList,pageSize,pageIndex,loading} = storeToRefs(checklist)
 console.log(userinfo.value.userId)
 
 const handleSizeChange = (val: number) => {

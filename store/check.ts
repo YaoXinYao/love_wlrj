@@ -8,7 +8,8 @@ interface stateProps{
     allPage:number,
     pageIndex:number,
     pageSize:number,
-    currentQuery:any
+    currentQuery:any,
+    loading:boolean,
 }
 
 
@@ -20,12 +21,15 @@ const check = defineStore('check',{
         pageIndex:0,
         pageSize:0,
         currentQuery:{},
+        loading:true,
     }),
     actions:{
         async getCheckList(query:any){
+            this.loading = true
             const listResult = await getLeave(query)
-            console.log(listResult.data)
-            console.log(listResult.data.value)
+            this.loading = false
+            // console.log(listResult.data)
+            // console.log(listResult.data.value)
             const list = listResult.data.value.data.list
             const count = listResult.data.value.data.allCount;
             const Page = listResult.data.value.data.allPage;
@@ -38,7 +42,7 @@ const check = defineStore('check',{
             this.checkList = list
             this.pageIndex = pageIndex;
             this.pageSize = size;
-            console.log(this.currentQuery)
+            // console.log(this.currentQuery)
             // console.log(this.checkList,this.allCount,this.allPage)
         }
     }

@@ -12,6 +12,8 @@
     "@element-plus/nuxt": "^1.0.6",
     "@nuxt/devtools": "latest",
     "@types/markdown-it": "^13.0.5",
+    "@types/websocket": "^1.0.9",
+    "@types/ws": "^8.5.9",
     "element-plus": "^2.4.1",
     "nuxt": "^3.7.0",
     "sass": "^1.66.1",
@@ -33,6 +35,7 @@
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",
     "socket.io-client": "^4.7.2",
-    "unplugin-element-plus": "^0.8.0"
+    "unplugin-element-plus": "^0.8.0",
+    "websocket": "^1.0.34"
   }
 }

@@ -1,5 +1,4 @@
 export const FileType = {
-  gif: "icon-gif",
   mkv: "icon-mkv",
   rar: "icon-rar",
   pdf: "icon-PDF",
@@ -19,4 +18,16 @@ export const FileType = {
   yml: "icon-YML",
   js: "icon-js",
   css: "icon-CSS",
+  sql: "icon-wenjianleixing",
+  gif: "icon-Gif",
+  java: "icon-a-ziyuan1",
+  xml: "icon-xml",
+  psd: "icon-psd",
+  cmd: "icon-cmd",
+  dll: "icon-dll",
+  pptx: "icon-pptx",
+  xls: "icon-xls",
+  bat: "icon-bat",
+  ini: "icon-ini",
+  jar: "icon-jar",
 };

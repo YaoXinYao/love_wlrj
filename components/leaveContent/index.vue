@@ -1,6 +1,6 @@
 <template>
     <ClientOnly>
-      <el-table :data="checkList" border  >
+      <el-table :data="checkList" border  v-loading="loading" >
         <el-table-column prop="leave.leaveReason" label="请假理由"  align="center" width="200" :cell-style="{'height':'80px','overflow':'auto'}" >
           <template #default="scope">
                   <span style="display: inline-block;height: max-content;white-space: wrap;line-height: 20px;width: 100%;">
@@ -75,7 +75,7 @@ const {userinfo}  = storeToRefs(user)
 console.log(userinfo.value.userId)
 fetchUserListData({userId:userinfo.value.userId,pageIndex:1,pageSize:5,idDesc:true})
 
-const {checkList,allCount,allPage,pageIndex,pageSize,currentQuery}  = storeToRefs(checklist)
+const {checkList,allCount,allPage,pageIndex,pageSize,currentQuery,loading}  = storeToRefs(checklist)
 console.log(checkList)
 
 
@@ -94,13 +94,13 @@ const disabled = ref(false)
 const handleSizeChange = (val: number) => {
   let current = currentQuery.value
   current.pageSize = val
-  console.log(current)
+  // console.log(current)
   fetchUserListData(current)
 }
 const handleCurrentChange = (val: number) => {
   let current = currentQuery.value
   current.pageIndex = val
-  console.log(current)
+  // console.log(current)
   fetchUserListData(current)
 }
 
