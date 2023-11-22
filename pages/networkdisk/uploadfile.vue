@@ -49,19 +49,43 @@
         :file="item"
       />
     </div>
-    <div class="uploadbt2" @click="uploadBt" v-show="filequeue.length !== 0">
-      <TransitionButton innertext="开始上传" />
+    <div
+      class="uploadbt2"
+      @click="dialogVisible = true"
+      v-show="filequeue.length !== 0"
+    >
+      <TransitionButton innertext="下一步" />
     </div>
+    <el-dialog v-model="dialogVisible" title="请选择文件分类标签" width="30%">
+      <div class="Tagselect">
+        <el-select-v2
+          class="selcet-v2"
+          v-model="curTag"
+          size="large"
+          style="width: max-content; min-width: 240px"
+          :options="AllType"
+          placeholder="选择分类"
+          multiple
+        />
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleClose"> 开始上传 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { uploadfile } from "~/service/disk";
 import { useDiskstore } from "~/store/disk";
 const input = ref<HTMLInputElement>();
 const isActive = ref(false);
+const curTag = ref([]);
 const disstore = useDiskstore();
-const { filequeue } = storeToRefs(disstore);
+disstore.getAllfiletag();
+const { filequeue, AllType } = storeToRefs(disstore);
 function loadingfile(event: Event) {
   const inputElement = event.target as HTMLInputElement;
   const selectedFile = inputElement.files;
@@ -92,9 +116,12 @@ function handleDrop(event: DragEvent) {
   }
   isActive.value = false;
 }
-function progress(obj: any) {
-  console.log(obj);
-}
+const dialogVisible = ref(false);
+const handleClose = () => {
+  dialogVisible.value = false;
+  console.log(curTag.value); //标签ID
+  uploadBt();
+};
 const uploadBt = async () => {
   const chunks = createChunks(filequeue.value[0], 1024 * 1024);
   const md5info = await HashMd5file(chunks);
@@ -166,5 +193,13 @@ const uploadBt = async () => {
     width: 3rem;
     margin: auto;
   }
+}
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+.Tagselect {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

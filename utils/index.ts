@@ -20,6 +20,23 @@ export function debounce<T extends (...args: any[]) => void>(
     }, delay);
   };
 }
+type ThrottleFunction = (...args: any[]) => void;
+// 节流
+export function Mythrottle(
+  func: ThrottleFunction,
+  delay: number
+): ThrottleFunction {
+  let lastCallTime = 0;
+
+  return function (...args: any[]) {
+    const now = Date.now();
+
+    if (now - lastCallTime >= delay) {
+      func(...args);
+      lastCallTime = now;
+    }
+  };
+}
 //文件下载，进度监视
 export const exportFile = async (
   data: string | null | undefined,

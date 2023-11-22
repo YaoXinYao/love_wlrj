@@ -119,6 +119,7 @@ export interface Fileprops {
   isPublic: any;
   uploadDate: string;
   uploadName: string;
+  is_collection: number;
 }
 //标签类型
 export interface Filetag {
