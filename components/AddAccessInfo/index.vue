@@ -137,7 +137,7 @@ watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
 });
 
-const emit = defineEmits(["addAlert",'update_event']);
+const emit = defineEmits(["addAlert", "update_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
@@ -228,18 +228,24 @@ const addAccess = () => {
   });
 };
 
-const submitForm = (formEl: FormInstance | undefined) => {
+const submitForm = async (formEl: FormInstance | undefined) => {
+  // console.log(accessInfo);
+
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
+      console.log(accessInfo);
+      console.log(accessInfo.plan);
+
       let res = await addAccessService(accessInfo);
       console.log(res);
-      formEl.resetFields();
+
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
           message: "添加成功",
         });
+        formEl.resetFields();
         emit("update_event", true);
       } else {
         ElMessage({
@@ -257,6 +263,20 @@ const submitForm = (formEl: FormInstance | undefined) => {
       return false;
     }
   });
+
+  // const result = await formEl.validate((valid, fields) => {
+  //   if (valid) {
+  //     console.log("submit");
+  //     return true;
+  //   } else {
+  //     console.log("error", fields);
+  //     return false;
+  //   }
+  // });
+
+  // if (result) {
+  //   console.log(accessInfo);
+  // }
 };
 </script>
 

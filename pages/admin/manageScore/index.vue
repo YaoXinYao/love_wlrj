@@ -52,7 +52,7 @@
           clearable
       /></el-form-item> -->
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
+        <el-button type="primary" @click="searchAccess">搜索</el-button>
         <el-button type="warning" @click="resetInfo">重置</el-button>
         <el-button type="success" @click="addAlert">新增</el-button>
       </el-form-item>
@@ -138,12 +138,12 @@
     </el-table>
     <el-pagination
       style="margin-top: 20px"
-      v-model:current-page="pageInfo.value.currentPage"
-      v-model:page-size="pageInfo.value.pageSize"
+      v-model:current-page="pageInfo.currentPage"
+      v-model:page-size="pageInfo.pageSize"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="pageInfo.value.total"
+      :total="pageInfo.total"
       @size-change="handleSizeChange"
       @current-change="handleCurChange"
     />
@@ -189,6 +189,28 @@ const resetInfo = () => {
   });
 };
 
+const searchAccess = async () => {
+  if (searchKeys.accessName == "") {
+    ElMessage({
+      type: "warning",
+      message: "请输入关键词",
+    });
+  } else {
+    const accessInfoRes = await getAllAccessService({
+      name: searchKeys.accessName,
+      nodePage: pageInfo.value.currentPage,
+      pageSize: pageInfo.value.pageSize,
+    });
+
+    console.log(accessInfo);
+
+    accessInfo.data = accessInfoRes.data.value.data.records;
+    pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
+    pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
+    pageInfo.value.total = accessInfoRes.data.value.data.total;
+  }
+};
+
 getAccessInfo({
   currentPage: pageInfo.value.currentPage,
   pageSize: pageInfo.value.pageSize,
@@ -199,6 +221,7 @@ const handleSizeChange = async (val: number) => {
 
   pageInfo.value.pageSize = val;
   getAccessInfo({
+    keyword:searchKeys.accessName,
     currentPage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
   });
@@ -207,6 +230,7 @@ const handleCurChange = async (val: number) => {
   console.log("当前页数", val);
   pageInfo.value.currentPage = val;
   getAccessInfo({
+    keyword:searchKeys.accessName,
     currentPage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
   });

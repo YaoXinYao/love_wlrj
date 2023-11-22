@@ -42,3 +42,6 @@ export interface AccessPageInfoType {
   pageSize: number;
   total: number;
 }
+export interface AccessStoreType {
+  pageInfo: { currentPage: number; pageSize: number; total: number };
+}

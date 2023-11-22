@@ -75,7 +75,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/coustom": {
-        target: "http://112.125.120.78:8666/",
+        target: "http://115.159.84.43:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },

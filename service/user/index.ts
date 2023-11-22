@@ -88,14 +88,22 @@ export const getAllTypes = () => {
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
-  let obj: MyObject = props;
-  for (let i = 0; i < props.types.length; i++) {
-    obj[`types[${i}].name`] = props.types[i].name;
-    obj[`types[${i}].rate`] = props.types[i].rate;
-  }
-  delete obj["types"];
+  // let obj: MyObject = props;
+  // for (let i = 0; i < props.types.length; i++) {
+  //   obj[`types[${i}].name`] = props.types[i].name;
+  //   obj[`types[${i}].rate`] = props.types[i].rate;
+  // }
+  // delete obj["types"];
+  let types = JSON.parse(JSON.stringify(props.types));
+  let obj = { ...props, types };
+  console.log(JSON.stringify(obj));
+  console.log(JSON.stringify(props));
 
-  return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, obj);
+  return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, "", {
+    body: {
+      studyPlanDto: JSON.stringify(props),
+    },
+  });
 };
 
 //获取考核数据
