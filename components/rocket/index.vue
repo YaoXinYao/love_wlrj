@@ -22,7 +22,6 @@
 <script setup lang="ts">
 const isShow = ref(false);
 function handlerScroll() {
-  console.log(window.scrollY);
   window.scrollY > 100 ? (isShow.value = true) : (isShow.value = false);
 }
 onMounted(() => {

@@ -42,7 +42,7 @@ export default defineNuxtConfig({
         },
         {
           type: "text/javascript",
-          src: "/staticjs/font_4330669_qlx1o97szjn.js",
+          src: "/staticjs/font_4330669_ng1m4irqeb.js",
         },
       ],
       noscript: [{ children: "Javascript is required" }],
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
       },
       //网盘接口
       "/disk": {
-        target: "http://10.102.242.89:19520/",
+        target: "http://115.159.84.43:19491/disk/swagger",
         changeOrigin: true,
         prependPath: true,
       },
