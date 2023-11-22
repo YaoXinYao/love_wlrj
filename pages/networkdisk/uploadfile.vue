@@ -96,7 +96,10 @@ function progress(obj: any) {
   console.log(obj);
 }
 const uploadBt = async () => {
-  const res = await uploadfile(
+  const chunks = createChunks(filequeue.value[0], 1024 * 1024);
+  const md5info = await HashMd5file(chunks);
+  console.log(md5info);
+  /*  const res = await uploadfile(
     {
       uploaderId: 7,
       uploadName: "赵子豪",
@@ -104,7 +107,7 @@ const uploadBt = async () => {
     },
     filequeue.value[0],
     progress
-  );
+  ); */
 };
 </script>
 <style scoped lang="scss">

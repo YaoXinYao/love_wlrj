@@ -1,3 +1,4 @@
+import SparkMD5 from "spark-md5";
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -19,6 +20,7 @@ export function debounce<T extends (...args: any[]) => void>(
     }, delay);
   };
 }
+//文件下载，进度监视
 export const exportFile = async (
   data: string | null | undefined,
   fileName: string,
@@ -98,7 +100,7 @@ export const exportFile = async (
     throw error; // 如果需要拒绝 Promise，将错误重新抛出
   }
 };
-
+// 复制到粘贴板
 export const copyToClipboard = async (text: string): Promise<void> => {
   try {
     // 使用 Clipboard API 将文本复制到剪贴板
@@ -110,6 +112,7 @@ export const copyToClipboard = async (text: string): Promise<void> => {
     ElMessage({ message: "复制连接失败", type: "error" });
   }
 };
+//匹配后缀
 export function filetype2(val: string) {
   const reg = /\.([a-zA-Z0-9]+)$/;
   return val.match(reg)![1];
@@ -118,7 +121,7 @@ interface IUploadProgress {
   loaded: number;
   total: number;
 }
-
+//废弃
 export function uploadFileWithProgress(
   url: string,
   file: File,
@@ -186,15 +189,44 @@ export function uploadFileWithProgress(
     }
   });
 }
+// 字节 --->  合适的单位
 export function convertFileSize(bytes: number) {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const base = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(base));
   const convertedSize = (bytes / Math.pow(base, i)).toFixed(2);
-
   if (isNaN(Number(convertedSize)) || !sizes[i]) {
     return ""; // 返回空字符串
   }
 
   return `${convertedSize} ${sizes[i]}`;
+}
+//文件分片,分片，生成md5
+export function createChunks(file: File, chunkSize: number) {
+  const result = [];
+  for (let i = 0; i < file.size; i += chunkSize) {
+    const temp = file.slice(i, i + chunkSize);
+    result.push(temp);
+  }
+  return result;
+}
+//生成文件的hash MD5
+export function HashMd5file(chunks: Blob[]) {
+  return new Promise((resolve) => {
+    const spark = new SparkMD5();
+    function _read(i: number) {
+      if (i >= chunks.length) {
+        resolve(spark.end());
+      }
+      const blob = chunks[i];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const bytes = e.target?.result;
+        spark.append(bytes as string);
+        _read(i + 1);
+      };
+      reader.readAsArrayBuffer(blob);
+    }
+    _read(0);
+  });
 }
