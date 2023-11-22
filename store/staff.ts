@@ -6,6 +6,13 @@ import {
   exportTemplate,
   deleteMoreUser,
   deleteUser,
+  selectAllGroup,
+  selectAllRole,
+  defaultGroup,
+  defaultRole,
+  deleteGroup,
+  insertGroup,
+  updateUserGroup
 } from "~/service/staff";
 export interface Staffs {
   modelState: boolean;
@@ -20,7 +27,9 @@ export interface Staffs {
   signleInfo: any;
   signleDelete:number;
   moreDelete:number[];
-  isSignle:boolean
+  isSignle:boolean;
+  manageGroup:boolean;
+  curTable:number;
 }
 export const useStaffStore = defineStore("staff", {
   state: (): Staffs => {
@@ -37,7 +46,9 @@ export const useStaffStore = defineStore("staff", {
       signleInfo: {},
       signleDelete:0,
       moreDelete:[],
-      isSignle:false
+      isSignle:false,
+      manageGroup:false,
+      curTable:1
     };
   },
   actions: {
@@ -50,6 +61,42 @@ export const useStaffStore = defineStore("staff", {
     async getGroup(grade: string) {
       let { data } = await selectGroup(grade);
       return data.value;
+    },
+    //获取所有的组别
+    async getAllGroup() {
+      let { data } = await selectAllGroup();
+      return data.value?.data || [];
+    },
+    //获取所有的角色
+    async getAllRole(){
+      let {data} = await selectAllRole();
+      return data.value?.data || []
+    },
+    //为导入用户设置默认组别
+    async defaultGroups(groupId:number){
+      let {data} = await defaultGroup(groupId)
+      return data.value?.code
+    },
+    //为导入用户设置默认角色
+    async defaultRoles(roleId:number){
+      let {data} = await defaultRole(roleId)
+      return data.value?.code
+    },
+    //删除组别
+    async deleteGroups(groupId:number){
+      let {data} = await deleteGroup(groupId)
+      return data.value?.code
+    },
+    //添加组别
+    async addGroups(groupName:string){
+      let {data} = await insertGroup(groupName)
+      return data.value?.code
+    },
+    //为用户设置组别
+    async setGroup(groupId:number,userId:number){
+      let {data} = await updateUserGroup(groupId,userId)
+      console.log("为用户设置组别",data.value);
+      return data.value?.code
     },
     //分页查询所有用户
     async getAllUser(

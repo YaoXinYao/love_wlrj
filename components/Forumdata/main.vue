@@ -118,15 +118,15 @@ let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
 let isLoading = ref(true);
 onMounted(() => {
-  forums.getUser(8)
-  setTimeout(()=>{
+  forums.getUser(8);
+  setTimeout(() => {
     fetchData();
-  },1000)
-  window.addEventListener("scroll",handleScroll)
+  }, 1000);
+  window.addEventListener("scroll", handleScroll);
 });
-onBeforeUnmount(()=>{
-  window.removeEventListener("scroll",handleScroll)
-})
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 //查询帖子
 function fetchData() {
   if (postSource.value && postSubId.value != 0) {
@@ -161,20 +161,20 @@ function fetchData() {
     });
   }
   pageNo.value++;
-  if (pageNo.value > pages.value) {
-    isLoading.value = true;
-  }
 }
-function handleScroll(){
+function handleScroll() {
   const scrollY = window.scrollY;
   const scrollHeight = document.documentElement.scrollHeight;
   const windowHeight = window.innerHeight;
-  let distanceToBottom =scrollHeight - (scrollY + windowHeight) 
-  
-  if (distanceToBottom < 100 && !isLoading.value) {
-    fetchData();
+  let distanceToBottom = scrollHeight - (scrollY + windowHeight);
+  if (pageNo.value > pages.value) {
+    isLoading.value = true;
+  } else {
+    if (distanceToBottom < 100 && !isLoading.value) {
+      fetchData();
+    }
   }
-};
+}
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
   forums.addlike(postId, status, type, userInfo.value.userId).then((res) => {

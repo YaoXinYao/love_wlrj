@@ -24,6 +24,7 @@
         >
       </div>
       <div>
+        <el-button type="warning" @click="manageGroup = true">组别</el-button>
         <el-button type="danger" @click="deleteModel = true">删除</el-button>
         <el-button type="success" @click="modelState = true">导入</el-button>
         <el-button type="primary" @click="downTemplate" class="downfile"
@@ -43,9 +44,8 @@ import { useStaffStore } from "~/store/staff";
 import { Search } from "@element-plus/icons-vue";
 import { ref } from "vue";
 let groups = ref<any>([]);
-let downLink = ref("");
 const staffStore = useStaffStore();
-const { modelState, deleteModel, grades, grade, group, input, users, total } =
+const { modelState, deleteModel, grades, grade, group, input, users, total,manageGroup ,curTable} =
   storeToRefs(staffStore);
 onMounted(() => {
   staffStore.getGrades();
@@ -72,6 +72,7 @@ watch(grade, (newValue, oldValue) => {
 });
 //检索不同条件下的人员
 function selectStaff(current: number) {
+  curTable.value = 1
   let groupId;
   if (group.value == "") {
     groupId = undefined;

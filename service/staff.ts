@@ -13,6 +13,36 @@ export const selectGroup = (grade: string) => {
     grade,
   });
 };
+
+//获取所有的组别
+export const selectAllGroup = () => {
+  return hyRequest.request("/zinfo/user/group/selectAllGroup", "GET");
+};
+//为导入用户设置默认组别
+export const defaultGroup = (groupId:number) => {
+  return hyRequest.request("/zinfo/user/group/updateDefaultGroup", "PUT",{groupId});
+};
+//为用户设置组别
+export const updateUserGroup = (groupId:number,userId:number)=>{
+  return hyRequest.request("/zinfo/user/group/updateUserGroup","PUT",{groupId,userId})
+}
+//删除组别
+export const deleteGroup = (groupId:number)=>{
+  return hyRequest.request("/zinfo/user/group/deleteGroup","DELETE",{groupId})
+}
+//添加组别
+export const insertGroup = (groupName:string)=>{
+  return hyRequest.request("/zinfo/user/group/insertGroup","POST",{groupName})
+}
+//获取所有的角色
+export const selectAllRole = () => {
+  return hyRequest.request("/zinfo/user/role/selectAllRole", "GET");
+};
+//为导入用户设置默认角色
+export const defaultRole= (roleId:number) => {
+  return hyRequest.request("/zinfo/user/role/defaultRole", "PUT",{roleId});
+};
+
 //分页查询所有用户
 export const selectAllUser = (
   pageNo: number,

@@ -18,15 +18,11 @@
       <el-table-column label="班级" width="100">
         <template #default="scope">{{ scope.row.userClass }}</template>
       </el-table-column>
-      <el-table-column property="groupName" label="方向" width="80" />
+      <el-table-column property="groupName" label="方向" width="80">
+        </el-table-column>
       <el-table-column #default="scope" label="操作">
-        <el-button size="small" @click="handleEdit(scope.row)"
-          >查看</el-button
-        >
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.row)"
+        <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+        <el-button size="small" type="danger" @click="handleDelete(scope.row)"
           >删除</el-button
         >
       </el-table-column>
@@ -63,29 +59,39 @@ const {
   signleInfo,
   signleDelete,
   isSignle,
-  moreDelete
+  moreDelete,
+  curTable
 } = storeToRefs(staffData);
 const multipleSelection = ref<any[]>([]);
 //选择项改变触发
 const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
-  moreDelete.value = []
-  isSignle.value = true
-  for(let i = 0;i<val.length;i++){
-    moreDelete.value[i] = val[i].userId
+  moreDelete.value = [];
+  isSignle.value = true;
+  for (let i = 0; i < val.length; i++) {
+    moreDelete.value[i] = val[i].userId;
   }
 };
 const handleEdit = (row: any) => {
-  signleInfo.value = row;
+  let singleTeam = [];
+  staffData.getGroup(row.userGrade).then((res) => {
+    if (res?.code == 20000) {
+      singleTeam = res?.data;
+      signleInfo.value = {...row,singleTeam}
+    } else {
+      ElMessage.error("获取组别失败");
+    }
+  });
   editModel.value = true;
 };
-const handleDelete = ( row: any) => {
-  signleDelete.value = row.userId
-  isSignle.value= false
+const handleDelete = (row: any) => {
+  signleDelete.value = row.userId;
+  isSignle.value = false;
   deleteModel.value = true;
 };
 //改变当前页
 const handleCurrentChange = (val: number) => {
+  curTable.value = val
   let groupId;
   if (group.value == "") {
     groupId = undefined;
