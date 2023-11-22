@@ -70,7 +70,9 @@
 import {storeToRefs} from "pinia"
 import {forumStore} from "~/store/forum"
 let forums = forumStore()
-const { userInfo } = storeToRefs(forums);
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const props = defineProps({
   cimmentData: {
     type: Array as () => any[],
@@ -96,7 +98,7 @@ const deleteCom = (ids: number) => {
   });
 };
 function comLike(comId: number, status: number, index: number) {
-  forums.LikesComment(comId, status, userInfo.value.userId).then((res) => {
+  forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
     if (status == 1) {
       if (res == 20000) {
         props.cimmentData[index].likes = true;

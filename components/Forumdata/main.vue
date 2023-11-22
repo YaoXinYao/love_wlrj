@@ -111,27 +111,27 @@
 import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource, userInfo } =
+const { datas, pages, uploadRender, postSubId, postSource} =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
 let isLoading = ref(true);
 onMounted(() => {
-  forums.getUser(8);
-  setTimeout(() => {
-    fetchData();
-  }, 1000);
+  fetchData(userinfo.value.userId);
   window.addEventListener("scroll", handleScroll);
 });
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
 });
 //查询帖子
-function fetchData() {
+function fetchData(userId:any) {
   if (postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(pageNo.value, 10, postSource.value, postSubId.value)
+      .selectPost(userId,pageNo.value, 20, postSource.value, postSubId.value)
       .then((res) => {
         if (res) {
           pagesData.value = [...pagesData.value, ...res];
@@ -139,21 +139,21 @@ function fetchData() {
         isLoading.value = false;
       });
   } else if (!postSource.value && postSubId.value != 0) {
-    forums.selectPost(pageNo.value, 10, "", postSubId.value).then((res) => {
+    forums.selectPost(userId,pageNo.value, 20, "", postSubId.value).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
       isLoading.value = false;
     });
   } else if (postSource.value && postSubId.value == 0) {
-    forums.selectPost(pageNo.value, 10, postSource.value).then((res) => {
+    forums.selectPost(userId,pageNo.value, 20, postSource.value).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
       isLoading.value = false;
     });
   } else if (!postSource.value && postSubId.value == 0) {
-    forums.selectPost(pageNo.value, 10).then((res) => {
+    forums.selectPost(userId,pageNo.value, 20).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
@@ -171,13 +171,13 @@ function handleScroll() {
     isLoading.value = true;
   } else {
     if (distanceToBottom < 100 && !isLoading.value) {
-      fetchData();
+      fetchData(userinfo.value.userId);
     }
   }
 }
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
-  forums.addlike(postId, status, type, userInfo.value.userId).then((res) => {
+  forums.addlike(postId, status, type, userinfo.value.userId).then((res) => {
     if (status == 1) {
       if (type == "Like") {
         if (res == 20000) {
@@ -226,7 +226,7 @@ watch(datas, (newValue, oldValue) => {
     pageNo.value = 1;
     pagesData.value = [];
     uploadRender.value = false;
-    fetchData();
+    fetchData(userinfo.value.userId);
   }
 });
 </script>

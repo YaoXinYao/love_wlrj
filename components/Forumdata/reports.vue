@@ -86,6 +86,10 @@ import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumManage, forumStore } from "~/store/forum";
 import type { UploadFile } from "element-plus";
+import {useHomestore} from "~/store/home"
+const router = useRouter()
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
@@ -102,7 +106,7 @@ let postNews = reactive<any>({
   postContent: "",
   postSubId: Number(selectValue.value),
   postTitle: "",
-  postUserId: 8,
+  postUserId: userinfo.value.userId,
 });
 onMounted(() => {
   manages.labelInfo(1, 100);
@@ -133,12 +137,7 @@ const uploadPhoto = () => {
     forumData.addCard(postNews, formData).then((result) => {
       if (result == 20000) {
         ElMessage.success("发布帖子成功");
-        formImage.files = [];
-        selectValue.value = "";
-        postNews.labelId = [];
-        postNews.postContent = "";
-        postImg.value = [];
-        postNews.postTitle = "";
+        router.push("/forum/home")
       } else {
         ElMessage.error("发布帖子失败");
       }
