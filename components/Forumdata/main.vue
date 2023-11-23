@@ -1,6 +1,11 @@
 <template>
   <div class="main">
-    <div class="title">相关帖子</div>
+    <div class="title">
+      <div>相关帖子</div>
+      <div class="signleHome" v-if="userinfo.userId != 0">
+      <NuxtLink to="/forum/person">个人主页</NuxtLink>
+      </div>
+    </div>
     <ul class="posts">
       <li class="card" v-for="(item, index) in pagesData" :key="index">
         <div class="cardPhotos">
@@ -10,14 +15,9 @@
                 path: '/forum/details',
                 query: { data: item.postId },
               })
-            "
-          >
+            ">
             <img
-              :src="
-                item.photos.length
-                  ? item.photos[0]
-                  : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'
-              "
+              :src="item.photos.length ? item.photos[0] : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'"
             />
           </NuxtLink>
         </div>
@@ -111,11 +111,11 @@
 import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource} =
+const { datas, pages, uploadRender, postSubId, postSource } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
@@ -128,32 +128,36 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
 });
 //查询帖子
-function fetchData(userId:any) {
+function fetchData(userId: any) {
   if (postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(userId,pageNo.value, 20, postSource.value, postSubId.value)
+      .selectPost(userId, pageNo.value, 10, postSource.value, postSubId.value)
+      .then((res) => {
+        if (res) {
+          pagesData.value = [...pagesData.value];
+        }
+        isLoading.value = false;
+      });
+  } else if (!postSource.value && postSubId.value != 0) {
+    forums
+      .selectPost(userId, pageNo.value, 10, "", postSubId.value)
       .then((res) => {
         if (res) {
           pagesData.value = [...pagesData.value, ...res];
         }
         isLoading.value = false;
       });
-  } else if (!postSource.value && postSubId.value != 0) {
-    forums.selectPost(userId,pageNo.value, 20, "", postSubId.value).then((res) => {
-      if (res) {
-        pagesData.value = [...pagesData.value, ...res];
-      }
-      isLoading.value = false;
-    });
   } else if (postSource.value && postSubId.value == 0) {
-    forums.selectPost(userId,pageNo.value, 20, postSource.value).then((res) => {
-      if (res) {
-        pagesData.value = [...pagesData.value, ...res];
-      }
-      isLoading.value = false;
-    });
+    forums
+      .selectPost(userId, pageNo.value, 10, postSource.value)
+      .then((res) => {
+        if (res) {
+          pagesData.value = [...pagesData.value, ...res];
+        }
+        isLoading.value = false;
+      });
   } else if (!postSource.value && postSubId.value == 0) {
-    forums.selectPost(userId,pageNo.value, 20).then((res) => {
+    forums.selectPost(userId, pageNo.value, 10).then((res) => {
       if (res) {
         pagesData.value = [...pagesData.value, ...res];
       }
@@ -239,6 +243,13 @@ watch(datas, (newValue, oldValue) => {
     font-size: 24px;
     font-weight: 400;
     font-family: "阿里妈妈刀隶体";
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    .signleHome {
+      font-size: 16px;
+      cursor: pointer;
+    }
   }
   .footer {
     width: 100%;
