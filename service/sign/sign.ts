@@ -3,7 +3,7 @@ import HYRequest from '../forum'
 
 // 删除
 export const deleteUnSign = (query:any)=>{
-    return HYRequest.delete('/check/unsign/deleteUnSign',query)
+    return HYRequest.delete('/check/unsign/deleteUnsign',query)
 }
 
 // 获取
@@ -24,6 +24,6 @@ export const upload = (query:any) =>{
     formdata.append('file',query)
 
 
-    return HYRequest.post('/unsign/uploadExcel','',{body:formdata})
+    return HYRequest.post('/check/unsign/uploadExcel','',{body:formdata})
 }
 

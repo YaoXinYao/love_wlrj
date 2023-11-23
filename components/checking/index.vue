@@ -28,7 +28,7 @@
             <el-table-column label="操作" align="center">
                 <template #default="scope">
                     <el-button type="primary">修改</el-button>
-                    <el-button type="danger">删除</el-button>
+                    <el-button type="danger" @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -49,6 +49,8 @@
 <script setup lang="ts">
 import signStore from '@/store/checking'
 import {storeToRefs} from 'pinia'
+import { ElMessageBox, ElNotification } from 'element-plus'
+import {deleteUnSign} from '@/service/sign/sign'
 
 const signstore = signStore()
 
@@ -76,6 +78,37 @@ function handleCurrentChange(val:number){
     current.pageIndex = val
     getUnSign({...current})
 }
+
+function handleDelete(data:any){
+    console.log(data)
+    ElMessageBox.confirm(
+        '确定删除嘛？',
+        'Warning',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+        deleteUnSign({unsignId:data.unsignId}).then(res=>{
+            console.log(res.data.value)
+            if(res.data.value.code === 20000){
+                ElNotification({
+                    title:'成功',
+                    message:'删除成功',
+                    type:'success'
+                })
+                let current = currentQuery.value
+                getUnSign({...current})
+            }
+        })
+    })
+    .catch(() => {
+
+    })
+}
+
 
 
 defineExpose({getUnSign})
