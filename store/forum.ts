@@ -6,7 +6,6 @@ import {
   getSubfield,
   postSubfield,
   deleteSubfield,
-  deletePost,
 } from "~/service/forums/admin";
 import {
   addpost,
@@ -18,6 +17,7 @@ import {
   deleteComment,
   likeComment,
   getKeep,
+  deletePost,
 } from "~/service/forums/card";
 import { getUserInfo } from "~/service/staff";
 export interface label {
@@ -258,6 +258,14 @@ export const forumStore = defineStore("forumInfo", {
         likes,
         collect,
       });
+    },
+    //删除帖子
+    async deletePosts(ids: number[]) {
+      let { data } = await deletePost(ids);
+      const code = data.value?.code;
+      console.log("删除帖子",data.value);
+      
+      return code;
     },
     //查询指定帖子下面的评论
     async selectComment(postId: number, userId: any) {

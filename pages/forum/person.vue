@@ -75,13 +75,22 @@
                   <span>{{ item.postCollect }}收藏</span>
                 </div>
                 <div>
-                  <el-button type="danger" v-if="jage == 'artic'"
+                  <el-button
+                    type="danger"
+                    v-if="jage == 'artic'"
+                    @click="deletePost(item.postId)"
                     >删除</el-button
                   >
-                  <el-button type="warning" v-if="jage == 'like'" @click="deleteData(item.postId,'Like')"
+                  <el-button
+                    type="warning"
+                    v-if="jage == 'like'"
+                    @click="deleteData(item.postId, 'Like')"
                     >取消</el-button
                   >
-                  <el-button type="warning" v-if="jage == 'collect'" @click="deleteData(item.postId,'Like')"
+                  <el-button
+                    type="warning"
+                    v-if="jage == 'collect'"
+                    @click="deleteData(item.postId, 'Collect')"
                     >取消</el-button
                   >
                 </div>
@@ -131,13 +140,22 @@
                     <span>{{ item.postCollect }}收藏</span>
                   </div>
                   <div>
-                    <el-button type="danger" v-if="jage == 'artic'"
+                    <el-button
+                      type="danger"
+                      v-if="jage == 'artic'"
+                      @click="deletePost(item.postId)"
                       >删除</el-button
                     >
-                    <el-button type="warning" v-if="jage == 'like'"
+                    <el-button
+                      type="warning"
+                      v-if="jage == 'like'"
+                      @click="deleteData(item.postId, 'Like')"
                       >取消</el-button
                     >
-                    <el-button type="warning" v-if="jage == 'collect'"
+                    <el-button
+                      type="warning"
+                      v-if="jage == 'collect'"
+                      @click="deleteData(item.postId, 'Collect')"
                       >取消</el-button
                     >
                   </div>
@@ -215,17 +233,39 @@ function changeStatus(status: string) {
   getStatus(1);
 }
 //取消点赞或收藏
-const deleteData =(postId:number,type:string)=>{
-  forums.addlike(postId,0,type,userinfo.value.userId).then((res)=>{
-    if(res == 20000){
-    if(type == "Like"){
-    ElMessage.success("取消成功")
+const deleteData = (postId: number, type: string) => {
+  forums.addlike(postId, 0, type, userinfo.value.userId).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("取消成功");
+      let index = posts.value.findIndex((item) => {
+        if (item.postId == postId) {
+          return true;
+        }
+      });
+      posts.value.splice(index, 1);
+    } else {
+      ElMessage.success("取消失败");
+    }
+  });
+};
+//删除帖子
+const deletePost = (id: number) => {
+  let ids = [];
+  ids[0] = id;
+  forums.deletePosts(ids).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("删除成功");
+      let index = posts.value.findIndex((item) => {
+        if (item.postId == id) {
+          return true;
+        }
+      });
+      posts.value.splice(index, 1);
     }else{
-      ElMessage.success("取消失败")
+      ElMessage.error("删除失败")
     }
-    }
-  })
-}
+  });
+};
 </script>
 
 <style lang="scss" scoped>

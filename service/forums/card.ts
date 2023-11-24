@@ -85,3 +85,7 @@ export const getKeep = (
     userId,
   });
 };
+//删除帖子
+export const deletePost = (ids: number[]) => {
+  return hyRequest.delete<IResultData<any>>("/api/post/delete", { ids });
+};
