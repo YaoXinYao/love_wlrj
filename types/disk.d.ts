@@ -19,6 +19,19 @@ export interface Diskstore {
     downfile: string;
   };
 }
+export interface Fileprops {
+  id: number;
+  name: string;
+  format: string;
+  types: string[];
+  uploaderId: number;
+  url: string;
+  collections: number;
+  isPublic: any;
+  uploadDate: string;
+  uploadName: string;
+  is_collection: number;
+}
 //文件列表item
 export interface Filelist {
   allPage: number;
@@ -35,4 +48,9 @@ export interface uploadfileType {
   fileTypeIdList: number[];
   uploaderId: number;
   uploadName: string;
+  md5: string;
+}
+//取消收藏文件
+export interface unCollectType {
+  fileId: number;
 }

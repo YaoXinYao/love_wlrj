@@ -101,5 +101,15 @@ export const useDiskstore = defineStore("disk", {
         ElMessage({ message: "下载完成", type: "success" });
       }
     },
+    //改变某一个的收藏状态
+    async changeUncomment(id: number) {
+      console.log("触发");
+      console.log(id);
+      const index = this.Filelist.dataList.findIndex((item) => item.id == id);
+      console.log(index);
+      this.Filelist.dataList[index].is_collection == 0
+        ? (this.Filelist.dataList[index].is_collection = 1)
+        : (this.Filelist.dataList[index].is_collection = 0);
+    },
   },
 });
