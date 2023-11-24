@@ -50,9 +50,6 @@ import { storeToRefs } from "pinia";
 definePageMeta({
   layout: "person",
 });
-getLoginUser().then((res) => {
-  console.log(res);
-});
 
 const homeStore = useHomestore();
 let { userinfo, user } = storeToRefs(homeStore);

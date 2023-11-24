@@ -102,10 +102,10 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-      "/ws": {
-        target: "ws://115.159.84.43:19491/",
-        ws: true,
+      "/forum": {
+        target: "http://115.159.84.43:19491/forum/swagger/forum/",
         changeOrigin: true,
+        prependPath: true,
       },
     },
   },

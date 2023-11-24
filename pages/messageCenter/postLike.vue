@@ -1,6 +1,6 @@
 <template>
   <div class="collectContainer">
-    <Info :data="messageInfoData.data" :type="'PostComment'" />
+    <Info :data="messageInfoData.data" :type="'PostLike'" />
   </div>
 </template>
 
@@ -16,11 +16,11 @@ const messageStore = useMessageStore();
 const homeStore = useHomestore();
 let { pageInfo, curType } = storeToRefs(messageStore);
 let { userinfo } = storeToRefs(homeStore);
-messageStore.ChangeCurType("PostComment");
+
 let messageInfoProps = {
   pageNo: pageInfo.value.currentPage,
   pageSize: pageInfo.value.pageSize,
-  type: "PostComment",
+  type: curType.value,
   userId: userinfo.value.userId,
 };
 
@@ -28,8 +28,6 @@ const messageInfoData = reactive<{ data: Array<MessageInfoResType> }>({
   data: [],
 });
 let messageInfoRes = await getMessageInfo(messageInfoProps);
-console.log(messageInfoRes);
-
 let baseInfo = messageInfoRes.data.value.data;
 messageStore.ChangePageInfo({
   currentPage: baseInfo.current,

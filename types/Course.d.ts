@@ -5,7 +5,7 @@ export interface CourseType {
   courseIsDelete: boolean;
   courseName: string;
   courseOrder: number;
-  courseUserId: string;
+  courseUserId: number;
   courseWeek: number;
 }
 

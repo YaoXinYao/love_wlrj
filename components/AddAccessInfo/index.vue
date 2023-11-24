@@ -6,6 +6,7 @@
         title="添加考核信息"
         width="30%"
         draggable
+        :closed="changeState"
       >
         <el-form
           ref="accessInfoRef"
@@ -69,7 +70,13 @@
           >
             <div class="accessInfoInputs">
               <el-input v-model="item.name" />
-              <el-input v-model="item.rate" />
+              <el-input-number
+                v-model="item.rate"
+                :precision="2"
+                :step="0.1"
+                :max="1"
+                :min="0"
+              />
               <span
                 class="mt-2"
                 style="display: inline-block; width: max-content"
@@ -114,12 +121,10 @@ let allGrade: Array<string>;
 let typeList: Array<AccessTypesType>;
 onMounted(() => {
   getAllGrade().then((res) => {
-    console.log(res);
     allGrade = res.data.value.data;
   });
 
   getAllTypes().then((res) => {
-    console.log(res.data.value.data);
     typeList = res.data.value.data;
   });
 });
@@ -132,6 +137,11 @@ const props = defineProps({
 });
 
 let dialogVisible = ref(false);
+
+//弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
+const changeState = () => {
+  dialogVisible.value = false;
+};
 
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
@@ -154,15 +164,7 @@ const accessInfo = reactive<AddAccessType>({
   types: [
     {
       name: "选择",
-      rate: 0,
-    },
-    {
-      name: "填空",
-      rate: 0,
-    },
-    {
-      name: "简答",
-      rate: 0,
+      rate: 0.0,
     },
   ],
 });
@@ -229,15 +231,25 @@ const addAccess = () => {
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-  // console.log(accessInfo);
-
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log(accessInfo);
-      console.log(accessInfo.plan);
+      let sum: number = 0;
+      for (let i = 0; i < accessInfo.types.length; i++) {
+        sum = sum * 1 + accessInfo.types[i].rate * 1;
+      }
+
+      if (sum != 1) {
+        ElMessage({
+          type: "warning",
+          message: "考核项分数百分比和为1",
+        });
+        return;
+      }
 
       let res = await addAccessService(accessInfo);
+      console.log(accessInfo);
+
       console.log(res);
 
       if (res.data.value.code === 20000) {
@@ -247,36 +259,25 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         });
         formEl.resetFields();
         emit("update_event", true);
+        dialogVisible.value = false;
+      } else if (res.data.value.code === 52003) {
+        ElMessage({
+          type: "warning",
+          message: "该考核已存在，请重新编辑考核名称",
+        });
       } else {
         ElMessage({
           type: "error",
           message: "添加失败，请检查网络",
         });
       }
-
-      dialogVisible.value = false;
     } else {
       ElMessage({
         type: "warning",
         message: "请完善表单",
       });
-      return false;
     }
   });
-
-  // const result = await formEl.validate((valid, fields) => {
-  //   if (valid) {
-  //     console.log("submit");
-  //     return true;
-  //   } else {
-  //     console.log("error", fields);
-  //     return false;
-  //   }
-  // });
-
-  // if (result) {
-  //   console.log(accessInfo);
-  // }
 };
 </script>
 
