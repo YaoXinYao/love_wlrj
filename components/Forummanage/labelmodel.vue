@@ -17,7 +17,6 @@
         class="ml-1 w-20"
         size="small"
         @keyup.enter="handleInputConfirm"
-        @blur="handleInputConfirm"
       />
       <el-button
         v-else
@@ -45,7 +44,6 @@
         class="ml-1 w-20"
         size="small"
         @keyup.enter="subfieldInputConfirm"
-        @blur="subfieldInputConfirm"
       />
       <el-button
         v-else
@@ -82,7 +80,7 @@ import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
 const tagTypes = ["success", "info", "warning", "danger", ""];
 let manage = forumManage();
-let { labelModel, subfieldModel, labels, subfields} = storeToRefs(manage);
+let { labelModel, subfieldModel, labels, subfields } = storeToRefs(manage);
 let ids = 0;
 let deleteNews = ref(false);
 let inputLabel = ref("");
@@ -126,21 +124,24 @@ function shutSure() {
 const showInput = () => {
   inputVisible.value = true;
 };
-const handleInputConfirm = async () => {
+const handleInputConfirm = () => {
+  console.log("执行了");
   if (inputLabel.value) {
     manage.addLabel(inputLabel.value).then((result) => {
       if (result == 20000) {
         manage.labelInfo(1, 100);
         successMessage("添加标签成功", "success");
+        inputVisible.value = false;
+        inputLabel.value = "";
       } else if (result == 53003) {
         successMessage("标签已经存在", "warning");
       } else {
         successMessage("添加标签失败", "error");
       }
     });
+  } else {
+    ElMessage("请输入标签内容");
   }
-  inputVisible.value = false;
-  inputLabel.value = "";
 };
 
 //-------------------------分栏管理-----------------------------
@@ -168,15 +169,17 @@ const subfieldInputConfirm = () => {
       if (result == 20000) {
         manage.subfieldInfo(1, 100);
         successMessage("添加分栏成功", "success");
+        subfieldVisible.value = false;
+        subfieldLabel.value = "";
       } else if (result == 53003) {
         successMessage("分栏已经存在", "warning");
       } else {
         successMessage("添加分栏失败", "danger");
       }
     });
+  } else {
+    ElMessage.warning("请输入分栏内容");
   }
-  subfieldVisible.value = false;
-  subfieldLabel.value = "";
 };
 </script>
 

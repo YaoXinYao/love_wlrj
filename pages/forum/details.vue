@@ -139,7 +139,7 @@
             <span style="margin: 0">{{ item.comLike }}</span>
             <span v-if="item.children.length != 0">展开全部</span>
             <span
-              v-if="(item.comUserId = userInfo.userId)"
+              v-if="(item.comUserId = userinfo.userId)"
               @click="deleteCom(item.comId)"
               >删除</span
             >
@@ -213,12 +213,17 @@ import { forumStore } from "~/store/forum";
 import { ref } from "vue";
 import type { UploadFile } from "element-plus";
 import { Delete, Plus, ZoomIn, ChatDotRound } from "@element-plus/icons-vue";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
+let forums = forumStore();
+const { singleData, discuss} = storeToRefs(forums);
 let commentNews = reactive<any>({
   comContent: "",
   comFatherId: 0,
   comPostId: 0,
   comRootId: 0,
-  comUserId: 8,
+  comUserId: userinfo.value.userId,
 });
 let conten = ref("");
 let formImage = reactive<any>({
@@ -229,17 +234,12 @@ const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let commentVisible = ref(false);
-let forums = forumStore();
-const { singleData, discuss, userInfo } = storeToRefs(forums);
 let data = useRoute().query.data;
 commentNews.comPostId = data;
 onMounted(() => {
   let id = Number(data);
-  forums.getUser(8);
-  forums.getSingle(id);
-  setTimeout(() => {
-    forums.selectComment(id);
-  }, 1000);
+  forums.getSingle(id,userinfo.value.userId);
+  forums.selectComment(id,userinfo.value.userId);
 });
 //删除图片
 const handleRemove = (file: UploadFile) => {
@@ -288,7 +288,7 @@ const submitData = (comFatherId: number, comRootId: number) => {
         forums.addComment(commentNews, formData).then((res) => {
           if (res == 20000) {
             ElMessage.success("评论成功");
-            forums.selectComment(Number(data));
+            forums.selectComment(Number(data),userinfo.value.userId);
             conten.value = "";
             comImg.value = [];
             formImage.files = [];
@@ -333,7 +333,7 @@ const sureCom = () => {
 };
 //点赞
 function comLike(comId: number, status: number, index: number) {
-  forums.LikesComment(comId, status, userInfo.value.userId).then((res) => {
+  forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
     if (status == 1) {
       if (res == 20000) {
         discuss.value[index].likes = true;

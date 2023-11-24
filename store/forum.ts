@@ -16,7 +16,7 @@ import {
   getComment,
   postComment,
   deleteComment,
-  likeComment
+  likeComment,
 } from "~/service/forums/card";
 import { getUserInfo } from "~/service/staff";
 export interface label {
@@ -51,7 +51,8 @@ export interface cards {
   datas: any[];
   discuss: any[];
   singleData: any;
-  userInfo: any;
+  total:number;
+  userPages:number;
 }
 export interface forums {
   labelModel: boolean;
@@ -75,19 +76,26 @@ export const forumStore = defineStore("forumInfo", {
       datas: [],
       discuss: [],
       singleData: {},
-      userInfo: {},
+      total:0,
+      userPages:0
     };
   },
   actions: {
-    //获取用户信息
-    async getUser(id: number) {
-      const { data } = await getUserInfo(id);
-      this.userInfo = data.value?.data;
-    },
     //用于发帖查询用户信息
     async selectUser(id: number) {
       const { data } = await getUserInfo(id);
       return data.value?.data;
+    },
+    //收藏/点赞帖子
+    async addlike(
+      postId: number,
+      status: number,
+      type: string,
+      userId: number
+    ) {
+      const { data } = await judgeLike(postId, status, type, userId);
+      const code = data.value?.code;
+      return code;
     },
     // 发布帖子
     async addCard(query: any, params: FormData) {
@@ -95,8 +103,77 @@ export const forumStore = defineStore("forumInfo", {
       const code = data.value?.code;
       return code;
     },
-    //查询帖子
+    //主页查询帖子
+    // async selectPost(
+    //   userId: any,
+    //   pageNo: number,
+    //   pageSize: number,
+    //   postTitle?: string,
+    //   postSubId?: number,
+    //   postContent?: string,
+    //   postUserId?: number
+    // ) {
+    //   const { data } = await getPost(
+    //     pageNo,
+    //     pageSize,
+    //     postTitle,
+    //     postSubId,
+    //     postContent,
+    //     postUserId
+    //   );
+    //   this.pages = data.value?.data.pages;
+    //   this.datas = [];
+    //   let dataArr = data.value?.data.records || [];
+    //   let promises = dataArr.map((postData: any, index: number) =>
+    //     this.processPostData(postData, userId, index)
+    //   );
+    //   await Promise.all(promises);
+    //   return this.datas;
+    // },
+    // async processPostData(postData: any, userId: number, index: number) {
+    //   const { postImg, ...postDataWithoutImg } = postData;
+    //   let img: string = postData.postImg;
+    //   let photos: string[] = img ? img.split(",") : [];
+    //   let likes = false;
+    //   let collect = false;
+    //   const resultPromise = this.addlike(postData.postId, 0, "Like", userId);
+    //   const resPromise = this.addlike(postData.postId, 0, "Collect", userId);
+    //   const usePromise = this.selectUser(postData.postUserId);
+    //   const [result, res, use] = await Promise.all([
+    //     resultPromise,
+    //     resPromise,
+    //     usePromise,
+    //   ]);
+    //   console.log("结果",result,res,use);
+      
+    //   if (result == 20000) {
+    //     console.log("进来了");
+        
+    //     likes = true;
+    //     let k = await this.addlike(postData.postId, 1, "Like", userId);
+    //     console.log("k",k);
+        
+    //   }
+    //   if (res == 20000) {
+    //     collect = true;
+    //     await this.addlike(postData.postId, 1, "Collect", userId);
+    //   }
+    //   let userName = use.userName;
+    //   let head =
+    //     use.userPicture == "未设置"
+    //       ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+    //       : use.userPicture;
+    //   this.datas[index] = {
+    //     ...postDataWithoutImg,
+    //     photos,
+    //     userName,
+    //     head,
+    //     likes,
+    //     collect,
+    //   };
+    // },
     async selectPost(
+      userId: any,
       pageNo: number,
       pageSize: number,
       postTitle?: string,
@@ -104,6 +181,8 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
+      console.log(userId);
+
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -123,38 +202,16 @@ export const forumStore = defineStore("forumInfo", {
         let likes = false;
         let collect = false;
         //判断用户是否点赞
-        const result = await this.addlike(
-          dataArr[i].postId,
-          1,
-          "Like",
-          this.userInfo.userId
-        );
+        const result = await this.addlike(dataArr[i].postId, 0, "Like", userId);
         if (result == 20000) {
-          await this.addlike(
-            dataArr[i].postId,
-            0,
-            "Like",
-            this.userInfo.userId
-          );
-        } else {
           likes = true;
+          await this.addlike(dataArr[i].postId, 1, "Like", userId);
         }
         //判断用户是否收藏
-        const res = await this.addlike(
-          dataArr[i].postId,
-          1,
-          "Collect",
-          this.userInfo.userId
-        );
+        const res = await this.addlike(dataArr[i].postId, 0, "Collect", userId);
         if (res == 20000) {
-          await this.addlike(
-            dataArr[i].postId,
-            0,
-            "Collect",
-            this.userInfo.userId
-          );
-        } else {
           collect = true;
+          await this.addlike(dataArr[i].postId, 1, "Collect", userId);
         }
         //查询用户
         const use = await this.selectUser(dataArr[i].postUserId);
@@ -167,19 +224,39 @@ export const forumStore = defineStore("forumInfo", {
       }
       return this.datas;
     },
-    //收藏/点赞帖子
-    async addlike(
-      postId: number,
-      status: number,
-      type: string,
-      userId: number
+    //用户查询自己发布过的帖子
+    async userPosts(
+      pageNo: number,
+      pageSize: number,
+      postTitle?: string,
+      postSubId?: number,
+      postContent?: string,
+      postUserId?: number
     ) {
-      const { data } = await judgeLike(postId, status, type, userId);
-      const code = data.value?.code;
-      return code;
+      const { data } = await getPost(
+        pageNo,
+        pageSize,
+        postTitle,
+        postSubId,
+        postContent,
+        postUserId
+      );
+      this.total = data.value?.data.total || 0;
+      this.userPages = data.value?.data.pages || 0
+      let dataArr = data.value?.data.records || [];
+      let userDatas = [];
+      if (dataArr.length != 0) {
+        for (let i = 0; i < dataArr.length; i++) {
+          const { postImg, ...postDataWithoutImg } = dataArr[i];
+          let img: string = dataArr[i].postImg;
+          let photos: string[] = img ? img.split(",") : [];
+          userDatas[i] = { ...postDataWithoutImg, photos };
+        }
+      }
+      return userDatas
     },
     //查询单个帖子
-    async getSingle(postId: number) {
+    async getSingle(postId: number, userId: any) {
       const { data } = await singlePost(postId);
       let single = data.value?.data || {};
       const { postImg, ...postData } = single;
@@ -189,30 +266,18 @@ export const forumStore = defineStore("forumInfo", {
       let likes = false;
       let collect = false;
       //判断用户是否点赞
-      const result = await this.addlike(
-        single.postId,
-        1,
-        "Like",
-        this.userInfo.userId
-      );
+      const result = await this.addlike(single.postId, 0, "Like", userId);
       if (result == 20000) {
-        await this.addlike(single.postId, 0, "Like", this.userInfo.userId);
-      } else if (result == 53003) {
         likes = true;
+        await this.addlike(single.postId, 1, "Like", userId);
       }
       //判断用户是否收藏
-      const res = await this.addlike(
-        single.postId,
-        1,
-        "Collect",
-        this.userInfo.userId
-      );
+      const res = await this.addlike(single.postId, 0, "Collect", userId);
       if (res == 20000) {
-        await this.addlike(single.postId, 0, "Collect", this.userInfo.userId);
-      } else if (res == 53003) {
         collect = true;
+        await this.addlike(single.postId, 1, "Collect", userId);
       }
-      //查询用户
+      //查询发帖者
       const use = await this.selectUser(single.postUserId);
       let userName = use.userName;
       let head =
@@ -230,53 +295,69 @@ export const forumStore = defineStore("forumInfo", {
     },
 
     //查询指定帖子下面的评论
-    async selectComment(postId: number) {
+    async selectComment(postId: number, userId: any) {
       let { data } = await getComment(postId);
       this.discuss = [];
       let comData = data.value?.data;
+      let k = 0;
       for (let i = 0; i < comData.length; i++) {
-        const { comImg, ...comInfo } = comData[i];
-        let img = comData[i].comImg;
-        let photos = img ? img.split(",") : [];
-        let likes = false
-        const result = await this.LikesComment(comData[i].comId,0,this.userInfo.userId);
-        if (result == 20000) {
-          likes = true;
-          await this.LikesComment(comData[i].comId,1,this.userInfo.userId);
-        }
         let user = await this.selectUser(comData[i].comUserId);
-        let comUserName = user.userName;
-        let head =
-          user.userPicture == "未设置"
-            ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-            : user.userPicture;
-        this.discuss[i] = { ...comInfo, comUserName, head, photos,likes };
-        if (comData[i].children.length != 0) {
-          this.discuss[i].children = [];
-          for (let j = 0; j < comData[i].children.length; j++) {
-            const { comImg, ...comInfos } = comData[i].children[j];
-            let img = comData[i].children[j].comImg;
-            let photos = img ? img.split(",") : [];
-            let likes = false
-            const result = await this.LikesComment(comData[i].children[j].comId,0,this.userInfo.userId);
-            if (result == 20000) {
-              likes = true;
-              await this.LikesComment(comData[i].children[j].comId,1,this.userInfo.userId);
-            }
-            let cuser = await this.selectUser(comData[i].children[j].comUserId);
-            let comUserName = cuser.userName;
-            let head =
-              cuser.userPicture == "未设置"
-                ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-                : cuser.userPicture;
-            this.discuss[i].children[j] = {
-              ...comInfos,
-              comUserName,
-              head,
-              photos,
-              likes
-            };
+        if (user == null) {
+          continue;
+        } else {
+          let comUserName = user.userName;
+          let head =
+            user.userPicture == "未设置"
+              ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+              : user.userPicture;
+          const { comImg, ...comInfo } = comData[i];
+          let img = comData[i].comImg;
+          let photos = img ? img.split(",") : [];
+          let likes = false;
+          const result = await this.LikesComment(comData[i].comId, 0, userId);
+          if (result == 20000) {
+            likes = true;
+            await this.LikesComment(comData[i].comId, 1, userId);
           }
+          this.discuss[k] = { ...comInfo, comUserName, head, photos, likes };
+          if (comData[i].children.length != 0) {
+            this.discuss[k].children = [];
+            for (let j = 0; j < comData[i].children.length; j++) {
+              const { comImg, ...comInfos } = comData[i].children[j];
+              let img = comData[i].children[j].comImg;
+              let photos = img ? img.split(",") : [];
+              let likes = false;
+              const result = await this.LikesComment(
+                comData[i].children[j].comId,
+                0,
+                userId
+              );
+              if (result == 20000) {
+                likes = true;
+                await this.LikesComment(
+                  comData[i].children[j].comId,
+                  1,
+                  userId
+                );
+              }
+              let cuser = await this.selectUser(
+                comData[i].children[j].comUserId
+              );
+              let comUserName = cuser.userName;
+              let head =
+                cuser.userPicture == "未设置"
+                  ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+                  : cuser.userPicture;
+              this.discuss[k].children[j] = {
+                ...comInfos,
+                comUserName,
+                head,
+                photos,
+                likes,
+              };
+            }
+          }
+          k++;
         }
       }
     },
@@ -287,17 +368,17 @@ export const forumStore = defineStore("forumInfo", {
       return code;
     },
     //删除评论
-    async deleteComments(ids:number[]){
-      let {data} = await deleteComment(ids)
-      const code = data.value?.code
-      return code
+    async deleteComments(ids: number[]) {
+      let { data } = await deleteComment(ids);
+      const code = data.value?.code;
+      return code;
     },
     //点赞评论
-    async LikesComment(comId:number,status:number,userId:number){
-      let {data} = await likeComment(comId,status,userId)
-      const code = data.value?.code
-      return code
-    }
+    async LikesComment(comId: number, status: number, userId: number) {
+      let { data } = await likeComment(comId, status, userId);
+      const code = data.value?.code;
+      return code;
+    },
   },
 });
 export const forumManage = defineStore("manage", {
@@ -379,7 +460,7 @@ export const forumManage = defineStore("manage", {
         let photos: string[] = img ? img.split(",") : [];
         //查询分栏
         const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
-        const subName = data.value.data.records[0].subName;
+        const subName = data.value?.data.records[0].subName;
         //查询用户
         const use = await this.getUser(dataArr[i].postUserId);
         let userName = use.userName;

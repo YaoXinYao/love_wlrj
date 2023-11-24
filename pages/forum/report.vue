@@ -13,11 +13,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { forumStore } from "~/store/forum";
-let forums = forumStore()
-onMounted(()=>{
-  forums.getUser(8)
-})
 </script>
 
 <style lang="scss" scoped>

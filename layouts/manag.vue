@@ -216,8 +216,9 @@ function skipAdd(a: any) {
   backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid #ddd;
   box-shadow: 0px 2px 3px 0px #c3cdd6;
+  min-height:60px !important;
+  --el-header-height: auto;
   .el-breadcrumb {
-    max-width: 500px;
     margin-left: 15px;
     overflow: hidden;
     white-space: nowrap;
