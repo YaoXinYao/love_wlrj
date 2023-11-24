@@ -1,73 +1,75 @@
 <template>
-    <div class="checking">
-        <div class="search">
-            <el-form
-            >
-                <el-row >
-                    <el-form-item>
-                        <el-button type="primary" @click="handleNew" >新增</el-button>
-                    </el-form-item>
-                </el-row>
-                <!-- <el-row>
-                    <el-form-item>
-                        <input type="file" style="display: none;" ref="inputRef" @click="handleUpdate">
-                        <el-button type="primary" @click="handleOpen" >上传文件</el-button>
-                    </el-form-item>
-                </el-row> -->
-                <el-row>
-                    <div 
-                        class="iconDiv" 
-                        @dragover.prevent="allowDrop" 
-                        @dragenter="highlight"
-                        @dragleave="light"
-                        @drop.prevent="handleDrop"
-                        @click="handleOpen"
-                        :class="{ 'highlight': isHighlighted }"
-                    >
-                        <el-icon size="90" class="el-icon--upload"><upload-filled /></el-icon>
+    <ClientOnly>
+        <div class="checking">
+            <div class="search">
+                <el-form
+                >
+                    <el-row >
+                        <el-form-item>
+                            <el-button type="primary" @click="handleNew" >新增</el-button>
+                        </el-form-item>
+                    </el-row>
+                    <!-- <el-row>
+                        <el-form-item>
+                            <input type="file" style="display: none;" ref="inputRef" @click="handleUpdate">
+                            <el-button type="primary" @click="handleOpen" >上传文件</el-button>
+                        </el-form-item>
+                    </el-row> -->
+                    <el-row>
+                        <div 
+                            class="iconDiv" 
+                            @dragover.prevent="allowDrop" 
+                            @dragenter="highlight"
+                            @dragleave="light"
+                            @drop.prevent="handleDrop"
+                            @click="handleOpen"
+                            :class="{ 'highlight': isHighlighted }"
+                        >
+                            <el-icon size="90" class="el-icon--upload"><upload-filled /></el-icon>
 
-                        <div>
-                            拖拽到这里或者点击上传
+                            <div>
+                                拖拽到这里或者点击上传
+                            </div>
+                            <input type="file" ref='inputRef' style="display: none;"  @change="handleUpdate">
                         </div>
-                        <input type="file" ref='inputRef' style="display: none;"  @change="handleUpdate">
-                    </div>
-                </el-row>
-            </el-form>
-            <div class="content" ref="uploadRef" >
-                <checkingContent ref="checkingRef"></checkingContent>
+                    </el-row>
+                </el-form>
+                <div class="content" ref="uploadRef" >
+                    <checkingContent ref="checkingRef" @change-click="handleChangeClick"></checkingContent>
+                </div>
             </div>
+            <el-dialog v-model="dialogTableVisible" width="30%">
+                <el-form
+                    :model="formData"
+                    label-position="left"
+                    ref="ruleFormRef"
+                    :rules="rules"
+                    :hide-required-asterisk="true"
+                >
+                    <el-form-item label="姓名"  label-width="80" prop="unsignUsername">
+                        <el-input style="width:65%;" v-model="formData.unsignUsername"></el-input>
+                    </el-form-item>
+                    <el-form-item label="学号" label-width="80" prop="unsignStudentId">
+                        <el-input style="width:65%;" v-model="formData.unsignStudentId"></el-input>
+                    </el-form-item>
+                    <el-form-item label="日期" label-width="80" prop="unsignDate">
+                        <el-date-picker
+                            v-model="formData.unsignDate"
+                            type="date"
+                            placeholder="选择日期"
+                        />
+                    </el-form-item>
+                    <el-form-item label="签到时间" label-width="80" prop="unsignTime">
+                        <el-time-picker v-model="formData.unsignTime" placeholder="Arbitrary time" />
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitNew">确定</el-button>
+                        <el-button type="danger" @click="cancel">取消</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </div>
-        <el-dialog v-model="dialogTableVisible" width="30%">
-            <el-form
-                :model="formData"
-                label-position="left"
-                ref="ruleFormRef"
-                :rules="rules"
-                :hide-required-asterisk="true"
-            >
-                <el-form-item label="姓名"  label-width="80" prop="unsignUsername">
-                    <el-input style="width:65%;" v-model="formData.unsignUsername"></el-input>
-                </el-form-item>
-                <el-form-item label="学号" label-width="80" prop="unsignStudentId">
-                    <el-input style="width:65%;" v-model="formData.unsignStudentId"></el-input>
-                </el-form-item>
-                <el-form-item label="日期" label-width="80" prop="unsignDate">
-                    <el-date-picker
-                        v-model="formData.unsignDate"
-                        type="date"
-                        placeholder="选择日期"
-                    />
-                </el-form-item>
-                <el-form-item label="签到时间" label-width="80" prop="unsignTime">
-                    <el-time-picker v-model="formData.unsignTime" placeholder="Arbitrary time" />
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="submitNew">确定</el-button>
-                    <el-button type="danger" @click="cancel">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-    </div>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -78,6 +80,7 @@ import { ElNotification,ElMessageBox  } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import signStore from '@/store/checking'
 import {storeToRefs} from 'pinia'
+
 
 
 const inputRef = ref()
@@ -99,7 +102,7 @@ const {currentQuery} = storeToRefs(signstore)
 interface formType {
     unsignDate:string,
     unsignUsername:string,
-    unsignTime:string,
+    unsignTime:any,
     unsignStudentId:string,
 }
 
@@ -146,11 +149,7 @@ function handleUpdate(event:any){
     console.log(event)
     const files =  inputRef.value.files
     handleFiles(files);
-    // const files = inputRef.value.files;
-    //   handleFiles(files);
-    //   console.log(files)
-    //   // 清空文件输入框，以便可以选择相同的文件
-    //   inputRef.value = null;
+    inputRef.value = null;
 }
 function handleOpen(){
     inputRef.value.click()
@@ -232,6 +231,21 @@ function cancel(){
     ruleFormRef.value?.resetFields()
 }
 
+function handleChangeClick(data:any){
+    console.log(data)
+
+    formData.unsignDate = data.unsignDate
+    formData.unsignStudentId = data.unsignStudentId
+    let time = new Date()
+    let arr = data.unsignTime.split(':')
+    time.setHours(arr[0])
+    time.setMinutes(arr[1])
+    time.setSeconds(arr[2])
+    formData.unsignTime = time
+    formData.unsignUsername = data.unsignUsername
+
+    dialogTableVisible.value = true
+}
 
 </script>
 

@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template #default="scope">
-                    <el-button type="primary">修改</el-button>
+                    <el-button type="primary" @click="handleChange(scope.row)">修改</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -58,6 +58,7 @@ getUnSign({pageIndex:1,size:5})
 
 const {signList,allCount,allPage,pageIndex,size,currentQuery} = storeToRefs(signstore)
 
+const emit = defineEmits(['changeClick'])
 
 
 function getUnSign(query:any){
@@ -108,6 +109,12 @@ function handleDelete(data:any){
 
     })
 }
+
+function handleChange(data:any){
+    console.log(data)
+    emit('changeClick',data)
+}
+
 
 
 

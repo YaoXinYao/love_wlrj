@@ -93,6 +93,25 @@
             </div>
           </template>
         </el-dialog>
+
+        <el-dialog
+          v-model="dialogVisible"
+          width="30%"
+        >
+          <el-form
+          
+            label-position="left"
+          >
+            <el-form-item label="年级">
+              <el-input disabled v-model="deleteForm.grade" style="width:60%" />
+            </el-form-item>
+            <el-form-item label="清除的时间">
+              <el-select >
+                <el-option v-for="(item,index) in deleteForm.time" :key="index" :label="item.label" :value="item.value"     />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -112,6 +131,7 @@ attendanceStore.getAllSchedule()
 const {timer,loading}  = storeToRefs(attendanceStore)
 
 const dialog = ref(false)
+const dialogVisible = ref(false)
 const ruleFormRef = ref<FormInstance>()
 
 watch(dialog,(newValue)=>{
@@ -149,6 +169,24 @@ const form = reactive<formType>({
   label:''
 })
 
+const deleteForm = reactive({
+  grade:'',
+  time:[
+    {
+      value:'10',
+      label:'上午开始时间'
+    },
+    {
+      value:'11',
+      label:'上午结束时间'
+    },
+    {
+      value:'1',
+      label:'上午开始时间'
+    },
+  ]
+})
+
 
 
 
@@ -160,28 +198,29 @@ function handleClose(){
 
 function handleClearAll(data:any){
   console.log(data)
-  ElMessageBox.confirm(
-    '你确定要清空时间嘛?',
-    '清空时间',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(() => {
-    ElNotification({
-        title: 'success',
-        type: 'success',
-        message: '清空成功',
-      })
-    })
-    .catch(() => {
-      ElNotification({
-        title: 'warning',
-        type: 'warning',
-        message: '清空取消',
-      })
-    })
+  dialogVisible.value = true
+  // ElMessageBox.confirm(
+  //   '你确定要清空时间嘛?',
+  //   '清空时间',
+  //   {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消',
+  //     type: 'warning',
+  //   }
+  // ).then(() => {
+  //   ElNotification({
+  //       title: 'success',
+  //       type: 'success',
+  //       message: '清空成功',
+  //     })
+  //   })
+  //   .catch(() => {
+  //     ElNotification({
+  //       title: 'warning',
+  //       type: 'warning',
+  //       message: '清空取消',
+  //     })
+  //   })
 }
 
 function handleSubmit(){
@@ -243,26 +282,29 @@ function handleSubmit(){
 
 function handleCell(row:any,column:any,cell:any,event:any){
   console.log(row,column,cell,event)
-  let label = column.property
-  console.log(label)
-  form.grade = row.grade
-  form.labelType = label
-  form.label = column.label
-  
-  let value = row[label]
+  if(column.label !== '操作' && column.label !== '年级'){
+    let label = column.property
+    console.log(label)
+    form.grade = row.grade
+    form.labelType = label
+    form.label = column.label
+    
+    let value = row[label]
 
-  console.log(value)
-  if(value == ''){
-    form.labelValue = value
-  }else{
-    let time  = new Date()
-    let arr = value.split(':')
-    time.setHours(arr[0])
-    time.setMinutes(arr[1])
-    time.setSeconds(arr[2])
-    form.labelValue = time
+    console.log(value)
+    if(value == ''){
+      form.labelValue = value
+    }else{
+      let time  = new Date()
+      let arr = value.split(':')
+      time.setHours(arr[0])
+      time.setMinutes(arr[1])
+      time.setSeconds(arr[2])
+      form.labelValue = time
+    }
+    dialog.value = true
   }
-  dialog.value = true
+
   
 }
 
