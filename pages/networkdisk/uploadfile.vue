@@ -79,8 +79,11 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+
 import { useDiskstore } from "~/store/disk";
+
 const input = ref<HTMLInputElement>();
+
 const isActive = ref(false);
 const curTag = ref([]);
 const disstore = useDiskstore();
@@ -125,7 +128,15 @@ const handleClose = () => {
 const uploadBt = async () => {
   const chunks = createChunks(filequeue.value[0], 1024 * 1024);
   const md5info = await HashMd5file(chunks);
-  console.log(md5info);
+  await Filefragmentation(
+    filequeue.value[0],
+    0,
+    md5info as string,
+    userinfo.value.userName,
+    curTag.value
+  );
+  ElMessage({ message: "上传成功！", type: "success" });
+  filequeue.value.shift();
   /*  const res = await uploadfile(
     {
       uploaderId: 7,

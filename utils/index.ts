@@ -247,3 +247,48 @@ export function HashMd5file(chunks: Blob[]) {
     _read(0);
   });
 }
+export async function Filefragmentation(
+  file: File,
+  chunkindex: number,
+  md5: string,
+  uploadname: string,
+  curTag: number[]
+) {
+  const name = file.name;
+  const Size = file.size;
+  const shardSize = 5 * 1024 * 1024; //以5MB为一个分片,每个分片的大小
+  const shardCount = Math.ceil(Size / shardSize);
+  if (chunkindex >= shardCount) {
+    //无需再传
+    return;
+  }
+  const start = chunkindex * shardSize;
+  const end = start + shardSize;
+  const packet = file.slice(start, end);
+  const form = new FormData();
+  form.append("file", packet); //slice方法用于切出文件的一部分
+  curTag.forEach((item) => {
+    form.append("fileTypeIdList", item as any);
+  });
+  form.append("fileName", name);
+  form.append("uploaderId", Authuserid() as any);
+  form.append("uploaderName", uploadname);
+  form.append("totalSize", Size as any);
+  form.append("total", shardCount as any); //总片数
+  form.append("index", chunkindex as any); //当前是第几片
+  form.append("md5", md5);
+  //数据填充完毕，开始上传
+  const { data } = await useFetch<any>("/disk/disk/file/shardingUpload", {
+    method: "post",
+    body: form,
+  });
+  //这个分片上传成功
+  if (data.value!.code == 20000) {
+    await Filefragmentation(file, chunkindex + 1, md5, uploadname, curTag);
+  }
+  //单个分片失败,继续尝试上传
+  if (data.value!.code === 51000)
+    setTimeout(async () => {
+      await Filefragmentation(file, chunkindex, md5, uploadname, curTag);
+    }, 1000);
+}

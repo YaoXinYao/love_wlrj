@@ -5,7 +5,7 @@
     </svg>
     <div class="filename">
       <p>
-        945--day141_网页云商城Nextjs项目实战-项目打包和部署_15-(掌握)-首页-编辑推荐商品列表的实现【海量资源：666java.com】.mp4945--day141_网页云商城Nextjs项目实战-项目打包和部署_15-(掌握)-首页-编辑推荐商品列表的实现【海量资源：666java.com】.mp4945--day141_网页云商城Nextjs项目实战-项目打包和部署_15-(掌握)-首页-编辑推荐商品列表的实现【海量资源：666java.com】.mp4
+        {{ file.name }}
       </p>
     </div>
     <i @click="() => deletefile(file.name)" class="iconfont icon-guanbi2"></i>
