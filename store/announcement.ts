@@ -5,14 +5,17 @@ import {insertNotice, getNotice} from '@/service/announcement/announcement'
 
 const annoucementStore = defineStore('annoucementStore',{
     state: ():Announcement =>({
-        announcementList: []
+        announcementList: [],
+        loading:false,
     }),
     actions:{
         async getAnoucementAction(queryInfo:any){
+            this.loading = true
             let listResult = await getNotice(queryInfo)
-            console.log(listResult.data.value.data.records)
+            this.loading = false
+            // console.log(listResult.data.value.data.records)
             this.announcementList = listResult.data.value.data.records
-            console.log(this.announcementList)
+            // console.log(this.announcementList)
             for(let item in this.announcementList){
                 let time = this.announcementList[item].noticeTime
                 let times = new Date(time)
