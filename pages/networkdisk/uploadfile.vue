@@ -79,9 +79,10 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-
+import { useHomestore } from "~/store/home";
 import { useDiskstore } from "~/store/disk";
-
+const homestore = useHomestore();
+const { userinfo } = storeToRefs(homestore);
 const input = ref<HTMLInputElement>();
 
 const isActive = ref(false);
