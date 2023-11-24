@@ -42,7 +42,7 @@ export default defineNuxtConfig({
         },
         {
           type: "text/javascript",
-          src: "/staticjs/font_4330669_ng1m4irqeb.js",
+          src: "/staticjs/font_4330669_ghs4q6fkhna.js",
         },
       ],
       noscript: [{ children: "Javascript is required" }],
@@ -102,10 +102,10 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-      "/ws": {
-        target: "ws://115.159.84.43:19491/",
-        ws: true,
+      "/forum": {
+        target: "http://115.159.84.43:19491/forum/swagger/forum/",
         changeOrigin: true,
+        prependPath: true,
       },
     },
   },

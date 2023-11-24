@@ -31,10 +31,12 @@ export interface AccessResInfoType {
   id: number;
   plan: string;
   publisher: number;
+  publisherName?: string;
   subscribers: number;
   type: string;
   typeId: number | null;
   updateTime: string | null;
+  sonTable: Array<any>;
 }
 
 export interface AccessPageInfoType {
@@ -44,4 +46,16 @@ export interface AccessPageInfoType {
 }
 export interface AccessStoreType {
   pageInfo: { currentPage: number; pageSize: number; total: number };
+  searchKey: string;
+}
+
+export interface ScoreType {
+  name: string;
+  score: number;
+}
+
+export interface ScoreAddType {
+  pid: number;
+  scores: Array<ScoreType>;
+  studentId: number;
 }

@@ -42,11 +42,17 @@
             >分享</ElButton
           >
           <ElButton
+            style="width: 0.7rem"
             @click="() => Favoritefilesend(scope.row.id)"
             type="warning"
-            color="rgb(40,77,213)"
-            >收藏</ElButton
+            :color="`${
+              scope.row.is_collection == 1
+                ? 'rgb(241,243,248)'
+                : 'rgb(40,77,213)'
+            }`"
           >
+            {{ scope.row.is_collection == 1 ? "已收藏" : "收藏" }}
+          </ElButton>
         </template>
       </el-table-column>
     </el-table>
@@ -67,6 +73,7 @@ import type { FileTyperoot } from "~/types/Home";
 import { Favoritefile } from "~/service/homeApi";
 import { storeToRefs } from "pinia";
 import { useDiskstore } from "~/store/disk";
+import { unCollectionFile } from "~/service/disk";
 const diskstore = useDiskstore();
 const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
 function iconfontType(val: string) {
@@ -77,12 +84,23 @@ function iconfontType(val: string) {
     return FileType.other;
   }
 }
-async function Favoritefilesend(id: number) {
+//收藏防抖
+const Favoritefilesend = Mythrottle(async (id: number) => {
   const res = await Favoritefile(id);
-  if (res.data.value.data === 20000) {
-    ElMessage({ message: res.data.value.message });
+  if (res.data.value.code === 20000) {
+    diskstore.changeUncomment(id);
+    console.log(res.data.value.message);
+    ElMessage({ message: res.data.value.message, type: "success" });
   }
-}
+  if (res.data.value.code === 51000) {
+    //取消收藏，并且在本地切换收藏状态
+    diskstore.changeUncomment(id);
+    const res = await unCollectionFile({ fileId: id });
+    if (res.data.value.code == 20000) {
+      ElMessage({ message: "取消收藏", type: "info" });
+    }
+  }
+}, 1000);
 function filetype(val: string) {
   const reg = /\.([a-zA-Z0-9]+)$/;
   return val.match(reg)![1];

@@ -8,6 +8,7 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
         pageSize: 5,
         total: 0,
       },
+      searchKey: "",
     };
   },
   actions: {

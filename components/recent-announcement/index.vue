@@ -24,15 +24,23 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="上传图片" prop="noticeImgs">
-                    <el-upload
-                        action=""
-                        list-type="picture"
-                        v-model:file-list="refForm.noticeImgs"
-                        :on-preview="handlePreview"
-                        :on-remove="handleRemove"
-                    >
-                        <el-button type="primary">Click to upload</el-button>
-                    </el-upload>
+                    <el-col>
+                        <input ref="fileInput" type="file" style="display: none" @change="handleFileChange" />
+                        <el-button type="primary" @click="handleFile">Click to upload</el-button>
+                    </el-col>
+                    <el-col  v-show="refForm.noticeImgs">
+                        <div class="fileShow">
+                            <img  :src="refForm.noticeImgs !== '' ? srcValue : ''" alt="上传图片" class="Pic">
+                            <div class="imgName">
+                                {{ refForm.noticeImgs.name }}
+                            </div>
+                            <div class="delPic" @click="handleDeletePic">
+                                <el-icon :size="10">
+                                    <CloseBold />
+                                </el-icon>
+                            </div>
+                        </div>
+                    </el-col>
                 </el-form-item>
                 <el-row>
                     <el-form-item label="公告范围" prop="noticeScope">
@@ -92,16 +100,20 @@
 import type  { FormRules, FormInstance} from 'element-plus';
 import {ElNotification, } from 'element-plus'
 import { ref, reactive } from 'vue';
-import type { UploadProps, UploadUserFile } from 'element-plus'
+import type { UploadProps, } from 'element-plus'
 import { getUser,getGrade } from '@/service/announcement/announcement'
 import {postAffiche} from '@/service/announcement/announcement'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import {CloseBold} from '@element-plus/icons-vue'
 
 
 const hide = ref(true)
 
 const grade = ref()
 const users = ref()
+const fileInput = ref()
+const srcValue = ref('')
+
 
 const emit = defineEmits(['newValue'])
 
@@ -134,7 +146,7 @@ interface IProps {
     noticeScope:string,
     grade:string,
     user:string,
-    noticeImgs:UploadUserFile[] | []
+    noticeImgs:string
 }
 
 const refForm = reactive<IProps>({
@@ -144,10 +156,10 @@ const refForm = reactive<IProps>({
     noticeScope:'',
     grade:'',
     user:'',
-    noticeImgs:[],
+    noticeImgs:'',
 })
 
-
+JSON.stringify
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -191,6 +203,12 @@ const handlePreview: UploadProps['onPreview'] = (file) => {
 }
 
 
+const handleFile = ()=>{
+    // fileInput.value.click()
+    fileInput.value.value = null;
+    fileInput.value.click()
+    
+}
 
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -235,7 +253,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             }
         ).then(()=>{
             postAffiche(form,fileList).then(res=>{
-                console.log(res.data.value)
+                console.log('上传图片')
+                console.log(res.data)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
@@ -326,6 +345,22 @@ const handleClearValue = ()=>{
 }
 
 
+function handleFileChange(event:any){
+    console.log(event)
+    const file = event.target.files[0]
+    refForm.noticeImgs = file
+    const value = URL.createObjectURL(file)
+    srcValue.value = value
+    console.log(value)
+    console.log(refForm.noticeImgs)
+}
+
+function handleDeletePic(){
+    fileInput.value.value = null;
+    refForm.noticeImgs = ''
+}
+
+
 </script>
 
 <style scoped lang="scss">
@@ -341,6 +376,37 @@ const handleClearValue = ()=>{
         position: relative;
         width: 100%;
         overflow: hidden;
+        .fileShow{
+            margin-top: 20px;
+            border: 1px solid #dcdfe6;
+            background-color: #ffffff;
+            width: 360px;
+            display: flex;
+            border-radius: 12px;
+            padding: 10px 20px;
+            position: relative;
+            align-items: center;
+            flex-direction: row;
+            gap: 10px;
+            .Pic{
+                border-radius: 6px;
+                width: 70px;
+                height: 70px;
+                object-fit: cover;
+            }
+            .imgName{
+                width: 220px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .delPic{
+                position: absolute;
+                right: 10px;
+                top: -5px;
+                cursor: pointer;
+            }
+        }
     }
 }
 </style>

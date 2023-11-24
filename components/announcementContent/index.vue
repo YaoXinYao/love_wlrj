@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 <template>
-    <div class="announcement">
+    <div class="announcement" v-loading="loading">
         <div class="content">
             <el-timeline>
                     <el-timeline-item center placement="top" v-for="item in announcementList" :key="item.noticeId" :timestamp="item.noticeTime"  >
@@ -19,18 +19,18 @@ import {reactive} from 'vue'
 import annoucementStore from '@/store/announcement'
 import {storeToRefs} from 'pinia'
 
-// export interface anType {
-//     title:string,
-//     type:string,
-//     content: string,
-//     timestamp: string,
-// }
+export interface anType {
+    title:string,
+    type:string,
+    content: string,
+    timestamp: string,
+}
 
 const announceList = annoucementStore()
 handleAnnouncement({pageNo:1,pageSize:9999})
 
-const {announcementList} = storeToRefs(announceList)
-
+const {announcementList,loading} = storeToRefs(announceList)
+console.log(announcementList)
 
 const isShow = ref(true)
 

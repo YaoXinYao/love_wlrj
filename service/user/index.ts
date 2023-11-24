@@ -2,11 +2,10 @@ import type { UpdatePassType, UserBaseInfoType } from "~/types/User";
 import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 import type { CourseType } from "~/types/Course";
-import type { AddAccessType, MyObject } from "~/types/Access";
+import type { AddAccessType, MyObject, ScoreAddType } from "~/types/Access";
 const BASEURL = "http://124.222.153.56:19591";
 //添加课表
 export const addTimetable = (props: CourseType) => {
-  console.log("我是数据", props);
   return hyRequest.post<IResultData<any>>(`/check/course-manage/createCourse`, {
     ...props,
   });
@@ -20,7 +19,7 @@ export const updateTimetable = (props: CourseType) => {
 };
 
 //获取某人的课表
-export const getTimetable = (userId: string) => {
+export const getTimetable = (userId: number) => {
   return hyRequest.get<IResultData<any>>(
     `/check/course-manage/getPersonAllCourse`,
     {
@@ -61,6 +60,13 @@ export const sendEmail = (props: { email: string; type: number }) => {
   });
 };
 
+//通过id获取某个用户信息
+export const getUserInfoById = (id: number) => {
+  return hyRequest.get<IResultData<any>>("/coustom/user/user/getUserById", {
+    id,
+  });
+};
+
 //修改密码
 export const updateUserPassword = (props: UpdatePassType) => {
   return hyRequest.put<IResultData<any>>(`/coustom/user/user/updatePassword`, {
@@ -88,21 +94,8 @@ export const getAllTypes = () => {
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
-  // let obj: MyObject = props;
-  // for (let i = 0; i < props.types.length; i++) {
-  //   obj[`types[${i}].name`] = props.types[i].name;
-  //   obj[`types[${i}].rate`] = props.types[i].rate;
-  // }
-  // delete obj["types"];
-  let types = JSON.parse(JSON.stringify(props.types));
-  let obj = { ...props, types };
-  console.log(JSON.stringify(obj));
-  console.log(JSON.stringify(props));
-
   return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, "", {
-    body: {
-      studyPlanDto: JSON.stringify(props),
-    },
+    body: JSON.stringify(props),
   });
 };
 
@@ -121,5 +114,19 @@ export const getAllAccessService = (props: {
 export const deleteAccessService = (ids: Array<number>) => {
   return hyRequest.delete<IResultData<any>>(`/access/studyPlan/delete`, {
     ids,
+  });
+};
+
+//添加某个考核的成绩
+export const addAccessScore = (props: ScoreAddType) => {
+  return hyRequest.post<IResultData<any>>(`/access/studyPlan/delete`, "", {
+    body: JSON.stringify(props),
+  });
+};
+
+//获取试卷模版
+export const getTemplateService = (id: number) => {
+  return hyRequest.get<IResultData<any>>(`/access/templates/search`, {
+    id,
   });
 };

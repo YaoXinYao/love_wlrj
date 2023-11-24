@@ -9,7 +9,7 @@ let weekDay = [
   "sunday",
 ];
 
-export const useGetTimetable = async (userId: string) => {
+export const useGetTimetable = async (userId: number) => {
   let res = await getTimetable(userId);
   let timetableData: any = res.data.value.data;
 

@@ -1,56 +1,20 @@
 <template>
   <div class="container">
     <AddAccessInfo
-      :dialogVisible="dialogVisible"
-      @addAlert="addAlertHandle"
+      :dialogVisible="accessDialogVisible"
+      @addAlert="accessHandle"
       @update_event="updateEvent"
+    />
+    <AddScoreInfo
+      :dialogVisible="scoreDialogVisible"
+      @addAlert="scoreHandle"
+      :id="addScoreID"
+      ref="addScoreRef"
     />
     <el-form :inline="true" :model="searchKeys">
       <el-form-item label="考核名称"
-        ><el-input
-          v-model="searchKeys.accessName"
-          placeholder="考核名称"
-          clearable
+        ><el-input v-model="searchKey" placeholder="考核名称" clearable
       /></el-form-item>
-      <!-- <el-form-item label="考核类型"
-        ><el-select v-model="searchKeys.accessType" placeholder="类型">
-          <el-option
-            v-for="item in searchKeys.accessType"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled"
-          /> </el-select
-      ></el-form-item> -->
-      <!-- <el-form-item label="考核类别"
-        ><el-select v-model="searchKeys.accessType" placeholder="类别">
-          <el-option
-            v-for="item in searchKeys.accessType"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled"
-          /> </el-select
-      ></el-form-item>
-      <el-form-item label="考核时间">
-        <el-date-picker
-          v-model="searchKeys.accessTime"
-          type="datetime"
-          placeholder="选择时间"
-        />
-      </el-form-item>
-      <el-form-item label="考核发起人"
-        ><el-input
-          v-model="searchKeys.accessPromoter"
-          placeholder="考核发起人"
-          clearable
-      /></el-form-item>
-      <el-form-item label="考核对象"
-        ><el-input
-          v-model="searchKeys.accessTarget"
-          placeholder="考核对象"
-          clearable
-      /></el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="searchAccess">搜索</el-button>
         <el-button type="warning" @click="resetInfo">重置</el-button>
@@ -58,14 +22,24 @@
       </el-form-item>
     </el-form>
     <el-table
-      :data="accessInfo.data"
+      :data="accessInfo"
       :border="parentBorder"
       style="width: 100%"
+      ref="tableRef"
+      v-loading="isLoading"
     >
       <el-table-column type="expand">
         <template #default="props">
+          <!-- <div>{{ props.row }}</div> -->
           <div class="accessInfo">
-            <h3>成绩</h3>
+            <h3>
+              成绩<el-button
+                style="margin-left: 10px; width: 55px; height: 30px"
+                type="success"
+                @click="scoreAlert(props.row.id)"
+                >添加</el-button
+              >
+            </h3>
             <el-table
               :data="props.row.sonTable"
               :border="childBorder"
@@ -92,11 +66,11 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column label="姓名" prop="姓名" />
-              <el-table-column label="代码" prop="代码" />
-              <el-table-column label="完成度" prop="完成度" />
-              <el-table-column label="基础知识" prop="基础知识" />
-              <el-table-column label="平时分" prop="平时分" />
+              <el-table-column label="姓名" prop="name" />
+              <el-table-column label="代码" prop="code" />
+              <el-table-column label="完成度" prop="final" />
+              <el-table-column label="基础知识" prop="base" />
+              <el-table-column label="平时分" prop="usual" />
             </el-table>
           </div>
         </template>
@@ -114,7 +88,7 @@
           }}</el-tag></template
         >
       </el-table-column> -->
-      <el-table-column label="发起者" prop="publisher" />
+      <el-table-column label="发起者" prop="publisherName" />
       <el-table-column label="考核对象" prop="subscribers" />
       <el-table-column label="考核时间" prop="deadline" />
       <el-table-column label="描述" prop="additional">
@@ -152,85 +126,153 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { deleteAccessService, getAllAccessService } from "~/service/user";
+import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
+import {
+  deleteAccessService,
+  getAllAccessService,
+  getUserInfoById,
+} from "~/service/user";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
+const tableRef = ref();
+import type { AccessResInfoType } from "~/types/Access";
 definePageMeta({
   layout: "manag",
 });
 
-const AccessPageInfoStore = useAccessPageInfoStore();
-const dialogVisible = ref(false);
-const { pageInfo } = storeToRefs(AccessPageInfoStore);
+const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
 
-let accessInfo = reactive({ data: undefined });
+const AccessPageInfoStore = useAccessPageInfoStore();
+const isLoading = ref(false);
+const accessDialogVisible = ref(false);
+const scoreDialogVisible = ref(false);
+const addScoreID = ref();
+const { pageInfo, searchKey } = storeToRefs(AccessPageInfoStore);
+
+const accessInfo = ref<Array<AccessResInfoType>>([]);
+
+// watch(accessInfo.value, (newValue) => {
+//   console.log(newValue);
+// });
 const getAccessInfo = async (props: {
   keyword?: string;
   currentPage: number;
   pageSize: number;
 }) => {
+  isLoading.value = true;
   const accessInfoRes = await getAllAccessService({
     name: props.keyword,
     nodePage: props.currentPage,
     pageSize: props.pageSize,
   });
 
-  accessInfo.data = accessInfoRes.data.value.data.records;
+  accessInfo.value = accessInfoRes.data.value.data.records;
+
+  if (accessInfo.value) {
+    for (let i = 0; i < accessInfo.value.length; i++) {
+      let user = await getUserInfoById(accessInfo.value[i].publisher as number);
+      if (user.data.value.code == 20000) {
+        accessInfo.value[i].publisherName = user.data.value.data.userName;
+      } else {
+        accessInfo.value[i].publisherName = "未知";
+      }
+    }
+  }
   pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
   pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
   pageInfo.value.total = accessInfoRes.data.value.data.total;
+  isLoading.value = false;
+  console.log(accessInfo.value);
 };
 
 const resetInfo = () => {
   pageInfo.value.currentPage = 1;
+  searchKey.value = "";
   getAccessInfo({
+    keyword: "",
     currentPage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
   });
 };
 
 const searchAccess = async () => {
-  if (searchKeys.accessName == "") {
+  if (searchKey.value == "") {
     ElMessage({
       type: "warning",
       message: "请输入关键词",
     });
   } else {
+    pageInfo.value.currentPage = 1;
     const accessInfoRes = await getAllAccessService({
-      name: searchKeys.accessName,
-      nodePage: pageInfo.value.currentPage,
+      name: searchKey.value,
+      nodePage: 1,
       pageSize: pageInfo.value.pageSize,
     });
-
-    console.log(accessInfo);
-
-    accessInfo.data = accessInfoRes.data.value.data.records;
+    accessInfo.value = accessInfoRes.data.value.data.records;
     pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
     pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
     pageInfo.value.total = accessInfoRes.data.value.data.total;
   }
 };
 
+const getScore = (row: any, expandedRows: any) => {
+  const isExpanded = expandedRows.includes(row);
+  console.log(expandedRows);
+  //判断开启下拉和关闭下拉
+  if (!isExpanded) {
+    return;
+  }
+  let sonTable = [
+    {
+      name: "张三",
+      code: 0,
+      final: 0,
+      base: 0,
+      usual: 0,
+      comments: [
+        {
+          name: "person1",
+          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+        },
+        {
+          name: "person1",
+          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+        },
+        {
+          name: "person1",
+          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+        },
+        {
+          name: "person1",
+          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
+        },
+      ],
+    },
+  ];
+
+  // let index = accessInfo.value?.findIndex((obj) => obj.id === row.id);
+
+  row.sonTable = markRaw(sonTable);
+};
+
 getAccessInfo({
+  keyword: searchKey.value,
   currentPage: pageInfo.value.currentPage,
   pageSize: pageInfo.value.pageSize,
 });
 
 const handleSizeChange = async (val: number) => {
-  console.log("当前每页大小:", val);
-
   pageInfo.value.pageSize = val;
   getAccessInfo({
-    keyword:searchKeys.accessName,
+    keyword: searchKey.value,
     currentPage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
   });
 };
 const handleCurChange = async (val: number) => {
-  console.log("当前页数", val);
   pageInfo.value.currentPage = val;
   getAccessInfo({
-    keyword:searchKeys.accessName,
+    keyword: searchKey.value,
     currentPage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
   });
@@ -260,245 +302,26 @@ let searchKeys = reactive({
 
 const parentBorder = ref(false);
 const childBorder = ref(false);
-// const accessInfo = [
-//   {
-//     date: "2016-05-03",
-//     name: "头脑风暴",
-//     type: "笔试",
-//     assessType: "头脑风暴",
-//     accessTarget: "2023级",
-//     accessPromoter: "2022级",
-//     sonTable: [
-//       {
-//         姓名: "张三",
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//         comments: [
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//         ],
-//       },
-//       {
-//         姓名: "张三",
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//         comments: [
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//         ],
-//       },
-//       {
-//         姓名: "张三",
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//         comments: [
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//         ],
-//       },
-//       {
-//         姓名: "张三",
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//         comments: [
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//           {
-//             name: "person1",
-//             commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     date: "2016-05-03",
-//     name: "头脑风暴",
-//     type: "笔试",
-//     assessType: "头脑风暴",
-//     accessTarget: "2023级",
-//     accessPromoter: "2022级",
-//     sonTable: [
-//       {
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//       },
-//     ],
-//   },
-//   {
-//     date: "2016-05-03",
-//     name: "头脑风暴",
-//     type: "笔试",
-//     assessType: "头脑风暴",
-//     accessTarget: "2023级",
-//     accessPromoter: "2022级",
-//     sonTable: [
-//       {
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//       },
-//     ],
-//     comments: [
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//     ],
-//   },
-//   {
-//     date: "2016-05-03",
-//     name: "头脑风暴",
-//     type: "笔试",
-//     assessType: "头脑风暴",
-//     accessTarget: "2023级",
-//     accessPromoter: "2022级",
-//     sonTable: [
-//       {
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//       },
-//     ],
-//     comments: [
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//     ],
-//   },
-//   {
-//     date: "2016-05-03",
-//     name: "头脑风暴",
-//     type: "笔试",
-//     assessType: "头脑风暴",
-//     accessTarget: "2023级",
-//     accessPromoter: "2022级",
-//     sonTable: [
-//       {
-//         代码: 0,
-//         完成度: 0,
-//         基础知识: 0,
-//         平时分: 0,
-//       },
-//     ],
-//     comments: [
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//       {
-//         name: "person1",
-//         commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-//       },
-//     ],
-//   },
-// ];
 
 const addAlert = () => {
-  dialogVisible.value = !dialogVisible.value;
+  accessDialogVisible.value = !accessDialogVisible.value;
+};
+const scoreAlert = (id: number) => {
+  addScoreID.value = id;
+  scoreDialogVisible.value = !scoreDialogVisible.value;
+  console.log(id);
+  addScoreRef.value?.postId(id);
 };
 
-const addAlertHandle = (props: boolean) => {
-  dialogVisible.value = props;
+const accessHandle = (props: boolean) => {
+  accessDialogVisible.value = props;
+};
+
+const scoreHandle = (props: boolean) => {
+  scoreDialogVisible.value = props;
 };
 const updateEvent = (props: boolean) => {
+  searchKey.value = "";
   if (props) {
     getAccessInfo({
       currentPage: pageInfo.value.currentPage,
@@ -521,6 +344,7 @@ const deleteAccess = (ids: Array<number>) => {
           message: "删除成功",
         });
         getAccessInfo({
+          keyword: searchKey.value,
           currentPage: pageInfo.value.currentPage,
           pageSize: pageInfo.value.pageSize,
         });
@@ -538,6 +362,9 @@ const deleteAccess = (ids: Array<number>) => {
       });
     });
 };
+
+//添加成绩
+const addScoreAlert = () => {};
 </script>
 
 <style lang="scss" scoped>

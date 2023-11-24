@@ -71,6 +71,14 @@
               ></template
             >
           </el-menu-item>
+          <el-menu-item index="/admin/checking">
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/checking" @click="skipAdd($event)"
+                >考勤管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>

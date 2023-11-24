@@ -135,10 +135,10 @@ checklist.getCheckList(query);
 
 
 function handleEditBtnClick(data:any){
-    // console.log(data.leave.leaveUserId)
+    console.log(data.leave)
     let query = {
-        leaveApprovalId:1,
-        leaveId : data.leaveId,
+        leaveApprovalId:userinfo.value.userId,
+        leaveId : data.leave.leaveId,
         leaveStatus: 1
     }
     ElMessageBox.confirm(
@@ -151,7 +151,7 @@ function handleEditBtnClick(data:any){
         }
     ).then(()=>{
         updateLeave(query).then(res=>{
-            // console.log(res.data.value.message)
+            console.log(res.data.value)
             if(res.data.value.code === 20000){
                 ElMessage({
                     type: 'success',
@@ -172,13 +172,13 @@ function handleEditBtnClick(data:any){
 function handleDeleteBtnClick(data:any){
     console.log(data)
     let query = {
-        leaveApprovalId:1,
-        leaveId : data.leaveId,
+        leaveApprovalId:userinfo.value.userId,
+        leaveId : data.leave.leaveId,
         leaveStatus: 2
     }
     console.log(query)
     ElMessageBox.confirm(
-        '是否通过此请假',
+        '是否驳回此请假',
         "审批请假",
         {
             confirmButtonText:'通过',
@@ -191,7 +191,7 @@ function handleDeleteBtnClick(data:any){
             if(res.data.value.code === 20000){
                 ElMessage({
                     type: 'success',
-                    message: '审核通过',
+                    message: '驳回成功',
                 })
                 fetchUserListData(checklist.currentQuery)
             }

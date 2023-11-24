@@ -1,6 +1,7 @@
 import HYRequest from '../forum'
 
 
+
 export const insertNotice = (query:any) =>{
     return HYRequest.post('/notice/affiche/insert',query)
 }
@@ -20,8 +21,13 @@ export const getUser = (query:any) =>{
 }
 
 export const postAffiche = (query:any,body?:any) =>{
+    console.log(query,body)
+    let formData = new FormData()
+    formData.append('noticeImgs',body)
+    console.log(formData)
+
     if(body){
-        return HYRequest.post('/notice/affiche/insert',query,body)
+        return HYRequest.post('/notice/affiche/insert',query,{body:formData})
     }else{
         return HYRequest.post('/notice/affiche/insert',query)
     }
