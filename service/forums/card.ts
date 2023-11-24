@@ -2,8 +2,10 @@ import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 
 //发布帖子
-export const addpost = (query:any,params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/post/insert",query,{body:params});
+export const addpost = (query: any, params: FormData) => {
+  return hyRequest.post<IResultData<any>>("/api/post/insert", query, {
+    body: params,
+  });
 };
 //查询帖子
 export const getPost = (
@@ -48,14 +50,38 @@ export const getComment = (postId: number) => {
   return hyRequest.get<IResultData<any>>("/api/comment/select", { postId });
 };
 //发布评论
-export const postComment = (query:any,params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/comment/insert",query,{body:params});
+export const postComment = (query: any, params: FormData) => {
+  return hyRequest.post<IResultData<any>>("/api/comment/insert", query, {
+    body: params,
+  });
 };
 //删除评论
-export const deleteComment = (ids:number[])=>{
-  return hyRequest.delete<IResultData<any>>("/api/comment/delete",{ids})
-}
+export const deleteComment = (ids: number[]) => {
+  return hyRequest.delete<IResultData<any>>("/api/comment/delete", { ids });
+};
 //评论点赞
-export const likeComment =(comId:number,status:number,userId:number)=>{
-  return hyRequest.post<IResultData<any>>("/api/comment/likeOrCancel",{comId,status,userId})
-}
+export const likeComment = (comId: number, status: number, userId: number) => {
+  return hyRequest.post<IResultData<any>>("/api/comment/likeOrCancel", {
+    comId,
+    status,
+    userId,
+  });
+};
+//获取用户点赞或收藏的文章============文章点赞或收藏的人
+export const getKeep = (
+  idType: string,
+  pageNo: number,
+  pageSize: number,
+  type: string,
+  userId?: number,
+  postId?: number
+) => {
+  return hyRequest.get<IResultData<any>>("/api/post/getKeep", {
+    idType,
+    pageNo,
+    pageSize,
+    postId,
+    type,
+    userId,
+  });
+};
