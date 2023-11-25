@@ -110,6 +110,9 @@
       <el-form-item label="年级" :label-width="formLabelWidth">
         <el-input v-bind:value="signleInfo.userGrade" disabled />
       </el-form-item>
+      <el-form-item label="角色" :label-width="formLabelWidth">
+        <el-input v-bind:value="signleInfo.roleName" disabled />
+      </el-form-item>
       <el-form-item label="班级" :label-width="formLabelWidth">
         <el-input v-bind:value="signleInfo.userClass" disabled />
       </el-form-item>
@@ -146,6 +149,38 @@
       </span>
     </template>
   </el-dialog>
+  <el-dialog
+    v-model="manageRole"
+    title="修改角色"
+    width="540px"
+    class="setRole"
+  >
+    确定要将
+    <el-select v-model="setGrade" placeholder="请选择年级">
+      <el-option
+        v-for="item in grades"
+        :key="item"
+        :label="item"
+        :value="item"
+      />
+    </el-select>
+    设置成
+    <el-select v-model="setRole" placeholder="请选择角色">
+      <el-option
+        v-for="item in roleData"
+        :key="item.roleId"
+        :label="item.roleName"
+        :value="item.roleId"
+      />
+    </el-select>
+    这个角色吗？
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="upadterole">确定</el-button>
+        <el-button @click="updateShut"> 取消 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
@@ -174,10 +209,14 @@ let {
   curTable,
   group,
   input,
-  grade
+  grade,
+  grades,
+  manageRole,
 } = storeToRefs(staffStore);
 let team = ref("");
 let role = ref("");
+let setGrade = ref("");
+let setRole = ref("");
 let roleData = ref<any[]>([]);
 let teamData = ref<any[]>([]);
 let fileList = false;
@@ -185,6 +224,9 @@ let deleteConfrom = ref(false);
 let ids = 0;
 let inputGroup = ref("");
 const inputVisible = ref(false);
+onMounted(() => {
+  staffStore.getGrades();
+});
 //随机生成标签颜色
 const tagTypes = ["success", "info", "warning", "danger", ""];
 function getRandomTagType() {
@@ -406,6 +448,49 @@ const handleInputConfirm = () => {
 const showInput = () => {
   inputVisible.value = true;
 };
+//修改用户角色
+const upadterole = () => {
+  if (setGrade.value == "" || setRole.value == "") {
+    ElMessage.warning("请完善信息");
+  } else {
+    let rid = Number(setRole.value);
+    staffStore.updateGrade(setGrade.value, rid).then((res) => {
+      if (res == 20000) {
+        ElMessage.success("修改成功");
+        let groupId;
+        if (group.value == "") {
+          groupId = undefined;
+        } else {
+          groupId = Number(group.value);
+        }
+        staffStore
+          .getAllUser(curTable.value, 7, groupId, input.value, grade.value)
+          .then((res) => {
+            if (res.code == 20000) {
+              users.value = res.data?.records;
+              total.value = res.data?.total;
+            } else if (res.code == 400006) {
+              users.value = [];
+              total.value = 0;
+              ElMessage.success("暂无数据");
+            } else {
+              ElMessage.error("更新人员加载失败");
+            }
+          });
+        setGrade.value = "";
+        setRole.value = "";
+        manageRole.value = false;
+      } else {
+        ElMessage.error("修改失败");
+      }
+    });
+  }
+};
+const updateShut = () => {
+  setGrade.value = "";
+  setRole.value = "";
+  manageRole.value = false;
+};
 </script>
 <style lang="scss" scoped>
 .el-button--text {
@@ -440,5 +525,10 @@ const showInput = () => {
 .el-tag.is-closable {
   margin-right: 7px;
   margin-bottom: 10px;
+}
+.setRole {
+  .el-select {
+    width: 150px;
+  }
 }
 </style>

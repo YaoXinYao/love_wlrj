@@ -53,6 +53,7 @@ export interface cards {
   discuss: any[];
   singleData: any;
   total: number;
+  loadings:boolean
 }
 export interface forums {
   labelModel: boolean;
@@ -65,6 +66,7 @@ export interface forums {
   mtotal: number;
   postInfos: any;
   deleteId: number[];
+  loading:boolean
 }
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
@@ -77,6 +79,7 @@ export const forumStore = defineStore("forumInfo", {
       discuss: [],
       singleData: {},
       total: 0,
+      loadings:false
     };
   },
   actions: {
@@ -112,6 +115,7 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
+      this.loadings = true
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -151,6 +155,7 @@ export const forumStore = defineStore("forumInfo", {
             : use.userPicture;
         this.datas[i] = { ...postData, photos, userName, head, likes, collect };
       }
+      this.loadings = false
       return this.datas;
     },
     //用户查询自己发布过的帖子
@@ -367,6 +372,7 @@ export const forumManage = defineStore("manage", {
       mtotal: 0,
       postInfos: {},
       deleteId: [],
+      loading:false
     };
   },
   actions: {
@@ -415,6 +421,7 @@ export const forumManage = defineStore("manage", {
       postContent?: string,
       postUserId?: number
     ) {
+      this.loading = true
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -439,6 +446,7 @@ export const forumManage = defineStore("manage", {
         let userName = use.userName;
         this.mdatas[i] = { ...postData, userName, subName, photos };
       }
+      this.loading = false
     },
     //删除帖子
     async deletePosts(ids: number[]) {

@@ -27,9 +27,9 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/">
+          <el-menu-item index="/admin/authority">
             <el-icon><document /></el-icon>
-            <template #title>权限管理</template>
+            <template #title><NuxtLink to="/admin/authority" @click="skipAdd($event)">权限管理</NuxtLink></template>
           </el-menu-item>
           <el-menu-item index="/admin/rotationChart">
             <el-icon><document /></el-icon>

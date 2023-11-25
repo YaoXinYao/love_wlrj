@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" v-loading = "loadings">
     <div class="title">
       <div>相关帖子</div>
       <div class="signleHome" v-if="userinfo.userId != 0">
@@ -115,7 +115,7 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource } =
+const { datas, pages, uploadRender, postSubId, postSource,loadings } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);

@@ -1,5 +1,5 @@
 <template>
-  <div class="forum">
+  <div class="forum"  v-loading = "loading">
     <el-form :inline="true" :model="condition">
       <el-form-item label="标题">
         <el-input v-model="condition.title" placeholder="帖子名称" />
@@ -101,7 +101,8 @@ let {
   mdatas,
   postInfos,
   mtotal,
-  deleteId
+  deleteId,
+  loading
 } = storeToRefs(manages);
 let condition = reactive({
   title: "",

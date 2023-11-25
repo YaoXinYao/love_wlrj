@@ -42,6 +42,10 @@ export const selectAllRole = () => {
 export const defaultRole= (roleId:number) => {
   return hyRequest.request("/zinfo/user/role/defaultRole", "PUT",{roleId});
 };
+//修改某个年级的角色
+export const updateByGrade =(grade:string,roleId:number)=>{
+return hyRequest.request("/zinfo/user/role/updateByGrade",'PUT',{grade,roleId})
+}
 
 //分页查询所有用户
 export const selectAllUser = (
