@@ -11,17 +11,8 @@
                 :rules="rules"
                 ref="ruleFormRef"
             >
-                <el-form-item label="公告标题" prop="noticeTitle">
-                    <el-input placeholder="填写公告标题" v-model="refForm.noticeTitle" />
-                </el-form-item>
-                <el-form-item label="公告类型" prop="noticeType">
-                    <el-select  placeholder="请选择公告类型" v-model="refForm.noticeType" default="讲课通知" >
-                        <el-option label="讲课通知" value="讲课通知"  />
-                        <el-option label="会议通知" value="会议通知" />
-                        <el-option label="违纪通知" value="违纪通知" />
-                        <el-option label="考核通知" value="考核通知" />
-                        <el-option label="其他" value="其他" />
-                    </el-select>
+                <el-form-item label="新闻标题" prop="noticeTitle">
+                    <el-input placeholder="填写新闻标题" v-model="refForm.noticeTitle" />
                 </el-form-item>
                 <el-form-item label="上传图片" prop="noticeImgs">
                     <el-col>
@@ -42,50 +33,8 @@
                         </div>
                     </el-col>
                 </el-form-item>
-                <el-row>
-                    <el-form-item label="公告范围" prop="noticeScope">
-                        <el-select  placeholder="面向人员" v-model="refForm.noticeScope" >
-                            <el-option label="全部" value="ALL"   @click="handleClearValue" />
-                            <el-option label="年级" value="年级"  @click="handleClearValue" />
-                            <el-option label="个人" value="个人"  @click="handleClearValue"/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item 
-                        v-show="refForm.noticeScope == '年级' || refForm.noticeScope === '个人'"
-                        prop="grade"
-                        :rules="refForm.noticeScope== '年级' || refForm.noticeScope === '个人'?
-                        {
-                            required:true,
-                            message:'请选择年级',
-                            trigger:'blur'
-                        }: {}"
-                    >
-                        <el-select placeholder="年级" v-model="refForm.grade" >
-                            <el-option v-for="(item,index) in grade" :label="item" :value="item" :key="index" @click="handleGetUsers(item)"  />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item 
-                        prop="user"
-                        v-show="refForm.grade !== '' && refForm.noticeScope === '个人'"
-                        :rules="refForm.noticeScope === '个人' && refForm.grade !== ''?{
-                            required:true,
-                            message:'请选择成员',
-                            trigger:'blur'
-                        }:{}"
-                    >
-                        <el-select   placeholder="用户" v-model="refForm.user" >
-                            <el-option v-for="item in users" :label="item.userName" :value="item.userId" :key="item.userId" />
-                        </el-select>
-                    </el-form-item>
-                </el-row>
-                <el-form-item label="公告内容" prop="noticeContent">
-                    <el-input 
-                        type="textarea" 
-                        v-model="refForm.noticeContent" 
-                        maxlength="100"
-                        show-word-limit
-                        class="el-textareaC"
-                    />
+                <el-form-item label="新闻内容" prop="noticeContent">
+                    <Markdown ref="markRef"></Markdown>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
@@ -101,68 +50,45 @@ import type  { FormRules, FormInstance} from 'element-plus';
 import {ElNotification, } from 'element-plus'
 import { ref, reactive } from 'vue';
 import type { UploadProps, } from 'element-plus'
-import { getUser,getGrade } from '@/service/announcement/announcement'
-import {postAffiche} from '@/service/announcement/announcement'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {CloseBold} from '@element-plus/icons-vue'
+import  Markdown  from '@/components/markdown/index';
+import {insertNew} from '@/service/journalism/journalism'
 
 
 const hide = ref(true)
 
-const grade = ref()
-const users = ref()
 const fileInput = ref()
 const srcValue = ref('')
-
+const markRef = ref<InstanceType<typeof Markdown>>()
 
 const emit = defineEmits(['newValue'])
 
-
-getGrade().then(res=>{
-    console.log(res.data.value)
-    grade.value = res.data.value.data
-})
-
-
-console.log(grade)
 
 
 const enum formEn{
     noticeTitle = "noticeTitle",
     noticeContent = "noticeContent",
     noticeImgs = "noticeImgs",
-    noticeScope = "noticeScope",
-    noticeType = "noticeType",
-    grade = "grade",
-    user = "user"
 }
 
 
 
 interface IProps {
     noticeTitle:string,
-    noticeType:string,
     noticeContent:string,
-    noticeScope:string,
-    grade:string,
-    user:string,
     noticeImgs:string
 }
 
 const refForm = reactive<IProps>({
     noticeTitle:'',
-    noticeType:'',
     noticeContent:'',
-    noticeScope:'',
-    grade:'',
-    user:'',
     noticeImgs:'',
 })
 
-JSON.stringify
+
 
 const ruleFormRef = ref<FormInstance>()
-
 
 function validateTitle(rule:any,value:any,callback:any){
     if (value.length < 3 || value.length > 10) {
@@ -181,13 +107,6 @@ function validateTitle(rule:any,value:any,callback:any){
 
 const rules = reactive<FormRules<IProps>>({
     noticeTitle:[{validator:validateTitle,trigger:'blur'}],
-    noticeType:[
-        {
-            required:true,
-            message:'清选择类型',
-            trigger:'blur'
-        }
-    ],
     noticeContent:[
         {
             required:true,
@@ -195,12 +114,12 @@ const rules = reactive<FormRules<IProps>>({
             trigger:'blur'
         }
     ],
-    noticeScope:[
+    noticeImgs:[
         {
             required:true,
-            message:'请选择人群',
+            message:'请选择图片',
             trigger:'blur'
-        },
+        }
     ]
 })
 
@@ -215,54 +134,47 @@ const handleFile = ()=>{
 
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  const result = await formEl.validate((valid, fields) => {
-    if (valid) {
-      console.log('submit!')
-      return true
-    } else {
-      console.log('error submit!', fields)
-      return false
-    }
-  })
-  if(result){
-    // console.log(refForm)
-    // ruleFormRef.value?.resetFields()
-    let form:any ={}
-    let fileList = refForm.noticeImgs
-    for(let item in refForm){
-        if(refForm[item as formEn] !== '' && item !== 'noticeImgs'){
-            form[item] = refForm[item as formEn]
+    let content = markRef.value.handleGetValue()
+    console.log(content)
+    refForm.noticeContent = content
+    if (!formEl) return
+    const result = await formEl.validate((valid, fields) => {
+        if (valid) {
+        console.log('submit!')
+        return true
+        } else {
+        console.log('error submit!', fields)
+        return false
         }
-    }
-    
-    if(refForm.user !== ''){
-        form.noticeScope = refForm.user
-        delete form.grade
-        delete form.user
-    }
-    if(refForm.user == '' && refForm.grade !== ''){
-        form.noticeScope = refForm.grade
-        delete form.grade
-    }
-    if(refForm.noticeImgs.length != 0){
+    })
+    if(result){
+        // console.log(refForm)
+        // ruleFormRef.value?.resetFields()
+        let form:any ={}
+        let fileList = refForm.noticeImgs
+        for(let item in refForm){
+            if(refForm[item as formEn] !== '' && item !== 'noticeImgs'){
+                form[item] = refForm[item as formEn]
+            }
+        }
+        
         ElMessageBox.confirm(
-            '确定发布公告嘛？',
-            '发布公告',
+            '确定发布新闻嘛？',
+            '发布新闻',
             {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
             }
         ).then(()=>{
-            postAffiche(form,fileList).then(res=>{
+            insertNew(form,fileList).then(res=>{
                 console.log('上传图片')
                 console.log(res.data)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
                         title:'发送成功',
-                        message:`这是一条${refForm.noticeType}的公告`,
+                        message:`这是一条${refForm.noticeTitle}的新闻`,
                         type:'success',
                         zIndex: 10000,
                     })
@@ -278,45 +190,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 zIndex: 10000,
             })
         })
-    }else{
-        ElMessageBox.confirm(
-            '确定发布公告嘛？',
-            '发布公告',
-            {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            }
-        ).then(()=>{
-            postAffiche(form).then(res=>{
-                console.log(res.data.value)
-                let data = res.data.value
-                if(data.code === 20000){
-                    ElNotification({
-                        title:'发送成功',
-                        message:`这是一条${refForm.noticeType}的公告`,
-                        type:'success',
-                        zIndex: 10000,
-                    })
-                    emit('newValue',{pageNo:1,pageSize:9999})
-                    ruleFormRef.value?.resetFields()
-                }
-            })
-        }).catch(()=>{
-            ElNotification({
-                title:'发送取消',
-                message:`已经取消`,
-                type:'error',
-                zIndex: 10000,
-            })
-        })
+        console.log(form)
+        console.log(fileList)
+        // postAffiche()
 
     }
-    console.log(form)
-    console.log(fileList)
-    // postAffiche()
-
-  }
 }
 
 
@@ -333,19 +211,6 @@ const resetForm = (forEl:FormInstance | undefined)=>{
 
 
 
-const handleGetUsers = (item:any)=>{
-    console.log(item)
-    refForm.user = ''
-    getUser({grade:item}).then(res=>{
-        console.log(res.data.value.data)
-        users.value = res.data.value.data
-    })
-}
-
-const handleClearValue = ()=>{
-    refForm.grade = ''
-    refForm.user = ''
-}
 
 
 function handleFileChange(event:any){
@@ -367,7 +232,6 @@ function handleFileChange(event:any){
             zIndex: 10000,
         })
     }
-
 }
 
 function handleDeletePic(){

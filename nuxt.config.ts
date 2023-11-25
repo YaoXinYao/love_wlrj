@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import ElementPlus from "unplugin-element-plus/vite";
+// import { MonacoEditor } from './.nuxt/components';
 export default defineNuxtConfig({
   css: ["@/assets/css/main.scss"],
   vite: {
@@ -11,7 +12,7 @@ export default defineNuxtConfig({
       },
     },
     //自动导入样式
-    plugins: [ElementPlus({})],
+    plugins: [ElementPlus({}),],
   },
   app: {
     head: {
@@ -52,6 +53,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@element-plus/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
+    'nuxt-monaco-editor'
   ],
   piniaPersistedstate: {
     storage: "localStorage",
@@ -75,7 +77,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/coustom": {
-        target: "http://115.159.84.43:19491/user/swagger/",
+        target: "http://152.136.161.44:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -91,7 +93,7 @@ export default defineNuxtConfig({
         prependPath: true,
       },
       "/notice/": {
-        target: "http://152.136.54.204:19998/notice/",
+        target: "http://152.136.161.44:19491/notice/swagger/notice/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -129,4 +131,12 @@ export default defineNuxtConfig({
       ssr: false,
     },
   },
+  MonacoEditor:{
+    dest: '_monaco',
+    locale: 'en',
+    componentName: {
+      codeEditor: 'MonacoEditor',
+      diffEditor: 'MonacoDiffEditor'
+    }
+  }
 });
