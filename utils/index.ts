@@ -1,4 +1,7 @@
 import SparkMD5 from "spark-md5";
+import type { FileTyperoot } from "~/types/Home";
+import { useHomestore } from "~/store/home";
+const homestore = useHomestore();
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -247,6 +250,7 @@ export function HashMd5file(chunks: Blob[]) {
     _read(0);
   });
 }
+//分片上传
 export async function Filefragmentation(
   file: File,
   chunkindex: number,
@@ -278,17 +282,125 @@ export async function Filefragmentation(
   form.append("index", chunkindex as any); //当前是第几片
   form.append("md5", md5);
   //数据填充完毕，开始上传
-  const { data } = await useFetch<any>("/disk/disk/file/shardingUpload", {
-    method: "post",
-    body: form,
-  });
-  //这个分片上传成功
-  if (data.value!.code == 20000) {
-    await Filefragmentation(file, chunkindex + 1, md5, uploadname, curTag);
-  }
-  //单个分片失败,继续尝试上传
-  if (data.value!.code === 51000)
+  try {
+    const { data } = await useFetch<any>(
+      "/disk/disk/file/shardingUploadAsync",
+      {
+        method: "post",
+        body: form,
+      }
+    );
+    //这个分片上传成功
+    if (data.value!.code == 20000) {
+      await Filefragmentation(file, chunkindex + 1, md5, uploadname, curTag);
+    }
+    if (data.value.code === 21000) {
+      //文件已经传过了，
+      return;
+    }
+    //单个分片失败,继续尝试上传
+    if (data.value!.code === 51000) {
+      setTimeout(async () => {
+        await Filefragmentation(file, chunkindex, md5, uploadname, curTag);
+      }, 1000);
+    }
+  } catch (error) {
     setTimeout(async () => {
       await Filefragmentation(file, chunkindex, md5, uploadname, curTag);
     }, 1000);
+  }
+}
+//分片
+export async function startUpload(
+  file: File,
+  currentChunk: number,
+  md5: string,
+  uploadname: string,
+  curTag: number[]
+) {
+  const chunkSize = 1024 * 1024 * 5; // 1MB
+  const name = file.name;
+  const Size = file.size;
+  const shardCount = Math.ceil(file.size / chunkSize);
+  async function uploadNextChunk() {
+    // 新建XHR 请求
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener("progress", function (event) {
+      if (event.lengthComputable) {
+        // 当前上传进度，同步到store
+        console.log(
+          ((currentChunk * chunkSize + event.loaded) / file.size) * 100
+        );
+      }
+    });
+    // 分片开始的地方
+    const startByte = currentChunk * chunkSize;
+    // 分片结束的地方
+    const endByte = Math.min(startByte + chunkSize, file.size);
+    const chunk = file.slice(startByte, endByte);
+    const form = new FormData();
+    form.append("file", chunk); //slice方法用于切出文件的一部分
+    curTag.forEach((item) => {
+      form.append("fileTypeIdList", item as any);
+    });
+    form.append("fileName", name);
+    form.append("uploaderId", Authuserid() as any);
+    form.append("uploaderName", uploadname);
+    form.append("totalSize", Size as any);
+    form.append("total", shardCount as any); //总片数
+    form.append("index", currentChunk as any); //当前是第几片
+    form.append("md5", md5);
+    // 开始发送
+    try {
+      const response = await uploadChunk(xhr, form);
+      const { flag, code, message } = JSON.parse(response as string);
+      if (code == 21000) {
+        ElMessage({ message: `${name}上传完成`, type: "success" });
+        //上传完成
+        return;
+      }
+      if (code == 20000) {
+        currentChunk++;
+        await uploadNextChunk();
+      }
+    } catch (error) {
+      //如果出现错误，则重新上传本片
+      setTimeout(async () => {
+        await uploadNextChunk();
+      }, 1000);
+    }
+  }
+  //  对状态码进行判断
+  async function uploadChunk(xhr: XMLHttpRequest, formData: FormData) {
+    return new Promise((resolve, reject) => {
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(xhr.responseText);
+        } else {
+          reject(new Error(`上传失败: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = function () {
+        reject(new Error("上传发生错误"));
+      };
+      xhr.open("POST", "/disk/file/shardingUpload", true);
+      xhr.send(formData);
+    });
+  }
+  await uploadNextChunk();
+}
+//生成图标
+export function iconfontType(val: string) {
+  const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
+  if (FileType[filetype]) {
+    return FileType[filetype];
+  } else {
+    return FileType.other;
+  }
+}
+// 文件类型
+export function filetype(val: string) {
+  const reg = /\.([a-zA-Z0-9]+)$/;
+  return val.match(reg)![1];
 }

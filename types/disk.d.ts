@@ -18,6 +18,16 @@ export interface Diskstore {
     downSpend: string;
     downfile: string;
   };
+  uploadProps: {
+    uploadFileTotalByte: number;
+    alreadyByte: number;
+    curuploadFile: {
+      Filespend: number;
+      FileSize: number;
+      alreadysize: number;
+      isComptedMd5: boolean;
+    };
+  };
 }
 export interface Fileprops {
   id: number;

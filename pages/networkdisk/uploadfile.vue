@@ -75,6 +75,17 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      :close-on-press-escape="false"
+      :show-close="false"
+      :close-on-click-modal="false"
+      v-model="dialogVisible2"
+      title="正在上传(1)"
+      width="70%"
+    >
+      <UploadLoding />
+      <template #footer></template>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -83,8 +94,9 @@ import { useHomestore } from "~/store/home";
 import { useDiskstore } from "~/store/disk";
 const homestore = useHomestore();
 const { userinfo } = storeToRefs(homestore);
+const dialogVisible = ref(false);
+const dialogVisible2 = ref(false);
 const input = ref<HTMLInputElement>();
-
 const isActive = ref(false);
 const curTag = ref([]);
 const disstore = useDiskstore();
@@ -120,33 +132,38 @@ function handleDrop(event: DragEvent) {
   }
   isActive.value = false;
 }
-const dialogVisible = ref(false);
+
 const handleClose = () => {
   dialogVisible.value = false;
   console.log(curTag.value); //标签ID
   uploadBt();
 };
 const uploadBt = async () => {
-  const chunks = createChunks(filequeue.value[0], 1024 * 1024);
+  // 开始上传列表
+  dialogVisible2.value = true;
+  await uploadFileQueue(filequeue.value, 0);
+  //-------等待时间
+  //上传完成
+};
+const uploadFileQueue = async (file: File[], index: number) => {
+  //在这个递归中，可以获取到，正在上传第几个，上传速度，上传的文件
+  /* 
+  在这里更新store中当前上传的文件信息，还有速度
+  */
+  if (index > file.length - 1) return; // 终止条件
+  console.log(`前正在传第${index}文件`);
+  const chunks = createChunks(file[index], 1024 * 1024);
   const md5info = await HashMd5file(chunks);
-  await Filefragmentation(
-    filequeue.value[0],
+  await startUpload(
+    file[index],
     0,
     md5info as string,
     userinfo.value.userName,
     curTag.value
   );
-  ElMessage({ message: "上传成功！", type: "success" });
-  filequeue.value.shift();
-  /*  const res = await uploadfile(
-    {
-      uploaderId: 7,
-      uploadName: "赵子豪",
-      fileTypeIdList: [1, 2],
-    },
-    filequeue.value[0],
-    progress
-  ); */
+  ElMessage({ message: `${file[index].name}上传成功`, type: "success" });
+  // 修正递归调用
+  uploadFileQueue(file, index + 1);
 };
 </script>
 <style scoped lang="scss">

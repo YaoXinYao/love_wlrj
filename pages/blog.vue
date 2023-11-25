@@ -219,7 +219,7 @@ useHeader();
 }
 .blog {
   padding: 1rem 0;
-  height: auto;
+  min-height: 90vh;
   background-color: rgb(244, 248, 251);
   width: 100%;
   .blogcontainer {

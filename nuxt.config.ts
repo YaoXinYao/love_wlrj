@@ -69,7 +69,7 @@ export default defineNuxtConfig({
       },
       //网盘接口
       "/disk": {
-        target: "http://115.159.84.43:19491/disk/swagger",
+        target: "http://112.125.120.78:19520/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -95,7 +95,6 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-
       //考核模块
       "/access": {
         target: "http://115.159.84.43:19491/assess/swagger/assess/",

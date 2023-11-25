@@ -67,23 +67,14 @@
     <DownCom />
   </div>
 </template>
-
 <script setup lang="ts">
-import type { FileTyperoot } from "~/types/Home";
 import { Favoritefile } from "~/service/homeApi";
 import { storeToRefs } from "pinia";
 import { useDiskstore } from "~/store/disk";
 import { unCollectionFile } from "~/service/disk";
 const diskstore = useDiskstore();
 const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
-function iconfontType(val: string) {
-  const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
-  if (FileType[filetype]) {
-    return FileType[filetype];
-  } else {
-    return FileType.other;
-  }
-}
+
 //收藏防抖
 const Favoritefilesend = Mythrottle(async (id: number) => {
   const res = await Favoritefile(id);
@@ -101,10 +92,8 @@ const Favoritefilesend = Mythrottle(async (id: number) => {
     }
   }
 }, 1000);
-function filetype(val: string) {
-  const reg = /\.([a-zA-Z0-9]+)$/;
-  return val.match(reg)![1];
-}
+
+// 下载文件
 function downFile(url: string, name: string) {
   down.value.isOpen = true;
   exportFile(

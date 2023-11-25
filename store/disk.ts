@@ -1,3 +1,4 @@
+import { number } from "echarts";
 import { defineStore } from "pinia";
 import { getAlltag, getFileTaglist, getFilelist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
@@ -41,9 +42,25 @@ export const useDiskstore = defineStore("disk", {
         //正在下载的文件信息
         downfile: "",
       },
+      //上传窗口所需参数
+      uploadProps: {
+        uploadFileTotalByte: 0,
+        alreadyByte: 0,
+        curuploadFile: {
+          Filespend: 0,
+          FileSize: 0,
+          alreadysize: 0,
+          isComptedMd5: false,
+        },
+      },
     };
   },
   actions: {
+    //上传文件的总字节
+    async updateTotalByte(val: number) {
+      //更新总字节
+      this.uploadProps.uploadFileTotalByte = val;
+    },
     //获取标签
     async getAllfiletag() {
       const res = await getAlltag();
@@ -75,6 +92,7 @@ export const useDiskstore = defineStore("disk", {
     async changeSearch(val: string) {
       this.Searchtext = val;
     },
+    //添加文件队列
     async changequeue(file: File) {
       if (this.filequeue.length >= 5) {
         ElMessage({ message: "不能超过五个", type: "info" });
@@ -87,6 +105,7 @@ export const useDiskstore = defineStore("disk", {
         });
       }
     },
+    //删除队列中具体文件
     async deletequeue(filename: string) {
       const copyQueue = [...this.filequeue]; // 使用扩展运算符复制数组以避免直接修改原始数组
       const newArr = copyQueue.filter((item) => {
