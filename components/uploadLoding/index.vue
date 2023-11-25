@@ -8,65 +8,66 @@
         :stroke-width="5"
         striped
       />
-      <div>已完成 14.8%</div>
+      <div>已完成 {{ Totalprogress }}%</div>
     </div>
-    <div class="uploadboxitem">
+    <div class="uploadboxitem" v-for="item in filequeue" :key="item.name">
       <div class="fileitem">
         <div class="fileitemicon">
           <svg class="icon" aria-hidden="true">
-            <use :xlink:href="`#${iconfontType(filetype('11111.png'))}`"></use>
+            <use :xlink:href="`#${iconfontType(filetype(item.name))}`"></use>
           </svg>
         </div>
         <div class="fileitemname">
-          <div>缺氧 561551558版本.7z缺氧</div>
-          <div>0B / 938.67Mb</div>
-        </div>
-        <div class="filetime">-- : -- : --</div>
-        <div class="loading">
-          <div class="computedMd5">正在为传输文件做准备..</div>
-          <div class="actionUp">
-            <el-progress
-              class="loading"
-              :text-inside="true"
-              :stroke-width="3"
-              :percentage="70"
-            />
-            <div class="spend">3.5MB / S</div>
+          <div>{{ item.name }}</div>
+          <div>
+            {{ convertFileSize(uploadProps.curuploadFile.Filespend) }} /
+            {{ convertFileSize(item.size) }}
           </div>
         </div>
-      </div>
-    </div>
-    <div class="uploadboxitem">
-      <div class="fileitem">
-        <div class="fileitemicon">
-          <svg class="icon" aria-hidden="true">
-            <use :xlink:href="`#${iconfontType(filetype('11111.png'))}`"></use>
-          </svg>
-        </div>
-        <div class="fileitemname">
-          <div>缺氧 561551558版本.7z缺氧</div>
-          <div>0B / 938.67Mb</div>
-        </div>
         <div class="filetime">-- : -- : --</div>
         <div class="loading">
-          <div class="computedMd5">正在为传输文件做准备..</div>
-          <div class="actionUp">
+          <div
+            class="computedMd5"
+            v-if="uploadProps.curuploadFile.isComptedMd5"
+          >
+            正在为传输文件做准备..
+          </div>
+          <div class="actionUp" v-if="!uploadProps.curuploadFile.isComptedMd5">
             <el-progress
               class="loading"
               :text-inside="true"
               :stroke-width="3"
               :percentage="70"
+              v-show="uploadProps.curuploadFile.FileFlag == item.name"
             />
-            <div class="spend">3.5MB / S</div>
+            <div
+              v-show="uploadProps.curuploadFile.FileFlag != item.name"
+              class="spend"
+            >
+              {{ convertFileSize(uploadProps.curuploadFile.Filespend) }} / S
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts"></script>
-
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+import { useDiskstore } from "~/store/disk";
+const diskstore = useDiskstore();
+const { uploadProps, filequeue } = storeToRefs(diskstore);
+console.log(
+  uploadProps.value.alreadyByte,
+  uploadProps.value.uploadFileTotalByte
+);
+const Totalprogress = computed(() => {
+  return (
+    (uploadProps.value.alreadyByte / uploadProps.value.uploadFileTotalByte) *
+    100
+  ).toFixed(1);
+});
+</script>
 <style scoped lang="scss">
 .uploadingbox {
   width: 100%;

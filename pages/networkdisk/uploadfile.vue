@@ -132,7 +132,6 @@ function handleDrop(event: DragEvent) {
   }
   isActive.value = false;
 }
-
 const handleClose = () => {
   dialogVisible.value = false;
   console.log(curTag.value); //标签ID
@@ -141,19 +140,25 @@ const handleClose = () => {
 const uploadBt = async () => {
   // 开始上传列表
   dialogVisible2.value = true;
+  let totalSize = 0;
+  for (let item of filequeue.value) {
+    totalSize += item.size;
+  }
+  //更新总文件的字节数
+  disstore.updateTotalByte(totalSize);
   await uploadFileQueue(filequeue.value, 0);
+  dialogVisible2.value = false;
   //-------等待时间
   //上传完成
 };
 const uploadFileQueue = async (file: File[], index: number) => {
-  //在这个递归中，可以获取到，正在上传第几个，上传速度，上传的文件
-  /* 
-  在这里更新store中当前上传的文件信息，还有速度
-  */
   if (index > file.length - 1) return; // 终止条件
-  console.log(`前正在传第${index}文件`);
+  disstore.updateCurfile(file[index].name);
+  disstore.upadteFileMd5(true);
   const chunks = createChunks(file[index], 1024 * 1024);
   const md5info = await HashMd5file(chunks);
+  //计算完成
+  disstore.upadteFileMd5(false);
   await startUpload(
     file[index],
     0,

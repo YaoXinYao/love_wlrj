@@ -44,13 +44,13 @@ export const useDiskstore = defineStore("disk", {
       },
       //上传窗口所需参数
       uploadProps: {
-        uploadFileTotalByte: 0,
+        uploadFileTotalByte: 1,
         alreadyByte: 0,
         curuploadFile: {
           Filespend: 0,
-          FileSize: 0,
           alreadysize: 0,
           isComptedMd5: false,
+          FileFlag: "",
         },
       },
     };
@@ -60,6 +60,26 @@ export const useDiskstore = defineStore("disk", {
     async updateTotalByte(val: number) {
       //更新总字节
       this.uploadProps.uploadFileTotalByte = val;
+    },
+    //已上传的字节数
+    async updatealreadyByte(val: number) {
+      this.uploadProps.alreadyByte = val;
+    },
+    //更新速度
+    async updateuploadSpend(val: number) {
+      this.uploadProps.curuploadFile.Filespend = val;
+    },
+    //更新单个文件的上传进度
+    async updateAready(val: number) {
+      this.uploadProps.curuploadFile.alreadysize = val;
+    },
+    //设置当前正在传的文件的名字
+    async updateCurfile(val: string) {
+      this.uploadProps.curuploadFile.FileFlag = val;
+    },
+    //改变MD5 的计算状态
+    async upadteFileMd5(val: boolean) {
+      this.uploadProps.curuploadFile.isComptedMd5 = val;
     },
     //获取标签
     async getAllfiletag() {

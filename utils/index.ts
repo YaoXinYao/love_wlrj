@@ -1,7 +1,7 @@
 import SparkMD5 from "spark-md5";
 import type { FileTyperoot } from "~/types/Home";
-import { useHomestore } from "~/store/home";
-const homestore = useHomestore();
+import { useDiskstore } from "~/store/disk";
+const diskstore = useDiskstore();
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -210,7 +210,7 @@ export function uploadFileWithProgress(
   });
 }
 // 字节 --->  合适的单位
-export function convertFileSize(bytes: number) {
+export const convertFileSize = Mythrottle((bytes: number) => {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const base = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(base));
@@ -220,7 +220,7 @@ export function convertFileSize(bytes: number) {
   }
 
   return `${convertedSize} ${sizes[i]}`;
-}
+}, 500);
 //文件分片,分片，生成md5
 export function createChunks(file: File, chunkSize: number) {
   const result = [];
@@ -325,9 +325,19 @@ export async function startUpload(
   async function uploadNextChunk() {
     // 新建XHR 请求
     const xhr = new XMLHttpRequest();
+    const startTime = new Date().getTime();
+    let oneUpSize = 0;
     xhr.upload.addEventListener("progress", function (event) {
       if (event.lengthComputable) {
+        const currentTime = new Date().getTime();
+        const elapsedMillis = currentTime - startTime;
+        oneUpSize += event.loaded;
+        diskstore.updateAready(oneUpSize);
+        // 计算上传速度（字节/毫秒），
+        const uploadSpeed = (event.loaded / elapsedMillis) * 1000;
+        diskstore.updateuploadSpend(uploadSpeed);
         // 当前上传进度，同步到store
+        diskstore.updatealreadyByte(currentChunk * chunkSize + event.loaded);
         console.log(
           ((currentChunk * chunkSize + event.loaded) / file.size) * 100
         );
@@ -384,7 +394,7 @@ export async function startUpload(
       xhr.onerror = function () {
         reject(new Error("上传发生错误"));
       };
-      xhr.open("POST", "/disk/file/shardingUpload", true);
+      xhr.open("POST", "/disk/disk/file/shardingUpload", true);
       xhr.send(formData);
     });
   }

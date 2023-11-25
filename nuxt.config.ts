@@ -69,7 +69,7 @@ export default defineNuxtConfig({
       },
       //网盘接口
       "/disk": {
-        target: "http://112.125.120.78:19520/",
+        target: "http://10.102.242.89:19520/",
         changeOrigin: true,
         prependPath: true,
       },

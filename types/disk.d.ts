@@ -23,9 +23,9 @@ export interface Diskstore {
     alreadyByte: number;
     curuploadFile: {
       Filespend: number;
-      FileSize: number;
       alreadysize: number;
       isComptedMd5: boolean;
+      FileFlag: any;
     };
   };
 }
