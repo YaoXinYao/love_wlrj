@@ -1,60 +1,50 @@
 <template>
-  <div class="infoContainer">
-    <ul class="noticeList">
-      <li class="noticeItem" v-for="(info, index) in props.data" :key="index">
-        <div class="noticeContent">
-          {{ info.title }}
-        </div>
-        <span class="noticeDate">{{ info.date }}</span>
-      </li>
-    </ul>
+  <div class="noticeContent">
+    {{ props.data.info }}
   </div>
+  <span class="noticeDate">{{ props.data.date }}</span>
 </template>
 
 <script setup lang="ts">
-const props = defineProps(["data"]);
+const props = defineProps(["data", "type"]);
+
+// const data = ref<Array<MessageInfoResType>>([]);
+// let infoList = ref<Array<{ info: string; date: string }>>([]);
+// watch(toRef(props, "data"), (newValue, oldValue) => {
+//   data.value = newValue;
+//   console.log("new:", data.value);
+//   if (props.type == "PostCollect") {
+//     for (let i = 0; i < data.value.length; i++) {
+//       console.log(data.value[i]);
+
+//       let infoItem = {
+//         info: `${data.value[i].msgSendName}收藏了你的帖子${data.value[i].msgContentName}`,
+//         date: data.value[i].msgTime,
+//       };
+//       console.log(infoItem);
+
+//       infoList.value.push(infoItem);
+//     }
+//   }
+// });
 </script>
 
 <style lang="scss" scoped>
-.infoContainer {
-  width: 100%;
+.noticeContent {
+  width: 80%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #666;
 }
-.noticeList {
-  display: inline-block;
-  width: 100%;
-}
 
-.noticeItem {
-  display: block;
-  width: 100%;
-  background-color: #fff;
-  padding: 10px 5px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  box-shadow: 1px 2px 5px #c7c5c5;
-  position: relative;
-  padding-bottom: 30px;
-
-  &:not(:first-child) {
-    margin-top: 20px;
-  }
-
-  .noticeContent {
-    width: 80%;
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: #666;
-  }
-
-  .noticeDate {
-    font-size: 12px;
-    color: #959595;
-    position: absolute;
-    right: 20px;
-  }
+.noticeDate {
+  font-size: 12px;
+  color: #959595;
+  position: absolute;
+  right: 20px;
 }
 </style>

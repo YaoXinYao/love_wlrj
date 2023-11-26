@@ -208,8 +208,10 @@ type annoucement = {
   noticeImg?:string,
   noticeTime:string,
   noticeId:number,
+  noticeScope:string,
 };
 // 公告类型
 export interface Announcement {
-  announcementList: annoucement[];
+  announcementList: annoucement[],
+  loading:boolean,
 }

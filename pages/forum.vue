@@ -4,19 +4,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { forumStore } from "~/store/forum";
 definePageMeta({
   layout: "default",
 });
-let forums = forumStore()
-onMounted(()=>{
-  forums.getUser(8)
-})
 </script>
 
 <style lang="scss" scoped>
 .forum {
-  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  background-color: rgba(244,248,251);
   min-height: calc(100vh - 136px);
 }
 </style>

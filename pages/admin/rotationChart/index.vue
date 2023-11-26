@@ -1,5 +1,8 @@
 <template>
   <div class="chart">
+    <div class="addPhoto">
+      <el-button type="success" @click="rotatinState = true">添加</el-button>
+    </div>
     <el-carousel :interval="2000" height="calc(100vh - 160px)">
       <el-carousel-item
         v-if="carouselItem.length != 0"
@@ -8,17 +11,11 @@
       >
         <div
           class="carousel-item-wrapper"
-          :style="{ backgroundImage: `url(${item.src})` }"
+          :style="{ backgroundImage: `url(${item.carouselUrl})` }"
         >
           <div class="operate">
-            <div class="upload">
-              <input type="file" class="files" accept="image/*"/>
-              <el-icon class="add" @click="rotatinState = true">
-                <CirclePlus
-              /></el-icon>
-            </div>
             <div>
-              <el-icon class="delete" @click="rotatinDelete = true"
+              <el-icon class="delete" @click="deletajage(item.carouselId)"
                 ><CircleClose
               /></el-icon>
             </div>
@@ -35,28 +32,145 @@
         ></div>
       </el-carousel-item>
     </el-carousel>
-    <RotationModel />
+    <el-dialog v-model="rotatinDelete" title="提示信息" width="300px">
+      <span>确定要删除这个轮播图？</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="deleteInfo">确定</el-button>
+          <el-button @click="rotatinDelete = false"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="rotatinState" title="提示信息" width="450px">
+      <el-form label-width="5em">
+        <el-form-item label="标题">
+          <el-input v-model="carouselTitle" />
+        </el-form-item>
+        <el-form-item label="介绍">
+          <el-input v-model="carouselContent" />
+        </el-form-item>
+        <el-form-item label="轮播图">
+          <el-upload
+            action="#"
+            list-type="picture-card"
+            :auto-upload="false"
+            accept="image/*"
+            v-model:file-list="photos"
+          >
+            <el-icon><Plus /></el-icon>
+            <template #file="{ file }">
+              <div>
+                <img
+                  class="el-upload-list__item-thumbnail"
+                  :src="file.url"
+                  alt=""
+                />
+                <span class="el-upload-list__item-actions">
+                  <span
+                    class="el-upload-list__item-preview"
+                    @click="handlePictureCardPreview(file)"
+                  >
+                    <el-icon><zoom-in /></el-icon>
+                  </span>
+                  <span
+                    v-if="!disabled"
+                    class="el-upload-list__item-delete"
+                    @click="handleRemove(file)"
+                  >
+                    <el-icon><Delete /></el-icon>
+                  </span>
+                </span>
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="subminInfo">确定</el-button>
+          <el-button @click="shutInfo"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+      v-model="dialogVisible"
+      class="previews"
+      style="max-width: 400px"
+    >
+      <img w-full :src="dialogImageUrl" alt="Preview Image" />
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-import { CirclePlus, CircleClose } from "@element-plus/icons-vue";
+import { CircleClose, Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
+import type { UploadFile } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useRotationStore } from "~/store/rotation";
-const rotations = useRotationStore();
-const { rotatinDelete, rotatinState } = storeToRefs(rotations);
-const carouselItem: any[] = [
-  {
-    src: "/images/wallhaven-kxj3l1_1920x1080.png",
-  },
-  {
-    src: "/images/wallhaven-vqeyxl_3840x2160.png",
-  },
-  {
-    src: "/images/wallhaven-yxkm5k_3840x2160.png",
-  },
-];
+let rotatinDelete = ref(false);
+let rotatinState = ref(false);
+const rotationsInfo = useRotationStore();
+const { carouselItem } = storeToRefs(rotationsInfo);
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+const disabled = ref(false);
+let carouselContent = ref("");
+let carouselTitle = ref("");
+let photos = ref<any[]>([]);
+let deleId:number;
+onMounted(() => {
+  rotationsInfo.getCarousel();
+});
+const handleRemove = (file: UploadFile) => {
+  photos.value = [];
+};
+const handlePictureCardPreview = (file: UploadFile) => {
+  dialogImageUrl.value = file.url!;
+  dialogVisible.value = true;
+};
+const subminInfo = () => {
+  let formdata = new FormData();
+  formdata.append("carouselContent", carouselContent.value);
+  formdata.append("carouselTitle", carouselTitle.value);
+  formdata.append("file", photos.value[0].raw);
+  useFetch("/zinfo/user/carousel/insertCarousel", {
+    method: "POST",
+    body: formdata,
+  }).then((res) => {
+    ElMessage.success("添加成功");
+    rotationsInfo.getCarousel();
+    rotatinState.value = false;
+    carouselContent.value = "";
+    carouselTitle.value = "";
+    photos.value = [];
+  });
+};
+const shutInfo = () => {
+  rotatinState.value = false;
+  carouselContent.value = "";
+  carouselTitle.value = "";
+  photos.value = [];
+};
+
+const deletajage = (id:number)=>{
+  deleId = id
+  rotatinDelete.value = true;
+}
+const deleteInfo = () => {
+  rotationsInfo.deleteCarousel(deleId).then(res=>{
+    if(res == 20000){
+    ElMessage.success("移除成功")
+    rotationsInfo.getCarousel();
+    }else{
+    ElMessage.error("操作失败")
+    }
+  })
+  rotatinDelete.value = false;
+};
 </script>
 <style lang="scss" scoped>
+.addPhoto {
+  margin-bottom: 10px;
+}
 .carousel-item-wrapper {
   display: flex;
   flex-direction: column;
@@ -76,21 +190,6 @@ const carouselItem: any[] = [
       width: 30px;
       height: 30px;
       margin-left: 20px;
-      input {
-        position: relative;
-        width: 30px;
-        height: 30px;
-        z-index: 5;
-        left: 20px;
-        opacity: 0;
-      }
-      .upload:hover {
-        cursor: pointer !important;
-      }
-      .add {
-        position: relative;
-        top: -30px;
-      }
     }
     .el-icon {
       font-size: 30px;
@@ -108,5 +207,15 @@ const carouselItem: any[] = [
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
+}
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+.el-dialog.previews {
+  overflow: hidden;
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
 }
 </style>

@@ -2,10 +2,9 @@ import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 
 //发布帖子
-export const addpost = (params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/post/insert", params);
+export const addpost = (query:any,params: FormData) => {
+  return hyRequest.post<IResultData<any>>("/api/post/insert",query,{body:params});
 };
-
 //查询帖子
 export const getPost = (
   pageNo: number,
@@ -13,7 +12,7 @@ export const getPost = (
   postTitle?: string,
   postSubId?: number,
   postContent?: string,
-  postUserId?: number,
+  postUserId?: number
 ) => {
   return hyRequest.get<IResultData<any>>("/api/post/select", {
     pageNo,
@@ -24,7 +23,6 @@ export const getPost = (
     postUserId,
   });
 };
-
 //判断是否用户点赞/收藏过该帖子
 export const judgeLike = (
   postId: number,
@@ -32,25 +30,32 @@ export const judgeLike = (
   type: string,
   userId: number
 ) => {
-  return hyRequest.post<IResultData<any>>("/api/post/likeOrCollect", {
-    postId,
-    status,
-    type,
-    userId,
+  return hyRequest.post<IResultData<any>>("/api/post/likeOrCollect", "", {
+    body: {
+      postId,
+      status,
+      type,
+      userId,
+    },
   });
 };
-
 //查询单个帖子
-export const singlePost = (postId:number)=>{
-  return hyRequest.get<IResultData<any>>("/api/post/getPostById",{postId})
-}
-
+export const singlePost = (postId: number) => {
+  return hyRequest.get<IResultData<any>>("/api/post/getPostById", { postId });
+};
 //查询指定文章下评论
-export const getComment = (postId:number)=>{
-  return hyRequest.get<IResultData<any>>("/api/comment/select",{postId})
-}
-
+export const getComment = (postId: number) => {
+  return hyRequest.get<IResultData<any>>("/api/comment/select", { postId });
+};
 //发布评论
-export const postComment=(params:FormData)=>{
-  return hyRequest.get<IResultData<any>>("/api/comment/insert",params)
+export const postComment = (query:any,params: FormData) => {
+  return hyRequest.post<IResultData<any>>("/api/comment/insert",query,{body:params});
+};
+//删除评论
+export const deleteComment = (ids:number[])=>{
+  return hyRequest.delete<IResultData<any>>("/api/comment/delete",{ids})
+}
+//评论点赞
+export const likeComment =(comId:number,status:number,userId:number)=>{
+  return hyRequest.post<IResultData<any>>("/api/comment/likeOrCancel",{comId,status,userId})
 }

@@ -5,16 +5,36 @@
         <div class="siderBar">
           <h2>消息中心</h2>
           <ul>
-            <li :class="route.path === '/messageCenter/like' ? 'active' : ''">
-              <nuxt-link to="/messageCenter/like"
-                ><span class="iconfont">&#xec7f;</span>点赞</nuxt-link
+            <li
+              :class="route.path === '/messageCenter/postLike' ? 'active' : ''"
+            >
+              <nuxt-link to="/messageCenter/postLike"
+                ><span class="iconfont">&#xec7f;</span>帖子点赞</nuxt-link
+              >
+            </li>
+            <li
+              :class="
+                route.path === '/messageCenter/commentLike' ? 'active' : ''
+              "
+            >
+              <nuxt-link to="/messageCenter/commentLike"
+                ><span class="iconfont">&#xec7f;</span>评论点赞</nuxt-link
               >
             </li>
             <li
               :class="route.path === '/messageCenter/comment' ? 'active' : ''"
             >
               <nuxt-link to="/messageCenter/comment"
-                ><span class="iconfont">&#xe8b4;</span>评论</nuxt-link
+                ><span class="iconfont">&#xe8b4;</span>帖子评论</nuxt-link
+              >
+            </li>
+            <li
+              :class="
+                route.path === '/messageCenter/commentReply' ? 'active' : ''
+              "
+            >
+              <nuxt-link to="/messageCenter/commentReply"
+                ><span class="iconfont">&#xe8b4;</span>评论回复</nuxt-link
               >
             </li>
             <li
@@ -42,38 +62,28 @@
 
 <script setup lang="ts">
 import "animate.css";
-import { onMounted, onBeforeUnmount } from "vue";
-import { Socket, io } from "socket.io-client";
-import type { DefaultEventsMap } from "@socket.io/component-emitter";
 import { useRoute } from "vue-router";
-
+import { useWebSocket } from "@vueuse/core";
 const route = useRoute();
-let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null;
+const { status, data, send, open, close } = useWebSocket(
+  "ws://115.159.84.43:19491/forum/swagger/forum/websocket/4",
+  {
+    autoReconnect: {
+      retries: 8,
+      delay: 1000,
+      onFailed() {
+        alert("Failed to connect WebSocket after 8 retries");
+      },
+    },
+  }
+);
+watch(status, (newStatus) => {
+  console.log(newStatus);
 
-onMounted(() => {
-  // 创建 socket 实例
-  socket = io(`ws://152.136.54.204:19999/forum/websocket/4`);
-
-  // 监听连接的建立与关闭
-  socket.on("connect", () => {
-    console.log("connect: WebSocket 连接成功~");
-  });
-
-  // 关闭连接的事件
-  socket.on("disconnect", () => {
-    console.log("disconnect: WebSocket 连接关闭！");
-  });
-
-  // 接收服务器发送的消息
-  socket.on("message", (msg) => {
-    console.log(msg);
-  });
-});
-
-onBeforeUnmount(() => {
-  // 销毁实例
-  socket?.close();
-  socket = null;
+  if (newStatus === "OPEN") {
+    console.log("WebSocket connection established");
+    // 连接成功的回调代码
+  }
 });
 </script>
 
@@ -112,6 +122,7 @@ onBeforeUnmount(() => {
   background-color: #8babfc;
   border-radius: 5px;
   color: #fff;
+  overflow: auto;
 
   h2 {
     text-align: center;

@@ -1,122 +1,55 @@
 <template>
   <div class="documentcommunity">
     <div class="documentheader">
+      <div class="selectTag" v-if="searchModel == 0">
+        <el-select-v2
+          class="selcet-v2"
+          v-model="curTag"
+          size="default"
+          style="width: max-content; min-width: 240px"
+          :options="AllType"
+          placeholder="选择分类"
+          multiple
+        />
+      </div>
+      <div
+        @click="searchModel = 0"
+        class="changefilelist"
+        v-if="searchModel == 1"
+      >
+        <i class="iconfont icon-xiangzuo1"></i>
+        返回
+      </div>
       <div class="searchinput">
-        <input placeholder="搜索文件" type="text" />
-        <span>搜索</span>
+        <input placeholder="搜索文件" v-model="searchText" type="text" />
+        <span @click="searchFile">搜索</span>
       </div>
     </div>
-    <div class="filelist">
-      <el-table ref="multipleTableRef" :data="tableData" style="width: 100%">
-        <el-table-column label="文件名" min-width="60" show-overflow-tooltip>
-          <template #default="scope">
-            <svg class="icon" aria-hidden="true">
-              <use
-                :xlink:href="`#${iconfontType(filetype(scope.row.name))}`"
-              ></use>
-            </svg>
-            {{ scope.row.name }}</template
-          >
-        </el-table-column>
-        <el-table-column property="uploadDate" label="时间" min-width="60" />
-        <el-table-column
-          property="uploaderId"
-          label="上传者"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          property="fileSize"
-          label="文件大小"
-          show-overflow-tooltip
-        />
-        <el-table-column property="address" label="操作" show-overflow-tooltip>
-          <template #default="scope">
-            <ElButton
-              type="primary"
-              plain
-              @click="() => exportFile(scope.row.url, scope.row.name)"
-              >下载</ElButton
-            >
-            <ElButton
-              type="info"
-              @click="() => copyToClipboard(scope.row.url)"
-              plain
-              >分享</ElButton
-            >
-            <ElButton
-              @click="() => Favoritefilesend(scope.row.id)"
-              type="warning"
-              color="rgb(40,77,213)"
-              >收藏</ElButton
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="10"
-        :total="1000"
-      />
-    </div>
+    <Tagfile v-if="searchModel == 0" />
+    <NameSeatch v-if="searchModel == 1" />
   </div>
 </template>
 <script setup lang="ts">
-import { Favoritefile } from "~/service/homeApi";
-import type { FileTyperoot, Fileprops } from "~/types/Home";
-function filetype(val: string) {
-  const reg = /\.([a-zA-Z0-9]+)$/;
-  return val.match(reg)![1];
+import type { Tagfile } from "#build/components";
+import { storeToRefs } from "pinia";
+import { useDiskstore } from "~/store/disk";
+const diskstore = useDiskstore();
+const searchText = ref("");
+const { AllType, curTag, Pagesize, curIndex } = storeToRefs(diskstore);
+const searchModel = ref(0); // 0 标签搜索  1，name搜索
+diskstore.getAllfiletag();
+diskstore.getFilelistitem();
+function searchFile() {
+  if (searchText.value == "")
+    return ElMessage({ message: "请输入搜索内容", type: "warning" });
+  /* searchModel.value = 1;
+  diskstore.changeSearch(searchText.value); */
+  ElMessage({ message: "搜索功能暂未开放", type: "warning" });
 }
-const tableData: Fileprops[] = [
-  {
-    id: 28,
-    name: "网易云音乐商城-接口文档.md",
-    format: "other",
-    types: ["Java", "后端"],
-    uploaderId: 7,
-    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
-    collections: 0,
-    isPublic: "公开",
-    uploadDate: "2023-11-17 21:06:59",
-  },
-  {
-    id: 28,
-    name: "网易云音乐商城-接口文档.md",
-    format: "other",
-    types: ["Java", "后端"],
-    uploaderId: 7,
-    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
-    collections: 0,
-    isPublic: "公开",
-    uploadDate: "2023-11-17 21:06:59",
-  },
-  {
-    id: 28,
-    name: "网易云音乐商城-接口文档.md",
-    format: "other",
-    types: ["Java", "后端"],
-    uploaderId: 7,
-    url: "http://124.222.153.56:9000/wlgzs-disk/7/5187c3dc-b296-4a50-8913-640796064d11.md",
-    collections: 0,
-    isPublic: "公开",
-    uploadDate: "2023-11-17 21:06:59",
-  },
-];
-async function Favoritefilesend(id: number) {
-  const res = await Favoritefile(id);
-  if (res.data.value.data === 20000) {
-    ElMessage({ message: res.data.value.message });
-  }
-}
-function iconfontType(val: string) {
-  const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
-  if (FileType[filetype]) {
-    return FileType[filetype];
-  } else {
-    return FileType.other;
-  }
-}
+//监听 curIndex 的变化，页数切换，watch巧妙监听
+watch([curIndex, Pagesize, curTag], () => {
+  diskstore.getFilelistitem();
+});
 </script>
 <style scoped lang="scss">
 .documentcommunity {
@@ -125,11 +58,14 @@ function iconfontType(val: string) {
   flex-direction: column;
   height: 100%;
   .documentheader {
-    padding-inline: 0.2rem;
+    padding-inline: 0.1rem;
     width: 100%;
     height: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     .searchinput {
-      width: 2.5rem;
+      width: 3rem;
       position: relative;
       padding-block: 0.05rem;
       input {
@@ -142,7 +78,7 @@ function iconfontType(val: string) {
         border-radius: 25px;
         outline: none;
         height: 0.4rem;
-        width: 2.5rem;
+        width: 3rem;
         &:hover {
           border: 1px solid rgb(6, 167, 255);
         }
@@ -159,6 +95,20 @@ function iconfontType(val: string) {
         transform: translateY(-50%);
       }
     }
+    .selectTag {
+      width: auto;
+      height: auto;
+      margin-right: 0.3rem;
+    }
+    .changefilelist {
+      width: 0.8rem;
+      font-size: 0.22rem;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+      align-items: center;
+      height: 100%;
+    }
   }
   .filelist {
     display: flex;
@@ -168,5 +118,9 @@ function iconfontType(val: string) {
     justify-content: space-between;
     align-items: center;
   }
+}
+.el-select-v2__selection {
+  display: flex;
+  flex-wrap: nowrap !important;
 }
 </style>

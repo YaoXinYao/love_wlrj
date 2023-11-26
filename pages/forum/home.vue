@@ -2,7 +2,7 @@
   <div class="home">
     <ForumdataHead></ForumdataHead>
     <ForumdataMain></ForumdataMain>
-    <div class="addPost">
+    <div class="addPost" v-if="userinfo.userId != 0">
       <NuxtLink to="/forum/report">
         <el-icon><Plus /></el-icon>
       </NuxtLink>
@@ -10,12 +10,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { forumStore } from "~/store/forum";
+import {storeToRefs} from "pinia"
 import { Plus } from "@element-plus/icons-vue";
-let forums = forumStore()
-onMounted(()=>{
-  forums.getUser(8)
-})
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 </script>
 
 <style lang="scss" scoped>

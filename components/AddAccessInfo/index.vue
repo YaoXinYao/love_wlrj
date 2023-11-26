@@ -6,6 +6,7 @@
         title="添加考核信息"
         width="30%"
         draggable
+        :closed="changeState"
       >
         <el-form
           ref="accessInfoRef"
@@ -63,19 +64,19 @@
             />
           </el-form-item>
           <el-form-item
-            v-for="(item, index) in JSON.parse(accessInfo.types)"
-            :key="item.name"
-            prop="additional"
+            v-for="(item, index) in accessInfo.types"
+            :key="index"
             :label="`考核项${index + 1}`"
-            :rules="{
-              required: true,
-              message: '内容不能为空',
-              trigger: 'blur',
-            }"
           >
             <div class="accessInfoInputs">
               <el-input v-model="item.name" />
-              <el-input v-model="item.rate" />
+              <el-input-number
+                v-model="item.rate"
+                :precision="2"
+                :step="0.1"
+                :max="1"
+                :min="0"
+              />
               <span
                 class="mt-2"
                 style="display: inline-block; width: max-content"
@@ -120,12 +121,10 @@ let allGrade: Array<string>;
 let typeList: Array<AccessTypesType>;
 onMounted(() => {
   getAllGrade().then((res) => {
-    console.log(res);
     allGrade = res.data.value.data;
   });
 
   getAllTypes().then((res) => {
-    console.log(res.data.value.data);
     typeList = res.data.value.data;
   });
 });
@@ -139,11 +138,16 @@ const props = defineProps({
 
 let dialogVisible = ref(false);
 
+//弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
+const changeState = () => {
+  dialogVisible.value = false;
+};
+
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
 });
 
-const emit = defineEmits(["addAlert"]);
+const emit = defineEmits(["addAlert", "update_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
@@ -157,39 +161,13 @@ const accessInfo = reactive<AddAccessType>({
   deadline: "",
   subscribers: "",
   additional: "",
-  types: JSON.stringify([
+  types: [
     {
       name: "选择",
-      rate: 0,
+      rate: 0.0,
     },
-    {
-      name: "填空",
-      rate: 0,
-    },
-    {
-      name: "简答",
-      rate: 0,
-    },
-  ]),
+  ],
 });
-
-const validateTypes = (rule: any, value: any, callback: any) => {
-  if (value.length === 0) {
-    callback(new Error("请添加考核项"));
-  } else {
-    let flag = false;
-    for (let i = 0; i < value.length; i++) {
-      if (value[i].name.trim() != "" && value[i].rate.trim() != "") {
-        flag = true;
-      }
-    }
-    if (!flag) {
-      callback(new Error("考核项内容不能为空"));
-    } else {
-      callback();
-    }
-  }
-};
 
 const validateNull = (rule: any, value: any, callback: any) => {
   if (value.trim() == "") {
@@ -217,9 +195,19 @@ const validateNameNull = (rule: any, value: any, callback: any) => {
   }
 };
 
+const validateTypesNull = (rule: any, value: any, callback: any) => {
+  for (let i = 0; i < value.length; i++) {
+    if (value[i].name.trim() === "" || value[i].rate < 0) {
+      callback(new Error("内容不能为空"));
+      return;
+    }
+  }
+  callback();
+};
+
 //校验
 const rules = reactive<FormRules<typeof accessInfo>>({
-  types: [{ validator: validateTypes, trigger: "blur" }],
+  types: [{ validator: validateTypesNull, trigger: "blur" }],
   plan: [{ validator: validateNameNull, trigger: "blur" }],
   type: [{ validator: validateNull, trigger: "blur" }],
   typeId: [{ validator: validateNumberNull, trigger: "blur" }],
@@ -229,37 +217,65 @@ const rules = reactive<FormRules<typeof accessInfo>>({
 });
 
 const removeDomain = (item: AccessItem) => {
-  const index = JSON.parse(accessInfo.types).indexOf(item);
+  const index = accessInfo.types.indexOf(item);
   if (index !== -1) {
-    JSON.parse(accessInfo.types).splice(index, 1);
+    accessInfo.types.splice(index, 1);
   }
 };
 
 const addAccess = () => {
-  JSON.parse(accessInfo.types).push({
+  accessInfo.types.push({
     name: "",
     rate: 0,
   });
 };
 
-const submitForm = (formEl: FormInstance | undefined) => {
-  console.log(accessInfo);
-
+const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log(accessInfo);
+      let sum: number = 0;
+      for (let i = 0; i < accessInfo.types.length; i++) {
+        sum = sum * 1 + accessInfo.types[i].rate * 1;
+      }
+
+      if (sum != 1) {
+        ElMessage({
+          type: "warning",
+          message: "考核项分数百分比和为1",
+        });
+        return;
+      }
 
       let res = await addAccessService(accessInfo);
+      console.log(accessInfo);
+
       console.log(res);
 
-      // dialogVisible.value = false;
+      if (res.data.value.code === 20000) {
+        ElMessage({
+          type: "success",
+          message: "添加成功",
+        });
+        formEl.resetFields();
+        emit("update_event", true);
+        dialogVisible.value = false;
+      } else if (res.data.value.code === 52003) {
+        ElMessage({
+          type: "warning",
+          message: "该考核已存在，请重新编辑考核名称",
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "添加失败，请检查网络",
+        });
+      }
     } else {
       ElMessage({
         type: "warning",
         message: "请完善表单",
       });
-      return false;
     }
   });
 };

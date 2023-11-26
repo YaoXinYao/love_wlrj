@@ -1,7 +1,7 @@
 <template>
     <ClientOnly>
         <div class="adLeaveContent">
-            <el-table :border="true" :data="checkList">
+            <el-table :border="true" :data="checkList" v-loading="loading">
                 <el-table-column prop="user.userName" label="申请人" align="center" width="120px">
 
                 </el-table-column>
@@ -96,6 +96,8 @@ import {updateLeave} from '@/service/check/check'
 import {ElMessageBox } from 'element-plus'
 
 
+
+
 const small = ref(false)
 const background = ref(false)
 const disabled = ref(false)
@@ -105,7 +107,7 @@ const user = useHomestore()
 const {userinfo}  = storeToRefs(user)
 console.log(userinfo.value.userId)
 fetchUserListData({pageIndex:1,pageSize:5,idDesc:true})
-const {allPage,allCount,checkList,pageSize,pageIndex} = storeToRefs(checklist)
+const {allPage,allCount,checkList,pageSize,pageIndex,loading} = storeToRefs(checklist)
 console.log(userinfo.value.userId)
 
 const handleSizeChange = (val: number) => {
@@ -133,10 +135,10 @@ checklist.getCheckList(query);
 
 
 function handleEditBtnClick(data:any){
-    // console.log(data.leave.leaveUserId)
+    console.log(data.leave)
     let query = {
-        leaveApprovalId:1,
-        leaveId : data.leaveId,
+        leaveApprovalId:userinfo.value.userId,
+        leaveId : data.leave.leaveId,
         leaveStatus: 1
     }
     ElMessageBox.confirm(
@@ -149,7 +151,7 @@ function handleEditBtnClick(data:any){
         }
     ).then(()=>{
         updateLeave(query).then(res=>{
-            // console.log(res.data.value.message)
+            console.log(res.data.value)
             if(res.data.value.code === 20000){
                 ElMessage({
                     type: 'success',
@@ -170,13 +172,13 @@ function handleEditBtnClick(data:any){
 function handleDeleteBtnClick(data:any){
     console.log(data)
     let query = {
-        leaveApprovalId:1,
-        leaveId : data.leaveId,
+        leaveApprovalId:userinfo.value.userId,
+        leaveId : data.leave.leaveId,
         leaveStatus: 2
     }
     console.log(query)
     ElMessageBox.confirm(
-        '是否通过此请假',
+        '是否驳回此请假',
         "审批请假",
         {
             confirmButtonText:'通过',
@@ -189,7 +191,7 @@ function handleDeleteBtnClick(data:any){
             if(res.data.value.code === 20000){
                 ElMessage({
                     type: 'success',
-                    message: '审核通过',
+                    message: '驳回成功',
                 })
                 fetchUserListData(checklist.currentQuery)
             }

@@ -2,7 +2,7 @@
   <div class="head">
     <div class="content">
       <div class="text">
-        <p><span style="margin-right:7px">{{time}}</span>{{ userInfo.userName }}</p>
+        <p><span style="margin-right:7px">{{time}}</span>{{ userinfo.userName }}</p>
         <div>欢迎来到未来论坛</div>
       </div>
       <div class="search">
@@ -43,10 +43,13 @@
 import { Search } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumStore, forumManage } from "~/store/forum";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const forumData = forumStore();
 const manage = forumManage();
 let { subfields } = storeToRefs(manage);
-let { uploadRender, postSource, postSubId, userInfo } = storeToRefs(forumData);
+let { uploadRender, postSource, postSubId} = storeToRefs(forumData);
 const tagTypes = ["success", "info", "warning", "danger", ""];
 let subValue = ref("");
 let time = ref("今天好");
@@ -94,13 +97,13 @@ function handleLabel(id: number, name: string) {
 function selectCards() {
   uploadRender.value = true;
   if (postSource.value && subValue.value) {
-    forumData.selectPost(1, 10, postSource.value, postSubId.value);
+    forumData.selectPost(userinfo.value.userId,1, 20, postSource.value, postSubId.value);
   } else if (!postSource.value && subValue.value) {
-    forumData.selectPost(1, 10, "", postSubId.value);
+    forumData.selectPost(userinfo.value.userId,1, 20, "", postSubId.value);
   } else if (postSource.value && !subValue.value) {
-    forumData.selectPost(1, 10, postSource.value);
+    forumData.selectPost(userinfo.value.userId,1, 20, postSource.value);
   } else {
-    forumData.selectPost(1, 10);
+    forumData.selectPost(userinfo.value.userId,1, 20);
   }
 }
 </script>

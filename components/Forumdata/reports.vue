@@ -86,24 +86,27 @@ import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumManage, forumStore } from "~/store/forum";
 import type { UploadFile } from "element-plus";
+import {useHomestore} from "~/store/home"
+const router = useRouter()
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let selectValue = ref("");
 let manages = forumManage();
 let forumData = forumStore();
-let { userInfo } = storeToRefs(forumData);
 let { subfields, labels } = storeToRefs(manages);
 let formImage = reactive<any>({
   files: [],
 });
+let postImg = ref<any[]>([]);
 let postNews = reactive<any>({
   labelId: [],
   postContent: "",
-  postImg: [],
   postSubId: Number(selectValue.value),
   postTitle: "",
-  postUserId: 8,
+  postUserId: userinfo.value.userId,
 });
 onMounted(() => {
   manages.labelInfo(1, 100);
@@ -116,36 +119,25 @@ watch(selectValue, (newValue) => {
 //文件上传
 const uploadPhoto = () => {
   let jage = true;
-  postNews.postImg=[]
+  postImg.value = [];
   for (let i = 0; i < formImage.files.length; i++) {
     jage = formImage.files[i].raw.type.startsWith("image/");
     if (!jage) {
       ElMessage.warning("文件类型错误");
       return;
     } else {
-      postNews.postImg.push(formImage.files[i].raw);
+      postImg.value.push(formImage.files[i].raw);
     }
   }
   if (jage) {
     let formData = new FormData();
-    Object.keys(postNews).forEach((key: string) => {
-      if (Array.isArray(postNews[key])) {
-        postNews[key].forEach((item: any, index: number) => {
-          formData.append(`${key}[${index}]`, item);
-        });
-      } else {
-        formData.append(key, postNews[key]);
-      }
+    postImg.value.forEach((item: any, index: number) => {
+      formData.append(`postImg[${index}]`, item);
     });
-    forumData.addCard(formData).then((result) => {
+    forumData.addCard(postNews, formData).then((result) => {
       if (result == 20000) {
         ElMessage.success("发布帖子成功");
-        formImage.files = [];
-        selectValue.value = "";
-        postNews.labelId = [];
-        postNews.postContent = "";
-        postNews.postImg = [];
-        postNews.postTitle = "";
+        router.push("/forum/home")
       } else {
         ElMessage.error("发布帖子失败");
       }
@@ -157,7 +149,7 @@ function clearNews() {
   selectValue.value = "";
   postNews.labelId = [];
   postNews.postContent = "";
-  postNews.postImg = [];
+  postImg.value = [];
   postNews.postTitle = "";
 }
 //删除图片
@@ -165,7 +157,7 @@ const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
   if (index !== -1) {
     formImage.files.splice(index, 1);
-    postNews.postImg.splice(index, 1);
+    postImg.value.splice(index, 1);
     ElMessage.success("移除成功");
   }
 };
@@ -180,7 +172,10 @@ const handlePictureCardPreview = (file: UploadFile) => {
 .tablePost {
   max-width: 600px;
   margin: 0 auto;
-  padding-bottom: 20px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
   .el-form-item {
     margin-bottom: 0px;
     margin-top: 15px;
@@ -196,24 +191,6 @@ const handlePictureCardPreview = (file: UploadFile) => {
     }
   }
 }
-/* .uploadFile {
-  width: 148px;
-  height: 148px;
-  margin-right: 6px;
-  background-color: #fafafa;
-  border: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  .el-icon {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    font-size: 28px;
-    color: #909399;
-  }
-} */
 .el-dialog {
   overflow: hidden;
   img {
