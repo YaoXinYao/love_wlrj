@@ -66,7 +66,8 @@ export interface forums {
   mtotal: number;
   postInfos: any;
   deleteId: number[];
-  loading:boolean
+  loading:boolean;
+  currentPage:number
 }
 export const forumStore = defineStore("forumInfo", {
   state: (): cards => {
@@ -372,7 +373,8 @@ export const forumManage = defineStore("manage", {
       mtotal: 0,
       postInfos: {},
       deleteId: [],
-      loading:false
+      loading:false,
+      currentPage:1
     };
   },
   actions: {
@@ -438,13 +440,19 @@ export const forumManage = defineStore("manage", {
         let img: string = dataArr[i].postImg;
         //分割图片
         let photos: string[] = img ? img.split(",") : [];
-        //查询分栏
-        const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
-        const subName = data.value?.data.records[0].subName;
         //查询用户
         const use = await this.getUser(dataArr[i].postUserId);
         let userName = use.userName;
-        this.mdatas[i] = { ...postData, userName, subName, photos };
+        //查询分栏
+        const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
+        console.log("data",data.value,dataArr[i].postSubId);
+        if(data.value?.data.records.length == 0){
+          const subName = "暂无";
+          this.mdatas[i] = { ...postData, userName, subName, photos };
+        }else{
+          const subName = data.value?.data.records[0].subName;
+          this.mdatas[i] = { ...postData, userName, subName, photos };
+        }
       }
       this.loading = false
     },

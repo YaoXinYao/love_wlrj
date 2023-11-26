@@ -87,7 +87,6 @@ import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
 import { ref } from "vue";
-const currentPage = ref(1);
 const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
@@ -102,7 +101,8 @@ let {
   postInfos,
   mtotal,
   deleteId,
-  loading
+  loading,
+  currentPage
 } = storeToRefs(manages);
 let condition = reactive({
   title: "",

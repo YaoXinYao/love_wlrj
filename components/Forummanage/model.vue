@@ -76,7 +76,7 @@ const props = defineProps({
   },
 });
 let manage = forumManage();
-let { lookModel, deleteModel, postInfos, deleteId } = storeToRefs(manage);
+let { lookModel, deleteModel, postInfos, deleteId,currentPage } = storeToRefs(manage);
 const formLabelWidth = "80px";
 // 删除帖子
 function deletePost() {
@@ -90,6 +90,7 @@ function deletePost() {
         subId = Number(props.condition.subfield);
       }
       manage.getPosts(1,7,props.condition.title,subId,props.condition.content);
+      currentPage.value = 1
     } else {
       ElMessage.error("删除失败");
     }
