@@ -27,7 +27,7 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/authority">
+          <el-menu-item index="/admin/authority" v-if="userinfo.roleId == 3">
             <el-icon><document /></el-icon>
             <template #title><NuxtLink to="/admin/authority" @click="skipAdd($event)">权限管理</NuxtLink></template>
           </el-menu-item>
@@ -47,7 +47,7 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/announcement">
+          <el-menu-item index="/admin/announcement" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
@@ -55,7 +55,7 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/leaveling">
+          <el-menu-item index="/admin/leaveling" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/leaveling" @click="skipAdd($event)"
@@ -63,7 +63,7 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/attendanceTime">
+          <el-menu-item index="/admin/attendanceTime" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/attendanceTime" @click="skipAdd($event)"
@@ -71,7 +71,7 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/checking">
+          <el-menu-item index="/admin/checking" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/checking" @click="skipAdd($event)"
@@ -112,6 +112,7 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminStore } from "~/store/admin";
+import {useHomestore} from "~/store/home"
 import {
   Document,
   Menu as IconMenu,
@@ -120,6 +121,8 @@ import {
   Expand,
   Fold,
 } from "@element-plus/icons-vue";
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const route = useRoute();
 let defaultRoute = ref("");
 let isCollapse = ref(false);

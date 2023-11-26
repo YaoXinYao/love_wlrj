@@ -1,9 +1,9 @@
 <template>
-  <div class="main" v-loading = "loadings">
+  <div class="main" v-loading="loadings">
     <div class="title">
       <div>相关帖子</div>
       <div class="signleHome" v-if="userinfo.userId != 0">
-      <NuxtLink to="/forum/person">个人主页</NuxtLink>
+        <NuxtLink to="/forum/person">个人主页</NuxtLink>
       </div>
     </div>
     <ul class="posts">
@@ -15,9 +15,14 @@
                 path: '/forum/details',
                 query: { data: item.postId },
               })
-            ">
+            "
+          >
             <img
-              :src="item.photos.length ? item.photos[0] : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'"
+              :src="
+                item.photos.length
+                  ? item.photos[0]
+                  : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'
+              "
             />
           </NuxtLink>
         </div>
@@ -115,7 +120,7 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource,loadings } =
+const { datas, pages, uploadRender, postSubId, postSource, loadings } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
@@ -181,49 +186,53 @@ function handleScroll() {
 }
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
-  forums.addlike(postId, status, type, userinfo.value.userId).then((res) => {
-    if (status == 1) {
-      if (type == "Like") {
-        if (res == 20000) {
-          pagesData.value[index].likes = true;
-          ElMessage.success("点赞成功");
-        } else if (res == 53003) {
-          ElMessage.warning("请勿重复点赞");
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    forums.addlike(postId, status, type, userinfo.value.userId).then((res) => {
+      if (status == 1) {
+        if (type == "Like") {
+          if (res == 20000) {
+            pagesData.value[index].likes = true;
+            ElMessage.success("点赞成功");
+          } else if (res == 53003) {
+            ElMessage.warning("请勿重复点赞");
+          } else {
+            ElMessage.error("点赞失败");
+          }
         } else {
-          ElMessage.error("点赞失败");
+          if (res == 20000) {
+            pagesData.value[index].collect = true;
+            ElMessage.success("收藏成功");
+          } else if (res == 53003) {
+            ElMessage.warning("请勿重复收藏");
+          } else {
+            ElMessage.error("收藏失败");
+          }
         }
       } else {
-        if (res == 20000) {
-          pagesData.value[index].collect = true;
-          ElMessage.success("收藏成功");
-        } else if (res == 53003) {
-          ElMessage.warning("请勿重复收藏");
+        if (type == "Like") {
+          if (res == 20000) {
+            pagesData.value[index].likes = false;
+            ElMessage.success("取消点赞");
+          } else if (res == 53004) {
+            ElMessage.warning("请勿重复取消");
+          } else {
+            ElMessage.error("取消点赞失败");
+          }
         } else {
-          ElMessage.error("收藏失败");
+          if (res == 20000) {
+            pagesData.value[index].collect = false;
+            ElMessage.success("取消收藏");
+          } else if (res == 53004) {
+            ElMessage.warning("请勿重复取消");
+          } else {
+            ElMessage.error("取消收藏失败");
+          }
         }
       }
-    } else {
-      if (type == "Like") {
-        if (res == 20000) {
-          pagesData.value[index].likes = false;
-          ElMessage.success("取消点赞");
-        } else if (res == 53004) {
-          ElMessage.warning("请勿重复取消");
-        } else {
-          ElMessage.error("取消点赞失败");
-        }
-      } else {
-        if (res == 20000) {
-          pagesData.value[index].collect = false;
-          ElMessage.success("取消收藏");
-        } else if (res == 53004) {
-          ElMessage.warning("请勿重复取消");
-        } else {
-          ElMessage.error("取消收藏失败");
-        }
-      }
-    }
-  });
+    });
+  }
 }
 watch(datas, (newValue, oldValue) => {
   if (uploadRender.value) {

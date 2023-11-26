@@ -20,10 +20,10 @@
       <el-form-item>
         <el-button type="primary" @click="selectPosts">搜索</el-button>
         <el-button type="info" @click="reset">重置</el-button>
-        <el-button type="success" @click="labelModel = true"
+        <el-button type="success" @click="labelModel = true" v-if="userinfo.roleId != 1"
           >标签管理</el-button
         >
-        <el-button type="warning" @click="subfieldModel = true"
+        <el-button type="warning" @click="subfieldModel = true" v-if="userinfo.roleId != 1"
           >分栏管理</el-button
         >
       </el-form-item>
@@ -64,7 +64,7 @@
           <el-button type="success" @click="handleEdit(scope.row)"
             >查看</el-button
           >
-          <el-button type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId != 1">删除</el-button>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -86,6 +86,9 @@
 import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 import { ref } from "vue";
 const small = ref(false);
 const background = ref(false);

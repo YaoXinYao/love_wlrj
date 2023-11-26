@@ -7,13 +7,8 @@
           <span class="right"></span>
           <span class="top"></span>
           <div class="userHead">
-            <img
-              :src="
-                userinfo.userPicture === '未设置'
-                  ? '/images/female.png'
-                  : userinfo.userPicture
-              "
-            />
+            <img v-if="userinfo.userPicture != '未设置'" :src="userinfo.userPicture"/>
+            <img v-if="userinfo.userPicture == '未设置'" :src="'/images/female.png'"/>
           </div>
         </div>
         <div class="userInfo">

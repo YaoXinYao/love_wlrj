@@ -38,11 +38,12 @@
           <el-input :value="postInfos.postView" :disabled="true" />
         </el-form-item>
         <el-form-item label="图片" :label-width="formLabelWidth">
-          <ul class="photos">
+          <ul class="photos" v-if="postInfos.photos.length!=0">
             <li v-for="(item, index) in postInfos.photos" :key="index">
               <img :src="item" />
             </li>
           </ul>
+          <div v-if="postInfos.photos.length==0">暂无图片</div>
         </el-form-item>
       </el-form>
       <template #footer>

@@ -54,6 +54,8 @@
             action="#"
             list-type="picture-card"
             :auto-upload="false"
+            :limit="1"
+            :on-exceed="exceedFun"
             accept="image/*"
             v-model:file-list="photos"
           >
@@ -103,7 +105,7 @@
 </template>
 <script lang="ts" setup>
 import { CircleClose, Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
-import type { UploadFile } from "element-plus";
+import type { UploadFile, UploadUserFile } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useRotationStore } from "~/store/rotation";
 let rotatinDelete = ref(false);
@@ -126,6 +128,10 @@ const handleRemove = (file: UploadFile) => {
 const handlePictureCardPreview = (file: UploadFile) => {
   dialogImageUrl.value = file.url!;
   dialogVisible.value = true;
+};
+//超出文件数量的钩子
+const exceedFun = (files: File[], uploadFiles: UploadUserFile[]) => {
+  ElMessage.warning("只允许上传一个文件");
 };
 const subminInfo = () => {
   let formdata = new FormData();

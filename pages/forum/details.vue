@@ -106,7 +106,7 @@
             /></el-icon>
             <svg
               v-if="item.likes == true"
-              @click="comLike(item.comId,0,index)"
+              @click="comLike(item.comId, 0, index)"
               t="1699003181186"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -122,7 +122,7 @@
             </svg>
             <svg
               v-if="item.likes == false"
-              @click="comLike(item.comId,1,index)"
+              @click="comLike(item.comId, 1, index)"
               t="1699003334612"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -137,7 +137,6 @@
               ></path>
             </svg>
             <span style="margin: 0">{{ item.comLike }}</span>
-            <span v-if="item.children.length != 0">展开全部</span>
             <span
               v-if="(item.comUserId = userinfo.userId)"
               @click="deleteCom(item.comId)"
@@ -213,11 +212,11 @@ import { forumStore } from "~/store/forum";
 import { ref } from "vue";
 import type { UploadFile } from "element-plus";
 import { Delete, Plus, ZoomIn, ChatDotRound } from "@element-plus/icons-vue";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { singleData, discuss} = storeToRefs(forums);
+const { singleData, discuss } = storeToRefs(forums);
 let commentNews = reactive<any>({
   comContent: "",
   comFatherId: 0,
@@ -238,8 +237,8 @@ let data = useRoute().query.data;
 commentNews.comPostId = data;
 onMounted(() => {
   let id = Number(data);
-  forums.getSingle(id,userinfo.value.userId);
-  forums.selectComment(id,userinfo.value.userId);
+  forums.getSingle(id, userinfo.value.userId);
+  forums.selectComment(id, userinfo.value.userId);
 });
 //删除图片
 const handleRemove = (file: UploadFile) => {
@@ -263,43 +262,47 @@ function cleardata() {
 }
 //发布评论
 const submitData = (comFatherId: number, comRootId: number) => {
-  let jage = true;
-  let formData = new FormData();
-  comImg.value = [];
-  let reg = /^\s+$/g;
-  if (!reg.test(conten.value)) {
-    if (formImage.files.length == 0 && conten.value == "") {
-      ElMessage.warning("评论数据为空");
-    } else {
-      for (let i = 0; i < formImage.files.length; i++) {
-        jage = formImage.files[i].raw.type.startsWith("image/");
-        if (!jage) {
-          ElMessage.warning("文件类型错误");
-          i = formImage.files.length;
-        } else {
-          comImg.value.push(formImage.files[i].raw);
-          formData.append(`comImg[${i}]`, formImage.files[i].raw);
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    let jage = true;
+    let formData = new FormData();
+    comImg.value = [];
+    let reg = /^\s+$/g;
+    if (!reg.test(conten.value)) {
+      if (formImage.files.length == 0 && conten.value == "") {
+        ElMessage.warning("评论数据为空");
+      } else {
+        for (let i = 0; i < formImage.files.length; i++) {
+          jage = formImage.files[i].raw.type.startsWith("image/");
+          if (!jage) {
+            ElMessage.warning("文件类型错误");
+            i = formImage.files.length;
+          } else {
+            comImg.value.push(formImage.files[i].raw);
+            formData.append(`comImg[${i}]`, formImage.files[i].raw);
+          }
+        }
+        if (jage) {
+          commentNews.comContent = conten.value;
+          commentNews.comRootId = comRootId;
+          commentNews.comFatherId = comFatherId;
+          forums.addComment(commentNews, formData).then((res) => {
+            if (res == 20000) {
+              ElMessage.success("评论成功");
+              forums.selectComment(Number(data), userinfo.value.userId);
+              conten.value = "";
+              comImg.value = [];
+              formImage.files = [];
+            } else {
+              ElMessage.error("评论失败");
+            }
+          });
         }
       }
-      if (jage) {
-        commentNews.comContent = conten.value;
-        commentNews.comRootId = comRootId;
-        commentNews.comFatherId = comFatherId;
-        forums.addComment(commentNews, formData).then((res) => {
-          if (res == 20000) {
-            ElMessage.success("评论成功");
-            forums.selectComment(Number(data),userinfo.value.userId);
-            conten.value = "";
-            comImg.value = [];
-            formImage.files = [];
-          } else {
-            ElMessage.error("评论失败");
-          }
-        });
-      }
+    } else {
+      ElMessage.warning("输入的内容为空格");
     }
-  } else {
-    ElMessage.warning("输入的内容为空格");
   }
 };
 //删除评论
@@ -328,32 +331,40 @@ const addCom = (id: number) => {
 };
 //确认添加
 const sureCom = () => {
-  submitData(commentNews.comFatherId, commentNews.comRootId);
-  commentVisible.value = false;
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    submitData(commentNews.comFatherId, commentNews.comRootId);
+    commentVisible.value = false;
+  }
 };
 //点赞
 function comLike(comId: number, status: number, index: number) {
-  forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
-    if (status == 1) {
-      if (res == 20000) {
-        discuss.value[index].likes = true;
-        ElMessage.success("点赞成功");
-      } else if (res == 53003) {
-        ElMessage.warning("请勿重复点赞");
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
+      if (status == 1) {
+        if (res == 20000) {
+          discuss.value[index].likes = true;
+          ElMessage.success("点赞成功");
+        } else if (res == 53003) {
+          ElMessage.warning("请勿重复点赞");
+        } else {
+          ElMessage.error("点赞失败");
+        }
       } else {
-        ElMessage.error("点赞失败");
+        if (res == 20000) {
+          discuss.value[index].likes = false;
+          ElMessage.success("取消点赞");
+        } else if (res == 53004) {
+          ElMessage.warning("请勿重复取消");
+        } else {
+          ElMessage.error("取消点赞失败");
+        }
       }
-    } else {
-      if (res == 20000) {
-        discuss.value[index].likes = false;
-        ElMessage.success("取消点赞");
-      } else if (res == 53004) {
-        ElMessage.warning("请勿重复取消");
-      } else {
-        ElMessage.error("取消点赞失败");
-      }
-    }
-  });
+    });
+  }
 }
 </script>
 
