@@ -94,7 +94,6 @@ import { Userloginany, Userloginemail, sendEmeil } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
-import { debounce } from "lodash";
 //定义登录的模板
 definePageMeta({
   layout: "custom",

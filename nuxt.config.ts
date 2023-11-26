@@ -44,6 +44,10 @@ export default defineNuxtConfig({
           type: "text/javascript",
           src: "/staticjs/font_4330669_ghs4q6fkhna.js",
         },
+        {
+          type: "text/javascript",
+          src: "/staticjs/phaser.min.js",
+        },
       ],
       noscript: [{ children: "Javascript is required" }],
     },
