@@ -6,7 +6,7 @@
         <NuxtLink to="/forum/person">个人主页</NuxtLink>
       </div>
     </div>
-    <ul class="posts">
+    <ul class="posts" v-if="pagesData.length != 0">
       <li class="card" v-for="(item, index) in pagesData" :key="index">
         <div class="cardPhotos">
           <NuxtLink
@@ -19,7 +19,7 @@
           >
             <img
               :src="
-                item.photos.length
+                item.photos.length != 0
                   ? item.photos[0]
                   : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'
               "
@@ -110,6 +110,12 @@
         </div>
       </li>
     </ul>
+    <div class="noDataImg" v-if="pagesData.length == 0">
+      <img class="noData" src="/images/暂无.svg" />
+    </div>
+    <div class="loadText" v-if="shows == 1" @click="nextData">
+      <span>点击加载更多</span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -124,66 +130,65 @@ const { datas, pages, uploadRender, postSubId, postSource, loadings } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
-let isLoading = ref(true);
+let shows = ref(1);
 onMounted(() => {
   fetchData(userinfo.value.userId);
-  window.addEventListener("scroll", handleScroll);
-});
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handleScroll);
 });
 //查询帖子
 function fetchData(userId: any) {
   if (postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(userId, pageNo.value, 10, postSource.value, postSubId.value)
+      .selectPost(userId, pageNo.value, 30, postSource.value, postSubId.value)
       .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value];
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
         }
-        isLoading.value = false;
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
       });
+    return;
   } else if (!postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(userId, pageNo.value, 10, "", postSubId.value)
+      .selectPost(userId, pageNo.value, 30, "", postSubId.value)
       .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value, ...res];
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
         }
-        isLoading.value = false;
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
       });
+    return;
   } else if (postSource.value && postSubId.value == 0) {
-    forums
-      .selectPost(userId, pageNo.value, 10, postSource.value)
-      .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value, ...res];
-        }
-        isLoading.value = false;
-      });
-  } else if (!postSource.value && postSubId.value == 0) {
-    forums.selectPost(userId, pageNo.value, 10).then((res) => {
-      if (res) {
-        pagesData.value = [...pagesData.value, ...res];
+    forums.selectPost(userId, pageNo.value, 30, postSource.value).then((res) => {
+      for (let i = 0; i < res.length; i++) {
+        pagesData.value.push({ ...res[i] });
       }
-      isLoading.value = false;
+      pageNo.value++;
+      if (pageNo.value > pages.value) {
+        shows.value = 0;
+      }
     });
-  }
-  pageNo.value++;
-}
-function handleScroll() {
-  const scrollY = window.scrollY;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const windowHeight = window.innerHeight;
-  let distanceToBottom = scrollHeight - (scrollY + windowHeight);
-  if (pageNo.value > pages.value) {
-    isLoading.value = true;
-  } else {
-    if (distanceToBottom < 100 && !isLoading.value) {
-      fetchData(userinfo.value.userId);
-    }
+    return;
+  } else if (!postSource.value && postSubId.value == 0) {
+    forums.selectPost(userId, pageNo.value, 30).then((res) => {
+      for (let i = 0; i < res.length; i++) {
+        pagesData.value.push({ ...res[i] });
+      }
+      pageNo.value++;
+      if (pageNo.value > pages.value) {
+        shows.value = 0;
+      }
+    });
+    return;
   }
 }
+const nextData = () => {
+  fetchData(userinfo.value.userId);
+};
 //点赞/收藏
 function postLike(postId: number, type: string, status: number, index: number) {
   if (userinfo.value.userId == 0) {
@@ -365,6 +370,34 @@ watch(datas, (newValue, oldValue) => {
     .cardPhotos {
       border-radius: 0 15px 15px 0;
     }
+  }
+}
+.noDataImg {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  .noData {
+    width: 200px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+}
+.loadText {
+  width: 100%;
+  text-align: center;
+  height: 25px;
+  line-height: 25px;
+  font-size: 17px;
+  font-family: "阿里妈妈刀隶体";
+  margin-bottom: 15px;
+  cursor: pointer;
+  span:hover {
+    color: rgb(46, 158, 202);
   }
 }
 @media (max-width: 1015px) {

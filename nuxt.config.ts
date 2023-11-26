@@ -63,7 +63,7 @@ export default defineNuxtConfig({
     devProxy: {
       //论坛管理
       "/api": {
-        target: "http://152.136.54.204:19999/forum",
+        target: "http://152.136.161.44:19491/forum/swagger/forum/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -81,7 +81,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/zinfo": {
-        target: "http://112.125.120.78:8666",
+        target: "http://152.136.161.44:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },

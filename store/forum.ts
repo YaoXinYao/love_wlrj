@@ -128,33 +128,60 @@ export const forumStore = defineStore("forumInfo", {
       this.pages = data.value?.data.pages;
       this.datas = [];
       let dataArr = data.value?.data.records || [];
+      let h = 0
+      console.log("帖子",dataArr);
+      
       for (let i = 0; i < dataArr.length; i++) {
-        const { postImg, ...postData } = dataArr[i];
-        let img: string = dataArr[i].postImg;
-        //分割图片
-        let photos: string[] = img ? img.split(",") : [];
-        let likes = false;
-        let collect = false;
-        //判断用户是否点赞
-        const result = await this.addlike(dataArr[i].postId, 0, "Like", userId);
-        if (result == 20000) {
-          likes = true;
-          await this.addlike(dataArr[i].postId, 1, "Like", userId);
-        }
-        //判断用户是否收藏
-        const res = await this.addlike(dataArr[i].postId, 0, "Collect", userId);
-        if (res == 20000) {
-          collect = true;
-          await this.addlike(dataArr[i].postId, 1, "Collect", userId);
-        }
         //查询用户
         const use = await this.selectUser(dataArr[i].postUserId);
-        let userName = use.userName;
-        let head =
-          use.userPicture == "未设置"
-            ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-            : use.userPicture;
-        this.datas[i] = { ...postData, photos, userName, head, likes, collect };
+        console.log("用户信息",use);
+        
+        if (use == null) {
+          continue;
+        } else {
+          let userName = use.userName;
+          let head =
+            use.userPicture == "未设置"
+              ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+              : use.userPicture;
+          const { postImg, ...postData } = dataArr[i];
+          let img: string = dataArr[i].postImg;
+          //分割图片
+          let photos: string[] = img ? img.split(",") : [];
+          let likes = false;
+          let collect = false;
+          //判断用户是否点赞
+          const result = await this.addlike(
+            dataArr[i].postId,
+            0,
+            "Like",
+            userId
+          );
+          if (result == 20000) {
+            likes = true;
+            await this.addlike(dataArr[i].postId, 1, "Like", userId);
+          }
+          //判断用户是否收藏
+          const res = await this.addlike(
+            dataArr[i].postId,
+            0,
+            "Collect",
+            userId
+          );
+          if (res == 20000) {
+            collect = true;
+            await this.addlike(dataArr[i].postId, 1, "Collect", userId);
+          }
+          this.datas[h] = {
+            ...postData,
+            photos,
+            userName,
+            head,
+            likes,
+            collect,
+          };
+          h++;
+        }
       }
       this.loadings = false;
       return this.datas;
@@ -337,7 +364,7 @@ export const forumStore = defineStore("forumInfo", {
                   photos,
                   likes,
                 };
-                m++
+                m++;
               }
             }
           }
