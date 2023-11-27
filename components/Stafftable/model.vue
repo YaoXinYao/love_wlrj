@@ -284,6 +284,8 @@ function submitFiles() {
             setTimeout(() => {
               modelState.value = false;
               uploadFiles.value!.clearFiles();
+              team.value=""
+              role.value=""
             }, 1000);
           } else {
             ElMessage.error("导入失败");
@@ -339,6 +341,8 @@ const changeFun = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
 function closeDialog() {
   uploadFiles.value!.clearFiles();
   modelState.value = false;
+  team.value=""
+  role.value=""
 }
 //删除成员
 function deleteStaff() {

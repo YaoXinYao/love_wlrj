@@ -4,7 +4,7 @@ import type { IResultData } from "../forum";
 //发布帖子
 export const addpost = (query: any, params: FormData) => {
   return hyRequest.post<IResultData<any>>("/api/post/insert", query, {
-    body: params,watch:false
+    body: params,watch:false 
   });
 };
 //查询帖子

@@ -102,7 +102,7 @@
           </div>
           <div class="icon">
             <el-icon
-              ><ChatDotRound color="black" @click="addCom(item.comId)"
+              ><ChatDotRound color="black" @click="addCom(item.comId,item.comUserId)"
             /></el-icon>
             <svg
               v-if="item.likes == true"
@@ -191,7 +191,7 @@
               <span
                 v-if="!disabled"
                 class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
+                @click="handleRemoves(file)"
               >
                 <el-icon><Delete /></el-icon>
               </span>
@@ -201,7 +201,7 @@
       </el-upload>
       <div class="btn">
         <el-button type="primary" @click="sureCom">提交</el-button>
-        <el-button type="info" @click="cleardata()">清空</el-button>
+        <el-button type="info" @click="cleardatas()">清空</el-button>
       </div>
     </el-dialog>
   </div>
@@ -231,6 +231,7 @@ let formImage = reactive<any>({
   files: [],
 });
 let contens = ref("");
+let sendFatherId = ref(0)
 let formImages = reactive<any>({
   files: [],
 });
@@ -322,6 +323,7 @@ const submitData = (comFatherId: number, comRootId: number) => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
+              sentMessage(singleData.value.postUserId,conten.value,"PostComment",singleData.value.postId)
               forums.selectComment(Number(datas), userinfo.value.userId);
               conten.value = "";
               formImage.files = [];
@@ -355,10 +357,11 @@ const deleteCom = (ids: number) => {
   });
 };
 //添加评论弹窗
-const addCom = (id: number) => {
+const addCom = (id: number,fatherId:number) => {
   commentVisible.value = true;
   commentNews.comFatherId = id;
   commentNews.comRootId = id;
+  sendFatherId.value = fatherId
 };
 //确认添加
 const sureCom = () => {
@@ -388,6 +391,7 @@ const sureCom = () => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
+              sentMessage(sendFatherId.value,contens.value,"CommentReply",commentNews.comFatherId)
               forums.selectComment(Number(datas), userinfo.value.userId);
               contens.value = "";
               formImages.files = [];
@@ -403,6 +407,19 @@ const sureCom = () => {
     }
   }
 };
+//删除图片
+const handleRemoves = (file: UploadFile) => {
+  const index = formImages.files.indexOf(file);
+  if (index !== -1) {
+    formImages.files.splice(index, 1);
+    ElMessage.success("移除成功");
+  }
+};
+//清空数据
+function cleardatas() {
+  contens.value = "";
+  formImages.files = [];
+}
 //点赞
 function comLike(
   comId: number,

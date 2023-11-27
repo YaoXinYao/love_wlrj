@@ -148,7 +148,6 @@ const handleEdit = (row: any) => {
   lookModel.value = true;
 };
 const handleDelete = (row:any)=>{
-  console.log("删除帖子",row);
   deleteId.value.push(row.postId)
   deleteModel.value = true
 }

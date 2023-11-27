@@ -42,7 +42,7 @@
         :style="inputcss"
       >
         <el-table-column type="index" label="序号" width="100" />
-        <el-table-column property="authorityId" label="权限名称" width="200" />
+        <el-table-column property="authorityName" label="权限名称" width="200" />
         <el-table-column #default="scope" label="操作" width="150">
           <el-button type="danger" @click="sureDelete(scope.row)"
             >删除</el-button
