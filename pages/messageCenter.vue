@@ -9,8 +9,42 @@
               :class="route.path === '/messageCenter/postLike' ? 'active' : ''"
             >
               <nuxt-link to="/messageCenter/postLike"
-                ><span class="iconfont">&#xec7f;</span>帖子点赞</nuxt-link
+                ><el-badge
+                  :value="notReadInfo.postLikeCnt"
+                  :hidden="!(notReadInfo.postLikeCnt > 0)"
+                  :max="99"
+                  class="item"
+                  ><span class="iconfont">&#xec7f;</span>帖子点赞</el-badge
+                ></nuxt-link
               >
+            </li>
+            <li
+              :class="
+                route.path === '/messageCenter/postCollect' ? 'active' : ''
+              "
+            >
+              <nuxt-link to="/messageCenter/postCollect"
+                ><el-badge
+                  :value="notReadInfo.postCollectCnt"
+                  :hidden="!(notReadInfo.postCollectCnt > 0)"
+                  :max="99"
+                  class="item"
+                  ><span class="iconfont">&#xe65e;</span>帖子收藏</el-badge
+                >
+              </nuxt-link>
+            </li>
+            <li
+              :class="route.path === '/messageCenter/comment' ? 'active' : ''"
+            >
+              <nuxt-link to="/messageCenter/comment"
+                ><el-badge
+                  :value="notReadInfo.postCommentCnt"
+                  :hidden="!(notReadInfo.postCommentCnt > 0)"
+                  :max="99"
+                  class="item"
+                  ><span class="iconfont">&#xe8b4;</span>帖子评论</el-badge
+                >
+              </nuxt-link>
             </li>
             <li
               :class="
@@ -18,36 +52,31 @@
               "
             >
               <nuxt-link to="/messageCenter/commentLike"
-                ><span class="iconfont">&#xec7f;</span>评论点赞</nuxt-link
-              >
+                ><el-badge
+                  :value="notReadInfo.commentLikeCnt"
+                  :hidden="!(notReadInfo.commentLikeCnt > 0)"
+                  :max="99"
+                  class="item"
+                >
+                  <span class="iconfont">&#xec7f;</span>评论点赞</el-badge
+                >
+              </nuxt-link>
             </li>
-            <li
-              :class="route.path === '/messageCenter/comment' ? 'active' : ''"
-            >
-              <nuxt-link to="/messageCenter/comment"
-                ><span class="iconfont">&#xe8b4;</span>帖子评论</nuxt-link
-              >
-            </li>
+
             <li
               :class="
                 route.path === '/messageCenter/commentReply' ? 'active' : ''
               "
             >
               <nuxt-link to="/messageCenter/commentReply"
-                ><span class="iconfont">&#xe8b4;</span>评论回复</nuxt-link
-              >
-            </li>
-            <li
-              :class="route.path === '/messageCenter/collect' ? 'active' : ''"
-            >
-              <nuxt-link to="/messageCenter/collect"
-                ><span class="iconfont">&#xe65e;</span>收藏</nuxt-link
-              >
-            </li>
-            <li :class="route.path === '/messageCenter/notice' ? 'active' : ''">
-              <nuxt-link to="/messageCenter/notice"
-                ><span class="iconfont">&#xe609;</span>公告</nuxt-link
-              >
+                ><el-badge
+                  :value="notReadInfo.commentReplyCnt"
+                  :hidden="!(notReadInfo.commentReplyCnt > 0)"
+                  :max="99"
+                  class="item"
+                  ><span class="iconfont">&#xe8b4;</span>评论回复</el-badge
+                >
+              </nuxt-link>
             </li>
           </ul>
         </div>
@@ -64,9 +93,21 @@
 import "animate.css";
 import { useRoute } from "vue-router";
 import { useWebSocket } from "@vueuse/core";
+import { getNotReadInfo } from "~/service/message";
+import { useHomestore } from "~/store/home";
+import { storeToRefs } from "pinia";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
 const route = useRoute();
+let notReadInfo = reactive({
+  commentLikeCnt: 0,
+  commentReplyCnt: 0,
+  postCollectCnt: 0,
+  postCommentCnt: 0,
+  postLikeCnt: 0,
+});
 const { status, data, send, open, close } = useWebSocket(
-  "ws://115.159.84.43:19491/forum/swagger/forum/websocket/4",
+  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/${userinfo.value.userId}`,
   {
     autoReconnect: {
       retries: 8,
@@ -75,16 +116,47 @@ const { status, data, send, open, close } = useWebSocket(
         alert("Failed to connect WebSocket after 8 retries");
       },
     },
+    onConnected() {
+      console.log("连接成功");
+    },
+    onDisconnected() {
+      console.log("断开");
+    },
+    onMessage() {
+      console.log("来消息了");
+
+      const msg = JSON.parse(data.value);
+      console.log("消息", msg);
+    },
+    onError(err) {
+      console.error(err);
+    },
   }
 );
-watch(status, (newStatus) => {
-  console.log(newStatus);
 
-  if (newStatus === "OPEN") {
-    console.log("WebSocket connection established");
-    // 连接成功的回调代码
-  }
-});
+// watch(status, (newStatus) => {
+//   console.log(newStatus);
+
+//   if (newStatus === "OPEN") {
+//     console.log("WebSocket connection established");
+//     // 连接成功的回调代码
+//   }
+// });
+
+let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
+const {
+  commentLikeCnt,
+  commentReplyCnt,
+  postCollectCnt,
+  postCommentCnt,
+  postLikeCnt,
+} = notReadInfoRes.data.value.data;
+notReadInfo.commentLikeCnt = commentLikeCnt;
+notReadInfo.commentReplyCnt = commentReplyCnt;
+notReadInfo.postCollectCnt = postCollectCnt;
+notReadInfo.postCommentCnt = postCommentCnt;
+notReadInfo.postLikeCnt = postLikeCnt;
+console.log(notReadInfoRes);
 </script>
 
 <style lang="scss" scoped>
@@ -135,7 +207,7 @@ watch(status, (newStatus) => {
       display: flex;
       align-items: center;
       width: 100%;
-      height: 45px;
+      height: 50px;
       font-size: 16px;
       line-height: 45px;
       padding-left: 30px;
@@ -144,6 +216,7 @@ watch(status, (newStatus) => {
       border-radius: 4px;
       transition: color 0.1s;
       transition: background-color 0.1s;
+      margin: 10px 0;
 
       span {
         margin-right: 8px;
@@ -155,6 +228,10 @@ watch(status, (newStatus) => {
       }
     }
   }
+}
+
+.item {
+  line-height: 35px;
 }
 // .page-enter-active {
 //   animation: slideInLeft 0.5s;

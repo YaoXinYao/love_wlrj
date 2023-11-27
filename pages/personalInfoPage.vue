@@ -44,7 +44,6 @@ import {
   type UploadFiles,
   type UploadProps,
 } from "element-plus";
-import { getLoginUser } from "~/service/user";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 definePageMeta({
@@ -85,6 +84,8 @@ const handleAvatarError = (
   ElMessage.error("上传失败");
   console.log(error);
 };
+
+
 </script>
 <style lang="scss" scoped>
 @font-face {

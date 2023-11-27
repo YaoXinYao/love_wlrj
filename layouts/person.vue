@@ -7,20 +7,29 @@
       </NuxtLink>
 
       <ul class="nav">
-        <li>导航1</li>
-        <li>导航2</li>
-        <li>导航3</li>
+        <li><NuxtLink to="/forum/home">论坛</NuxtLink></li>
+        <li><NuxtLink to="/forum/home">公告</NuxtLink></li>
+        <li><NuxtLink to="/networkdisk">网盘</NuxtLink></li>
       </ul>
       <div class="navUser">
         <el-dropdown trigger="click" class="dropDown">
           <span class="el-dropdown-link">
-            用户名<el-icon class="el-icon--right"><arrow-down /></el-icon>
+            {{ userinfo.userName
+            }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>Action 1</el-dropdown-item>
-              <el-dropdown-item> Action 2 </el-dropdown-item>
-              <el-dropdown-item>退出登录</el-dropdown-item>
+              <el-dropdown-item>
+                <li>
+                  <NuxtLink to="/admin/staff">后台</NuxtLink>
+                </li></el-dropdown-item
+              >
+              <el-dropdown-item>
+                <li>
+                  <NuxtLink to="/messageCenter/postLike">消息中心</NuxtLink>
+                </li></el-dropdown-item
+              >
+              <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -32,6 +41,14 @@
 
 <script setup lang="ts">
 import { ArrowDown } from "@element-plus/icons-vue";
+import { storeToRefs } from "pinia";
+import { useHomestore } from "~/store/home";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
+const exit = () => {
+  homeStore.exitlogin();
+  navigateTo("/");
+};
 </script>
 
 <style lang="scss" scoped>
@@ -97,6 +114,11 @@ import { ArrowDown } from "@element-plus/icons-vue";
     font-size: 18px;
     font-weight: 700;
     transition: all 0.3s;
+
+    &:hover {
+      color: $groupColor;
+      margin-top: 8px;
+    }
   }
 }
 
@@ -105,7 +127,7 @@ import { ArrowDown } from "@element-plus/icons-vue";
   justify-content: right;
   align-items: center;
   width: 200px;
-  height: 100%;
+  height: 60px;
 }
 
 .dropDown {
