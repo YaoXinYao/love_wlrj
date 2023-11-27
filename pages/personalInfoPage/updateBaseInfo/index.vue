@@ -1,6 +1,7 @@
 <template>
   <div class="container animate__animated animate__fadeIn">
     <client-only>
+      <ReturnPersonalPage style="margin-left: 50px" />
       <h2>基本信息</h2>
       <el-form
         ref="baseInfoRef"
@@ -271,7 +272,7 @@ const sendCode = async () => {
     font-size: 21px;
     color: #666;
     margin-left: 60px;
-    margin-top: 50px;
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 }

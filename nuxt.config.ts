@@ -63,19 +63,19 @@ export default defineNuxtConfig({
     devProxy: {
       //论坛管理
       "/api": {
-        target: "http://115.159.84.43:19491/forum/swagger/forum",
+        target: "http://152.136.161.44:19491/forum/swagger/forum",
         changeOrigin: true,
         prependPath: true,
       },
       //网盘接口
       "/disk": {
-        target: "http://115.159.84.43:19491/disk/swagger",
+        target: "http://152.136.161.44:19491/disk/swagger",
         changeOrigin: true,
         prependPath: true,
       },
       //用户接口
       "/coustom": {
-        target: "http://115.159.84.43:19491/user/swagger/",
+        target: "http://152.136.161.44:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -98,12 +98,18 @@ export default defineNuxtConfig({
 
       //考核模块
       "/access": {
-        target: "http://115.159.84.43:19491/assess/swagger/assess/",
+        target: "http://152.136.161.44:19491/assess/swagger/assess/",
         changeOrigin: true,
         prependPath: true,
       },
       "/forum": {
-        target: "http://115.159.84.43:19491/forum/swagger/forum/",
+        target: "http://152.136.161.44:19491/forum/swagger/forum/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+      //消息模块
+      "/messageInterface": {
+        target: "http://152.136.161.44:19491/forum/swagger/forum/",
         changeOrigin: true,
         prependPath: true,
       },

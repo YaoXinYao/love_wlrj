@@ -9,26 +9,29 @@
       :infinite-scroll-delay="1000"
       :infinite-scroll-immediate="false"
     >
-      <li v-for="(info, index) in infoList" :key="index" class="noticeItem">
+      <li
+        v-for="(info, index) in infoList.data"
+        :key="index"
+        class="noticeItem animate__animated animate__fadeIn"
+      >
         <Info :data="info" :type="'PostCollect'" />
       </li>
-      <li class="isLoading" v-show="!isDisabled">正在加载中...</li>
+      <li style="width: 100%; height: 2px" ref="loading"></li>
+      <li class="isLoading" v-show="isLoading">正在加载中...</li>
     </ul>
   </div>
 </template>
 <script setup lang="ts">
-import { getMessageInfo } from "~/service/message";
-import { getPostInfoById } from "~/service/post";
-import type { MessageInfoResType } from "~/types/Message";
-import { getUserInfoById } from "~/service/user";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 import { useMessageStore } from "~/store/message";
+import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
+import { useIntersectionObserver } from "@vueuse/core";
 const messageStore = useMessageStore();
 const homeStore = useHomestore();
-let { pageInfo, curType } = storeToRefs(messageStore);
+
 let { userinfo } = storeToRefs(homeStore);
-messageStore.ChangeCurType("PostCollect");
+messageStore.ChangeCurType("PostLike");
 let messageInfoProps = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -37,56 +40,51 @@ let messageInfoProps = reactive({
 });
 
 let isDisabled = ref(false);
-console.log(messageInfoProps);
+let isStop = ref(false);
+let isLoading = ref(false);
+let loading = ref();
 
-const messageInfoData = reactive<{ data: Array<MessageInfoResType> }>({
-  data: [],
-});
-let infoList = reactive<Array<{ info: string; date: string }>>([]);
+let infoList = reactive<{
+  data: Array<{ id: number; info: string; date: string }>;
+}>({ data: [] });
 onMounted(() => {
   getInfo();
+
+  useIntersectionObserver(
+    loading,
+    ([{ isIntersecting }], observerElement) => {
+      if (isIntersecting) {
+        console.log("空元素出现了");
+        loadingMore();
+      }
+    },
+    { threshold: 0 }
+  );
 });
+
+const loadingMore = () => {
+
+  if (!isDisabled.value && infoList.data.length != 0) {
+    console.log("调用加载");
+    getInfo();
+  }
+};
 const getInfo = async () => {
-  console.log("getInfo");
-
-  let messageInfoRes = await getMessageInfo(messageInfoProps);
-  let baseInfo = messageInfoRes.data.value.data;
-  console.log(baseInfo);
-
-  messageInfoData.data = baseInfo.records;
-  for (let i = 0; i < messageInfoData.data.length; i++) {
-    //查询信息发送者信息
-    let userInfoRes = await getUserInfoById(messageInfoData.data[i].msgSend);
-    if (userInfoRes.data.value.code === 20000) {
-      messageInfoData.data[i].msgSendName =
-        userInfoRes.data.value.data.userName;
-    } else {
-      messageInfoData.data[i].msgSendName = "未知人员";
-    }
-    //查询帖子名称
-    let postInfoRes = await getPostInfoById(
-      messageInfoData.data[i].msgContentId
-    );
-    if (postInfoRes.data.value.code === 20000) {
-      messageInfoData.data[i].msgContentName =
-        postInfoRes.data.value.data.postTitle;
-    } else {
-      messageInfoData.data[i].msgContentName = "未知文章";
-    }
-    let infoItem = {
-      info: `${messageInfoData.data[i].msgSendName}收藏了你的帖子${messageInfoData.data[i].msgContentName}`,
-      date: messageInfoData.data[i].msgTime,
-    };
-    infoList.push(infoItem);
-  }
-
-  if (baseInfo.pages <= baseInfo.current) {
+  isLoading.value = true;
+  if (!isStop.value) {
     isDisabled.value = true;
-  } else {
-    messageInfoProps.pageNo = (messageInfoProps.pageNo as number) * 1 + 1;
-    console.log("page:", messageInfoProps.pageNo);
   }
-  console.log(isDisabled.value);
+
+  let messageInfo = await useGetMessageInfo(messageInfoProps);
+  infoList.data = [...infoList.data, ...messageInfo.infoResList];
+  isLoading.value = false;
+  if (messageInfo.resPageInfo.pages <= messageInfo.resPageInfo.current) {
+    isDisabled.value = true;
+    isStop.value = true;
+  } else {
+    isDisabled.value = false;
+    messageInfoProps.pageNo = (messageInfoProps.pageNo as number) * 1 + 1;
+  }
 };
 </script>
 <style scoped>
@@ -98,17 +96,6 @@ const getInfo = async () => {
 .noticeItem {
   display: block;
   width: 100%;
-  background-color: #fff;
-  padding: 5px 5px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  box-shadow: 1px 2px 5px #c7c5c5;
-  position: relative;
-  padding-bottom: 30px;
-
-  &:not(:first-child) {
-    margin-top: 20px;
-  }
 }
 
 .isLoading,
@@ -118,5 +105,6 @@ const getInfo = async () => {
   line-height: 30px;
   color: rgb(78, 111, 243);
   text-align: center;
+  opacity: 0.5;
 }
 </style>

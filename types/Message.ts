@@ -35,3 +35,4 @@ export interface MessageInfoResType {
   msgTime: string;
   msgType: MessageTypes;
 }
+
