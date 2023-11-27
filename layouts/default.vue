@@ -4,6 +4,7 @@
     <app-header2 class="app-header2"></app-header2>
     <slot></slot>
     <rocket />
+    <ai-service />
     <app-footer />
   </div>
 </template>
