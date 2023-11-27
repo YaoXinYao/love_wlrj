@@ -79,12 +79,12 @@ function handleChangesClick(flag:any){
     announcementCon.value = flag
     isShow.value = !isShow.value
     
-    console.log(isShow.value)
+    // console.log(isShow.value)
     // return flag
 }
 
 function handleNewValueClick(query:any){
-    console.log(query)
+    // console.log(query)
     contentRef.value?.handleAnnouncement(query)
 }
 
@@ -94,7 +94,7 @@ useHead({
 })
 
 function toggleFullscrent(){
-    console.log(ImgRef.value)
+    // console.log(ImgRef.value)
 }
 
 

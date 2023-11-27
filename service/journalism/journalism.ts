@@ -9,16 +9,21 @@ export const deleteNew = (query:any)=>{
 
 
 export const getNew = (query:any)=>{
-    return HYRequest.delete('/notice/news/select',query)
+    return HYRequest.get('/notice/news/select',query)
 }
 
 
 export const insertNew = (query:any,body:any)=>{
+    // let form = new FormData()
     let formData = new FormData()
+    for(let item in query){
+        console.log(query[item])
+        formData.append(`${item}`,query[item])
+    }
     formData.append('newsImgs',body)
-    return HYRequest.delete('/notice/news/insert',query,{body:formData})
+    return HYRequest.post('/notice/news/insert','',{body:formData})
 }
 
 export const updateNew = (query:any)=>{
-    return HYRequest.delete('/notice/news/update',query)
+    return HYRequest.put('/notice/news/update',query)
 }

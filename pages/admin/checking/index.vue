@@ -25,7 +25,14 @@
                             @click="handleOpen"
                             :class="{ 'highlight': isHighlighted }"
                         >
-                            <el-icon size="90" class="el-icon--upload"><upload-filled /></el-icon>
+                            <el-icon 
+                                size="90" 
+                                class="el-icon--upload" 
+                                @dragover.prevent="allowDrop" 
+                                @drop.prevent="handleDrop"
+                            >
+                                <upload-filled />
+                            </el-icon>
 
                             <div>
                                 拖拽到这里或者点击上传
@@ -37,7 +44,7 @@
                                 </div>
                                 <div class="filesCont">
                                     <el-icon class="iconFile" size="20"><Document /></el-icon>
-                                    <el-progress  :percentage="percentage" color="#409eff" />
+                                    <el-progress   :percentage="percentage" color="#409eff" />
                                 </div>
                             </div>
                         </div>
@@ -192,10 +199,13 @@ function handleOpen(){
 }
 
 function highlight(){
+    console.log('进来了');
+    
     isHighlighted.value=true
 }
 
 function light(){
+    console.log('出来了');
     isHighlighted.value = false
 }
 
@@ -207,14 +217,15 @@ function handleNew(){
 
 
 function handleDrop(event:any) {
-    console.log(event)
+    // console.log(event)
     const files = event.dataTransfer.files;
-    // console.log(files)
+    console.log(files)
+    // handleFiles(files);
     let nameArr = files[0].name.split('.')
     if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
         handleFiles(files);
         showFile.value = true;
-        console.log(files)
+        // console.log(files)
     }else{
         ElNotification({
             title: '上传失败',
@@ -226,11 +237,11 @@ function handleDrop(event:any) {
 }
 
 function handleUploadProgress(event:any){
-    console.log(event)
-    console.log(event.lengthComputable)
+    // console.log(event)
+    // console.log(event.lengthComputable)
     const percentages = (event.loaded / event.total) * 100;
-    console.log(event.loaded)
-    console.log(event.total)
+    console.log(event.loaded, event.total)
+    // console.log(event.total)
     percentage.value = Math.floor(percentages);
 }
 
@@ -251,13 +262,20 @@ function handleFiles(files:any){
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-            showFile.value = false
+            
             ElNotification({
                 title: '成功',
                 message: '上传成功',
                 type:'success'
             })
-            percentage.value = 0;
+            if(percentage.value == 100){
+                console.log(1)
+                percentage.value = 0;
+                showFile.value = false
+                let current = currentQuery.value
+                checkingRef.value?.getUnSign({...current})
+            }
+            
         } else {
             console.error('Upload failed');
         }

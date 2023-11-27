@@ -32,3 +32,8 @@ export const postAffiche = (query:any,body?:any) =>{
         return HYRequest.post('/notice/affiche/insert',query)
     }
 }
+
+
+export const deleteNotice = (query:any) =>{
+    return HYRequest.delete('/notice/affiche/delete',query)
+}

@@ -4,7 +4,8 @@ import { reactive } from 'vue';
         <div class="content">
             <el-timeline>
                     <el-timeline-item center placement="top" v-for="item in announcementList" :key="item.noticeId" :timestamp="item.noticeTime"  >
-                        <el-card @click="con(item)">
+                        <el-card @click="con(item)" class="card">
+                            <el-icon class="cardIcon" @click.stop="handleDelete(item)" size="20"><CircleCloseFilled /></el-icon>
                             <h2>{{ item.noticeType }}</h2>
                         </el-card>
                     </el-timeline-item>
@@ -18,6 +19,9 @@ import { reactive } from 'vue';
 import {reactive} from 'vue'
 import annoucementStore from '@/store/announcement'
 import {storeToRefs} from 'pinia'
+import {CircleCloseFilled}  from '@element-plus/icons-vue'
+import { ElMessageBox, ElNotification  }  from 'element-plus'
+import { deleteNotice } from '~/service/announcement/announcement'
 
 export interface anType {
     title:string,
@@ -48,6 +52,42 @@ function con(Props:any){
     emit('ShowClick',Props)
 }
 
+function handleDelete(item:any){
+    console.log('删除')
+    console.log(item)
+    ElMessageBox.confirm(
+    '确定删除此公告嘛?',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+        deleteNotice({ids:[item.noticeId]}).then(res=>{
+            console.log(res.data.value)
+            if(res.data.value.code == 20000){
+                ElNotification({
+                    type:'success',
+                    message:'删除成功',
+                    title:'删除公告'
+                })
+                handleAnnouncement({pageNo:1,pageSize:9999})
+            }
+
+        })
+
+    })
+    .catch(() => {
+        ElNotification({
+            type:'warning',
+            message:'删除取消',
+            title:'取消'
+        })
+    })
+}
+
 
 defineExpose({handleAnnouncement})
 </script>
@@ -67,6 +107,15 @@ defineExpose({handleAnnouncement})
         width:100%;
         height: 100%;
         overflow-y: auto;
+        .card{
+            position: relative;
+            .cardIcon{
+                cursor: pointer;
+                position: absolute;
+                right: 10px;
+                top:10px;
+            }
+        }
     }
     .content::-webkit-scrollbar{
         width:0px

@@ -43,8 +43,10 @@ let md: any = new MarkdownIt({
 });
 watch(
   ()=>props.markText,
-  ()=>{
+  (newValue)=>{
     result.value = md.render(props.markText);
+  },{
+    immediate:true
   }
 );
 </script>

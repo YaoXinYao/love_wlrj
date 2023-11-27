@@ -11,19 +11,19 @@
                 :rules="rules"
                 ref="ruleFormRef"
             >
-                <el-form-item label="新闻标题" prop="noticeTitle">
-                    <el-input placeholder="填写新闻标题" v-model="refForm.noticeTitle" />
+                <el-form-item label="新闻标题" prop="newsTitle">
+                    <el-input placeholder="填写新闻标题" v-model="refForm.newsTitle" />
                 </el-form-item>
-                <el-form-item label="上传图片" prop="noticeImgs">
+                <el-form-item label="上传图片" prop="newsImgs">
                     <el-col>
                         <input ref="fileInput" type="file" style="display: none" @change="handleFileChange" />
                         <el-button type="primary" @click="handleFile">Click to upload</el-button>
                     </el-col>
-                    <el-col  v-show="refForm.noticeImgs">
+                    <el-col  v-show="refForm.newsImgs">
                         <div class="fileShow">
-                            <img  :src="refForm.noticeImgs !== '' ? srcValue : ''" alt="上传图片" class="Pic">
+                            <img  :src="refForm.newsImgs !== '' ? srcValue : ''" alt="上传图片" class="Pic">
                             <div class="imgName">
-                                {{ refForm.noticeImgs.name }}
+                                {{ refForm.newsImgs.name }}
                             </div>
                             <div class="delPic" @click="handleDeletePic">
                                 <el-icon :size="10">
@@ -33,7 +33,7 @@
                         </div>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="新闻内容" prop="noticeContent">
+                <el-form-item label="新闻内容" prop="newsContent">
                     <Markdown ref="markRef"></Markdown>
                 </el-form-item>
                 <el-form-item>
@@ -67,23 +67,23 @@ const emit = defineEmits(['newValue'])
 
 
 const enum formEn{
-    noticeTitle = "noticeTitle",
-    noticeContent = "noticeContent",
-    noticeImgs = "noticeImgs",
+    newsTitle = "newsTitle",
+    newsContent = "newsContent",
+    newsImgs = "newsImgs",
 }
 
 
 
 interface IProps {
-    noticeTitle:string,
-    noticeContent:string,
-    noticeImgs:string
+    newsTitle:string,
+    newsContent:string,
+    newsImgs:string
 }
 
 const refForm = reactive<IProps>({
-    noticeTitle:'',
-    noticeContent:'',
-    noticeImgs:'',
+    newsTitle:'',
+    newsContent:'',
+    newsImgs:'',
 })
 
 
@@ -106,15 +106,15 @@ function validateTitle(rule:any,value:any,callback:any){
 
 
 const rules = reactive<FormRules<IProps>>({
-    noticeTitle:[{validator:validateTitle,trigger:'blur'}],
-    noticeContent:[
+    newsTitle:[{validator:validateTitle,trigger:'blur'}],
+    newsContent:[
         {
             required:true,
             message:'不能为空的',
             trigger:'blur'
         }
     ],
-    noticeImgs:[
+    newsImgs:[
         {
             required:true,
             message:'请选择图片',
@@ -136,7 +136,7 @@ const handleFile = ()=>{
 const submitForm = async (formEl: FormInstance | undefined) => {
     let content = markRef.value.handleGetValue()
     console.log(content)
-    refForm.noticeContent = content
+    refForm.newsContent = content
     if (!formEl) return
     const result = await formEl.validate((valid, fields) => {
         if (valid) {
@@ -151,13 +151,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         // console.log(refForm)
         // ruleFormRef.value?.resetFields()
         let form:any ={}
-        let fileList = refForm.noticeImgs
+        let fileList = refForm.newsImgs
         for(let item in refForm){
             if(refForm[item as formEn] !== '' && item !== 'noticeImgs'){
                 form[item] = refForm[item as formEn]
             }
         }
-        
+        console.log(form,fileList)        
         ElMessageBox.confirm(
             '确定发布新闻嘛？',
             '发布新闻',
@@ -170,11 +170,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             insertNew(form,fileList).then(res=>{
                 console.log('上传图片')
                 console.log(res.data)
+                console.log(res)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
                         title:'发送成功',
-                        message:`这是一条${refForm.noticeTitle}的新闻`,
+                        message:`这是一条${refForm.newsTitle}的新闻`,
                         type:'success',
                         zIndex: 10000,
                     })
@@ -219,11 +220,11 @@ function handleFileChange(event:any){
     console.log(file)
     let nameArr = file.name.split('.')
     if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
-        refForm.noticeImgs = file
+        refForm.newsImgs = file
         const value = URL.createObjectURL(file)
         srcValue.value = value
         console.log(value)
-        console.log(refForm.noticeImgs)
+        console.log(refForm.newsImgs)
     }else{
         ElNotification({
             title:'上传失败',
@@ -236,7 +237,7 @@ function handleFileChange(event:any){
 
 function handleDeletePic(){
     fileInput.value.value = null;
-    refForm.noticeImgs = ''
+    refForm.newsImgs = ''
 }
 
 

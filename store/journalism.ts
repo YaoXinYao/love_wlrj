@@ -4,12 +4,16 @@ import {getNew} from '@/service/journalism/journalism'
 
 const journalismStore = defineStore('journalism',{
     state:()=>({
-        newList:[]
+        newList:[],
+        loading:false
     }),
     actions:{
-        async getNew(){
-            const result = await getNew({pageNo:1,pageSize:10})
-            console.log(result)
+        async getNew(query:any){
+            this.Loading = true
+            const result = await getNew(query)
+            this.Loading = false
+            console.log(result.data.value)
+            this.newList = result.data.value.data.records
         }
     }
 })

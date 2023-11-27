@@ -4,6 +4,7 @@
         <el-table 
             border
             :data="signList"
+            v-loading="loading"
         >
             <el-table-column label="姓名" align="center" prop="unsignUsername" >
                 <template #default="scope">
@@ -22,7 +23,7 @@
             </el-table-column>
             <el-table-column label="签到时间" align="center" prop="unsignTime">
                 <template #default="scope">
-                    {{ scope.row.unsignTime ? scope.row.unsignTime : '数据错误' }}
+                    {{ scope.row.unsignTime ? scope.row.unsignTime : '未打卡' }}
                 </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -56,7 +57,7 @@ const signstore = signStore()
 
 getUnSign({pageIndex:1,size:5})
 
-const {signList,allCount,allPage,pageIndex,size,currentQuery} = storeToRefs(signstore)
+const {loading,signList,allCount,allPage,pageIndex,size,currentQuery} = storeToRefs(signstore)
 
 const emit = defineEmits(['changeClick'])
 

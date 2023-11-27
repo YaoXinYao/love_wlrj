@@ -99,18 +99,38 @@
           width="30%"
         >
           <el-form
-          
+            :model="deleteForm"
             label-position="left"
+            :hide-required-asterisk="true"
+            ref="deleteRef"
+            :rules="rules"
           >
-            <el-form-item label="年级">
-              <el-input disabled v-model="deleteForm.grade" style="width:60%" />
+            <el-form-item 
+              label="年级" 
+              prop="deleteGrade"
+            >
+              <el-input disabled v-model="deleteForm.deleteGrade" style="width:60%" />
             </el-form-item>
-            <el-form-item label="清除的时间">
-              <el-select >
-                <el-option v-for="(item,index) in deleteForm.time" :key="index" :label="item.label" :value="item.value"     />
+            <el-form-item 
+              label="清除的时间" 
+              prpp="deleteTime" 
+            >
+              <el-select placeholder="请选择时间"  v-model="deleteForm.deleteTime">
+                <el-option label="上午开始时间" :value="10" />
+                <el-option label="上午结束时间" :value="11" />
+                <el-option label="下午开始时间" :value="20" />
+                <el-option label="下午结束时间" :value="21" />
+                <el-option label="晚上开始时间" :value="30" />
+                <el-option label="晚上结束时间" :value="31" />
               </el-select>
             </el-form-item>
           </el-form>
+          <template #footer>
+            <div class="dialogFooter">
+              <el-button  type="primary" @click="handleDelete">确定</el-button>
+              <el-button  >取消</el-button>
+            </div>
+          </template>
         </el-dialog>
     </div>
 </template>
@@ -119,8 +139,8 @@
 import AttendanceStore from '@/store/attendance'
 import {storeToRefs} from 'pinia'
 import {ref} from 'vue'
-import type {FormInstance} from 'element-plus'
-import {saveSchedule} from '@/service/attendance/attendance'
+import type {FormInstance, FormRules} from 'element-plus'
+import {saveSchedule, deleteSchedule} from '@/service/attendance/attendance'
 import {ElMessageBox, ElNotification  } from 'element-plus'
 
 
@@ -133,11 +153,19 @@ const {timer,loading}  = storeToRefs(attendanceStore)
 const dialog = ref(false)
 const dialogVisible = ref(false)
 const ruleFormRef = ref<FormInstance>()
+const deleteRef = ref<FormInstance>()
 
 watch(dialog,(newValue)=>{
   console.log(newValue)
   if(!newValue){
     ruleFormRef.value?.resetFields()
+  }
+})
+
+watch(dialogVisible,(newValue)=>{
+  console.log(newValue)
+  if(!newValue){
+    deleteRef.value?.resetFields()
   }
 })
 
@@ -168,26 +196,76 @@ const form = reactive<formType>({
   labelValue:'',
   label:''
 })
+interface deleteForms{
+  deleteGrade:string,
+  deleteTime:number,
+}
+const deleteForm = reactive<deleteForms>({
+  deleteGrade:'',
+  deleteTime:10,
+})
 
-const deleteForm = reactive({
-  grade:'',
-  time:[
+const rules = reactive<FormRules<deleteForms>>({
+  deleteGrade: [
     {
-      value:'10',
-      label:'上午开始时间'
+      required: true,
+      message: '填写年级',
+      trigger: 'blur',
     },
+  ],
+  deleteTime: [
     {
-      value:'11',
-      label:'上午结束时间'
+      required: true,
+      message: '选择一个时间',
+      trigger: 'blur',
     },
-    {
-      value:'1',
-      label:'上午开始时间'
-    },
-  ]
+  ],
 })
 
 
+
+
+
+async function  handleDelete(){
+  if(!deleteRef) return 
+  await deleteRef.value?.validate((valid, fields) => {
+    if (valid) {
+      ElMessageBox.confirm(
+        '你确定要清除这个时间嘛?',
+        '清空时间',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(()=>{
+        let timeArr = deleteForm.deleteTime.toString().split('')
+        let query = {
+          gradeLevel:'',
+          order:'',
+          status:'',
+        }
+        query.gradeLevel = deleteForm.deleteGrade
+        query.order = timeArr[0]
+        query.status = timeArr[1]
+        deleteSchedule(query).then((res)=>{
+          console.log(res.data.value)
+          if(res.data.value.code == 20000){
+                ElNotification({
+                  title: '清除成功',
+                  type: 'success',
+                  message: '清空成功',
+                })
+                dialogVisible.value = false
+                attendanceStore.getAllSchedule()
+          }
+        })
+      })
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
 
 
 
@@ -198,15 +276,16 @@ function handleClose(){
 
 function handleClearAll(data:any){
   console.log(data)
+  deleteForm.deleteGrade = data.grade
   dialogVisible.value = true
   // ElMessageBox.confirm(
-  //   '你确定要清空时间嘛?',
-  //   '清空时间',
-  //   {
-  //     confirmButtonText: '确定',
-  //     cancelButtonText: '取消',
-  //     type: 'warning',
-  //   }
+    // '你确定要清空时间嘛?',
+    // '清空时间',
+    // {
+    //   confirmButtonText: '确定',
+    //   cancelButtonText: '取消',
+    //   type: 'warning',
+    // }
   // ).then(() => {
   //   ElNotification({
   //       title: 'success',
@@ -262,6 +341,11 @@ function handleSubmit(){
       saveSchedule(query).then(res=>{
         console.log(res.data.value)
         if(res.data.value.code === 20000){
+          ElNotification({
+            title: 'success',
+            type: 'success',
+            message: '上传成功',
+          })
           dialog.value = false;
           attendanceStore.getAllSchedule()
         }
