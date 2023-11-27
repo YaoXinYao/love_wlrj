@@ -21,11 +21,12 @@ export interface Diskstore {
   uploadProps: {
     uploadFileTotalByte: number;
     alreadyByte: number;
-    curuploadFile: {
-      Filespend: number;
-      alreadysize: number;
-      isComptedMd5: boolean;
-      FileFlag: any;
+    HavePassed: string[];
+    curUpFile: {
+      File: File | null; //当前正在传输的文件信息，
+      ParseMd5: boolean; //是否正在检索文件
+      FileUpSpend: number; // 当前下上传速度
+      upedChunk: number; //正在上传的分片
     };
   };
 }

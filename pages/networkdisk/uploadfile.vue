@@ -80,7 +80,7 @@
       :show-close="false"
       :close-on-click-modal="false"
       v-model="dialogVisible2"
-      title="正在上传(1)"
+      title="正在上传....."
       width="70%"
     >
       <UploadLoding />
@@ -140,25 +140,30 @@ const handleClose = () => {
 const uploadBt = async () => {
   // 开始上传列表
   dialogVisible2.value = true;
-  let totalSize = 0;
+  //初始化上传片数为0
+  disstore.updatereader(1);
+  let totalChunk = 0;
+  const chunkSize = 1024 * 1024 * 5;
   for (let item of filequeue.value) {
-    totalSize += item.size;
+    totalChunk += createChunks(item, chunkSize).length;
   }
-  //更新总文件的字节数
-  disstore.updateTotalByte(totalSize);
+  await disstore.updateTotalByte(totalChunk);
+  console.log(totalChunk);
   await uploadFileQueue(filequeue.value, 0);
+  disstore.updatefilequeue();
   dialogVisible2.value = false;
-  //-------等待时间
   //上传完成
 };
 const uploadFileQueue = async (file: File[], index: number) => {
   if (index > file.length - 1) return; // 终止条件
-  disstore.updateCurfile(file[index].name);
-  disstore.upadteFileMd5(true);
-  const chunks = createChunks(file[index], 1024 * 1024);
-  const md5info = await HashMd5file(chunks);
+  //设置正在传送的文件
+  disstore.updateFile(file[index]);
+  disstore.updateMd5(true);
+  // const chunks = createChunks(file[index], 1024 * 1024);
+  const md5info = await calculateFileHash(file[index]);
+  console.log(md5info);
+  disstore.updateMd5(false);
   //计算完成
-  disstore.upadteFileMd5(false);
   await startUpload(
     file[index],
     0,
@@ -166,9 +171,11 @@ const uploadFileQueue = async (file: File[], index: number) => {
     userinfo.value.userName,
     curTag.value
   );
-  ElMessage({ message: `${file[index].name}上传成功`, type: "success" });
+  //一个文件传输完毕之后进行的操作
+  disstore.updateFilename(filequeue.value[index].name);
+  disstore.updatereadyByte(1);
   // 修正递归调用
-  uploadFileQueue(file, index + 1);
+  await uploadFileQueue(file, index + 1);
 };
 </script>
 <style scoped lang="scss">

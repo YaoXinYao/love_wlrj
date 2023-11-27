@@ -45,6 +45,9 @@ watch(
   () => props.markText,
   () => {
     result.value = md.render(props.markText);
+  },
+  {
+    immediate: true,
   }
 );
 </script>

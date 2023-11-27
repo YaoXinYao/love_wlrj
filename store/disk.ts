@@ -44,42 +44,52 @@ export const useDiskstore = defineStore("disk", {
       },
       //上传窗口所需参数
       uploadProps: {
-        uploadFileTotalByte: 1,
-        alreadyByte: 0,
-        curuploadFile: {
-          Filespend: 0,
-          alreadysize: 0,
-          isComptedMd5: false,
-          FileFlag: "",
+        uploadFileTotalByte: 1, //总片数
+        alreadyByte: 1,
+        HavePassed: [],
+        curUpFile: {
+          File: null, //当前正在传输的文件信息，
+          ParseMd5: false, //是否正在检索文件
+          FileUpSpend: 0, // 当前下上传速度
+          upedChunk: 0, // 正在上传第几片
         },
       },
+      //我的收藏列表
     };
   },
   actions: {
-    //上传文件的总字节
+    //清除filequeue
+    async updatefilequeue() {
+      this.filequeue = [];
+    },
+    //添加已经传过的文件的名字
+    async updateFilename(val: string) {
+      this.uploadProps.HavePassed.push(val);
+    },
+    //更新已经上传的总分片
+    async updatereadyByte(val: number) {
+      this.uploadProps.alreadyByte += val;
+    },
+    async updatereader(val: number) {
+      this.uploadProps.alreadyByte = val;
+    },
+    //更新正在上传的分片
+    async updateChunk(val: number) {
+      this.uploadProps.curUpFile.upedChunk = val;
+    },
+    //上传文件的总片数
     async updateTotalByte(val: number) {
       //更新总字节
       this.uploadProps.uploadFileTotalByte = val;
     },
-    //已上传的字节数
-    async updatealreadyByte(val: number) {
-      this.uploadProps.alreadyByte = val;
+    //更新当前文件的下载进度
+    //正在上传的文件
+    async updateFile(file: File) {
+      this.uploadProps.curUpFile.File = file;
     },
-    //更新速度
-    async updateuploadSpend(val: number) {
-      this.uploadProps.curuploadFile.Filespend = val;
-    },
-    //更新单个文件的上传进度
-    async updateAready(val: number) {
-      this.uploadProps.curuploadFile.alreadysize = val;
-    },
-    //设置当前正在传的文件的名字
-    async updateCurfile(val: string) {
-      this.uploadProps.curuploadFile.FileFlag = val;
-    },
-    //改变MD5 的计算状态
-    async upadteFileMd5(val: boolean) {
-      this.uploadProps.curuploadFile.isComptedMd5 = val;
+    //MD5 解析
+    async updateMd5(val: boolean) {
+      this.uploadProps.curUpFile.ParseMd5 = val;
     },
     //获取标签
     async getAllfiletag() {

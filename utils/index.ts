@@ -1,7 +1,10 @@
 import SparkMD5 from "spark-md5";
 import type { FileTyperoot } from "~/types/Home";
 import { useDiskstore } from "~/store/disk";
+import { storeToRefs } from "pinia";
+import { sha256 } from "js-sha256";
 const diskstore = useDiskstore();
+const { uploadProps, filequeue } = storeToRefs(diskstore);
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -210,7 +213,7 @@ export function uploadFileWithProgress(
   });
 }
 // 字节 --->  合适的单位
-export const convertFileSize = Mythrottle((bytes: number) => {
+export const convertFileSize = (bytes: number) => {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const base = 1024;
   const i = Math.floor(Math.log(bytes) / Math.log(base));
@@ -220,16 +223,17 @@ export const convertFileSize = Mythrottle((bytes: number) => {
   }
 
   return `${convertedSize} ${sizes[i]}`;
-}, 500);
+};
 //文件分片,分片，生成md5
 export function createChunks(file: File, chunkSize: number) {
-  const result = [];
+  const result: Blob[] = [];
   for (let i = 0; i < file.size; i += chunkSize) {
     const temp = file.slice(i, i + chunkSize);
-    result.push(temp);
+    result.push(new Blob([temp]));
   }
   return result;
 }
+
 //生成文件的hash MD5
 export function HashMd5file(chunks: Blob[]) {
   return new Promise((resolve) => {
@@ -240,14 +244,38 @@ export function HashMd5file(chunks: Blob[]) {
       }
       const blob = chunks[i];
       const reader = new FileReader();
+      reader.readAsArrayBuffer(blob);
       reader.onload = (e) => {
         const bytes = e.target?.result;
         spark.append(bytes as string);
         _read(i + 1);
       };
-      reader.readAsArrayBuffer(blob);
     }
     _read(0);
+  });
+}
+// 封装计算文件哈希值的函数
+export function calculateFileHash(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      // 获取文件内容的 ArrayBuffer
+      const arrayBuffer = event.target.result;
+
+      // 使用 sha256() 计算哈希值
+      const hashValue = sha256(arrayBuffer);
+
+      // 返回计算得到的哈希值
+      resolve(hashValue);
+    };
+
+    reader.onerror = (error) => {
+      // 读取文件出错时，reject 错误信息
+      reject(error);
+    };
+
+    // 以 ArrayBuffer 格式读取文件内容
+    reader.readAsArrayBuffer(file);
   });
 }
 //分片上传
@@ -318,31 +346,14 @@ export async function startUpload(
   uploadname: string,
   curTag: number[]
 ) {
-  const chunkSize = 1024 * 1024 * 5; // 1MB
+  // 分片，每片10Mb
+  const chunkSize = 1024 * 1024 * 5; // 10MB
   const name = file.name;
   const Size = file.size;
   const shardCount = Math.ceil(file.size / chunkSize);
   async function uploadNextChunk() {
     // 新建XHR 请求
     const xhr = new XMLHttpRequest();
-    const startTime = new Date().getTime();
-    let oneUpSize = 0;
-    xhr.upload.addEventListener("progress", function (event) {
-      if (event.lengthComputable) {
-        const currentTime = new Date().getTime();
-        const elapsedMillis = currentTime - startTime;
-        oneUpSize += event.loaded;
-        diskstore.updateAready(oneUpSize);
-        // 计算上传速度（字节/毫秒），
-        const uploadSpeed = (event.loaded / elapsedMillis) * 1000;
-        diskstore.updateuploadSpend(uploadSpeed);
-        // 当前上传进度，同步到store
-        diskstore.updatealreadyByte(currentChunk * chunkSize + event.loaded);
-        console.log(
-          ((currentChunk * chunkSize + event.loaded) / file.size) * 100
-        );
-      }
-    });
     // 分片开始的地方
     const startByte = currentChunk * chunkSize;
     // 分片结束的地方
@@ -365,12 +376,28 @@ export async function startUpload(
       const response = await uploadChunk(xhr, form);
       const { flag, code, message } = JSON.parse(response as string);
       if (code == 21000) {
-        ElMessage({ message: `${name}上传完成`, type: "success" });
+        //大文件已经传过的判断
+        if (
+          code == 21000 &&
+          currentChunk == 0 &&
+          chunk.size > 1024 * 1024 * 5
+        ) {
+          diskstore.updateChunk(shardCount);
+          ElMessage({ message: `该文件已经上传过`, type: "success" });
+        } else {
+          diskstore.updatereadyByte(1); //加一片
+          ElMessage({ message: `${name}上传完成`, type: "success" });
+        }
         //上传完成
         return;
       }
       if (code == 20000) {
         currentChunk++;
+        /**
+         * 更新正在上传第几片
+         */
+        diskstore.updateChunk(currentChunk);
+        diskstore.updatereadyByte(1); //加一片
         await uploadNextChunk();
       }
     } catch (error) {
@@ -380,9 +407,14 @@ export async function startUpload(
       }, 1000);
     }
   }
-  //  对状态码进行判断
+  //  上传单片
   async function uploadChunk(xhr: XMLHttpRequest, formData: FormData) {
     return new Promise((resolve, reject) => {
+      xhr.open("POST", "/disk/disk/file/shardingUpload", true);
+      xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+        }
+      };
       xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve(xhr.responseText);
@@ -390,11 +422,9 @@ export async function startUpload(
           reject(new Error(`上传失败: ${xhr.statusText}`));
         }
       };
-
       xhr.onerror = function () {
         reject(new Error("上传发生错误"));
       };
-      xhr.open("POST", "/disk/disk/file/shardingUpload", true);
       xhr.send(formData);
     });
   }
