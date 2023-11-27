@@ -138,7 +138,7 @@
             </svg>
             <span style="margin: 0">{{ item.comLike }}</span>
             <span
-              v-if="(item.comUserId = userinfo.userId)"
+              v-if="(item.comUserId == userinfo.userId)"
               @click="deleteCom(item.comId)"
               >删除</span
             >

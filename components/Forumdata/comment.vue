@@ -60,7 +60,7 @@
             ></path>
           </svg>
           <span style="margin: 0">{{ item.comLike }}</span>
-          <span @click="deleteCom(item.comId)">删除</span>
+          <span v-if="(item.comUserId == userinfo.userId)" @click="deleteCom(item.comId)">删除</span>
         </div>
       </li>
     </ul>
