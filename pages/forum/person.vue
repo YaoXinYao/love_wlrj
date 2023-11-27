@@ -33,6 +33,7 @@
           <li>班级：{{ userinfo.userClass }}</li>
           <li>年级: {{ userinfo.userGrade }}</li>
           <li>作品: {{ total }}</li>
+          <li><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
         </ul>
       </div>
       <div class="article">

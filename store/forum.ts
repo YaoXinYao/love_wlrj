@@ -128,14 +128,10 @@ export const forumStore = defineStore("forumInfo", {
       this.pages = data.value?.data.pages;
       this.datas = [];
       let dataArr = data.value?.data.records || [];
-      let h = 0
-      console.log("帖子",dataArr);
-      
+      let h = 0;
       for (let i = 0; i < dataArr.length; i++) {
         //查询用户
         const use = await this.selectUser(dataArr[i].postUserId);
-        console.log("用户信息",use);
-        
         if (use == null) {
           continue;
         } else {
@@ -295,8 +291,6 @@ export const forumStore = defineStore("forumInfo", {
     async deletePosts(ids: number[]) {
       let { data } = await deletePost(ids);
       const code = data.value?.code;
-      console.log("删除帖子", data.value);
-
       return code;
     },
     //查询指定帖子下面的评论
@@ -305,78 +299,78 @@ export const forumStore = defineStore("forumInfo", {
       this.discuss = [];
       let comData = data.value?.data;
       let k = 0;
-      for (let i = 0; i < comData.length; i++) {
-        let user = await this.selectUser(comData[i].comUserId);
-        if (user == null) {
-          continue;
-        } else {
-          let comUserName = user.userName;
-          let head =
-            user.userPicture == "未设置"
-              ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-              : user.userPicture;
-          const { comImg, ...comInfo } = comData[i];
-          let img = comData[i].comImg;
-          let photos = img ? img.split(",") : [];
-          let likes = false;
-          const result = await this.LikesComment(comData[i].comId, 0, userId);
-          if (result == 20000) {
-            likes = true;
-            await this.LikesComment(comData[i].comId, 1, userId);
-          }
-          this.discuss[k] = { ...comInfo, comUserName, head, photos, likes };
-          if (comData[i].children.length != 0) {
-            this.discuss[k].children = [];
-            let m = 0;
-            for (let j = 0; j < comData[i].children.length; j++) {
-              let cuser = await this.selectUser(
-                comData[i].children[j].comUserId
-              );
-              if (cuser == null) {
-                continue;
-              } else {
-                let comUserName = cuser.userName;
-                const { comImg, ...comInfos } = comData[i].children[j];
-                let img = comData[i].children[j].comImg;
-                let photos = img ? img.split(",") : [];
-                let likes = false;
-                const result = await this.LikesComment(
-                  comData[i].children[j].comId,
-                  0,
-                  userId
+      if (comData != null) {
+        for (let i = 0; i < comData.length; i++) {
+          let user = await this.selectUser(comData[i].comUserId);
+          if (user == null) {
+            continue;
+          } else {
+            let comUserName = user.userName;
+            let head =
+              user.userPicture == "未设置"
+                ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+                : user.userPicture;
+            const { comImg, ...comInfo } = comData[i];
+            let img = comData[i].comImg;
+            let photos = img ? img.split(",") : [];
+            let likes = false;
+            const result = await this.LikesComment(comData[i].comId, 0, userId);
+            if (result == 20000) {
+              likes = true;
+              await this.LikesComment(comData[i].comId, 1, userId);
+            }
+            this.discuss[k] = { ...comInfo, comUserName, head, photos, likes };
+            if (comData[i].children.length != 0) {
+              this.discuss[k].children = [];
+              let m = 0;
+              for (let j = 0; j < comData[i].children.length; j++) {
+                let cuser = await this.selectUser(
+                  comData[i].children[j].comUserId
                 );
-                if (result == 20000) {
-                  likes = true;
-                  await this.LikesComment(
+                if (cuser == null) {
+                  continue;
+                } else {
+                  let comUserName = cuser.userName;
+                  const { comImg, ...comInfos } = comData[i].children[j];
+                  let img = comData[i].children[j].comImg;
+                  let photos = img ? img.split(",") : [];
+                  let likes = false;
+                  const result = await this.LikesComment(
                     comData[i].children[j].comId,
-                    1,
+                    0,
                     userId
                   );
+                  if (result == 20000) {
+                    likes = true;
+                    await this.LikesComment(
+                      comData[i].children[j].comId,
+                      1,
+                      userId
+                    );
+                  }
+                  let head =
+                    cuser.userPicture == "未设置"
+                      ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+                      : cuser.userPicture;
+                  this.discuss[k].children[m] = {
+                    ...comInfos,
+                    comUserName,
+                    head,
+                    photos,
+                    likes,
+                  };
+                  m++;
                 }
-                let head =
-                  cuser.userPicture == "未设置"
-                    ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-                    : cuser.userPicture;
-                this.discuss[k].children[m] = {
-                  ...comInfos,
-                  comUserName,
-                  head,
-                  photos,
-                  likes,
-                };
-                m++;
               }
             }
+            k++;
           }
-          k++;
         }
       }
     },
     //发布评论
     async addComment(query: any, params: FormData) {
       let { data } = await postComment(query, params);
-      console.log("发布帖子", data.value);
-
       const code = data.value?.code;
       return code;
     },
@@ -492,7 +486,6 @@ export const forumManage = defineStore("manage", {
     //删除帖子
     async deletePosts(ids: number[]) {
       let { data } = await deletePost(ids);
-      console.log("删除帖子", data.value);
       return data.value?.code;
     },
   },

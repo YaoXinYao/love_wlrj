@@ -51,7 +51,9 @@
             <li>
               <svg
                 v-if="item.likes == true"
-                @click="postLike(item.postId, 'Like', 0, index)"
+                @click="
+                  postLike(item.postId, 'Like', 0, index, item.postUserId)
+                "
                 t="1699003181186"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -69,7 +71,9 @@
               </svg>
               <svg
                 v-if="item.likes == false"
-                @click="postLike(item.postId, 'Like', 1, index)"
+                @click="
+                  postLike(item.postId, 'Like', 1, index, item.postUserId)
+                "
                 t="1699003334612"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -90,12 +94,16 @@
             <li>
               <el-icon
                 v-if="item.collect == false"
-                @click="postLike(item.postId, 'Collect', 1, index)"
+                @click="
+                  postLike(item.postId, 'Collect', 1, index, item.postUserId)
+                "
                 ><Star
               /></el-icon>
               <el-icon
                 v-if="item.collect == true"
-                @click="postLike(item.postId, 'Collect', 0, index)"
+                @click="
+                  postLike(item.postId, 'Collect', 0, index, item.postUserId)
+                "
                 ><StarFilled
                   color="yellow"
                   style="font-size: 23px; margin-top: -4px"
@@ -120,6 +128,8 @@
 </template>
 <script lang="ts" setup>
 import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
+import { useRoute } from "vue-router";
+import { useWebSocket } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
 import { useHomestore } from "~/store/home";
@@ -131,9 +141,39 @@ const { datas, pages, uploadRender, postSubId, postSource, loadings } =
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
 let shows = ref(1);
+const route = useRoute();
+const { status, data, send, open, close } = useWebSocket(
+  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/+${userinfo.value.userId}`,
+  {
+    autoReconnect: {
+      retries: 8,
+      delay: 1000,
+      onFailed() {
+        alert("Failed to connect WebSocket after 8 retries");
+      },
+    },
+  }
+);
 onMounted(() => {
   fetchData(userinfo.value.userId);
 });
+//发送消息
+const sentMessage = (
+  msgAccept: number,
+  msgContent: string,
+  msgType: string,
+  msgContentId: number
+) => {
+  let obj = {
+    msgAccept,
+    msgContent,
+    msgSend: userinfo.value.userId,
+    msgType,
+    msgContentId,
+  };
+  send(JSON.stringify(obj));
+  console.log("发送成功");
+};
 //查询帖子
 function fetchData(userId: any) {
   if (postSource.value && postSubId.value != 0) {
@@ -163,15 +203,17 @@ function fetchData(userId: any) {
       });
     return;
   } else if (postSource.value && postSubId.value == 0) {
-    forums.selectPost(userId, pageNo.value, 30, postSource.value).then((res) => {
-      for (let i = 0; i < res.length; i++) {
-        pagesData.value.push({ ...res[i] });
-      }
-      pageNo.value++;
-      if (pageNo.value > pages.value) {
-        shows.value = 0;
-      }
-    });
+    forums
+      .selectPost(userId, pageNo.value, 30, postSource.value)
+      .then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
+        }
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
+      });
     return;
   } else if (!postSource.value && postSubId.value == 0) {
     forums.selectPost(userId, pageNo.value, 30).then((res) => {
@@ -190,7 +232,13 @@ const nextData = () => {
   fetchData(userinfo.value.userId);
 };
 //点赞/收藏
-function postLike(postId: number, type: string, status: number, index: number) {
+function postLike(
+  postId: number,
+  type: string,
+  status: number,
+  index: number,
+  postUserId: number
+) {
   if (userinfo.value.userId == 0) {
     ElMessage.warning("请先登录");
   } else {
@@ -200,6 +248,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
           if (res == 20000) {
             pagesData.value[index].likes = true;
             ElMessage.success("点赞成功");
+            sentMessage(postUserId,"点赞了你的帖子","PostLike",postId)
           } else if (res == 53003) {
             ElMessage.warning("请勿重复点赞");
           } else {
@@ -209,6 +258,7 @@ function postLike(postId: number, type: string, status: number, index: number) {
           if (res == 20000) {
             pagesData.value[index].collect = true;
             ElMessage.success("收藏成功");
+            sentMessage(postUserId,"收藏了了你的帖子","PostCollect",postId)
           } else if (res == 53003) {
             ElMessage.warning("请勿重复收藏");
           } else {

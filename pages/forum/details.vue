@@ -106,7 +106,7 @@
             /></el-icon>
             <svg
               v-if="item.likes == true"
-              @click="comLike(item.comId, 0, index)"
+              @click="comLike(item.comId, 0, index, item.comUserId)"
               t="1699003181186"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -122,7 +122,7 @@
             </svg>
             <svg
               v-if="item.likes == false"
-              @click="comLike(item.comId, 1, index)"
+              @click="comLike(item.comId, 1, index, item.comUserId)"
               t="1699003334612"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -154,12 +154,12 @@
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
     </el-dialog>
     <el-dialog v-model="commentVisible" style="max-width: 450px">
-      <h4>欢迎大家进行交流</h4>
+      <h4>请文明发言</h4>
       <el-input
         type="textarea"
-        v-model="conten"
+        v-model="contens"
         maxlength="600"
-        placeholder="留言评论"
+        placeholder="追加评论"
         show-word-limit
         :autosize="{ minRows: 5, maxRows: 8 }"
         input-style="margin-top:10px"
@@ -171,7 +171,7 @@
         :auto-upload="false"
         :multiple="true"
         accept="image/*"
-        v-model:file-list="formImage.files"
+        v-model:file-list="formImages.files"
       >
         <el-icon><Plus /></el-icon>
         <template #file="{ file }">
@@ -207,9 +207,11 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useRoute } from "vue-router";
+import { useWebSocket } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { UploadFile } from "element-plus";
 import { Delete, Plus, ZoomIn, ChatDotRound } from "@element-plus/icons-vue";
 import { useHomestore } from "~/store/home";
@@ -228,18 +230,51 @@ let conten = ref("");
 let formImage = reactive<any>({
   files: [],
 });
+let contens = ref("");
+let formImages = reactive<any>({
+  files: [],
+});
 let comImg = ref<any[]>([]);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let commentVisible = ref(false);
-let data = useRoute().query.data;
-commentNews.comPostId = data;
+let datas = useRoute().query.data;
+commentNews.comPostId = datas;
+const route = useRoute();
+const { status, data, send, open, close } = useWebSocket(
+  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/+${userinfo.value.userId}`,
+  {
+    autoReconnect: {
+      retries: 8,
+      delay: 1000,
+      onFailed() {
+        alert("Failed to connect WebSocket after 8 retries");
+      },
+    },
+  }
+);
 onMounted(() => {
-  let id = Number(data);
+  let id = Number(datas);
   forums.getSingle(id, userinfo.value.userId);
   forums.selectComment(id, userinfo.value.userId);
 });
+//发送消息
+const sentMessage = (
+  msgAccept: number,
+  msgContent: string,
+  msgType: string,
+  msgContentId: number
+) => {
+  let obj = {
+    msgAccept,
+    msgContent,
+    msgSend: userinfo.value.userId,
+    msgType,
+    msgContentId,
+  };
+  send(JSON.stringify(obj));
+};
 //删除图片
 const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
@@ -290,9 +325,8 @@ const submitData = (comFatherId: number, comRootId: number) => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
-              forums.selectComment(Number(data), userinfo.value.userId);
+              forums.selectComment(Number(datas), userinfo.value.userId);
               conten.value = "";
-              comImg.value = [];
               formImage.files = [];
             } else {
               ElMessage.error("评论失败");
@@ -334,12 +368,51 @@ const sureCom = () => {
   if (userinfo.value.userId == 0) {
     ElMessage.warning("请先登录");
   } else {
-    submitData(commentNews.comFatherId, commentNews.comRootId);
-    commentVisible.value = false;
+    let jage = true;
+    let formData = new FormData();
+    comImg.value = [];
+    let reg = /^\s+$/g;
+    if (!reg.test(contens.value)) {
+      if (formImages.files.length == 0 && contens.value == "") {
+        ElMessage.warning("评论数据为空");
+      } else {
+        for (let i = 0; i < formImages.files.length; i++) {
+          jage = formImages.files[i].raw.type.startsWith("image/");
+          if (!jage) {
+            ElMessage.warning("文件类型错误");
+            i = formImages.files.length;
+          } else {
+            comImg.value.push(formImages.files[i].raw);
+            formData.append(`comImg[${i}]`, formImages.files[i].raw);
+          }
+        }
+        if (jage) {
+          commentNews.comContent = contens.value;
+          forums.addComment(commentNews, formData).then((res) => {
+            if (res == 20000) {
+              ElMessage.success("评论成功");
+              forums.selectComment(Number(datas), userinfo.value.userId);
+              contens.value = "";
+              formImages.files = [];
+            } else {
+              ElMessage.error("评论失败");
+            }
+          });
+        }
+        commentVisible.value = false;
+      }
+    } else {
+      ElMessage.warning("输入的内容为空格");
+    }
   }
 };
 //点赞
-function comLike(comId: number, status: number, index: number) {
+function comLike(
+  comId: number,
+  status: number,
+  index: number,
+  comUserId: number
+) {
   if (userinfo.value.userId == 0) {
     ElMessage.warning("请先登录");
   } else {
@@ -348,6 +421,7 @@ function comLike(comId: number, status: number, index: number) {
         if (res == 20000) {
           discuss.value[index].likes = true;
           ElMessage.success("点赞成功");
+          sentMessage(comUserId, "点赞了你的评论", "CommentLike", comId);
         } else if (res == 53003) {
           ElMessage.warning("请勿重复点赞");
         } else {
@@ -366,6 +440,11 @@ function comLike(comId: number, status: number, index: number) {
     });
   }
 }
+watch(status, (newStatus) => {
+  if (newStatus === "OPEN") {
+    console.log("WebSocket connection established");
+  }
+});
 </script>
 
 <style lang="scss" scoped>
