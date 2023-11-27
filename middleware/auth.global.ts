@@ -5,8 +5,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (whitelist.includes(to.path)) {
     return true;
   } else {
-    if (Authtoken() == "") {
-      return navigateTo("/login");
-    }
+    return true;
   }
 });

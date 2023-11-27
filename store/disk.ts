@@ -128,10 +128,10 @@ export const useDiskstore = defineStore("disk", {
         ElMessage({ message: "不能超过五个", type: "info" });
       } else {
         this.filequeue.push(file);
-        ElMessage({
-          message: `${file.name}已添加`,
-          type: "success",
-          offset: 64,
+        ElNotification({
+          title: "新增文件",
+          message: h("i", { style: "color: teal" }, `${file.name}已添加`),
+          duration: 1000,
         });
       }
     },
@@ -152,7 +152,6 @@ export const useDiskstore = defineStore("disk", {
     },
     //改变某一个的收藏状态
     async changeUncomment(id: number) {
-      console.log("触发");
       console.log(id);
       const index = this.Filelist.dataList.findIndex((item) => item.id == id);
       console.log(index);
