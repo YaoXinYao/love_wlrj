@@ -4,7 +4,7 @@ import type { IResultData } from "../forum";
 //发布帖子
 export const addpost = (query: any, params: FormData) => {
   return hyRequest.post<IResultData<any>>("/api/post/insert", query, {
-    body: params,
+    body: params,watch:false
   });
 };
 //查询帖子
@@ -52,7 +52,7 @@ export const getComment = (postId: number) => {
 //发布评论
 export const postComment = (query: any, params: FormData) => {
   return hyRequest.post<IResultData<any>>("/api/comment/insert", query, {
-    body: params,
+    body: params,watch:false
   });
 };
 //删除评论

@@ -234,7 +234,6 @@ let contens = ref("");
 let formImages = reactive<any>({
   files: [],
 });
-let comImg = ref<any[]>([]);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
@@ -280,7 +279,6 @@ const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
   if (index !== -1) {
     formImage.files.splice(index, 1);
-    comImg.value.splice(index, 1);
     ElMessage.success("移除成功");
   }
 };
@@ -292,7 +290,6 @@ const handlePictureCardPreview = (file: UploadFile) => {
 //清空数据
 function cleardata() {
   conten.value = "";
-  comImg.value = [];
   formImage.files = [];
 }
 //发布评论
@@ -302,7 +299,7 @@ const submitData = (comFatherId: number, comRootId: number) => {
   } else {
     let jage = true;
     let formData = new FormData();
-    comImg.value = [];
+    let comImg:any[] = [];
     let reg = /^\s+$/g;
     if (!reg.test(conten.value)) {
       if (formImage.files.length == 0 && conten.value == "") {
@@ -314,7 +311,7 @@ const submitData = (comFatherId: number, comRootId: number) => {
             ElMessage.warning("文件类型错误");
             i = formImage.files.length;
           } else {
-            comImg.value.push(formImage.files[i].raw);
+            comImg.push(formImage.files[i].raw);
             formData.append(`comImg[${i}]`, formImage.files[i].raw);
           }
         }
@@ -370,7 +367,7 @@ const sureCom = () => {
   } else {
     let jage = true;
     let formData = new FormData();
-    comImg.value = [];
+    let comImg:any[] = [];
     let reg = /^\s+$/g;
     if (!reg.test(contens.value)) {
       if (formImages.files.length == 0 && contens.value == "") {
@@ -382,7 +379,7 @@ const sureCom = () => {
             ElMessage.warning("文件类型错误");
             i = formImages.files.length;
           } else {
-            comImg.value.push(formImages.files[i].raw);
+            comImg.push(formImages.files[i].raw);
             formData.append(`comImg[${i}]`, formImages.files[i].raw);
           }
         }
