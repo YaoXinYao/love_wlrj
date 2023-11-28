@@ -1,5 +1,5 @@
 <template>
-  <div class="staff">
+  <div class="staff" v-loading="loading">
     <div class="header">
       <div>
         <el-select v-model="grade" clearable placeholder="可选择年级">
@@ -23,7 +23,8 @@
           >搜索</el-button
         >
       </div>
-      <div>
+      <div v-if="userinfo.roleId == 3">
+        <el-button type="info" @click="manageRole = true">角色</el-button>
         <el-button type="warning" @click="manageGroup = true">组别</el-button>
         <el-button type="danger" @click="deleteModel = true">删除</el-button>
         <el-button type="success" @click="modelState = true">导入</el-button>
@@ -42,10 +43,14 @@
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
 import { Search } from "@element-plus/icons-vue";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 import { ref } from "vue";
+let loading = ref(true)
 let groups = ref<any>([]);
 const staffStore = useStaffStore();
-const { modelState, deleteModel, grades, grade, group, input, users, total,manageGroup ,curTable} =
+const { modelState, deleteModel, grades, grade, group, input, users, total,manageGroup ,curTable,manageRole} =
   storeToRefs(staffStore);
 onMounted(() => {
   staffStore.getGrades();
@@ -53,6 +58,7 @@ onMounted(() => {
     if (res.code == 20000) {
       users.value = res.data?.records;
       total.value = res.data?.total;
+      loading.value = false
     } else {
       ElMessage.error("获取人员数据失败");
     }

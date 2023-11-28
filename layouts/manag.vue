@@ -12,7 +12,7 @@
             <template #title>后台管理</template>
           </el-menu-item>
           <el-menu-item index="/admin/staff">
-            <el-icon><icon-menu /></el-icon>
+            <el-icon><User /></el-icon>
             <template #title
               ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
                 >人员管理</NuxtLink
@@ -27,12 +27,12 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/">
-            <el-icon><document /></el-icon>
-            <template #title>权限管理</template>
+          <el-menu-item index="/admin/authority" v-if="userinfo.roleId == 3">
+            <el-icon><Filter /></el-icon>
+            <template #title><NuxtLink to="/admin/authority" @click="skipAdd($event)">权限管理</NuxtLink></template>
           </el-menu-item>
           <el-menu-item index="/admin/rotationChart">
-            <el-icon><document /></el-icon>
+            <el-icon><PictureRounded /></el-icon>
             <template #title
               ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
                 >轮播管理</NuxtLink
@@ -47,15 +47,15 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/announcement">
-            <el-icon><document /></el-icon>
+          <el-menu-item index="/admin/announcement" v-if="userinfo.roleId != 1">
+            <el-icon><Calendar /></el-icon>
             <template #title
               ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
                 >公告管理</NuxtLink
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/leaveling">
+          <el-menu-item index="/admin/leaveling" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/leaveling" @click="skipAdd($event)"
@@ -63,16 +63,16 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/attendanceTime">
-            <el-icon><document /></el-icon>
+          <el-menu-item index="/admin/attendanceTime" v-if="userinfo.roleId != 1">
+            <el-icon><Timer /></el-icon>
             <template #title
               ><NuxtLink to="/admin/attendanceTime" @click="skipAdd($event)"
                 >考勤时间管理</NuxtLink
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/checking">
-            <el-icon><document /></el-icon>
+          <el-menu-item index="/admin/checking" v-if="userinfo.roleId != 1">
+            <el-icon><Stopwatch /></el-icon>
             <template #title
               ><NuxtLink to="/admin/checking" @click="skipAdd($event)"
                 >考勤管理</NuxtLink
@@ -120,6 +120,7 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminStore } from "~/store/admin";
+import {useHomestore} from "~/store/home"
 import {
   Document,
   Menu as IconMenu,
@@ -127,7 +128,15 @@ import {
   Setting,
   Expand,
   Fold,
+  User,
+  Filter,
+  PictureRounded,
+  Timer,
+  Stopwatch,
+  Calendar
 } from "@element-plus/icons-vue";
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const route = useRoute();
 let defaultRoute = ref("");
 let isCollapse = ref(false);

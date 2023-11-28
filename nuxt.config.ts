@@ -87,7 +87,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/zinfo": {
-        target: "http://112.125.120.78:8666",
+        target: "http://152.136.161.44:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -104,17 +104,6 @@ export default defineNuxtConfig({
       //考核模块
       "/access": {
         target: "http://152.136.161.44:19491/assess/swagger/assess/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      "/forum": {
-        target: "http://152.136.161.44:19491/forum/swagger/forum/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      //消息模块
-      "/messageInterface": {
-        target: "http://152.136.161.44:19491/forum/swagger/forum/",
         changeOrigin: true,
         prependPath: true,
       },

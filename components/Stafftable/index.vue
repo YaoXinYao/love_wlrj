@@ -8,7 +8,7 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" />
+      <el-table-column type="selection" width="50" v-if="userinfo.roleId == 3"/>
       <el-table-column property="userGrade" label="年级" width="100">
       </el-table-column>
       <el-table-column property="userAccount" label="学号" width="180">
@@ -20,7 +20,7 @@
       </el-table-column>
       <el-table-column property="groupName" label="方向" width="80">
         </el-table-column>
-      <el-table-column #default="scope" label="操作">
+      <el-table-column #default="scope" label="操作" v-if="userinfo.roleId == 3">
         <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
         <el-button size="small" type="danger" @click="handleDelete(scope.row)"
           >删除</el-button
@@ -42,6 +42,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 import { ref } from "vue";
 const currentPage = ref();
 const small = ref(false);
