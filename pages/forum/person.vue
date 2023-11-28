@@ -19,12 +19,13 @@
             <li @click="changeStatus('artic')">作品</li>
             <li @click="changeStatus('like')">点赞</li>
             <li @click="changeStatus('collect')">收藏</li>
+            <li class="showHome"><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
           </ul>
         </div>
       </div>
       <div class="newsbg"></div>
     </div>
-    <div class="main">
+    <div class="main" v-loading="loading">
       <div class="introduce">
         <div class="triangle"></div>
         <div class="con">关于我</div>
@@ -181,6 +182,7 @@ let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
 let { total } = storeToRefs(forums);
 let pages = 15;
+let loading = ref(true)
 
 let posts = ref<any[]>([]);
 let jage = ref("artic");
@@ -189,6 +191,7 @@ onMounted(() => {
     .userPosts(1, pages, undefined, undefined, undefined, userinfo.value.userId)
     .then((res) => {
       posts.value = res;
+      loading.value = false
     });
 });
 //分页
@@ -197,6 +200,7 @@ const handleCurrentChange = (val: number) => {
 };
 //查询帖子
 function getStatus(pageNo: number) {
+  loading.value = true
   if (jage.value == "artic") {
     forums
       .userPosts(
@@ -223,6 +227,7 @@ function getStatus(pageNo: number) {
         posts.value = res;
       });
   }
+  loading.value = false
 }
 //切换状态查询帖子
 function changeStatus(status: string) {
@@ -401,6 +406,9 @@ const deletePost = (id: number) => {
           cursor: pointer;
           position: relative;
         }
+        .showHome{
+          display: none;
+        }
         li::after {
           content: "";
           position: absolute;
@@ -571,6 +579,14 @@ const deletePost = (id: number) => {
   .el-pagination {
     --el-pagination-bg-color: rgb(244, 248, 251);
     --el-pagination-button-disabled-bg-color: rgb(244, 248, 251);
+  }
+}
+@media screen and (max-width: 800px) {
+  .showHome{
+    display: block !important;
+  }
+  .introduce{
+    display: none;
   }
 }
 </style>

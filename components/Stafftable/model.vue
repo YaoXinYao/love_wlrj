@@ -332,7 +332,6 @@ const beforeRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
 };
 //文件发生变化
 const changeFun = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-  console.log(uploadFiles.length);
   if (uploadFiles.length != 0) {
     fileList = true;
   }

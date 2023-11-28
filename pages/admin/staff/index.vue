@@ -88,7 +88,6 @@ function selectStaff(current: number) {
   staffStore
     .getAllUser(current, 7, groupId, input.value, grade.value)
     .then((res) => {
-      console.log(res);
       if (res.code == 20000) {
         users.value = res.data?.records;
         total.value = res.data?.total;

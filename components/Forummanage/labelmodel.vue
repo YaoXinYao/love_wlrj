@@ -125,7 +125,6 @@ const showInput = () => {
   inputVisible.value = true;
 };
 const handleInputConfirm = () => {
-  console.log("执行了");
   if (inputLabel.value) {
     manage.addLabel(inputLabel.value).then((result) => {
       if (result == 20000) {
