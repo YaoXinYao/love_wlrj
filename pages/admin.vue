@@ -11,5 +11,6 @@
   
   <style lang="scss" scoped>
   .admin {
+    height: inherit;
   }
   </style>

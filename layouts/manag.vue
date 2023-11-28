@@ -79,6 +79,14 @@
               ></template
             >
           </el-menu-item>
+          <el-menu-item index="/admin/journalism">
+            <el-icon><document /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/journalism" @click="skipAdd($event)"
+                >新闻管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>

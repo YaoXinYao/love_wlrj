@@ -18,7 +18,9 @@
     "@types/websocket": "^1.0.9",
     "@types/ws": "^8.5.9",
     "element-plus": "^2.4.1",
+    "monaco-editor": "^0.44.0",
     "nuxt": "^3.7.0",
+    "nuxt-monaco-editor": "^1.2.3",
     "sass": "^1.66.1",
     "scss": "^0.2.4",
     "typescript": "^5.2.2"

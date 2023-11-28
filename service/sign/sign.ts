@@ -12,6 +12,11 @@ export const getUnSign = (query:any)=>{
 }
 
 
+export const updateUnSign = (query:any)=>{
+    return HYRequest.put('/check/unsign/updateUnSign',query)
+}
+
+
 // 添加
 export const inserUnSign = (query:any)=>{
     return HYRequest.post('/check/unsign/insertUnSign',query)

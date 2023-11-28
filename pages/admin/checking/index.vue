@@ -25,12 +25,28 @@
                             @click="handleOpen"
                             :class="{ 'highlight': isHighlighted }"
                         >
-                            <el-icon size="90" class="el-icon--upload"><upload-filled /></el-icon>
+                            <el-icon 
+                                size="90" 
+                                class="el-icon--upload" 
+                                @dragover.prevent="allowDrop" 
+                                @drop.prevent="handleDrop"
+                            >
+                                <upload-filled />
+                            </el-icon>
 
                             <div>
                                 拖拽到这里或者点击上传
                             </div>
                             <input type="file" ref='inputRef' style="display: none;"  @change="handleUpdate">
+                            <div class="fileAll" v-show="showFile">
+                                <div>
+                                    每日统计表_20231111_20231111 (2).xlsx
+                                </div>
+                                <div class="filesCont">
+                                    <el-icon class="iconFile" size="20"><Document /></el-icon>
+                                    <el-progress   :percentage="percentage" color="#409eff" />
+                                </div>
+                            </div>
                         </div>
                     </el-row>
                 </el-form>
@@ -74,9 +90,9 @@
 
 <script setup lang="ts">
 import checkingContent  from '@/components/checking/index.vue'
-import { UploadFilled } from '@element-plus/icons-vue'
-import {upload,inserUnSign} from '@/service/sign/sign'
-import { ElNotification,ElMessageBox  } from 'element-plus'
+import { UploadFilled, Document } from '@element-plus/icons-vue'
+import { updateUnSign, inserUnSign} from '@/service/sign/sign'
+import { ElNotification  } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import signStore from '@/store/checking'
 import {storeToRefs} from 'pinia'
@@ -88,14 +104,17 @@ const isHighlighted = ref(false)
 const dialogTableVisible = ref(false)
 const ruleFormRef = ref<FormInstance>()
 const checkingRef = ref<InstanceType<typeof checkingContent>>()
-
-
+const percentage = ref(0)
 const signstore = signStore()
-
+const showFile = ref(false)
 
 const {currentQuery} = storeToRefs(signstore)
 
-
+watch(dialogTableVisible,(newValue)=>{
+    if(newValue == false){
+        ruleFormRef.value?.resetFields()
+    }
+})
 
 
 
@@ -104,6 +123,7 @@ interface formType {
     unsignUsername:string,
     unsignTime:any,
     unsignStudentId:string,
+    unsignId?:string,
 }
 
 
@@ -113,6 +133,22 @@ const formData = reactive<formType>({
     unsignTime:'',
     unsignStudentId:'',
 })
+
+
+function validateNumber(rule:any,value:any,callback:any){
+    // 判断是否是数字
+    const isNumeric = /^\d+$/.test(value);
+    // 判断长度是否为11位
+    const isCorrectLength = value.length === 11;
+
+    if (isNumeric && isCorrectLength) {
+        // 验证通过
+        callback();
+    } else {
+        // 验证失败，返回错误信息
+        callback(new Error('必须是11位数字'));
+    }
+}
 
 const rules = reactive<FormRules<typeof formData>>({
     unsignDate:[
@@ -127,7 +163,8 @@ const rules = reactive<FormRules<typeof formData>>({
             required:true,
             message:'请填写姓名',
             trigger:'blur'
-        }
+        },
+
     ],
     unsignTime:[
         {
@@ -136,62 +173,119 @@ const rules = reactive<FormRules<typeof formData>>({
             trigger:'blur'
         }
     ],
-    unsignStudentId:[
-        {
-            required:true,
-            message:'请填写学号',
-            trigger:'blur'
-        }
-    ],
+    unsignStudentId:[{validator:validateNumber,trigger:'blur'}],
 })
 
 function handleUpdate(event:any){
     console.log(event)
     const files =  inputRef.value.files
-    handleFiles(files);
-    inputRef.value = null;
+    let nameArr = files[0].name.split('.')
+    if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
+        handleFiles(files);
+        showFile.value = true;
+        console.log(files)
+    }else{
+        ElNotification({
+            title: '上传失败',
+            message: '格式不对',
+            type:'warning'
+        })
+    }
+    // handleFiles(files);
+    // inputRef.value = null;
 }
 function handleOpen(){
     inputRef.value.click()
 }
 
 function highlight(){
+    console.log('进来了');
+    
     isHighlighted.value=true
 }
 
 function light(){
+    console.log('出来了');
     isHighlighted.value = false
 }
 
 
 function handleNew(){
     dialogTableVisible.value = true
+
 }
 
 
 function handleDrop(event:any) {
-    console.log(event)
+    // console.log(event)
     const files = event.dataTransfer.files;
-    handleFiles(files);
+    console.log(files)
+    // handleFiles(files);
+    let nameArr = files[0].name.split('.')
+    if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
+        handleFiles(files);
+        showFile.value = true;
+        // console.log(files)
+    }else{
+        ElNotification({
+            title: '上传失败',
+            message: '格式不对',
+            type:'warning'
+        })
+    }
+
+}
+
+function handleUploadProgress(event:any){
+    // console.log(event)
+    // console.log(event.lengthComputable)
+    const percentages = (event.loaded / event.total) * 100;
+    console.log(event.loaded, event.total)
+    // console.log(event.total)
+    percentage.value = Math.floor(percentages);
 }
 
 
 function handleFiles(files:any){
     console.log(files)
-    upload(files[0]).then(res=>{
-        console.log(res.data.value)
-        if(res.data.value.code === 20000){
+    let formData = new FormData()
+    formData.append('file',files[0])
+
+    const xhr = new XMLHttpRequest()
+
+
+    xhr.upload.addEventListener('progress',handleUploadProgress)
+
+    xhr.open('POST','/check/unsign/uploadExcel',true)
+    xhr.withCredentials = true;
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+            
             ElNotification({
-                title:'成功',
-                message:'上传成功',
+                title: '成功',
+                message: '上传成功',
                 type:'success'
             })
+            if(percentage.value == 100){
+                console.log(1)
+                percentage.value = 0;
+                showFile.value = false
+                let current = currentQuery.value
+                checkingRef.value?.getUnSign({...current})
+            }
+            
+        } else {
+            console.error('Upload failed');
         }
-    })
+        }
+    };
+    xhr.send(formData)
+
 }
 
 function allowDrop(event:any){
-    // console.log(event)
     event.preventDefault();
 }
 
@@ -199,26 +293,59 @@ function allowDrop(event:any){
 function submitNew(){
     ruleFormRef.value?.validate((valid) => {
         if (valid) {
-            // console.log('submit!')
-            // console.log(formData)
-            let time = new Date(formData.unsignDate)
-            let times = new Date(formData.unsignTime)
-            formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
-            formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
-            console.log(formData)
-            inserUnSign({...formData}).then(res=>{
-                console.log(res.data.value)
-                if(res.data.value.code === 20000){
-                    ElNotification({
-                        title:'成功',
-                        message:'添加成功',
-                        type:'success'
-                    })
-                    dialogTableVisible.value = false
-                    let current = currentQuery.value
-                    checkingRef.value?.getUnSign({...current})
+            if(formData.unsignId){
+                let time = new Date(formData.unsignDate)
+                let times = new Date(formData.unsignTime)
+                formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
+                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
+                let object = {
+                    unsignDate:formData.unsignDate,
+                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                    unsignUsername:formData.unsignUsername,
+                    unsignStudentId:formData.unsignStudentId,
+                    unsignId:formData.unsignId
                 }
-            })
+                 console.log(object)
+                 updateUnSign(object).then(res=>{
+                    console.log(res.data.value)
+                    if(res.data.value.code === 20000){
+                        ElNotification({
+                            title:'成功',
+                            message:'修改成功',
+                            type:'success'
+                        })
+                        
+                        let current = currentQuery.value
+                        checkingRef.value?.getUnSign({...current})
+                    }
+                })
+                dialogTableVisible.value = false
+            }else{
+                let time = new Date(formData.unsignDate)
+                let times = new Date(formData.unsignTime)
+                formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
+                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
+                let object = {
+                    unsignDate:formData.unsignDate,
+                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                    unsignUsername:formData.unsignUsername,
+                    unsignStudentId:formData.unsignStudentId,
+                }
+                inserUnSign(object).then(res=>{
+                    console.log(res.data.value)
+                    if(res.data.value.code === 20000){
+                        ElNotification({
+                            title:'成功',
+                            message:'添加成功',
+                            type:'success'
+                        })
+                        let current = currentQuery.value
+                        checkingRef.value?.getUnSign({...current})
+                    }
+                })
+                dialogTableVisible.value = false
+            }
+
         } else {
             console.log('error submit!')
             return false
@@ -231,20 +358,27 @@ function cancel(){
     ruleFormRef.value?.resetFields()
 }
 
+
+
 function handleChangeClick(data:any){
     console.log(data)
-
+    dialogTableVisible.value = true
     formData.unsignDate = data.unsignDate
     formData.unsignStudentId = data.unsignStudentId
-    let time = new Date()
-    let arr = data.unsignTime.split(':')
-    time.setHours(arr[0])
-    time.setMinutes(arr[1])
-    time.setSeconds(arr[2])
-    formData.unsignTime = time
     formData.unsignUsername = data.unsignUsername
-
-    dialogTableVisible.value = true
+    formData.unsignId = data.unsignId
+    if(data.unsignTime !== null){
+        let time = new Date()
+        let arr = data.unsignTime.split(':')
+        time.setHours(arr[0])
+        time.setMinutes(arr[1])
+        time.setSeconds(arr[2])
+        formData.unsignTime = time
+        
+    }else{
+        formData.unsignTime = ''
+    }
+    console.log(formData)
 }
 
 </script>
@@ -262,8 +396,9 @@ function handleChangeClick(data:any){
         align-items: center;
         .iconDiv{
             display: flex;
+            position: relative;
             flex: 1;
-            padding:30px 20px ;
+            padding:30px 20px 60px 20px ;
             flex-direction: column;
             justify-content: center;
             border-radius: 12px;
@@ -275,9 +410,32 @@ function handleChangeClick(data:any){
             :deep(.el-icon){
                 color:#a8abb2 !important;
             }
+            .fileAll{
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                bottom:15px;
+                left: 40%;
+                .filesCont{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    .iconFile{
+                        position: absolute;
+                        left: -25px;
+                    }
+                }
+                .filesCont .el-progress--line {
+                    width: 350px;
+                }
+            }
+
         }
         .iconDiv.highlight{
-            border-color: rgba(64,158,255);
+            border:2px dashed  #79bbff;
+            background-color: #ecf5ff;
         }
         .iconDiv:hover{
             border-color: rgba(64,158,255);

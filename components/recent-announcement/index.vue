@@ -163,14 +163,24 @@ JSON.stringify
 
 const ruleFormRef = ref<FormInstance>()
 
+
+function validateTitle(rule:any,value:any,callback:any){
+    if (value.length < 3 || value.length > 10) {
+        callback(new Error('长度必须在3到10之间'));
+    } else {
+        // 检查开头和结尾是否有空格
+        if (value.trim() !== value) {
+          callback(new Error('开头和结尾不能有空格'));
+        } else {
+          // 验证通过
+          callback();
+        }
+    }
+}
+
+
 const rules = reactive<FormRules<IProps>>({
-    noticeTitle:[
-        {
-            required:true,
-            message:'请填写标题',
-            trigger:'blur'
-        },
-    ],
+    noticeTitle:[{validator:validateTitle,trigger:'blur'}],
     noticeType:[
         {
             required:true,
@@ -194,13 +204,6 @@ const rules = reactive<FormRules<IProps>>({
     ]
 })
 
-const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
-  console.log(uploadFile, uploadFiles)
-}
-
-const handlePreview: UploadProps['onPreview'] = (file) => {
-  console.log(file)
-}
 
 
 const handleFile = ()=>{
@@ -348,11 +351,23 @@ const handleClearValue = ()=>{
 function handleFileChange(event:any){
     console.log(event)
     const file = event.target.files[0]
-    refForm.noticeImgs = file
-    const value = URL.createObjectURL(file)
-    srcValue.value = value
-    console.log(value)
-    console.log(refForm.noticeImgs)
+    console.log(file)
+    let nameArr = file.name.split('.')
+    if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
+        refForm.noticeImgs = file
+        const value = URL.createObjectURL(file)
+        srcValue.value = value
+        console.log(value)
+        console.log(refForm.noticeImgs)
+    }else{
+        ElNotification({
+            title:'上传失败',
+            message:`格式不正确`,
+            type:'warning',
+            zIndex: 10000,
+        })
+    }
+
 }
 
 function handleDeletePic(){

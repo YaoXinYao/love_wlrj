@@ -6,8 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import  AttendanceHeader  from '@/components/attendanceHeader';
-import  AttendanceContent  from '@/components/attendanceContent';
+import  AttendanceHeader  from '@/components/attendanceHeader/index.vue';
+import  AttendanceContent  from '@/components/attendanceContent/index.vue';
 </script>
 
 <style scoped>
