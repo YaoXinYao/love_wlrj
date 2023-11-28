@@ -44,6 +44,10 @@ export default defineNuxtConfig({
           type: "text/javascript",
           src: "/staticjs/font_4330669_ghs4q6fkhna.js",
         },
+        {
+          type: "text/javascript",
+          src: "/staticjs/phaser.min.js",
+        },
       ],
       noscript: [{ children: "Javascript is required" }],
     },
@@ -69,7 +73,7 @@ export default defineNuxtConfig({
       },
       //网盘接口
       "/disk": {
-        target: "http://152.136.161.44:19491/disk/swagger",
+        target: "http://112.125.120.78:19520/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -95,7 +99,6 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-
       //考核模块
       "/access": {
         target: "http://152.136.161.44:19491/assess/swagger/assess/",

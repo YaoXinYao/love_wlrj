@@ -1,9 +1,13 @@
 <template>
-  <div>
-    <h1>我的收藏</h1>
-  </div>
+  <div class="mylove"></div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.mylove {
+  width: 100%;
+  background-color: saddlebrown;
+  height: 100%;
+}
+</style>

@@ -18,7 +18,7 @@ import type { Filelist } from "~/types/disk";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
-    "/coustom/user/user/loginByPassword",
+    "/zinfo/user/user/loginByPassword",
     "POST",
     {
       ...logininfo,
@@ -28,7 +28,7 @@ export function Userloginany(logininfo: loginparams) {
 //发送验证码
 export function sendEmeil(params: sendEmailparams) {
   return Hyrequire.request<IResultData<any>>(
-    "/coustom/user/user/sendEmail",
+    "/zinfo/user/user/sendEmail",
     "POST",
     {
       ...params,
@@ -38,7 +38,7 @@ export function sendEmeil(params: sendEmailparams) {
 //邮箱登录
 export function Userloginemail(params: Emailparams) {
   return Hyrequire.request<IResultData<any>>(
-    "/coustom/user/user/loginByEmail",
+    "/zinfo/user/user/loginByEmail",
     "POST",
     {
       ...params,
@@ -48,7 +48,7 @@ export function Userloginemail(params: Emailparams) {
 //获取用户信息
 export function getUserinfo2(account: any) {
   return Hyrequire.request<IResultData<Homestoreuserinfo>>(
-    "/coustom/user/user/getLoginUserByPassword",
+    "/zinfo/user/user/getLoginUserByPassword",
     "GET",
     {
       account,
@@ -61,7 +61,7 @@ export function getAllblog() {
     IResultData<{
       [key: string]: blogitem[];
     }>
-  >("/coustom/user/user/selectBlog", "GET");
+  >("/zinfo/user/user/selectBlog", "GET");
 }
 //查询所有标签
 export function getAlltag() {

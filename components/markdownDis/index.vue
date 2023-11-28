@@ -12,14 +12,12 @@ import hljs from "highlight.js";
 //代码高亮主题
 import "highlight.js/styles/atom-one-dark.css";
 const loading = ref(false);
-const { markText } = defineProps({
+const result = ref();
+const props = defineProps({
   markText: {
     required: true,
     default: "",
   },
-});
-const post = ref({
-  content: markText,
 });
 let md: any = new MarkdownIt({
   html: true,
@@ -43,7 +41,15 @@ let md: any = new MarkdownIt({
     );
   },
 });
-let result = md.render(post.value.content);
+watch(
+  () => props.markText,
+  () => {
+    result.value = md.render(props.markText);
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 <style lang="scss" scoped>
 .detail {
