@@ -52,6 +52,15 @@
       </el-table-column>
       <el-table-column label="考核时间" prop="date" />
     </el-table>
+    <el-pagination
+      v-model:current-page="pageInfo.current"
+      v-model:page-size="pageInfo.pageSize"
+      :page-sizes="[100, 200, 300, 400]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pageInfo.total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -60,6 +69,61 @@ import { ref } from "vue";
 
 const parentBorder = ref(false);
 const childBorder = ref(false);
+import { useHomestore } from "~/store/home";
+import { storeToRefs } from "pinia";
+import { getAccessInfo, getScoreByAccessService } from "~/service/user";
+import type { AccessResInfoType, ScorePageInfoListType } from "~/types/Access";
+//获取当前登录用户信息
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
+let userId = userinfo.value.userId;
+let pageInfo = ref<ScorePageInfoListType>({
+  pageSize: 1,
+  current: 1,
+  total: 0,
+});
+
+let studyPlanList = ref<Array<AccessResInfoType>>([]);
+
+const getInfo = async () => {
+  let scoreInfoRes = await getScoreByAccessService({
+    nodePage: pageInfo.value.current,
+    pageSize: pageInfo.value.pageSize,
+    studentId: userId,
+  });
+
+  let scoreInfo = scoreInfoRes.data.value;
+  console.log(scoreInfo);
+  let scoreInfoList = scoreInfo.data.list;
+  console.log(scoreInfoList);
+
+  if (scoreInfo.code == 20000) {
+    console.log(scoreInfo.code);
+    pageInfo.value.current = scoreInfo.data.pageIndex;
+    pageInfo.value.pageSize = scoreInfo.data.size;
+    pageInfo.value.total = scoreInfo.data.allCount;
+    for (let i = 0; i < scoreInfoList.length; i++) {
+      console.log(scoreInfoList[i].pid);
+
+      let studyPlanRes = await getAccessInfo(scoreInfoList[i].pid);
+      let studyPlan = studyPlanRes.data.value.data;
+      console.log(studyPlan);
+
+      studyPlanList.value.push(studyPlan);
+    }
+
+    console.log(studyPlanList);
+  }
+};
+
+getInfo();
+const handleSizeChange = (val: number) => {
+  console.log(val);
+};
+
+const handleCurrentChange = (val: number) => {
+  console.log(val);
+};
 const tableData = [
   {
     date: "2016-05-03",

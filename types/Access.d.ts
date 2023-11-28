@@ -1,3 +1,4 @@
+import { number } from "echarts";
 export interface AccessTypesType {
   id: number;
   typeName: string;
@@ -60,3 +61,16 @@ export interface ScoreAddType {
   scores: Array<ScoreType>;
   studentId: string | null;
 }
+
+export interface ScorePageInfoListType {
+  pageSize: number;
+  current: number;
+  total: number;
+}
+
+// export interface ScoreListType {
+//   id: number;
+//   studentId: number;
+//   scores: Array<ScoreType>;
+//   pid: number;
+// }
