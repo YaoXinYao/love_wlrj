@@ -129,9 +129,9 @@
       <el-form-item label="博客链接" :label-width="formLabelWidth">
         <el-input v-bind:value="signleInfo.userBlog" disabled />
       </el-form-item>
-      <el-form-item label="成绩" :label-width="formLabelWidth">
+      <!-- <el-form-item label="成绩" :label-width="formLabelWidth">
         <el-button type="success">成绩详情</el-button>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <template #footer>
       <span class="dialog-footer">
