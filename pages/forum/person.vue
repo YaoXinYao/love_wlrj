@@ -19,6 +19,7 @@
             <li @click="changeStatus('artic')">作品</li>
             <li @click="changeStatus('like')">点赞</li>
             <li @click="changeStatus('collect')">收藏</li>
+            <li class="showHome"><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
           </ul>
         </div>
       </div>
@@ -405,6 +406,9 @@ const deletePost = (id: number) => {
           cursor: pointer;
           position: relative;
         }
+        .showHome{
+          display: none;
+        }
         li::after {
           content: "";
           position: absolute;
@@ -575,6 +579,14 @@ const deletePost = (id: number) => {
   .el-pagination {
     --el-pagination-bg-color: rgb(244, 248, 251);
     --el-pagination-button-disabled-bg-color: rgb(244, 248, 251);
+  }
+}
+@media screen and (max-width: 800px) {
+  .showHome{
+    display: block !important;
+  }
+  .introduce{
+    display: none;
   }
 }
 </style>
