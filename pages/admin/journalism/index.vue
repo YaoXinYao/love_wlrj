@@ -1,8 +1,8 @@
 
 <template>
     <div class="journalism">
-        <JournalismCont></JournalismCont>
-        <JournalismNew></JournalismNew>
+        <JournalismCont @new-value="handleNew"></JournalismCont>
+        <JournalismNew ref="newRef"></JournalismNew>
     </div>
 </template>
 
@@ -10,6 +10,13 @@
 
 import  JournalismCont  from '@/components/journalismCont/index.vue';
 import  JournalismNew  from '@/components/journalismNew/index.vue';
+
+const newRef = ref<InstanceType<typeof JournalismNew>>()
+
+function handleNew(data:any){
+    console.log(data)
+    newRef.value?.handleAnnouncement(data)
+}
 
 </script>
 

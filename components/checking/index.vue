@@ -23,7 +23,13 @@
             </el-table-column>
             <el-table-column label="签到时间" align="center" prop="unsignTime">
                 <template #default="scope">
-                    {{ scope.row.unsignTime ? scope.row.unsignTime : '未打卡' }}
+                    {{ scope.row.unsignTime ? scope.row.unsignTime : 
+                        scope.row.unsignPeriod ? 
+                        scope.row.unsignPeriod == 1 ? '上午未打卡' 
+                        : scope.row.unsignPeriod == 2 ? '下午未打卡'
+                        : '晚上未打卡'
+                        : '数据错误'
+                    }}
                 </template>
             </el-table-column>
             <el-table-column label="操作" align="center">

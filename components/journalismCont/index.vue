@@ -153,7 +153,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         let form:any ={}
         let fileList = refForm.newsImgs
         for(let item in refForm){
-            if(refForm[item as formEn] !== '' && item !== 'noticeImgs'){
+            if(refForm[item as formEn] !== '' && item !== 'newsImgs'){
                 form[item] = refForm[item as formEn]
             }
         }

@@ -63,10 +63,10 @@
                     :hide-required-asterisk="true"
                 >
                     <el-form-item label="姓名"  label-width="80" prop="unsignUsername">
-                        <el-input style="width:65%;" v-model="formData.unsignUsername"></el-input>
+                        <el-input  v-model="formData.unsignUsername"></el-input>
                     </el-form-item>
                     <el-form-item label="学号" label-width="80" prop="unsignStudentId">
-                        <el-input style="width:65%;" v-model="formData.unsignStudentId"></el-input>
+                        <el-input  v-model="formData.unsignStudentId"></el-input>
                     </el-form-item>
                     <el-form-item label="日期" label-width="80" prop="unsignDate">
                         <el-date-picker
@@ -74,6 +74,13 @@
                             type="date"
                             placeholder="选择日期"
                         />
+                    </el-form-item>
+                    <el-form-item label="时间段" label-width="80" prop="unsignPeriod">
+                        <el-select v-model="formData.unsignPeriod" placeholder="请选择时间段">
+                            <el-option label="上午" value="1" />
+                            <el-option label="下午" value="2" />
+                            <el-option label="晚上" value="3" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="签到时间" label-width="80" prop="unsignTime">
                         <el-time-picker v-model="formData.unsignTime" placeholder="Arbitrary time" />
@@ -121,9 +128,10 @@ watch(dialogTableVisible,(newValue)=>{
 interface formType {
     unsignDate:string,
     unsignUsername:string,
-    unsignTime:any,
+    unsignTime?:any,
     unsignStudentId:string,
     unsignId?:string,
+    unsignPeriod:string,
 }
 
 
@@ -132,6 +140,7 @@ const formData = reactive<formType>({
     unsignUsername:'',
     unsignTime:'',
     unsignStudentId:'',
+    unsignPeriod:'',
 })
 
 
@@ -166,10 +175,10 @@ const rules = reactive<FormRules<typeof formData>>({
         },
 
     ],
-    unsignTime:[
+    unsignPeriod:[
         {
             required:true,
-            message:'请填写时间',
+            message:'选择时间段',
             trigger:'blur'
         }
     ],
@@ -297,13 +306,24 @@ function submitNew(){
                 let time = new Date(formData.unsignDate)
                 let times = new Date(formData.unsignTime)
                 formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
-                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
-                let object = {
-                    unsignDate:formData.unsignDate,
-                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
-                    unsignUsername:formData.unsignUsername,
-                    unsignStudentId:formData.unsignStudentId,
-                    unsignId:formData.unsignId
+                let object = {}
+                if(formData.unsignTime){
+                    object = {
+                        unsignDate:formData.unsignDate,
+                        unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignId:formData.unsignId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
+                }else{
+                        object = {
+                        unsignDate:formData.unsignDate,
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignId:formData.unsignId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
                 }
                  console.log(object)
                  updateUnSign(object).then(res=>{
@@ -324,13 +344,24 @@ function submitNew(){
                 let time = new Date(formData.unsignDate)
                 let times = new Date(formData.unsignTime)
                 formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
-                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
-                let object = {
-                    unsignDate:formData.unsignDate,
-                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
-                    unsignUsername:formData.unsignUsername,
-                    unsignStudentId:formData.unsignStudentId,
+                let object = {}
+                if(formData.unsignTime){
+                    object = {
+                        unsignDate:formData.unsignDate,
+                        unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
+                }else{
+                        object = {
+                        unsignDate:formData.unsignDate,
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
                 }
+                console.log(object)
                 inserUnSign(object).then(res=>{
                     console.log(res.data.value)
                     if(res.data.value.code === 20000){

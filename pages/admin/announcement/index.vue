@@ -24,7 +24,19 @@
                             </el-form-item>
                             <el-form-item v-show="announcementCon.noticeImg">
                                 <div class="picContent">
-                                    <img  ref="ImgRef" :src="announcementCon.noticeImg" class="showPicture" @click="toggleFullscrent"  alt="">
+                                    <div 
+                                        :class="{'full-screen':isFullScreen}" 
+                                        @click="toggleFullscrent"
+                                        @wheel.prevent="handleWheel"
+                                    >
+                                        <img  
+                                            ref="ImgRef" 
+                                            :src="announcementCon.noticeImg" 
+                                            :style="{ transform: `scale(${scale})` }"
+                                            :class="{showPicture:true,'full-screen-img':isFullScreen}" 
+                                            alt=""
+                                        >
+                                    </div>
                                 </div>
                             </el-form-item>
                             <el-form-item >
@@ -54,6 +66,11 @@ import type {annoucement} from '@/store/store'
 
 const isShow = ref(false)
 const ImgRef = ref()
+const isFullScreen = ref(false)
+const scale = ref(1)
+const minScale = ref(0.5)
+const maxScale = ref(2)
+const scaleStep = ref(0.1)
 
 let announcementCon = ref<annoucement>({
     noticeTitle: '',
@@ -89,12 +106,27 @@ function handleNewValueClick(query:any){
 }
 
 
+function handleWheel(event:any){
+    if (isFullScreen.value) {
+        // 阻止滚动事件的默认行为
+        event.preventDefault();
+
+        // 计算缩放比例
+        const delta = event.deltaY > 0 ? -scaleStep.value : scaleStep.value;
+        const newScale = scale.value + delta;
+
+        // 限制缩放范围
+        scale.value = Math.min(Math.max(newScale, minScale.value), maxScale.value);
+      }
+}
+
 useHead({
     title:props.title
 })
 
 function toggleFullscrent(){
     // console.log(ImgRef.value)
+    isFullScreen.value = !isFullScreen.value
 }
 
 
@@ -160,6 +192,23 @@ function toggleFullscrent(){
                 height: 100px;
                 object-fit: cover;
                 cursor: pointer;
+            }
+            .full-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.8); /* 半透明黑色遮罩层 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: zoom-out;
+                .full-screen-img {
+                    width: 100vw;
+                    height: 100vh;
+                    object-fit: contain; /* 保持图片比例 */
+                }
             }
         }
         

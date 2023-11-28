@@ -27,7 +27,19 @@ import { reactive } from 'vue';
                             </el-form-item>
                             <el-form-item v-show="newJournalism.newsImg">
                                 <div class="picContent">
-                                    <img  ref="ImgRef" :src="newJournalism.newsImg" class="showPicture" @click="handleScale"  alt="">
+                                    <div 
+                                        :class="{'full-screen':isFullScreen}" 
+                                        @click="toggleFullscrent"
+                                        @wheel.passive="handleWheel"
+                                    >
+                                        <img  
+                                            ref="ImgRef" 
+                                            :src="newJournalism.newsImg" 
+                                            :style="{ transform: `scale(${scale})` }"
+                                            :class="{showPicture:true,'full-screen-img':isFullScreen}" 
+                                            alt=""
+                                        >
+                                    </div>
                                 </div>
                             </el-form-item>
                             <el-form-item  >
@@ -77,14 +89,18 @@ const {newList,loading} = storeToRefs(JournalismStore)
 console.log(JournalismStore)
 
 const dialogTableVisible = ref(false)
-
+const isFullScreen = ref(false)
+const scale = ref(1)
+const minScale = ref(0.5)
+const maxScale = ref(2)
+const scaleStep = ref(0.1)
 
 
 const emit = defineEmits(['ShowClick'])
 
 
 function handleAnnouncement(query:any){
-    JournalismStore.getNew(query)
+    JournalismStore.getNews(query)
 }
 
 function con(Props:any){
@@ -92,7 +108,7 @@ function con(Props:any){
     dialogTableVisible.value=true
     newJournalism = Props
 
-    // console.log(newJournalism.newsContent)
+    console.log(newJournalism)
 }
 
 function handleDelete(item:any){
@@ -132,10 +148,27 @@ function handleDelete(item:any){
 }
 
 
-function handleScale(){
 
+
+
+function handleWheel(event:any){
+    console.log(event)
+    if (isFullScreen.value) {
+        // 阻止滚动事件的默认行为
+        event.preventDefault();
+
+        // 计算缩放比例
+        const delta = event.deltaY > 0 ? -scaleStep.value : scaleStep.value;
+        const newScale = scale.value + delta;
+
+        // 限制缩放范围
+        scale.value = Math.min(Math.max(newScale, minScale.value), maxScale.value);
+      }
 }
-
+function toggleFullscrent(){
+    // console.log(ImgRef.value)
+    isFullScreen.value = !isFullScreen.value
+}
 
 
 defineExpose({handleAnnouncement})
@@ -191,6 +224,23 @@ defineExpose({handleAnnouncement})
                 width: 100px;
                 height: 100px;
                 object-fit: cover;
+            }
+            .full-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.8); /* 半透明黑色遮罩层 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: zoom-out;
+                .full-screen-img {
+                    width: 100vw;
+                    height: 100vh;
+                    object-fit: contain; /* 保持图片比例 */
+                }
             }
         }
         
