@@ -57,7 +57,7 @@ const { status, data, send, open, close } = useWebSocket(
     },
     onMessage(ws, event) {
       const Message: MessageType = JSON.parse(event.data);
-      if (Authuserid() == event.data.uploaderId) {
+      if (Authuserid() !== Message.uploaderId) {
         ElNotification({
           title: "发现新的文件",
           dangerouslyUseHTMLString: true,
