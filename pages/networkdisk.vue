@@ -41,6 +41,33 @@
 
 <script setup lang="ts">
 useHeader();
+import { useWebSocket } from "@vueuse/core";
+import type { MessageType } from "~/types/disk";
+const { status, data, send, open, close } = useWebSocket(
+  `ws://112.125.120.78:19520/disk/websocket/${Authuserid()}`,
+  {
+    autoReconnect: {
+      retries: 3,
+      onFailed: () => {
+        ElMessage({
+          message: "websoscket连接失败, 请关闭你的加速器",
+          type: "error",
+        });
+      },
+    },
+    onMessage(ws, event) {
+      const Message: MessageType = JSON.parse(event.data);
+      if (Authuserid() == event.data.uploaderId) {
+        ElNotification({
+          title: "发现新的文件",
+          dangerouslyUseHTMLString: true,
+          message: ` <strong style="color: rgb(40,77,213);" >${Message.uploadName}</strong>上传了<br/>${Message.name}`,
+          duration: 4000,
+        });
+      }
+    },
+  }
+);
 </script>
 <style scoped lang="scss">
 .networkdisk {

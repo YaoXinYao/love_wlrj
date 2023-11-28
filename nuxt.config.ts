@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       },
     },
     //自动导入样式
-    plugins: [ElementPlus({}),],
+    plugins: [ElementPlus({})],
   },
   app: {
     head: {
@@ -57,7 +57,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@element-plus/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
-    'nuxt-monaco-editor'
+    "nuxt-monaco-editor",
   ],
   piniaPersistedstate: {
     storage: "localStorage",
@@ -129,12 +129,12 @@ export default defineNuxtConfig({
       ssr: false,
     },
   },
-  MonacoEditor:{
-    dest: '_monaco',
-    locale: 'en',
+  MonacoEditor: {
+    dest: "_monaco",
+    locale: "en",
     componentName: {
-      codeEditor: 'MonacoEditor',
-      diffEditor: 'MonacoDiffEditor'
-    }
-  }
+      codeEditor: "MonacoEditor",
+      diffEditor: "MonacoDiffEditor",
+    },
+  },
 });

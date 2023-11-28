@@ -57,9 +57,10 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      style="margin-top: 0.2rem"
       v-model:current-page="curIndex"
       v-model:page-size="Pagesize"
-      :page-sizes="[5, 10, 20, 30, 40]"
+      :page-sizes="[5, 10, 20]"
       background
       layout="sizes, prev, pager, next"
       :total="Filelist.count"
@@ -74,7 +75,6 @@ import { useDiskstore } from "~/store/disk";
 import { unCollectionFile } from "~/service/disk";
 const diskstore = useDiskstore();
 const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
-
 //收藏防抖
 const Favoritefilesend = Mythrottle(async (id: number) => {
   const res = await Favoritefile(id);
@@ -118,6 +118,7 @@ function downFile(url: string, name: string) {
 .filelist {
   display: flex;
   width: 100%;
+  max-height: 80vh;
   flex: 1;
   flex-direction: column;
   justify-content: space-between;

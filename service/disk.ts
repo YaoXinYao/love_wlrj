@@ -1,4 +1,9 @@
-import type { uploadfileType, unCollectType } from "~/types/disk";
+import type {
+  uploadfileType,
+  unCollectType,
+  MyfileType,
+  ToProvate,
+} from "~/types/disk";
 import Hyrequire from "./index";
 import type { IResultData } from "~/types/Userlogin";
 export function getfilelist(index: number, pagesize: number) {
@@ -42,4 +47,25 @@ export function unCollectionFile(params: unCollectType) {
     "put",
     { ...params, userId: Authuserid() }
   );
+}
+//查看自己上传的文件
+export function LookMyfile(params: MyfileType) {
+  return Hyrequire.request<IResultData<any>>(
+    "/disk/disk/file/getUploadFileList",
+    "GET",
+    {
+      ...params,
+    }
+  );
+}
+//修改为私密
+export function FileToPrivate(params: ToProvate) {
+  return Hyrequire.request("/disk/disk/file/updateFileToPrivate", "put", {
+    ...params,
+  });
+}
+export function FileToPublic(params: ToProvate) {
+  return Hyrequire.request("/disk/disk/file/updateFileToPublic", "put", {
+    ...params,
+  });
 }

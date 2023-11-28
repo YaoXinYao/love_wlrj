@@ -1,5 +1,9 @@
 <template>
   <div class="actionPage">
+    <div class="Diskheader">
+      <NumberScorll :num="num" :duration="1" />
+      <span class="DiskNum"> 文件总数 </span>
+    </div>
     <div class="diskcontainer">
       <div
         class="img"
@@ -56,6 +60,7 @@
 </template>
 
 <script setup lang="ts">
+const num = ref(50);
 //切换侧栏图片
 const curIndex = ref(0);
 const imgdata = ref([
@@ -70,8 +75,17 @@ const imgdata = ref([
 .actionPage {
   width: 100%;
   height: 100%;
+
   padding: 1rem;
-  padding-top: 0.5rem;
+  padding-top: 0.2rem;
+  .Diskheader {
+    height: 1.5rem;
+    width: 100%;
+    .DiskNum {
+      font-weight: bold;
+      padding-left: 0.1rem;
+    }
+  }
   .diskcontainer {
     width: 100%;
     height: 100%;
@@ -88,6 +102,15 @@ const imgdata = ref([
     .linkitem {
       width: 50%;
       height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      a {
+        display: block;
+        width: 3.3rem;
+        height: 0.9rem;
+        margin-bottom: 0.2rem;
+      }
       .linkitemroot {
         width: 3.3rem;
         height: 0.9rem;

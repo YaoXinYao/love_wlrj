@@ -29,6 +29,20 @@ export interface Diskstore {
       upedChunk: number; //正在上传的分片
     };
   };
+  Mylove: {
+    Search?: string;
+    curIndex: number;
+    PageSize: number;
+    Loading: boolean;
+    FileList: Filelist;
+  };
+  Myfile: {
+    Search?: string;
+    curIndex: number;
+    PageSize: number;
+    Loading: boolean;
+    FileList: Filelist;
+  };
 }
 export interface Fileprops {
   id: number;
@@ -38,7 +52,7 @@ export interface Fileprops {
   uploaderId: number;
   url: string;
   collections: number;
-  isPublic: any;
+  isPublic: string;
   uploadDate: string;
   uploadName: string;
   is_collection: number;
@@ -64,4 +78,28 @@ export interface uploadfileType {
 //取消收藏文件
 export interface unCollectType {
   fileId: number;
+}
+//MessageType
+export interface MessageType {
+  collections: number;
+  fileSize: string;
+  format: string;
+  id: number;
+  isPublic: string;
+  is_collection: number;
+  name: string;
+  types: string[];
+  uploadDate: string;
+  uploadName: string;
+  uploaderId: number;
+  url: string;
+}
+export interface MyfileType {
+  index: number;
+  pageSize: number;
+  userId: number;
+}
+export interface ToProvate {
+  fileId: number;
+  userId: number;
 }

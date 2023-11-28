@@ -14,7 +14,6 @@ import type {
   Tagparams,
 } from "~/types/Home";
 import type { Filelist } from "~/types/disk";
-
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
@@ -91,9 +90,18 @@ export function getFilelist(params: Filelistprops) {
 export function getFileTaglist(params: Tagparams) {
   console.log(params.types);
   return Hyrequire.request<IResultData<Filelist>>(
-    `/disk//disk/file/getFileListByTypes?${params.types}&pageSize=${
+    `/disk/disk/file/getFileListByTypes?${params.types}&pageSize=${
       params.pageSize
     }&index=${params.index}&userId=${Authuserid()}`,
+    "GET"
+  );
+}
+//我的收藏
+export function GetMylovefile(params: Tagparams) {
+  return Hyrequire.request<IResultData<Filelist>>(
+    `/disk/disk/file/getCollectionList?pageSize=${params.pageSize}&index=${
+      params.index
+    }&userId=${Authuserid()}`,
     "GET"
   );
 }

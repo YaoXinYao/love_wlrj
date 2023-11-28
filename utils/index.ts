@@ -4,7 +4,7 @@ import { useDiskstore } from "~/store/disk";
 import { storeToRefs } from "pinia";
 import { sha256 } from "js-sha256";
 const diskstore = useDiskstore();
-const { uploadProps, filequeue } = storeToRefs(diskstore);
+const { down } = storeToRefs(diskstore);
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -123,6 +123,25 @@ export const exportFile = async (
     throw error; // 如果需要拒绝 Promise，将错误重新抛出
   }
 };
+export function downFile(url: string, name: string) {
+  down.value.isOpen = true;
+  exportFile(
+    url,
+    name,
+    (progress, spend) => {
+      down.value.downSpend = Math.floor(spend / 1024) + " kb/s";
+      diskstore.changeProgress(progress);
+      down.value.downProgress = Math.floor(progress);
+      if (progress >= 100) {
+        down.value.isOpen = false;
+      }
+    },
+    //文件大小
+    (size) => {
+      down.value.downSize = size;
+    }
+  );
+}
 // 复制到粘贴板
 export const copyToClipboard = async (text: string): Promise<void> => {
   try {
