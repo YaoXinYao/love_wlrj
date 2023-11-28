@@ -31,7 +31,8 @@
           >公告</span
         >
       </h3>
-      <p>{{ newNotice.noticeContent }}</p>
+      <p v-if="newNotice">{{ newNotice.noticeContent }}</p>
+      <p v-if="!newNotice">暂无公告</p>
     </div>
     <NuxtLink
       to="/personalInfoPage/userTimetable"

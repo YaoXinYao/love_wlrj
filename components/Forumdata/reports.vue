@@ -1,5 +1,5 @@
 <template>
-  <div class="tablePost">
+  <div class="tablePost" v-loading="loading">
     <el-form
       label-position="top"
       label-width="100px"
@@ -102,6 +102,7 @@ let { userinfo } = storeToRefs(userData);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
+let loading = ref(false)
 let manages = forumManage();
 let forumData = forumStore();
 let { subfields, labels } = storeToRefs(manages);
@@ -152,6 +153,7 @@ onMounted(() => {
 //--------------获取上传文件-----------
 //文件上传
 const uploadPhoto = async (formEl: FormInstance | undefined) => {
+  loading.value = true
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -188,9 +190,10 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
             ElMessage.error("发布帖子失败");
           }
         });
+        loading.value = false
       }
     } else {
-      console.log("error submit!", fields);
+      loading.value = false
     }
   });
 };

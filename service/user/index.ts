@@ -135,6 +135,11 @@ export const addAccessScore = (props: ScoreAddType) => {
   });
 };
 
+//获取某个考核的信息
+export const getAccessInfo = (id: number) => {
+  return hyRequest.get<IResultData<any>>(`/access/studyPlan/select`, { id });
+};
+
 //获取试卷模版
 export const getTemplateService = (id: number) => {
   return hyRequest.get<IResultData<any>>(`/access/templates/search`, {
