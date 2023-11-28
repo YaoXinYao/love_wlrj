@@ -22,6 +22,7 @@ export interface MyObject {
 export interface AccessItem {
   name: string;
   rate: number;
+  score?: number;
 }
 
 export interface AccessResInfoType {
@@ -32,11 +33,11 @@ export interface AccessResInfoType {
   plan: string;
   publisher: number;
   publisherName?: string;
-  subscribers: number;
+  subscribers: string;
   type: string;
   typeId: number | null;
   updateTime: string | null;
-  sonTable: Array<any>;
+  sonTable?: Array<any>;
 }
 
 export interface AccessPageInfoType {
@@ -51,11 +52,11 @@ export interface AccessStoreType {
 
 export interface ScoreType {
   name: string;
-  score: number;
+  score: number | undefined;
 }
 
 export interface ScoreAddType {
   pid: number;
   scores: Array<ScoreType>;
-  studentId: number;
+  studentId: string | null;
 }
