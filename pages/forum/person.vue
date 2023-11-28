@@ -24,7 +24,7 @@
       </div>
       <div class="newsbg"></div>
     </div>
-    <div class="main">
+    <div class="main" v-loading="loading">
       <div class="introduce">
         <div class="triangle"></div>
         <div class="con">关于我</div>
@@ -181,6 +181,7 @@ let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
 let { total } = storeToRefs(forums);
 let pages = 15;
+let loading = ref(true)
 
 let posts = ref<any[]>([]);
 let jage = ref("artic");
@@ -189,6 +190,7 @@ onMounted(() => {
     .userPosts(1, pages, undefined, undefined, undefined, userinfo.value.userId)
     .then((res) => {
       posts.value = res;
+      loading.value = false
     });
 });
 //分页
@@ -197,6 +199,7 @@ const handleCurrentChange = (val: number) => {
 };
 //查询帖子
 function getStatus(pageNo: number) {
+  loading.value = true
   if (jage.value == "artic") {
     forums
       .userPosts(
@@ -223,6 +226,7 @@ function getStatus(pageNo: number) {
         posts.value = res;
       });
   }
+  loading.value = false
 }
 //切换状态查询帖子
 function changeStatus(status: string) {

@@ -172,7 +172,6 @@ const sentMessage = (
     msgContentId,
   };
   send(JSON.stringify(obj));
-  console.log("发送成功");
 };
 //查询帖子
 function fetchData(userId: any) {

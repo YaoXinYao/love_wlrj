@@ -87,6 +87,14 @@
               ></template
             >
           </el-menu-item>
+          <el-menu-item index="/">
+            <el-icon><Monitor /></el-icon>
+            <template #title
+              ><NuxtLink to="/"
+                >返回首页</NuxtLink
+              ></template
+            >
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
@@ -133,7 +141,8 @@ import {
   PictureRounded,
   Timer,
   Stopwatch,
-  Calendar
+  Calendar,
+  Monitor
 } from "@element-plus/icons-vue";
 let userData = useHomestore()
 let {userinfo} = storeToRefs(userData)
