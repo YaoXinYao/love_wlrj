@@ -108,6 +108,7 @@ const loadingfilelist = async () => {
     };
   });
 };
+//测试
 const beforeChange2 = async (name: string, id: number) => {
   Filepublic.value[name].loading = true;
   if (Filepublic.value[name].public) {
