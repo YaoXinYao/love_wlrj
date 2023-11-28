@@ -163,6 +163,7 @@
             v-if="total != 0"
             layout="prev, pager, next"
             :total="total"
+            :page-size="pages"
             @current-change="handleCurrentChange"
           />
         </ul>
@@ -179,7 +180,7 @@ let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
 let { total } = storeToRefs(forums);
-let pages = 8;
+let pages = 15;
 
 let posts = ref<any[]>([]);
 let jage = ref("artic");
@@ -257,6 +258,7 @@ const deletePost = (id: number) => {
         }
       });
       posts.value.splice(index, 1);
+      total.value = total.value - 1
     }else{
       ElMessage.error("删除失败")
     }

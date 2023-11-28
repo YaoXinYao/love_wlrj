@@ -232,7 +232,6 @@ export const forumStore = defineStore("forumInfo", {
       if (data.value?.code == 53004) {
         return [];
       } else {
-        this.total = data.value?.data.total;
         let dataAll = data.value?.data.records || [];
         let selectKeeps = [];
         if (dataAll.length != 0) {

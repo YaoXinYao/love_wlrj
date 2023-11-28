@@ -118,7 +118,7 @@ const disabled = ref(false);
 let carouselContent = ref("");
 let carouselTitle = ref("");
 let photos = ref<any[]>([]);
-let deleId:number;
+let deleId: number;
 onMounted(() => {
   rotationsInfo.getCarousel();
 });
@@ -135,20 +135,25 @@ const exceedFun = (files: File[], uploadFiles: UploadUserFile[]) => {
 };
 const subminInfo = () => {
   let formdata = new FormData();
-  formdata.append("carouselContent", carouselContent.value);
-  formdata.append("carouselTitle", carouselTitle.value);
   formdata.append("file", photos.value[0].raw);
-  useFetch("/zinfo/user/carousel/insertCarousel", {
-    method: "POST",
-    body: formdata,
-  }).then((res) => {
-    ElMessage.success("添加成功");
-    rotationsInfo.getCarousel();
-    rotatinState.value = false;
-    carouselContent.value = "";
-    carouselTitle.value = "";
-    photos.value = [];
-  });
+  let obj = {
+    carouselContent: carouselContent.value,
+    carouselTitle: carouselTitle.value,
+  };
+  rotationsInfo
+    .postCarousel(obj, formdata)
+    .then((res) => {
+      if (res == 20000) {
+        ElMessage.success("添加成功");
+        rotationsInfo.getCarousel();
+        rotatinState.value = false;
+        carouselContent.value = "";
+        carouselTitle.value = "";
+        photos.value = [];
+      } else {
+        ElMessage.error("添加失败,上传图片过大");
+      }
+    })
 };
 const shutInfo = () => {
   rotatinState.value = false;
@@ -157,19 +162,19 @@ const shutInfo = () => {
   photos.value = [];
 };
 
-const deletajage = (id:number)=>{
-  deleId = id
+const deletajage = (id: number) => {
+  deleId = id;
   rotatinDelete.value = true;
-}
+};
 const deleteInfo = () => {
-  rotationsInfo.deleteCarousel(deleId).then(res=>{
-    if(res == 20000){
-    ElMessage.success("移除成功")
-    rotationsInfo.getCarousel();
-    }else{
-    ElMessage.error("操作失败")
+  rotationsInfo.deleteCarousel(deleId).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("移除成功");
+      rotationsInfo.getCarousel();
+    } else {
+      ElMessage.error("操作失败");
     }
-  })
+  });
   rotatinDelete.value = false;
 };
 </script>
