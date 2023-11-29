@@ -136,7 +136,6 @@
                 p-id="1744"
               ></path>
             </svg>
-            <span style="margin: 0">{{ item.comLike }}</span>
             <span
               v-if="(item.comUserId == userinfo.userId)"
               @click="deleteCom(item.comId)"
