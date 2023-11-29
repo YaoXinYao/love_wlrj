@@ -26,9 +26,20 @@
 <script setup lang="ts">
 import {ref,watch} from 'vue'
 const value = ref('')
+const props = defineProps({
+    isClear: Boolean,
+})
 function handleGetValue(){
     return value.value
 }
+
+watch(()=>props.isClear,(newValue)=>{
+    if(newValue){
+        value.value = ''
+    }else{
+       
+    }
+})
 
 defineExpose({handleGetValue})
 </script>

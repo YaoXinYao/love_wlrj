@@ -23,7 +23,13 @@
             </el-table-column>
             <el-table-column label="签到时间" align="center" prop="unsignTime">
                 <template #default="scope">
-                    {{ scope.row.unsignTime ? scope.row.unsignTime : '未打卡' }}
+                    {{ scope.row.unsignTime ? scope.row.unsignTime : 
+                        scope.row.unsignPeriod ? 
+                        scope.row.unsignPeriod == 1 ? '上午未打卡' 
+                        : scope.row.unsignPeriod == 2 ? '下午未打卡'
+                        : '晚上未打卡'
+                        : '数据错误'
+                    }}
                 </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -67,22 +73,22 @@ function getUnSign(query:any){
 }
 
 function handleSizeChange(val:number){
-    console.log(val)
+    // console.log(val)
     let current = currentQuery.value
     current.size = val
     getUnSign({...current})
 }
 
 function handleCurrentChange(val:number){
-    console.log(val)
-    console.log(size.value)
+    // console.log(val)
+    // console.log(size.value)
     let current = currentQuery.value
     current.pageIndex = val
     getUnSign({...current})
 }
 
 function handleDelete(data:any){
-    console.log(data)
+    // console.log(data)
     ElMessageBox.confirm(
         '确定删除嘛？',
         'Warning',
@@ -94,7 +100,7 @@ function handleDelete(data:any){
   )
     .then(() => {
         deleteUnSign({unsignId:data.unsignId}).then(res=>{
-            console.log(res.data.value)
+            // console.log(res.data.value)
             if(res.data.value.code === 20000){
                 ElNotification({
                     title:'成功',
@@ -112,7 +118,7 @@ function handleDelete(data:any){
 }
 
 function handleChange(data:any){
-    console.log(data)
+    // console.log(data)
     emit('changeClick',data)
 }
 

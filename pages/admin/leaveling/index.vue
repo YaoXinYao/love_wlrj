@@ -115,7 +115,7 @@ enum formEn{
 // typeingor
 function handleQueryClick(){
     let form:any = {}
-    console.log(formInline)
+    // console.log(formInline)
     for(let item in formInline){
         if(formInline[item as formEn] !== ''){
             if(item === 'queryDate'){
@@ -126,7 +126,7 @@ function handleQueryClick(){
             }
         }
     }
-    console.log(form)
+    // console.log(form)
     leaveContentRef.value?.fetchUserListData({...form,pageSize:pageSize.value,pageIndex:pageIndex.value,idDesc:true})
 }
 </script>

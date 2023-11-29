@@ -119,12 +119,12 @@ const emit = defineEmits(['newValue'])
 
 
 getGrade().then(res=>{
-    console.log(res.data.value)
+    // console.log(res.data.value)
     grade.value = res.data.value.data
 })
 
 
-console.log(grade)
+// console.log(grade)
 
 
 const enum formEn{
@@ -218,10 +218,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   const result = await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log('submit!')
+    //   console.log('submit!')
       return true
     } else {
-      console.log('error submit!', fields)
+    //   console.log('error submit!', fields)
       return false
     }
   })
@@ -256,8 +256,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             }
         ).then(()=>{
             postAffiche(form,fileList).then(res=>{
-                console.log('上传图片')
-                console.log(res.data)
+                // console.log('上传图片')
+                // console.log(res.data)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
@@ -289,7 +289,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             }
         ).then(()=>{
             postAffiche(form).then(res=>{
-                console.log(res.data.value)
+                // console.log(res.data.value)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
@@ -312,8 +312,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         })
 
     }
-    console.log(form)
-    console.log(fileList)
+    // console.log(form)
+    // console.log(fileList)
     // postAffiche()
 
   }
@@ -334,10 +334,10 @@ const resetForm = (forEl:FormInstance | undefined)=>{
 
 
 const handleGetUsers = (item:any)=>{
-    console.log(item)
+    // console.log(item)
     refForm.user = ''
     getUser({grade:item}).then(res=>{
-        console.log(res.data.value.data)
+        // console.log(res.data.value.data)
         users.value = res.data.value.data
     })
 }
@@ -349,16 +349,16 @@ const handleClearValue = ()=>{
 
 
 function handleFileChange(event:any){
-    console.log(event)
+    // console.log(event)
     const file = event.target.files[0]
-    console.log(file)
+    // console.log(file)
     let nameArr = file.name.split('.')
     if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
         refForm.noticeImgs = file
         const value = URL.createObjectURL(file)
         srcValue.value = value
-        console.log(value)
-        console.log(refForm.noticeImgs)
+        // console.log(value)
+        // console.log(refForm.noticeImgs)
     }else{
         ElNotification({
             title:'上传失败',

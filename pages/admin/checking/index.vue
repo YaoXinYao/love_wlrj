@@ -63,10 +63,10 @@
                     :hide-required-asterisk="true"
                 >
                     <el-form-item label="姓名"  label-width="80" prop="unsignUsername">
-                        <el-input style="width:65%;" v-model="formData.unsignUsername"></el-input>
+                        <el-input  v-model="formData.unsignUsername"></el-input>
                     </el-form-item>
                     <el-form-item label="学号" label-width="80" prop="unsignStudentId">
-                        <el-input style="width:65%;" v-model="formData.unsignStudentId"></el-input>
+                        <el-input  v-model="formData.unsignStudentId"></el-input>
                     </el-form-item>
                     <el-form-item label="日期" label-width="80" prop="unsignDate">
                         <el-date-picker
@@ -74,6 +74,13 @@
                             type="date"
                             placeholder="选择日期"
                         />
+                    </el-form-item>
+                    <el-form-item label="时间段" label-width="80" prop="unsignPeriod">
+                        <el-select v-model="formData.unsignPeriod" placeholder="请选择时间段">
+                            <el-option label="上午" value="1" />
+                            <el-option label="下午" value="2" />
+                            <el-option label="晚上" value="3" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="签到时间" label-width="80" prop="unsignTime">
                         <el-time-picker v-model="formData.unsignTime" placeholder="Arbitrary time" />
@@ -121,9 +128,10 @@ watch(dialogTableVisible,(newValue)=>{
 interface formType {
     unsignDate:string,
     unsignUsername:string,
-    unsignTime:any,
+    unsignTime?:any,
     unsignStudentId:string,
     unsignId?:string,
+    unsignPeriod:string,
 }
 
 
@@ -132,6 +140,7 @@ const formData = reactive<formType>({
     unsignUsername:'',
     unsignTime:'',
     unsignStudentId:'',
+    unsignPeriod:'',
 })
 
 
@@ -166,10 +175,10 @@ const rules = reactive<FormRules<typeof formData>>({
         },
 
     ],
-    unsignTime:[
+    unsignPeriod:[
         {
             required:true,
-            message:'请填写时间',
+            message:'选择时间段',
             trigger:'blur'
         }
     ],
@@ -177,13 +186,13 @@ const rules = reactive<FormRules<typeof formData>>({
 })
 
 function handleUpdate(event:any){
-    console.log(event)
+    // console.log(event)
     const files =  inputRef.value.files
     let nameArr = files[0].name.split('.')
     if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
         handleFiles(files);
         showFile.value = true;
-        console.log(files)
+        // console.log(files)
     }else{
         ElNotification({
             title: '上传失败',
@@ -199,13 +208,13 @@ function handleOpen(){
 }
 
 function highlight(){
-    console.log('进来了');
+    // console.log('进来了');
     
     isHighlighted.value=true
 }
 
 function light(){
-    console.log('出来了');
+    // console.log('出来了');
     isHighlighted.value = false
 }
 
@@ -219,7 +228,7 @@ function handleNew(){
 function handleDrop(event:any) {
     // console.log(event)
     const files = event.dataTransfer.files;
-    console.log(files)
+    // console.log(files)
     // handleFiles(files);
     let nameArr = files[0].name.split('.')
     if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
@@ -240,14 +249,14 @@ function handleUploadProgress(event:any){
     // console.log(event)
     // console.log(event.lengthComputable)
     const percentages = (event.loaded / event.total) * 100;
-    console.log(event.loaded, event.total)
+    // console.log(event.loaded, event.total)
     // console.log(event.total)
     percentage.value = Math.floor(percentages);
 }
 
 
 function handleFiles(files:any){
-    console.log(files)
+    // console.log(files)
     let formData = new FormData()
     formData.append('file',files[0])
 
@@ -269,7 +278,7 @@ function handleFiles(files:any){
                 type:'success'
             })
             if(percentage.value == 100){
-                console.log(1)
+                // console.log(1)
                 percentage.value = 0;
                 showFile.value = false
                 let current = currentQuery.value
@@ -277,7 +286,7 @@ function handleFiles(files:any){
             }
             
         } else {
-            console.error('Upload failed');
+            // console.error('Upload failed');
         }
         }
     };
@@ -297,17 +306,28 @@ function submitNew(){
                 let time = new Date(formData.unsignDate)
                 let times = new Date(formData.unsignTime)
                 formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
-                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
-                let object = {
-                    unsignDate:formData.unsignDate,
-                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
-                    unsignUsername:formData.unsignUsername,
-                    unsignStudentId:formData.unsignStudentId,
-                    unsignId:formData.unsignId
+                let object = {}
+                if(formData.unsignTime){
+                    object = {
+                        unsignDate:formData.unsignDate,
+                        unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignId:formData.unsignId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
+                }else{
+                        object = {
+                        unsignDate:formData.unsignDate,
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignId:formData.unsignId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
                 }
-                 console.log(object)
+                //  console.log(object)
                  updateUnSign(object).then(res=>{
-                    console.log(res.data.value)
+                    // console.log(res.data.value)
                     if(res.data.value.code === 20000){
                         ElNotification({
                             title:'成功',
@@ -324,15 +344,26 @@ function submitNew(){
                 let time = new Date(formData.unsignDate)
                 let times = new Date(formData.unsignTime)
                 formData.unsignDate = time.getFullYear().toString() + '-' + (time.getMonth() + 1).toString().padStart(2, '0') + '-' + time.getDate().toString().padStart(2,'0');
-                formData.unsignTime = times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0')
-                let object = {
-                    unsignDate:formData.unsignDate,
-                    unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
-                    unsignUsername:formData.unsignUsername,
-                    unsignStudentId:formData.unsignStudentId,
+                let object = {}
+                if(formData.unsignTime){
+                    object = {
+                        unsignDate:formData.unsignDate,
+                        unsignTime:times.getHours().toString().padStart(2,'0') + ':'+ times.getMinutes().toString().padStart(2,'0') + ':'+times.getSeconds().toString().padStart(2,'0'),
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
+                }else{
+                        object = {
+                        unsignDate:formData.unsignDate,
+                        unsignUsername:formData.unsignUsername,
+                        unsignStudentId:formData.unsignStudentId,
+                        unsignPeriod:formData.unsignPeriod
+                    }
                 }
+                // console.log(object)
                 inserUnSign(object).then(res=>{
-                    console.log(res.data.value)
+                    // console.log(res.data.value)
                     if(res.data.value.code === 20000){
                         ElNotification({
                             title:'成功',
@@ -347,7 +378,7 @@ function submitNew(){
             }
 
         } else {
-            console.log('error submit!')
+            // console.log('error submit!')
             return false
         }
     })
@@ -361,7 +392,7 @@ function cancel(){
 
 
 function handleChangeClick(data:any){
-    console.log(data)
+    // console.log(data)
     dialogTableVisible.value = true
     formData.unsignDate = data.unsignDate
     formData.unsignStudentId = data.unsignStudentId
@@ -378,7 +409,7 @@ function handleChangeClick(data:any){
     }else{
         formData.unsignTime = ''
     }
-    console.log(formData)
+    // console.log(formData)
 }
 
 </script>

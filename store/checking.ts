@@ -36,7 +36,7 @@ const signStore = defineStore('signStore',{
             this.allPage = result.data.value.data.allPage
             this.pageIndex = result.data.value.data.pageIndex
             this.size = result.data.value.data.size
-            console.log(this.signList)
+            // console.log(this.signList)
         }
     }
 })
