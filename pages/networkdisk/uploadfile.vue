@@ -92,16 +92,16 @@
 import { storeToRefs } from "pinia";
 import { useHomestore } from "~/store/home";
 import { useDiskstore } from "~/store/disk";
+const disstore = useDiskstore();
 const homestore = useHomestore();
 const { userinfo } = storeToRefs(homestore);
+const { filequeue, AllType } = storeToRefs(disstore);
 const dialogVisible = ref(false);
 const dialogVisible2 = ref(false);
 const input = ref<HTMLInputElement>();
 const isActive = ref(false);
 const curTag = ref([]);
-const disstore = useDiskstore();
 disstore.getAllfiletag();
-const { filequeue, AllType } = storeToRefs(disstore);
 function loadingfile(event: Event) {
   const inputElement = event.target as HTMLInputElement;
   const selectedFile = inputElement.files;

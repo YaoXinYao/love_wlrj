@@ -23,8 +23,8 @@
         </div>
       </div>
       <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
-        <el-carousel-item v-for="(item, index) in carouselItem" :key="index">
-          <img class="carouselimg" :src="item.src" alt="" />
+        <el-carousel-item v-for="(item, index) in Wrapper" :key="index">
+          <img class="carouselimg" :src="item.carouselUrl" alt="" />
         </el-carousel-item>
       </el-carousel>
       <div class="spcial2">
@@ -41,27 +41,11 @@
 
 <script setup lang="ts">
 import { gsap } from "gsap";
+import { storeToRefs } from "pinia";
+import { useHomestore } from "~/store/home";
+const homestore = useHomestore();
+const { Wrapper } = storeToRefs(homestore);
 const carousel = ref();
-const carouselItem = [
-  {
-    src: "https://article.biliimg.com/bfs/article/81ea8eaf042608dea429a0e07b8a73c0323404779.jpg",
-  },
-  {
-    src: "https://article.biliimg.com/bfs/article/7b7b96c30d816afb7066126bc91912c2323404779.jpg",
-  },
-  {
-    src: "https://article.biliimg.com/bfs/article/a7bd9db95f80fd6e46dc133f40ca4790323404779.jpg",
-  },
-  {
-    src: "https://article.biliimg.com/bfs/article/3aaa62e88ba9721c37b9a777f46023f5323404779.jpg",
-  },
-  {
-    src: "https://article.biliimg.com/bfs/article/791618eea691490ea892ad05197d9a1d323404779.jpg",
-  },
-  {
-    src: "https://article.biliimg.com/bfs/article/4de0e27efe0632387c31414aa5e14c8e323404779.jpg",
-  },
-];
 onMounted(() => {
   //首屏划入标题
   const line = gsap.timeline();

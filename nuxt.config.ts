@@ -81,7 +81,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/coustom": {
-        target: "http://152.136.161.44:19491/user/swagger/",
+        target: "http://112.125.120.78:8666/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -126,6 +126,9 @@ export default defineNuxtConfig({
       ssr: false,
     },
     "/messageCenter/**": {
+      ssr: false,
+    },
+    "/articlemd/**": {
       ssr: false,
     },
   },

@@ -91,24 +91,12 @@ import { storeToRefs } from "pinia";
 import { FileToPrivate, FileToPublic } from "~/service/disk";
 import { useDiskstore } from "~/store/disk";
 const diskstore = useDiskstore();
-const value = ref(false);
-const { Myfile } = storeToRefs(diskstore);
 const Filepublic = ref<{
   [key: string]: {
     public: boolean;
     loading: boolean;
   };
 }>({});
-const loadingfilelist = async () => {
-  await diskstore.getMyfile();
-  Myfile.value.FileList.dataList.forEach((item) => {
-    Filepublic.value[item.name] = {
-      public: item.isPublic == "公开" ? true : false,
-      loading: false,
-    };
-  });
-};
-//测试
 const beforeChange2 = async (name: string, id: number) => {
   Filepublic.value[name].loading = true;
   if (Filepublic.value[name].public) {
@@ -128,7 +116,19 @@ const beforeChange2 = async (name: string, id: number) => {
     } else return false;
   }
 };
-loadingfilelist();
+const { Myfile } = storeToRefs(diskstore);
+const loadingfilelist = async () => {
+  await diskstore.getMyfile();
+  Myfile.value.FileList.dataList.forEach((item) => {
+    Filepublic.value[item.name] = {
+      public: item.isPublic == "公开" ? true : false,
+      loading: false,
+    };
+  });
+};
+onMounted(async () => {
+  await loadingfilelist();
+});
 </script>
 <style scoped lang="scss">
 .myfile {

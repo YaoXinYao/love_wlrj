@@ -6,31 +6,31 @@
         <div
           class="newsleft"
           :style="{
-            backgroundImage: `url(${news.newarr[curIndexnews].imgsrc})`,
+            backgroundImage: `url(${HotNews?.records[curIndexnews]?.newsImg})`,
           }"
         ></div>
         <div class="newsright">
           <div class="newsrighttop">
             <NuxtLink
-              :to="`/articlemd/${item.descid}`"
+              :to="`/articlemd/${item.newsId}`"
               target="_blank"
               :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
-              v-for="(item, index) in news.newarr"
+              v-for="(item, index) in HotNews.records"
               :key="index"
               @mouseenter="() => changenews(index)"
             >
               <div class="newsposotion">
-                <div class="newsitemTime">{{ item.time }}</div>
-                <div class="newitemContent">{{ item.title }}</div>
+                <div class="newsitemTime">{{ timereg(item.newsTime) }}</div>
+                <div class="newitemContent">{{ item.newsTitle }}</div>
               </div>
               <div class="borderitem"></div>
             </NuxtLink>
           </div>
           <div class="newsrightbootom">
-            <div class="bottomPrev">
+            <div class="bottomPrev" @click="prePage">
               <i class="iconfont icon-xiangxia-copy"></i>
             </div>
-            <div class="bottomNext">
+            <div class="bottomNext" @click="nextPage">
               <i class="iconfont icon-xiangxia-copy"></i>
             </div>
           </div>
@@ -42,9 +42,14 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-//统一管理当前选项
+import { storeToRefs } from "pinia";
+import { useHomestore } from "~/store/home";
 const curIndexnews = ref(0);
-const news = ref({
+const curPage = ref(1);
+const homestore = useHomestore();
+homestore.getHotnews(curPage.value);
+const { HotNews } = storeToRefs(homestore);
+/* const news = ref({
   newarr: [
     {
       imgsrc:
@@ -75,6 +80,23 @@ const news = ref({
       time: "1949.10.01",
     },
   ],
+}); */
+const nextPage = () => {
+  if (curPage.value >= HotNews.value.pages) {
+    return;
+  }
+  curIndexnews.value = 0;
+  curPage.value++;
+};
+const prePage = () => {
+  if (curPage.value <= 1) {
+    return;
+  }
+  curIndexnews.value = 0;
+  curPage.value--;
+};
+watch(curPage, () => {
+  homestore.getHotnews(curPage.value);
 });
 onMounted(() => {
   loading();
@@ -106,8 +128,23 @@ function loading() {
     ),
   });
 }
+function timereg(dateString: string) {
+  // 定义日期字符串
+  // 定义正则表达式
+  const pattern = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
+  // 使用正则表达式进行匹配
+  const match = dateString.match(pattern);
+  // 如果匹配成功，打印结果
+  if (match) {
+    var year = match[1];
+    var month = match[2];
+    var day = match[3];
+    return `${year}.${month}.${day}`;
+  } else {
+    return `${2022}.${1}.${1}`;
+  }
+}
 </script>
-
 <style scoped lang="scss">
 @media screen and (max-width: 998px) {
   .newsleft {

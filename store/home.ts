@@ -1,7 +1,12 @@
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 import type { HomeStore, HomeStoreuser } from "~/types/Home";
-import { getAllblog, getAlltag, getUserinfo2 } from "~/service/homeApi";
+import {
+  GetHotnews,
+  GetWrapper,
+  getAllblog,
+  getUserinfo2,
+} from "~/service/homeApi";
 import { getLoginUser } from "~/service/user";
 export const useHomestore = defineStore("home", {
   state(): HomeStore {
@@ -43,9 +48,31 @@ export const useHomestore = defineStore("home", {
         time: 0,
       },
       Allblog: {},
+      Wrapper: [],
+      HotNews: {
+        records: [],
+        total: 0,
+        size: 0,
+        current: 0,
+        orders: [],
+        hitCount: false,
+        countId: "",
+        maxLimit: "",
+        searchCount: false,
+        pages: 0,
+      },
     };
   },
   actions: {
+    //获取热点新闻
+    async getHotnews(curIndex: number) {
+      const res = await GetHotnews({ pageNo: curIndex, pageSize: 4 });
+      this.HotNews = res.data.value.data || [];
+    },
+    async getWapper() {
+      const res = await GetWrapper();
+      this.Wrapper = res.data.value.data || [];
+    },
     async ChangeHeader(headerType: any) {
       this.header = headerType;
     },

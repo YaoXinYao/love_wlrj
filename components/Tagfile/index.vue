@@ -6,7 +6,7 @@
       :data="Filelist.dataList"
       style="width: 100%"
     >
-      <el-table-column label="文件名" min-width="60" show-overflow-tooltip>
+      <el-table-column label="文件名" min-width="70" show-overflow-tooltip>
         <template #default="scope">
           <svg class="icon" aria-hidden="true">
             <use
@@ -19,15 +19,28 @@
       <el-table-column property="uploadDate" label="时间" min-width="60" />
       <el-table-column
         property="uploadName"
+        min-width="30"
         label="上传者"
         show-overflow-tooltip
       />
       <el-table-column
         property="fileSize"
+        min-width="30"
         label="文件大小"
         show-overflow-tooltip
       />
-      <el-table-column property="address" label="操作" show-overflow-tooltip>
+      <el-table-column
+        min-width="30"
+        property="collections"
+        label="收藏数量"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        property="address"
+        label="操作"
+        show-overflow-tooltip
+        min-width="60"
+      >
         <template #default="scope">
           <ElButton
             type="primary"
