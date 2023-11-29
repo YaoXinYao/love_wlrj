@@ -103,6 +103,11 @@ export const getAllTypes = () => {
   return hyRequest.get<IResultData<any>>(`/access/type/list`);
 };
 
+//根据id搜索类别
+export const getTypesByIdService = (id: number) => {
+  return hyRequest.get<IResultData<any>>(`/access/type/get`, { id });
+};
+
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
   return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, "", {
@@ -158,4 +163,18 @@ export const getScoreByAccessService = (props: {
     `/access/grade/getGradeByStudentId`,
     props
   );
+};
+
+//添加面评
+export const addInterviewService = (props: {
+  content: string;
+  PId: number;
+  studentId: number;
+}) => {
+  return hyRequest.post<IResultData<any>>(`/access/interview/add`, props);
+};
+
+//获得面评
+export const getInterviewService = (props: { id: number; pId: number }) => {
+  return hyRequest.get<IResultData<any>>(`/access/interview/add`, props);
 };

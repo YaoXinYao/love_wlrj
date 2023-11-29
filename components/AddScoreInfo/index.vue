@@ -93,7 +93,7 @@ const scoreInfoRef = ref();
 const scoreInfo = reactive<ScoreAddType>({
   pid: -1,
   scores: [],
-  studentId: null,
+  studentId: "",
 });
 
 //弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
@@ -105,7 +105,7 @@ watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
 });
 
-const emit = defineEmits(["addAlert", "update_event"]);
+const emit = defineEmits(["addAlert", "update_score_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
@@ -178,7 +178,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           message: "添加成功",
         });
         formEl.resetFields();
-        emit("update_event", true);
+        emit("update_score_event", true);
         dialogVisible.value = false;
       } else {
         ElMessage({

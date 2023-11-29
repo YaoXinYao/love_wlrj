@@ -9,18 +9,25 @@ export const useMessageStore = defineStore("messageStore", {
     return {
       pageInfo: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 5,
         total: 0,
       },
-      curType: "PostCollect",
+      // curType: "PostCollect",
+      curType: "PostLike",
+      infoList: [],
     };
   },
   actions: {
-    async ChangePageInfo(props: MessagePageInfoType) {
+    ChangePageInfo(props: MessagePageInfoType) {
+      console.log(props);
       this.pageInfo = props;
     },
-    async ChangeCurType(type: MessageTypes) {
+    ChangeCurType(type: MessageTypes) {
       this.curType = type;
+    },
+
+    ChangeInfoList(info: any) {
+      this.infoList = info;
     },
   },
   //持久化操作

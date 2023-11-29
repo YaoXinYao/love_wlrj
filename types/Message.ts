@@ -15,6 +15,7 @@ export type MessageTypes =
 export interface MessageType {
   pageInfo: MessagePageInfoType;
   curType: MessageTypes;
+  infoList: any;
 }
 
 export interface MessagePageInfoType {
@@ -35,4 +36,3 @@ export interface MessageInfoResType {
   msgTime: string;
   msgType: MessageTypes;
 }
-

@@ -83,6 +83,18 @@
 
         <div class="messageContainer">
           <NuxtPage class="animate__animated animate__fadeIn"></NuxtPage>
+          <el-pagination
+            v-show="pageInfo.total"
+            style="height: 100px; width: max-content; margin-left: 10px"
+            v-model:current-page="pageInfo.currentPage"
+            v-model:page-size="pageInfo.pageSize"
+            :page-sizes="[5, 10, 15]"
+            :background="true"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageInfo.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
         </div>
       </div>
     </div>
@@ -98,6 +110,10 @@ import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
+import { useMessageStore } from "~/store/message";
+import { useGetMessageInfo } from "../hooks/useGetMessageInfo";
+const messageStore = useMessageStore();
+const { curType, pageInfo, infoList } = storeToRefs(messageStore);
 const route = useRoute();
 let notReadInfo = reactive({
   commentLikeCnt: 0,
@@ -106,6 +122,11 @@ let notReadInfo = reactive({
   postCommentCnt: 0,
   postLikeCnt: 0,
 });
+
+onMounted(() => {
+  getInfo();
+});
+
 const { status, data, send, open, close } = useWebSocket(
   `ws://152.136.161.44:19491/forum/swagger/forum/websocket/${userinfo.value.userId}`,
   {
@@ -134,15 +155,6 @@ const { status, data, send, open, close } = useWebSocket(
   }
 );
 
-// watch(status, (newStatus) => {
-//   console.log(newStatus);
-
-//   if (newStatus === "OPEN") {
-//     console.log("WebSocket connection established");
-//     // 连接成功的回调代码
-//   }
-// });
-
 let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
 const {
   commentLikeCnt,
@@ -157,6 +169,38 @@ notReadInfo.postCollectCnt = postCollectCnt;
 notReadInfo.postCommentCnt = postCommentCnt;
 notReadInfo.postLikeCnt = postLikeCnt;
 console.log(notReadInfoRes);
+
+const getInfo = async () => {
+  let messageRes = await useGetMessageInfo({
+    pageNo: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+    type: curType.value,
+    userId: userinfo.value.userId,
+  });
+
+  console.log(messageRes);
+  if (messageRes) {
+    let { current, pages, total, pageSize } = messageRes?.resPageInfo;
+    messageStore.ChangePageInfo({
+      pageSize: pageSize,
+      currentPage: current,
+      total: total,
+    });
+
+    infoList.value = messageRes.infoResList;
+    console.log(pageInfo.value);
+  }
+};
+
+const handleSizeChange = (val: number) => {
+  pageInfo.value.pageSize = val;
+  getInfo();
+};
+
+const handleCurrentChange = (val: number) => {
+  pageInfo.value.currentPage = val;
+  getInfo();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -176,21 +220,22 @@ console.log(notReadInfoRes);
   background-image: url("@/assets/image/messageBg.png");
   // background-image: linear-gradient(to right, #74ebd5 0%, #9face6 100%);
   width: 100%;
-  height: 100vh;
+  // height: 100vh;
   overflow: hidden;
 }
 
 .mainContent {
   display: flex;
   width: $originalWidth;
-  height: calc(100% - 200px);
+  // height: calc(100% - 200px);
   margin: 0 auto;
   margin-top: 175px;
+  padding-bottom: 50px;
 }
 
 .siderBar {
   width: 150px;
-  height: 100%;
+  height: max-content;
   background-color: #8babfc;
   border-radius: 5px;
   color: #fff;
@@ -240,11 +285,19 @@ console.log(notReadInfoRes);
 //   animation: slideOutLeft 0.3s;
 // }
 .messageContainer {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  justify-content: space-between;
   flex: 1;
   background-color: rgba(#fff, 0.7);
   margin-left: 20px;
-  height: 100%;
-  overflow: auto;
+  height: max-content;
+  position: relative;
+  border-radius: 10px;
+  overflow-x: hidden;
+  min-height: 400px;
+  // overflow: auto;
 }
 
 .active {

@@ -137,9 +137,12 @@ const props = defineProps({
 });
 
 let dialogVisible = ref(false);
+const accessInfoRef = ref<FormInstance>();
 
 //弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
 const changeState = () => {
+  console.log("关闭");
+
   dialogVisible.value = false;
 };
 
@@ -151,13 +154,15 @@ const emit = defineEmits(["addAlert", "update_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   dialogVisible.value = newValue;
   emit("addAlert", dialogVisible.value);
+  if (!newValue) {
+    accessInfoRef.value?.resetFields();
+  }
 });
 
-const accessInfoRef = ref<FormInstance>();
 const accessInfo = reactive<AddAccessType>({
   plan: "",
   typeId: undefined,
-  type: "笔试",
+  type: "",
   deadline: "",
   subscribers: "",
   additional: "",
@@ -232,32 +237,43 @@ const addAccess = () => {
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  formEl.validate(async (valid) => {
+  const result = await formEl.validate((valid) => {
     if (valid) {
-      let sum: number = 0;
-      for (let i = 0; i < accessInfo.types.length; i++) {
-        sum = sum * 1 + accessInfo.types[i].rate * 1;
-      }
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "请完善表单",
+      });
+    }
+  });
+  if (result) {
+    let obj = accessInfo;
+    console.log(accessInfo);
+    console.log(obj);
 
-      if (sum != 1) {
-        ElMessage({
-          type: "warning",
-          message: "考核项分数百分比和为1",
-        });
-        return;
-      }
+    let sum: number = 0;
+    for (let i = 0; i < accessInfo.types.length; i++) {
+      sum = sum * 1 + accessInfo.types[i].rate * 1;
+    }
 
-      let res = await addAccessService(accessInfo);
+    if (sum != 1) {
+      ElMessage({
+        type: "warning",
+        message: "考核项分数百分比和为1",
+      });
+      return;
+    }
+
+    addAccessService(accessInfo).then((res) => {
       console.log(accessInfo);
 
-      console.log(res);
+      console.log(res.data.value);
 
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
           message: "添加成功",
         });
-        formEl.resetFields();
         emit("update_event", true);
         dialogVisible.value = false;
       } else if (res.data.value.code === 52003) {
@@ -271,13 +287,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           message: "添加失败，请检查网络",
         });
       }
-    } else {
-      ElMessage({
-        type: "warning",
-        message: "请完善表单",
-      });
-    }
-  });
+    });
+  }
 };
 </script>
 

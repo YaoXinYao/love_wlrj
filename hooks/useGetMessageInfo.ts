@@ -6,6 +6,8 @@ import type { GetMessagePropsType, MessageInfoResType } from "~/types/Message";
 export const useGetMessageInfo = async (
   messageInfoProps: GetMessagePropsType
 ) => {
+  console.log(messageInfoProps);
+
   const messageInfoData = reactive<{ data: Array<MessageInfoResType> }>({
     data: [],
   });
@@ -14,13 +16,20 @@ export const useGetMessageInfo = async (
   );
 
   let messageInfoRes = await getMessageInfo(messageInfoProps);
+  console.log(messageInfoRes);
+
   let baseInfo = messageInfoRes.data.value.data;
+  messageInfoData.data = baseInfo.records;
+  if (messageInfoData.data.length == 0) {
+    return null;
+  }
   let resPageInfo = {
     current: baseInfo.current,
     pages: baseInfo.pages,
+    total: baseInfo.total,
+    pageSize: baseInfo.size,
   };
 
-  messageInfoData.data = baseInfo.records;
   for (let i = 0; i < messageInfoData.data.length; i++) {
     //查询信息发送者信息
     let userInfoRes = await getUserInfoById(messageInfoData.data[i].msgSend);

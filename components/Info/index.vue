@@ -1,5 +1,5 @@
 <template>
-  <div class="item" v-show="isShow" ref="target">
+  <div class="item" ref="target">
     {{ props.data.id }}
     <div class="noticeContent">
       {{ props.data.info }}
@@ -15,21 +15,48 @@
 <script setup lang="ts">
 import { Delete } from "@element-plus/icons-vue";
 import { deleteMessageInfoService, updateMsgStatus } from "~/service/message";
-import { useIntersectionObserver } from "@vueuse/core";
 import { useObserver } from "~/hooks/useObserver";
+import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
+import { useMessageStore } from "~/store/message";
+import { storeToRefs } from "pinia";
+const messageStore = useMessageStore();
+const { infoList, pageInfo, curType } = storeToRefs(messageStore);
+import { useHomestore } from "~/store/home";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
 const props = defineProps(["data", "type"]);
-console.log(props.data);
 const target = ref();
-let isShow = ref(true);
+
+const emit = defineEmits(["addAlert", "info_event"]);
 
 const deleteMessage = async () => {
   let res = await deleteMessageInfoService([props.data.id]);
+
   if (res.data.value.code == 20000) {
     ElMessage({
       type: "success",
       message: "删除成功",
     });
-    isShow.value = false;
+    let messageRes = await useGetMessageInfo({
+      pageNo: pageInfo.value.currentPage,
+      pageSize: pageInfo.value.pageSize,
+      type: curType.value,
+      userId: userinfo.value.userId,
+    });
+
+    console.log(messageRes);
+
+    if (messageRes) {
+      let { current, pages, total, pageSize } = messageRes?.resPageInfo;
+      messageStore.ChangePageInfo({
+        pageSize: pageSize,
+        currentPage: current,
+        total: total,
+      });
+
+      infoList.value = messageRes.infoResList;
+      console.log(pageInfo.value);
+    }
   } else {
     ElMessage({
       type: "error",
@@ -65,7 +92,7 @@ useObserver(target, updateMsgStatus, props.data.id);
   border-radius: 5px;
   box-shadow: 1px 2px 5px #d9d9d9;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   &:hover {
     .deleteBox {

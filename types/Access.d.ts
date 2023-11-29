@@ -37,6 +37,7 @@ export interface AccessResInfoType {
   subscribers: string;
   type: string;
   typeId: number | null;
+  typeName?: string;
   updateTime: string | null;
   sonTable?: Array<any>;
 }
@@ -47,8 +48,10 @@ export interface AccessPageInfoType {
   total: number;
 }
 export interface AccessStoreType {
-  pageInfo: { currentPage: number; pageSize: number; total: number };
-  searchKey: string;
+  managePageInfo: { currentPage: number; pageSize: number; total: number };
+  manageSearchKey: string;
+  selfPageInfo: { currentPage: number; pageSize: number; total: number };
+  selfSearchKey: string;
 }
 
 export interface ScoreType {
@@ -59,7 +62,7 @@ export interface ScoreType {
 export interface ScoreAddType {
   pid: number;
   scores: Array<ScoreType>;
-  studentId: string | null;
+  studentId: string;
 }
 
 export interface ScorePageInfoListType {

@@ -8,11 +8,12 @@
     <AddScoreInfo
       :dialogVisible="scoreDialogVisible"
       @addAlert="scoreHandle"
+      @update_score_event="updateScoreEvent"
       ref="addScoreRef"
     />
-    <el-form :inline="true" :model="searchKeys">
+    <el-form :inline="true" :model="manageSearchKeys">
       <el-form-item label="考核名称"
-        ><el-input v-model="searchKey" placeholder="考核名称" clearable
+        ><el-input v-model="manageSearchKey" placeholder="考核名称" clearable
       /></el-form-item>
       <el-form-item>
         <el-button type="primary" @click="searchAccess">搜索</el-button>
@@ -68,21 +69,32 @@
                   </div>
                 </template>
               </el-table-column>
+              <el-table-column label="姓名" prop="name" />
+              <el-table-column label="学号" prop="studentId" />
               <el-table-column
                 v-for="(item, index) in props.row.templates"
                 :key="index"
                 :label="item.name"
                 :prop="item.name"
               />
+
+              <el-table-column label="操作"
+                ><el-button type="warning" @click="updateScore(props.row)"
+                  >修改</el-button
+                >
+                <el-button type="danger" @click="deleteScore(props.row)"
+                  >删除</el-button
+                ></el-table-column
+              >
             </el-table>
             <div class="pagination">
               <el-pagination
-                v-model:current-page="props.row.pageInfo.pageIndex"
-                v-model:page-size="props.row.pageInfo.allPage"
+                v-model:current-page="props.row.managePageInfo.pageIndex"
+                v-model:page-size="props.row.managePageInfo.allPage"
                 :page-sizes="[5, 10, 15, 20]"
                 small
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="props.row.pageInfo.allCount"
+                :total="props.row.managePageInfo.allCount"
                 @size-change="handleScoreSizeChange"
                 @current-change="handleScoreCurrentChange"
               />
@@ -96,13 +108,13 @@
           ><el-tag size="large">{{ scope.row.type }}</el-tag></template
         >
       </el-table-column>
-      <!-- <el-table-column label="考核类型" prop="assessType">
+      <el-table-column label="考核类型" prop="assessType">
         <template #default="scope"
           ><el-tag size="large" type="success">{{
-            scope.row.assessType
+            scope.row.typeName
           }}</el-tag></template
         >
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="发起者" prop="publisherName" />
       <el-table-column label="考核对象" prop="subscribers" />
       <el-table-column label="考核时间" prop="deadline" />
@@ -127,12 +139,12 @@
     </el-table>
     <el-pagination
       style="margin-top: 20px"
-      v-model:current-page="pageInfo.currentPage"
-      v-model:page-size="pageInfo.pageSize"
+      v-model:current-page="managePageInfo.currentPage"
+      v-model:page-size="managePageInfo.pageSize"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="pageInfo.total"
+      :total="managePageInfo.total"
       @size-change="handleSizeChange"
       @current-change="handleCurChange"
     />
@@ -147,6 +159,7 @@ import {
   getAllAccessService,
   getScoreByAccessService,
   getTemplateService,
+  getTypesByIdService,
   getUserInfoById,
 } from "~/service/user";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
@@ -163,7 +176,7 @@ const accessDialogVisible = ref(false);
 const scoreDialogVisible = ref(false);
 const addScoreNeedInfo = ref<AccessResInfoType>();
 const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
-const { pageInfo, searchKey } = storeToRefs(AccessPageInfoStore);
+const { managePageInfo, manageSearchKey } = storeToRefs(AccessPageInfoStore);
 
 const rowKeyArr = ref<any>([]);
 
@@ -186,6 +199,7 @@ const getAccessInfo = async (props: {
   });
 
   accessInfo.value = accessInfoRes.data.value.data.records;
+  console.log(accessInfo.value);
 
   if (accessInfo.value) {
     for (let i = 0; i < accessInfo.value.length; i++) {
@@ -195,24 +209,31 @@ const getAccessInfo = async (props: {
       } else {
         accessInfo.value[i].publisherName = "未知";
       }
-      // let scores = await getScoreByAccessService({
-      //   nodePage: 1,
-      //   pageSize: 10,
-      //   pId: accessInfo.value[i].id,
-      // });
-      // console.log(scores);
-      // accessInfo.value[i].sonTable=scores.data.value.data.records
+      let typeName = "未知";
+      if (accessInfo.value[i].typeId) {
+        let typeNameRes = await getTypesByIdService(
+          accessInfo.value[i].typeId as number
+        );
+        if (typeNameRes.data.value.code == 20000) {
+          typeName = typeNameRes.data.value.data;
+        }
+      }
+      accessInfo.value[i].typeName = typeName;
     }
   }
-  pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
-  pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
-  pageInfo.value.total = accessInfoRes.data.value.data.total;
+  managePageInfo.value.currentPage = accessInfoRes.data.value.data.current;
+  managePageInfo.value.pageSize = accessInfoRes.data.value.data.size;
+  managePageInfo.value.total = accessInfoRes.data.value.data.total;
   isLoading.value = false;
 };
 
-const onExpand = async (row: any, expend: any) => {
-  let pageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
-  row.pageInfo = pageInfo;
+const onExpand = async (row: any, expandedRows: any) => {
+  if (!expandedRows.includes(row)) {
+    return;
+  }
+
+  let managePageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
+  row.managePageInfo = managePageInfo;
   let ids = handleRow(row);
   let index = rowKeyArr.value?.indexOf(ids);
   if (index === -1) {
@@ -221,24 +242,24 @@ const onExpand = async (row: any, expend: any) => {
     rowKeyArr.value?.splice(index, 1);
   }
 
-  console.log(row.id);
-
   let templateRes = await getTemplateService(row.id);
+  if (templateRes.data.value.code == 400006) {
+    return;
+  }
+
   let scoreInfoRes = await getScoreByAccessService({
     nodePage: 1,
     pageSize: 2,
     pId: row.id,
   });
-  console.log(scoreInfoRes);
 
   if (scoreInfoRes.data.value.code == 20000) {
     let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
-    pageInfo = { pageIndex, allPage, allCount, size };
-    row.pageInfo = pageInfo;
+    managePageInfo = { pageIndex, allPage, allCount, size };
+    row.managePageInfo = managePageInfo;
     const list = scoreInfoRes.data.value.data.list;
     let scoreList = new Array(list.length);
     row.templates = templateRes.data.value.data.types;
-    console.log(list);
 
     for (let i = 0; i < list.length; i++) {
       let scores = list[i].scores;
@@ -247,8 +268,11 @@ const onExpand = async (row: any, expend: any) => {
       for (let j = 0; j < scores.length; j++) {
         obj[scores[j].name] = scores[j].score;
       }
+      let studentNameRes = await getUserInfoById(list[i].studentId);
+
+      obj["name"] = studentNameRes.data.value.data.userName;
+      obj["studentId"] = studentNameRes.data.value.data.userAccount;
       scoreList.push(obj);
-      console.log(scoreList);
     }
     row.scoreList = scoreList;
   } else {
@@ -257,59 +281,59 @@ const onExpand = async (row: any, expend: any) => {
 };
 
 const resetInfo = () => {
-  pageInfo.value.currentPage = 1;
-  searchKey.value = "";
+  managePageInfo.value.currentPage = 1;
+  manageSearchKey.value = "";
   getAccessInfo({
     keyword: "",
-    currentPage: pageInfo.value.currentPage,
-    pageSize: pageInfo.value.pageSize,
+    currentPage: managePageInfo.value.currentPage,
+    pageSize: managePageInfo.value.pageSize,
   });
 };
 
 const searchAccess = async () => {
-  if (searchKey.value == "") {
+  if (manageSearchKey.value == "") {
     ElMessage({
       type: "warning",
       message: "请输入关键词",
     });
   } else {
-    pageInfo.value.currentPage = 1;
+    managePageInfo.value.currentPage = 1;
     const accessInfoRes = await getAllAccessService({
-      name: searchKey.value,
+      name: manageSearchKey.value,
       nodePage: 1,
-      pageSize: pageInfo.value.pageSize,
+      pageSize: managePageInfo.value.pageSize,
     });
     accessInfo.value = accessInfoRes.data.value.data.records;
-    pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
-    pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
-    pageInfo.value.total = accessInfoRes.data.value.data.total;
+    managePageInfo.value.currentPage = accessInfoRes.data.value.data.current;
+    managePageInfo.value.pageSize = accessInfoRes.data.value.data.size;
+    managePageInfo.value.total = accessInfoRes.data.value.data.total;
   }
 };
 
 getAccessInfo({
-  keyword: searchKey.value,
-  currentPage: pageInfo.value.currentPage,
-  pageSize: pageInfo.value.pageSize,
+  keyword: manageSearchKey.value,
+  currentPage: managePageInfo.value.currentPage,
+  pageSize: managePageInfo.value.pageSize,
 });
 
 const handleSizeChange = async (val: number) => {
-  pageInfo.value.pageSize = val;
+  managePageInfo.value.pageSize = val;
   getAccessInfo({
-    keyword: searchKey.value,
-    currentPage: pageInfo.value.currentPage,
-    pageSize: pageInfo.value.pageSize,
+    keyword: manageSearchKey.value,
+    currentPage: managePageInfo.value.currentPage,
+    pageSize: managePageInfo.value.pageSize,
   });
 };
 const handleCurChange = async (val: number) => {
-  pageInfo.value.currentPage = val;
+  managePageInfo.value.currentPage = val;
   getAccessInfo({
-    keyword: searchKey.value,
-    currentPage: pageInfo.value.currentPage,
-    pageSize: pageInfo.value.pageSize,
+    keyword: manageSearchKey.value,
+    currentPage: managePageInfo.value.currentPage,
+    pageSize: managePageInfo.value.pageSize,
   });
 };
 
-let searchKeys = reactive({
+let manageSearchKeys = reactive({
   accessName: "",
   accessPromoter: "",
   accessTarget: "",
@@ -352,11 +376,20 @@ const scoreHandle = (props: boolean) => {
   scoreDialogVisible.value = props;
 };
 const updateEvent = (props: boolean) => {
-  searchKey.value = "";
+  manageSearchKey.value = "";
   if (props) {
     getAccessInfo({
-      currentPage: pageInfo.value.currentPage,
-      pageSize: pageInfo.value.pageSize,
+      currentPage: managePageInfo.value.currentPage,
+      pageSize: managePageInfo.value.pageSize,
+    });
+  }
+};
+
+const updateScoreEvent = (props: boolean) => {
+  if (props) {
+    getAccessInfo({
+      currentPage: managePageInfo.value.currentPage,
+      pageSize: managePageInfo.value.pageSize,
     });
   }
 };
@@ -374,9 +407,9 @@ const deleteAccess = (ids: Array<number>) => {
           message: "删除成功",
         });
         getAccessInfo({
-          keyword: searchKey.value,
-          currentPage: pageInfo.value.currentPage,
-          pageSize: pageInfo.value.pageSize,
+          keyword: manageSearchKey.value,
+          currentPage: managePageInfo.value.currentPage,
+          pageSize: managePageInfo.value.pageSize,
         });
       } else {
         ElMessage({
@@ -398,6 +431,14 @@ const handleScoreSizeChange = (val: number) => {
 };
 const handleScoreCurrentChange = (val: number) => {
   console.log(val);
+};
+
+const deleteScore = (row: any) => {
+  console.log(row);
+};
+
+const updateScore = (row: any) => {
+  console.log(row);
 };
 </script>
 
