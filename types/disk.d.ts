@@ -38,10 +38,15 @@ export interface Diskstore {
   };
   Myfile: {
     Search?: string;
+    SearchItem: Fileprops[];
     curIndex: number;
     PageSize: number;
     Loading: boolean;
     FileList: Filelist;
+  };
+  Diskinfo: {
+    diskFileNumber: number;
+    diskFileSize: string;
   };
 }
 export interface Fileprops {

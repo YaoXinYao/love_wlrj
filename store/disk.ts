@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { LookMyfile } from "~/service/disk";
+import { GetDisjinfo, LookMyfile } from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
@@ -73,6 +73,7 @@ export const useDiskstore = defineStore("disk", {
         curIndex: 1,
         PageSize: 10,
         Loading: false,
+        SearchItem: [],
         FileList: {
           allPage: 0,
           count: 0,
@@ -81,9 +82,19 @@ export const useDiskstore = defineStore("disk", {
           pageSize: 0,
         },
       },
+      //网盘信息总览
+      Diskinfo: {
+        diskFileNumber: 0,
+        diskFileSize: "",
+      },
     };
   },
   actions: {
+    //获取网盘信息
+    async getDiskinfo() {
+      const res = await GetDisjinfo();
+      this.Diskinfo = res.data.value.data;
+    },
     //改变我的收藏中的页数
     changeMylovePageSize(val: number) {
       this.Mylove.PageSize = val;

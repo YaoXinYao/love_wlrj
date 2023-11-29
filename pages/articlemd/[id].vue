@@ -25,7 +25,7 @@
           }`"
         ></i>
       </div>
-      <div class="optionsitem">
+      <div class="optionsitem" @click="copyURL">
         <i class="iconfont icon-JC_054"></i>
       </div>
     </div>
@@ -43,6 +43,9 @@ console.log(data.value);
 markText.value = data.value.data.newsContent;
 function changewide() {
   iswidescreen.value = !iswidescreen.value;
+}
+function copyURL() {
+  copyToClipboard(window.location + route.fullPath);
 }
 </script>
 <style scoped lang="scss">

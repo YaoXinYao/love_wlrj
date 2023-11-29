@@ -18,6 +18,7 @@
   </div>
 </template>
 <script setup lang="ts">
+const route = useRouter();
 const props = defineProps({
   num: {
     require: true,

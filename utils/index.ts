@@ -127,9 +127,9 @@ export const copyToClipboard = async (text: string): Promise<void> => {
     const newtext = `@未来软件所有：
     ${text}`;
     await navigator.clipboard.writeText(newtext);
-    ElMessage({ message: "复制连接成功", type: "success" });
+    ElMessage({ message: "复制链接成功", type: "success" });
   } catch (err) {
-    ElMessage({ message: "复制连接失败", type: "error" });
+    ElMessage({ message: "复制链接失败", type: "error" });
   }
 };
 //匹配后缀

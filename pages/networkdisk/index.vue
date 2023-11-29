@@ -1,8 +1,14 @@
 <template>
   <div class="actionPage">
     <div class="Diskheader">
-      <NumberScorll :num="num" :duration="1" />
-      <span class="DiskNum"> 文件总数 </span>
+      <div class="left">
+        <NumberScorll :num="Diskinfo.diskFileNumber" :duration="1" />
+        <span class="DiskNum"> 文件总数 </span>
+      </div>
+      <div class="right">
+        <p class="size">{{ Diskinfo.diskFileSize }}</p>
+        <span class="DiskNum"> 网盘已存 </span>
+      </div>
     </div>
     <div class="diskcontainer">
       <div
@@ -60,7 +66,11 @@
 </template>
 
 <script setup lang="ts">
-const num = ref(50);
+import { storeToRefs } from "pinia";
+import { useDiskstore } from "~/store/disk";
+const homestore = useDiskstore();
+const { Diskinfo } = storeToRefs(homestore);
+console.log(Diskinfo.value);
 //切换侧栏图片
 const curIndex = ref(0);
 const imgdata = ref([
@@ -70,7 +80,6 @@ const imgdata = ref([
   "/images/myfile.png",
 ]);
 </script>
-
 <style scoped lang="scss">
 .actionPage {
   width: 100%;
@@ -81,9 +90,19 @@ const imgdata = ref([
   .Diskheader {
     height: 1.5rem;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 1.3rem;
     .DiskNum {
       font-weight: bold;
       padding-left: 0.1rem;
+    }
+    .right {
+      .size {
+        padding-top: 0.1rem;
+        font-size: 0.5rem;
+        color: #06a8ff;
+      }
     }
   }
   .diskcontainer {

@@ -69,3 +69,7 @@ export function FileToPublic(params: ToProvate) {
     ...params,
   });
 }
+// 获取网盘总览信息
+export function GetDisjinfo() {
+  return Hyrequire.get("/disk/disk/file/getDiskOverview");
+}

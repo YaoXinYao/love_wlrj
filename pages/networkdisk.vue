@@ -41,6 +41,9 @@
 
 <script setup lang="ts">
 useHeader();
+import { useDiskstore } from "~/store/disk";
+const homestore = useDiskstore();
+homestore.getDiskinfo();
 import { useWebSocket } from "@vueuse/core";
 import type { MessageType } from "~/types/disk";
 const { status, data, send, open, close } = useWebSocket(

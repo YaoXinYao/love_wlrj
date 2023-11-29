@@ -8,9 +8,16 @@
           :value="Myfile.FileList.count"
         />
       </el-col>
-      <NuxtLink class="headerUp" to="/networkdisk/uploadfile">
-        <TransitionButton innertext="继续上传" />
-      </NuxtLink>
+      <div class="headereright">
+        <div class="Search" @click="dialogVisible = true">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-sousuo"></use>
+          </svg>
+        </div>
+        <NuxtLink class="headerUp" to="/networkdisk/uploadfile">
+          <TransitionButton innertext="继续上传" />
+        </NuxtLink>
+      </div>
     </div>
     <div class="filelist">
       <el-empty
@@ -84,6 +91,24 @@
         :total="Myfile.FileList.count"
       />
     </div>
+    <el-dialog v-model="dialogVisible" title="搜索我的文件" width="50%">
+      <el-input
+        v-model="Myfile.Search"
+        class="w-50 m-2"
+        size="large"
+        placeholder="输入文件名"
+      />
+      <el-table :data="Myfile.SearchItem" style="width: 100%">
+        <el-table-column prop="name" label="文件名" width="180" />
+        <el-table-column prop="uploadDate" label="上传时间" width="180" />
+        <el-table-column prop="fileSize" label="文件大小" width="180" />
+      </el-table>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -91,6 +116,7 @@ import { storeToRefs } from "pinia";
 import { FileToPrivate, FileToPublic } from "~/service/disk";
 import { useDiskstore } from "~/store/disk";
 const diskstore = useDiskstore();
+const dialogVisible = ref(false);
 const Filepublic = ref<{
   [key: string]: {
     public: boolean;
@@ -152,6 +178,20 @@ onMounted(async () => {
     .headerUp {
       display: block;
       width: 1.5rem;
+    }
+    .headereright {
+      display: flex;
+      .Search {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.08rem;
+        cursor: pointer;
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 50%;
+        margin-right: 0.4rem;
+      }
     }
   }
 }
