@@ -11,6 +11,11 @@
       </div>
       <nav :class="header.isSpread ? 'NavBar' : 'NavBar2'">
         <div class="HeaderNavItem">
+          <NuxtLink to="/blog">
+            <span>博客展示</span>
+          </NuxtLink>
+        </div>
+        <!--  <div class="HeaderNavItem">
           <span>
             产品
             <i
@@ -35,7 +40,7 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
         <div class="HeaderNavItem">
           <NuxtLink to="/networkdisk">
             <span
@@ -111,9 +116,6 @@
           </span>
           <div class="header-dropdown">
             <ul>
-              <li>
-                <NuxtLink to="/blog">博客展示</NuxtLink>
-              </li>
               <li>
                 <NuxtLink to="/grouphistory">小组历程</NuxtLink>
               </li>

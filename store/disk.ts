@@ -1,6 +1,6 @@
-import { number } from "echarts";
 import { defineStore } from "pinia";
-import { getAlltag, getFileTaglist, getFilelist } from "~/service/homeApi";
+import { GetDisjinfo, LookMyfile } from "~/service/disk";
+import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
   state(): Diskstore {
@@ -55,9 +55,50 @@ export const useDiskstore = defineStore("disk", {
         },
       },
       //我的收藏列表
+      Mylove: {
+        Search: "",
+        curIndex: 1,
+        PageSize: 10,
+        Loading: false,
+        FileList: {
+          allPage: 0,
+          count: 0,
+          dataList: [],
+          index: 0,
+          pageSize: 0,
+        },
+      },
+      Myfile: {
+        Search: "",
+        curIndex: 1,
+        PageSize: 10,
+        Loading: false,
+        SearchItem: [],
+        FileList: {
+          allPage: 0,
+          count: 0,
+          dataList: [],
+          index: 0,
+          pageSize: 0,
+        },
+      },
+      //网盘信息总览
+      Diskinfo: {
+        diskFileNumber: 0,
+        diskFileSize: "",
+      },
     };
   },
   actions: {
+    //获取网盘信息
+    async getDiskinfo() {
+      const res = await GetDisjinfo();
+      this.Diskinfo = res.data.value.data;
+    },
+    //改变我的收藏中的页数
+    changeMylovePageSize(val: number) {
+      this.Mylove.PageSize = val;
+    },
     //清除filequeue
     async updatefilequeue() {
       this.filequeue = [];
@@ -113,6 +154,30 @@ export const useDiskstore = defineStore("disk", {
       this.Filelist = res.data.value.data;
       this.Loading = false;
     },
+    //获取我的收藏
+    async getMylove() {
+      //标签分类查询
+      this.Mylove.Loading = true;
+      const res = await GetMylovefile({
+        index: this.Mylove.curIndex,
+        pageSize: this.Mylove.PageSize,
+        types: "",
+      });
+      this.Mylove.FileList = res.data.value.data;
+      this.Mylove.Loading = false;
+    },
+    //获取我的文件
+    async getMyfile() {
+      this.Myfile.Loading = true;
+      const res = await LookMyfile({
+        index: this.Myfile.curIndex,
+        pageSize: this.Myfile.PageSize,
+        userId: Authuserid(),
+      });
+      console.log(res.data.value.data);
+      this.Myfile.FileList = res.data.value.data;
+      this.Myfile.Loading = false;
+    },
     async getNameFile() {
       this.Loading2 = true;
       setTimeout(() => {
@@ -158,6 +223,17 @@ export const useDiskstore = defineStore("disk", {
       this.Filelist.dataList[index].is_collection == 0
         ? (this.Filelist.dataList[index].is_collection = 1)
         : (this.Filelist.dataList[index].is_collection = 0);
+    },
+    //Mylove收藏
+    async changeUncomment2(id: number) {
+      console.log(id);
+      const index = this.Mylove.FileList.dataList.findIndex(
+        (item) => item.id == id
+      );
+      console.log(index);
+      this.Mylove.FileList.dataList[index].is_collection == 0
+        ? (this.Mylove.FileList.dataList[index].is_collection = 1)
+        : (this.Mylove.FileList.dataList[index].is_collection = 0);
     },
   },
 });

@@ -1,13 +1,23 @@
 <template>
   <div class="article">
     <div :class="`articleleft ${iswidescreen ? 'activeleft' : ''}`">
+      <h1>{{ data.data.newsTitle }}</h1>
+      <h4>{{ data.data.newsTime }}</h4>
       <MarkdownDis :mark-text="markText" />
     </div>
-    <div :class="`articleright ${iswidescreen ? 'activeright' : ''}`"></div>
-    <div class="markdownoptions">
-      <div class="optionsitem">
-        <i class="iconfont icon-zan-copy"></i>
+    <div :class="`articleright ${iswidescreen ? 'activeright' : ''}`">
+      <div class="headerImg">
+        <img
+          src="https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~50x50.awebp"
+          alt=""
+        />
+        <div class="authname">赵子豪</div>
       </div>
+    </div>
+    <div class="markdownoptions">
+      <!--  <div class="optionsitem">
+        <i class="iconfont icon-zan-copy"></i>
+      </div> -->
       <div class="optionsitem" @click="changewide">
         <i
           :class="`iconfont ${
@@ -15,7 +25,7 @@
           }`"
         ></i>
       </div>
-      <div class="optionsitem">
+      <div class="optionsitem" @click="copyURL">
         <i class="iconfont icon-JC_054"></i>
       </div>
     </div>
@@ -27,97 +37,15 @@ const iswidescreen = ref(false);
 const markText = ref("");
 useHeader();
 const { data, pending, error, refresh } = await useFetch<any>(
-  `http://localhost:3001/api/v1/user/${route.params.id}`
+  `/notice/news/selectById?newsId=${route.params.id}`
 );
-markText.value = `
-
-## OPPO手机商城-接口文档
-
-> baseURL：http://codercba.com:9060/oppo-nuxt/api
-
-### 1. GET-获取首页信息
-
-说明 : 调用此接口 , 获取首页商品信息
-
-\*\*请求方法 :\*\* GET 
-
-**接口地址 :** \` /
-  home /
-  info\`
-
-**必选参数 :**
-
-\`\`\`
-type: 商品类型，支持： oppo 、onePlus、intelligent, 默认是oppo
-\`\`\`
-
-
-
-**调用例子 :** \`baseURL + /home/info?type=oppo\`
-
-\`\`\`json
-{
-    "code": 200,
-    "data": {
-        "navbars": [
-
-        ],
-        "banners":[
-
-        ],
-        "categorys":[
-
-        ]
-    }
-}
-\`\`\`
-
-
-
-### 2. GET-获取OPPO商品详情信息
-
-说明 : 调用此接口 , 获取商品详情信息
-
-**请求方法 :** GET
-
-**接口地址 :** \`/oppoDetail\`
-
-**必选参数 :**  可选
-
-\`\`\`json
-type: 类型：oppo 、air、watch、tablet, 默认是oppo
-\`\`\`
-
-**调用例子 :** \`baseURL + /oppoDetail?type=oppo\`
-
-\`\`\`json
-{
-    "code": 200,
-    "data": [
-        {
-            "id": 19978,
-            "title": "Enco X 系列",
-            "productDetailss": [
-                {
-                      "categoryCode": "000020",
-                    "id": 21452,
-                    "title": "OPPO Enco X2 镜夜黑 有线充版",
-                    "marketingText": "45dB 降噪深度",
-                    "skuId": 8687,
-                    "skuName": "OPPO Enco X2 镜夜黑 有线充版",
-                    .....
-                }
-            ]
-        }
-    ]
-}
-\`\`\`
-
-
-
-`;
+console.log(data.value);
+markText.value = data.value.data.newsContent;
 function changewide() {
   iswidescreen.value = !iswidescreen.value;
+}
+function copyURL() {
+  copyToClipboard(window.location + route.fullPath);
 }
 </script>
 <style scoped lang="scss">
@@ -171,8 +99,32 @@ function changewide() {
     border-radius: 10px;
     top: 1rem;
     width: 2.5rem;
-    height: 5rem;
+    height: 2rem;
+    padding: 0.3rem;
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 20px 6px;
     background-color: rgb(255, 255, 255);
+    .headerImg {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      img {
+        height: 100%;
+        object-fit: cover;
+        height: 0.7rem;
+        width: 0.7rem;
+        border-radius: 50%;
+      }
+      .authname {
+        margin-top: 0.2rem;
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: bold;
+      }
+    }
   }
   .activeright {
     display: none;

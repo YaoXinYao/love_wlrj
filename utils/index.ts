@@ -1,10 +1,7 @@
 import SparkMD5 from "spark-md5";
 import type { FileTyperoot } from "~/types/Home";
-import { useDiskstore } from "~/store/disk";
-import { storeToRefs } from "pinia";
 import { sha256 } from "js-sha256";
-const diskstore = useDiskstore();
-const { uploadProps, filequeue } = storeToRefs(diskstore);
+//仅仅是工具函数，不能使用Pinia，store，不然会出现错误
 export function escapeMarkdown(text: string): string {
   // List of special characters in Markdown syntax
   const specialChars = /[\\`*_{}[\]()#+\-.!]/g;
@@ -130,9 +127,9 @@ export const copyToClipboard = async (text: string): Promise<void> => {
     const newtext = `@未来软件所有：
     ${text}`;
     await navigator.clipboard.writeText(newtext);
-    ElMessage({ message: "复制连接成功", type: "success" });
+    ElMessage({ message: "复制链接成功", type: "success" });
   } catch (err) {
-    ElMessage({ message: "复制连接失败", type: "error" });
+    ElMessage({ message: "复制链接失败", type: "error" });
   }
 };
 //匹配后缀
@@ -339,97 +336,7 @@ export async function Filefragmentation(
   }
 }
 //分片
-export async function startUpload(
-  file: File,
-  currentChunk: number,
-  md5: string,
-  uploadname: string,
-  curTag: number[]
-) {
-  // 分片，每片10Mb
-  const chunkSize = 1024 * 1024 * 5; // 10MB
-  const name = file.name;
-  const Size = file.size;
-  const shardCount = Math.ceil(file.size / chunkSize);
-  async function uploadNextChunk() {
-    // 新建XHR 请求
-    const xhr = new XMLHttpRequest();
-    // 分片开始的地方
-    const startByte = currentChunk * chunkSize;
-    // 分片结束的地方
-    const endByte = Math.min(startByte + chunkSize, file.size);
-    const chunk = file.slice(startByte, endByte);
-    const form = new FormData();
-    form.append("file", chunk); //slice方法用于切出文件的一部分
-    curTag.forEach((item) => {
-      form.append("fileTypeIdList", item as any);
-    });
-    form.append("fileName", name);
-    form.append("uploaderId", Authuserid() as any);
-    form.append("uploaderName", uploadname);
-    form.append("totalSize", Size as any);
-    form.append("total", shardCount as any); //总片数
-    form.append("index", currentChunk as any); //当前是第几片
-    form.append("md5", md5);
-    // 开始发送
-    try {
-      const response = await uploadChunk(xhr, form);
-      const { flag, code, message } = JSON.parse(response as string);
-      if (code == 21000) {
-        //大文件已经传过的判断
-        if (
-          code == 21000 &&
-          currentChunk == 0 &&
-          chunk.size > 1024 * 1024 * 5
-        ) {
-          diskstore.updateChunk(shardCount);
-          ElMessage({ message: `该文件已经上传过`, type: "success" });
-        } else {
-          diskstore.updatereadyByte(1); //加一片
-          ElMessage({ message: `${name}上传完成`, type: "success" });
-        }
-        //上传完成
-        return;
-      }
-      if (code == 20000) {
-        currentChunk++;
-        /**
-         * 更新正在上传第几片
-         */
-        diskstore.updateChunk(currentChunk);
-        diskstore.updatereadyByte(1); //加一片
-        await uploadNextChunk();
-      }
-    } catch (error) {
-      //如果出现错误，则重新上传本片
-      setTimeout(async () => {
-        await uploadNextChunk();
-      }, 1000);
-    }
-  }
-  //  上传单片
-  async function uploadChunk(xhr: XMLHttpRequest, formData: FormData) {
-    return new Promise((resolve, reject) => {
-      xhr.open("POST", "/disk/disk/file/shardingUpload", true);
-      xhr.upload.onprogress = function (event) {
-        if (event.lengthComputable) {
-        }
-      };
-      xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(xhr.responseText);
-        } else {
-          reject(new Error(`上传失败: ${xhr.statusText}`));
-        }
-      };
-      xhr.onerror = function () {
-        reject(new Error("上传发生错误"));
-      };
-      xhr.send(formData);
-    });
-  }
-  await uploadNextChunk();
-}
+
 //生成图标
 export function iconfontType(val: string) {
   const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;

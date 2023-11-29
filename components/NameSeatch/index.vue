@@ -51,9 +51,10 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      style="margin-top: 0.2rem"
       v-model:current-page="curIndex2"
       v-model:page-size="Pagesize2"
-      :page-sizes="[5, 10, 20, 30, 40]"
+      :page-sizes="[5, 10, 20]"
       background
       layout="sizes, prev, pager, next"
       :total="1000"
@@ -95,6 +96,7 @@ watch([Pagesize2, curIndex2, Searchtext], () => {
 
 <style scoped lang="scss">
 .filelist {
+  max-height: 80vh;
   display: flex;
   width: 100%;
   flex: 1;

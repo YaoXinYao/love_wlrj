@@ -75,6 +75,15 @@ export interface HomeStore {
   Allblog: {
     [key: string]: blogitem[];
   };
+  Wrapper: WrapperType[];
+  HotNews: NewsRoot;
+}
+//轮播图信息
+export interface WrapperType {
+  carouselId: number;
+  carouselTitle: string;
+  carouselContent: string;
+  carouselUrl: string;
 }
 export interface HomeStoreuser {
   expiresIn: number;
@@ -140,4 +149,29 @@ export interface Tagparams {
   index: number;
   pageSize: number;
   types: string;
+}
+//查询新闻
+export interface Hotnews {
+  pageNo: number;
+  pageSize: number;
+}
+export interface NewsRoot {
+  records: Record[];
+  total: number;
+  size: number;
+  current: number;
+  orders: any[];
+  hitCount: boolean;
+  countId: any;
+  maxLimit: any;
+  searchCount: boolean;
+  pages: number;
+}
+
+export interface Record {
+  newsId: number;
+  newsTitle: string;
+  newsContent: string;
+  newsImg: string;
+  newsTime: string;
 }

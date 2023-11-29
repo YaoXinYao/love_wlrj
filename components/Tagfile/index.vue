@@ -6,7 +6,7 @@
       :data="Filelist.dataList"
       style="width: 100%"
     >
-      <el-table-column label="文件名" min-width="60" show-overflow-tooltip>
+      <el-table-column label="文件名" min-width="70" show-overflow-tooltip>
         <template #default="scope">
           <svg class="icon" aria-hidden="true">
             <use
@@ -19,15 +19,28 @@
       <el-table-column property="uploadDate" label="时间" min-width="60" />
       <el-table-column
         property="uploadName"
+        min-width="30"
         label="上传者"
         show-overflow-tooltip
       />
       <el-table-column
         property="fileSize"
+        min-width="30"
         label="文件大小"
         show-overflow-tooltip
       />
-      <el-table-column property="address" label="操作" show-overflow-tooltip>
+      <el-table-column
+        min-width="30"
+        property="collections"
+        label="收藏数量"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        property="address"
+        label="操作"
+        show-overflow-tooltip
+        min-width="60"
+      >
         <template #default="scope">
           <ElButton
             type="primary"
@@ -57,9 +70,10 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      style="margin-top: 0.2rem"
       v-model:current-page="curIndex"
       v-model:page-size="Pagesize"
-      :page-sizes="[5, 10, 20, 30, 40]"
+      :page-sizes="[5, 10, 20]"
       background
       layout="sizes, prev, pager, next"
       :total="Filelist.count"
@@ -74,7 +88,6 @@ import { useDiskstore } from "~/store/disk";
 import { unCollectionFile } from "~/service/disk";
 const diskstore = useDiskstore();
 const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
-
 //收藏防抖
 const Favoritefilesend = Mythrottle(async (id: number) => {
   const res = await Favoritefile(id);
@@ -118,6 +131,7 @@ function downFile(url: string, name: string) {
 .filelist {
   display: flex;
   width: 100%;
+  max-height: 80vh;
   flex: 1;
   flex-direction: column;
   justify-content: space-between;

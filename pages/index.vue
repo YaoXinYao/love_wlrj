@@ -15,13 +15,8 @@
 <script setup lang="ts">
 import { useHomestore } from "~/store/home";
 const usehomestore = useHomestore();
+usehomestore.getWapper(); //获取轮播图
 usehomestore.ChangeisRequireanim(true);
-/* useHead({
-  script: [
-    { src: "https://api.vvhan.com/api/denglong2", async: true },
-    { src: "https://api.vvhan.com/api/snow", async: true },
-  ],
-}); */
 </script>
 <style lang="scss">
 .vvhan-com-denglong-c {
