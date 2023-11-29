@@ -3,11 +3,19 @@ import { reactive } from 'vue';
     <div class="announcement" v-loading="loading">
         <div class="content">
             <el-timeline>
+                    <el-timeline-item center placement="top" v-show="announcementList.length === 0" timestamp="2023-11-29 00:00:00">
+                        <el-card   class="card">
+                            <el-icon class="cardIcon" size="20"><CircleCloseFilled /></el-icon>
+                            <h2>暂无数据</h2>
+                        </el-card>
+                    </el-timeline-item>
                     <el-timeline-item center placement="top" v-for="item in announcementList" :key="item.noticeId" :timestamp="item.noticeTime"  >
+                        
                         <el-card @click="con(item)" class="card">
                             <el-icon class="cardIcon" @click.stop="handleDelete(item)" size="20"><CircleCloseFilled /></el-icon>
                             <h2>{{ item.noticeType }}</h2>
                         </el-card>
+                        
                     </el-timeline-item>
             </el-timeline>
         </div> 
@@ -34,7 +42,7 @@ const announceList = annoucementStore()
 handleAnnouncement({pageNo:1,pageSize:9999})
 
 const {announcementList,loading} = storeToRefs(announceList)
-console.log(announcementList)
+// console.log(announcementList)
 
 const isShow = ref(true)
 
@@ -48,13 +56,13 @@ function handleAnnouncement(query:any){
 }
 
 function con(Props:any){
-    console.log(Props)
+    // console.log(Props)
     emit('ShowClick',Props)
 }
 
 function handleDelete(item:any){
-    console.log('删除')
-    console.log(item)
+    // console.log('删除')
+    // console.log(item)
     ElMessageBox.confirm(
     '确定删除此公告嘛?',
     '警告',
@@ -66,7 +74,7 @@ function handleDelete(item:any){
   )
     .then(() => {
         deleteNotice({ids:[item.noticeId]}).then(res=>{
-            console.log(res.data.value)
+            // console.log(res.data.value)
             if(res.data.value.code == 20000){
                 ElNotification({
                     type:'success',
@@ -97,7 +105,7 @@ defineExpose({handleAnnouncement})
     overflow: hidden;
     padding: 24px;
     width: 90%;
-    height: 600px;
+    max-height: 600px;
     display: flex;
     flex-direction: column;
     border: 1px solid #e3e8f7;

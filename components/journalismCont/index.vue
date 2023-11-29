@@ -34,7 +34,7 @@
                     </el-col>
                 </el-form-item>
                 <el-form-item label="新闻内容" prop="newsContent">
-                    <Markdown ref="markRef"></Markdown>
+                    <Markdown ref="markRef" :isClear="isClear" ></Markdown>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
@@ -52,12 +52,12 @@ import { ref, reactive } from 'vue';
 import type { UploadProps, } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {CloseBold} from '@element-plus/icons-vue'
-import  Markdown  from '@/components/markdown/index';
+import  Markdown  from '@/components/markdown/index.vue';
 import {insertNew} from '@/service/journalism/journalism'
 
 
 const hide = ref(true)
-
+const isClear = ref(false)
 const fileInput = ref()
 const srcValue = ref('')
 const markRef = ref<InstanceType<typeof Markdown>>()
@@ -135,15 +135,15 @@ const handleFile = ()=>{
 
 const submitForm = async (formEl: FormInstance | undefined) => {
     let content = markRef.value.handleGetValue()
-    console.log(content)
+    // console.log(content)
     refForm.newsContent = content
     if (!formEl) return
     const result = await formEl.validate((valid, fields) => {
         if (valid) {
-        console.log('submit!')
+        // console.log('submit!')
         return true
         } else {
-        console.log('error submit!', fields)
+        // console.log('error submit!', fields)
         return false
         }
     })
@@ -157,7 +157,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 form[item] = refForm[item as formEn]
             }
         }
-        console.log(form,fileList)        
+        // console.log(form,fileList)        
         ElMessageBox.confirm(
             '确定发布新闻嘛？',
             '发布新闻',
@@ -168,9 +168,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             }
         ).then(()=>{
             insertNew(form,fileList).then(res=>{
-                console.log('上传图片')
-                console.log(res.data)
-                console.log(res)
+                // console.log('上传图片')
+                // console.log(res.data)
+                // console.log(res)
                 let data = res.data.value
                 if(data.code === 20000){
                     ElNotification({
@@ -180,6 +180,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         zIndex: 10000,
                     })
                     emit('newValue',{pageNo:1,pageSize:9999})
+                    isClear.value = true;
+                    fileInput.value.value = null;
                     ruleFormRef.value?.resetFields()
                 }
             })
@@ -191,8 +193,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 zIndex: 10000,
             })
         })
-        console.log(form)
-        console.log(fileList)
+        // console.log(form)
+        // console.log(fileList)
         // postAffiche()
 
     }
@@ -215,16 +217,16 @@ const resetForm = (forEl:FormInstance | undefined)=>{
 
 
 function handleFileChange(event:any){
-    console.log(event)
+    // console.log(event)
     const file = event.target.files[0]
     console.log(file)
     let nameArr = file.name.split('.')
-    if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
+    if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp' || nameArr[nameArr.length-1] === 'jpeg'){
         refForm.newsImgs = file
         const value = URL.createObjectURL(file)
         srcValue.value = value
-        console.log(value)
-        console.log(refForm.newsImgs)
+        // console.log(value)
+        // console.log(refForm.newsImgs)
     }else{
         ElNotification({
             title:'上传失败',

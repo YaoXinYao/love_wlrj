@@ -105,21 +105,21 @@ const checklist = checkStore()
 const user = useHomestore()
 
 const {userinfo}  = storeToRefs(user)
-console.log(userinfo.value.userId)
+// console.log(userinfo.value.userId)
 fetchUserListData({pageIndex:1,pageSize:5,idDesc:true})
 const {allPage,allCount,checkList,pageSize,pageIndex,loading} = storeToRefs(checklist)
-console.log(userinfo.value.userId)
+// console.log(userinfo.value.userId)
 
 const handleSizeChange = (val: number) => {
     let checkList = checklist.currentQuery
     checkList.pageSize = val;
-    console.log(checkList)
+    // console.log(checkList)
   fetchUserListData({...checkList})
 }
 const handleCurrentChange = (val: number) => {
     let checkList = checklist.currentQuery
     checkList.pageIndex = val;
-    console.log(checkList)
+    // console.log(checkList)
     fetchUserListData({...checkList})
 }
 
@@ -135,7 +135,7 @@ checklist.getCheckList(query);
 
 
 function handleEditBtnClick(data:any){
-    console.log(data.leave)
+    // console.log(data.leave)
     let query = {
         leaveApprovalId:userinfo.value.userId,
         leaveId : data.leave.leaveId,
@@ -151,7 +151,7 @@ function handleEditBtnClick(data:any){
         }
     ).then(()=>{
         updateLeave(query).then(res=>{
-            console.log(res.data.value)
+            // console.log(res.data.value)
             if(res.data.value.code === 20000){
                 ElMessage({
                     type: 'success',
@@ -170,13 +170,13 @@ function handleEditBtnClick(data:any){
 }
 
 function handleDeleteBtnClick(data:any){
-    console.log(data)
+    // console.log(data)
     let query = {
         leaveApprovalId:userinfo.value.userId,
         leaveId : data.leave.leaveId,
         leaveStatus: 2
     }
-    console.log(query)
+    // console.log(query)
     ElMessageBox.confirm(
         '是否驳回此请假',
         "审批请假",

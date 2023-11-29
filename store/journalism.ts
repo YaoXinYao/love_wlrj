@@ -18,7 +18,7 @@ const journalismStore = defineStore('journalism',{
             this.loading = true
             const result = await getNew(query)
             this.loading = false
-            console.log(result.data.value)
+            // console.log(result.data.value)
             this.newList = result.data.value.data.records
         }
     }

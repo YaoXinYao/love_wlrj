@@ -156,14 +156,14 @@ const ruleFormRef = ref<FormInstance>()
 const deleteRef = ref<FormInstance>()
 
 watch(dialog,(newValue)=>{
-  console.log(newValue)
+  // console.log(newValue)
   if(!newValue){
     ruleFormRef.value?.resetFields()
   }
 })
 
 watch(dialogVisible,(newValue)=>{
-  console.log(newValue)
+  // console.log(newValue)
   if(!newValue){
     deleteRef.value?.resetFields()
   }
@@ -249,7 +249,7 @@ async function  handleDelete(){
         query.order = timeArr[0]
         query.status = timeArr[1]
         deleteSchedule(query).then((res)=>{
-          console.log(res.data.value)
+          // console.log(res.data.value)
           if(res.data.value.code == 20000){
                 ElNotification({
                   title: '清除成功',
@@ -262,7 +262,7 @@ async function  handleDelete(){
         })
       })
     } else {
-      console.log('error submit!', fields)
+      // console.log('error submit!', fields)
     }
   })
 }
@@ -275,31 +275,9 @@ function handleClose(){
 }
 
 function handleClearAll(data:any){
-  console.log(data)
+  // console.log(data)
   deleteForm.deleteGrade = data.grade
   dialogVisible.value = true
-  // ElMessageBox.confirm(
-    // '你确定要清空时间嘛?',
-    // '清空时间',
-    // {
-    //   confirmButtonText: '确定',
-    //   cancelButtonText: '取消',
-    //   type: 'warning',
-    // }
-  // ).then(() => {
-  //   ElNotification({
-  //       title: 'success',
-  //       type: 'success',
-  //       message: '清空成功',
-  //     })
-  //   })
-  //   .catch(() => {
-  //     ElNotification({
-  //       title: 'warning',
-  //       type: 'warning',
-  //       message: '清空取消',
-  //     })
-  //   })
 }
 
 function handleSubmit(){
@@ -313,7 +291,7 @@ function handleSubmit(){
 
   ruleFormRef.value?.validate((valid:any) => {
     if (valid) {
-      console.log('submit!')
+      // console.log('submit!')
       query.gradeLevel = form.grade
       if(form.labelType === 'morningStart'){
         query.order = "1"
@@ -337,9 +315,9 @@ function handleSubmit(){
 
       let time = form.labelValue.getHours().toString().padStart(2, '0') + ':' + form.labelValue.getMinutes().toString().padStart(2, '0') + ':' + form.labelValue.getSeconds().toString().padStart(2, '0')
       query.time = time
-      console.log(query)
+      // console.log(query)
       saveSchedule(query).then(res=>{
-        console.log(res.data.value)
+        // console.log(res.data.value)
         if(res.data.value.code === 20000){
           ElNotification({
             title: 'success',
@@ -352,7 +330,7 @@ function handleSubmit(){
       })
       
     } else {
-      console.log('error submit!')
+      // console.log('error submit!')
       return false
     }
   })
@@ -365,17 +343,17 @@ function handleSubmit(){
 }
 
 function handleCell(row:any,column:any,cell:any,event:any){
-  console.log(row,column,cell,event)
+  // console.log(row,column,cell,event)
   if(column.label !== '操作' && column.label !== '年级'){
     let label = column.property
-    console.log(label)
+    // console.log(label)
     form.grade = row.grade
     form.labelType = label
     form.label = column.label
     
     let value = row[label]
 
-    console.log(value)
+    // console.log(value)
     if(value == ''){
       form.labelValue = value
     }else{

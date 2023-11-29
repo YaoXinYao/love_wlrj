@@ -27,7 +27,7 @@
                                     <div 
                                         :class="{'full-screen':isFullScreen}" 
                                         @click="toggleFullscrent"
-                                        @wheel.prevent="handleWheel"
+                                        @wheel.passive="handleWheel"
                                     >
                                         <img  
                                             ref="ImgRef" 

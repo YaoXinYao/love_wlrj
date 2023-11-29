@@ -15,11 +15,11 @@ export const getNew = (query:any)=>{
 
 export const insertNew = (query:any,body:any)=>{
     // let form = new FormData()
-    console.log(query)
-    console.log(body)
+    // console.log(query)
+    // console.log(body)
     let formData = new FormData()
     for(let item in query){
-        console.log(query[item])
+        // console.log(query[item])
         formData.append(`${item}`,query[item])
     }
     formData.append('newsImgs',body)

@@ -31,7 +31,7 @@ const AttendanceStore = defineStore('attendance',{
             this.loading = false
             // this.timer = msResult
             this.timer = msResult[1]
-            console.log(this.timer)
+            // console.log(this.timer)
         }
     }
 })

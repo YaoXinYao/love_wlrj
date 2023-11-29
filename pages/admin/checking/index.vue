@@ -186,13 +186,13 @@ const rules = reactive<FormRules<typeof formData>>({
 })
 
 function handleUpdate(event:any){
-    console.log(event)
+    // console.log(event)
     const files =  inputRef.value.files
     let nameArr = files[0].name.split('.')
     if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
         handleFiles(files);
         showFile.value = true;
-        console.log(files)
+        // console.log(files)
     }else{
         ElNotification({
             title: '上传失败',
@@ -208,13 +208,13 @@ function handleOpen(){
 }
 
 function highlight(){
-    console.log('进来了');
+    // console.log('进来了');
     
     isHighlighted.value=true
 }
 
 function light(){
-    console.log('出来了');
+    // console.log('出来了');
     isHighlighted.value = false
 }
 
@@ -228,7 +228,7 @@ function handleNew(){
 function handleDrop(event:any) {
     // console.log(event)
     const files = event.dataTransfer.files;
-    console.log(files)
+    // console.log(files)
     // handleFiles(files);
     let nameArr = files[0].name.split('.')
     if(nameArr[nameArr.length-1] === 'xlsx' || nameArr[nameArr.length-1] === 'xls'){
@@ -249,14 +249,14 @@ function handleUploadProgress(event:any){
     // console.log(event)
     // console.log(event.lengthComputable)
     const percentages = (event.loaded / event.total) * 100;
-    console.log(event.loaded, event.total)
+    // console.log(event.loaded, event.total)
     // console.log(event.total)
     percentage.value = Math.floor(percentages);
 }
 
 
 function handleFiles(files:any){
-    console.log(files)
+    // console.log(files)
     let formData = new FormData()
     formData.append('file',files[0])
 
@@ -278,7 +278,7 @@ function handleFiles(files:any){
                 type:'success'
             })
             if(percentage.value == 100){
-                console.log(1)
+                // console.log(1)
                 percentage.value = 0;
                 showFile.value = false
                 let current = currentQuery.value
@@ -286,7 +286,7 @@ function handleFiles(files:any){
             }
             
         } else {
-            console.error('Upload failed');
+            // console.error('Upload failed');
         }
         }
     };
@@ -325,9 +325,9 @@ function submitNew(){
                         unsignPeriod:formData.unsignPeriod
                     }
                 }
-                 console.log(object)
+                //  console.log(object)
                  updateUnSign(object).then(res=>{
-                    console.log(res.data.value)
+                    // console.log(res.data.value)
                     if(res.data.value.code === 20000){
                         ElNotification({
                             title:'成功',
@@ -361,9 +361,9 @@ function submitNew(){
                         unsignPeriod:formData.unsignPeriod
                     }
                 }
-                console.log(object)
+                // console.log(object)
                 inserUnSign(object).then(res=>{
-                    console.log(res.data.value)
+                    // console.log(res.data.value)
                     if(res.data.value.code === 20000){
                         ElNotification({
                             title:'成功',
@@ -378,7 +378,7 @@ function submitNew(){
             }
 
         } else {
-            console.log('error submit!')
+            // console.log('error submit!')
             return false
         }
     })
@@ -392,7 +392,7 @@ function cancel(){
 
 
 function handleChangeClick(data:any){
-    console.log(data)
+    // console.log(data)
     dialogTableVisible.value = true
     formData.unsignDate = data.unsignDate
     formData.unsignStudentId = data.unsignStudentId
@@ -409,7 +409,7 @@ function handleChangeClick(data:any){
     }else{
         formData.unsignTime = ''
     }
-    console.log(formData)
+    // console.log(formData)
 }
 
 </script>
