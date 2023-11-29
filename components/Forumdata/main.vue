@@ -46,9 +46,6 @@
           </div>
           <ul class="icons">
             <li>
-              <el-icon><ChatDotRound color="black" /></el-icon>
-            </li>
-            <li>
               <svg
                 v-if="item.likes == true"
                 @click="
@@ -89,7 +86,6 @@
                   p-id="1744"
                 ></path>
               </svg>
-              <span>{{ item.postLike }}</span>
             </li>
             <li>
               <el-icon
@@ -108,7 +104,6 @@
                   color="yellow"
                   style="font-size: 23px; margin-top: -4px"
               /></el-icon>
-              <span>{{ item.postCollect }}</span>
             </li>
             <li>
               <el-icon><Sunny color="#ca5120" /></el-icon
@@ -382,7 +377,7 @@ watch(datas, (newValue, oldValue) => {
         overflow: hidden;
       }
       .icons {
-        width: 200px;
+        width: 150px;
         margin-top: 3px;
         list-style: none;
         display: flex;

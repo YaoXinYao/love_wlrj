@@ -167,6 +167,7 @@ const handleDelete = (row:any)=>{
   }
   .el-pagination {
     margin-top: 16px;
+    padding-bottom: 16px;
     .demo-pagination-block + .demo-pagination-block {
       margin-top: 10px;
     }
