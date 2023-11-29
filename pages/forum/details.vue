@@ -102,11 +102,11 @@
           </div>
           <div class="icon">
             <el-icon
-              ><ChatDotRound color="black" @click="addCom(item.comId)"
+              ><ChatDotRound color="black" @click="addCom(item.comId,item.comUserId)"
             /></el-icon>
             <svg
               v-if="item.likes == true"
-              @click="comLike(item.comId,0,index)"
+              @click="comLike(item.comId, 0, index, item.comUserId)"
               t="1699003181186"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -122,7 +122,7 @@
             </svg>
             <svg
               v-if="item.likes == false"
-              @click="comLike(item.comId,1,index)"
+              @click="comLike(item.comId, 1, index, item.comUserId)"
               t="1699003334612"
               class="icon"
               viewBox="0 0 1024 1024"
@@ -137,9 +137,8 @@
               ></path>
             </svg>
             <span style="margin: 0">{{ item.comLike }}</span>
-            <span v-if="item.children.length != 0">展开全部</span>
             <span
-              v-if="(item.comUserId = userinfo.userId)"
+              v-if="(item.comUserId == userinfo.userId)"
               @click="deleteCom(item.comId)"
               >删除</span
             >
@@ -155,12 +154,12 @@
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
     </el-dialog>
     <el-dialog v-model="commentVisible" style="max-width: 450px">
-      <h4>欢迎大家进行交流</h4>
+      <h4>请文明发言</h4>
       <el-input
         type="textarea"
-        v-model="conten"
+        v-model="contens"
         maxlength="600"
-        placeholder="留言评论"
+        placeholder="追加评论"
         show-word-limit
         :autosize="{ minRows: 5, maxRows: 8 }"
         input-style="margin-top:10px"
@@ -172,7 +171,7 @@
         :auto-upload="false"
         :multiple="true"
         accept="image/*"
-        v-model:file-list="formImage.files"
+        v-model:file-list="formImages.files"
       >
         <el-icon><Plus /></el-icon>
         <template #file="{ file }">
@@ -192,7 +191,7 @@
               <span
                 v-if="!disabled"
                 class="el-upload-list__item-delete"
-                @click="handleRemove(file)"
+                @click="handleRemoves(file)"
               >
                 <el-icon><Delete /></el-icon>
               </span>
@@ -202,22 +201,24 @@
       </el-upload>
       <div class="btn">
         <el-button type="primary" @click="sureCom">提交</el-button>
-        <el-button type="info" @click="cleardata()">清空</el-button>
+        <el-button type="info" @click="cleardatas()">清空</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
+import { useRoute } from "vue-router";
+import { useWebSocket } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { UploadFile } from "element-plus";
 import { Delete, Plus, ZoomIn, ChatDotRound } from "@element-plus/icons-vue";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { singleData, discuss} = storeToRefs(forums);
+const { singleData, discuss } = storeToRefs(forums);
 let commentNews = reactive<any>({
   comContent: "",
   comFatherId: 0,
@@ -229,24 +230,56 @@ let conten = ref("");
 let formImage = reactive<any>({
   files: [],
 });
-let comImg = ref<any[]>([]);
+let contens = ref("");
+let sendFatherId = ref(0)
+let formImages = reactive<any>({
+  files: [],
+});
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let commentVisible = ref(false);
-let data = useRoute().query.data;
-commentNews.comPostId = data;
+let datas = useRoute().query.data;
+commentNews.comPostId = datas;
+const route = useRoute();
+const { status, data, send, open, close } = useWebSocket(
+  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/+${userinfo.value.userId}`,
+  {
+    autoReconnect: {
+      retries: 8,
+      delay: 1000,
+      onFailed() {
+        alert("Failed to connect WebSocket after 8 retries");
+      },
+    },
+  }
+);
 onMounted(() => {
-  let id = Number(data);
-  forums.getSingle(id,userinfo.value.userId);
-  forums.selectComment(id,userinfo.value.userId);
+  let id = Number(datas);
+  forums.getSingle(id, userinfo.value.userId);
+  forums.selectComment(id, userinfo.value.userId);
 });
+//发送消息
+const sentMessage = (
+  msgAccept: number,
+  msgContent: string,
+  msgType: string,
+  msgContentId: number
+) => {
+  let obj = {
+    msgAccept,
+    msgContent,
+    msgSend: userinfo.value.userId,
+    msgType,
+    msgContentId,
+  };
+  send(JSON.stringify(obj));
+};
 //删除图片
 const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
   if (index !== -1) {
     formImage.files.splice(index, 1);
-    comImg.value.splice(index, 1);
     ElMessage.success("移除成功");
   }
 };
@@ -258,48 +291,51 @@ const handlePictureCardPreview = (file: UploadFile) => {
 //清空数据
 function cleardata() {
   conten.value = "";
-  comImg.value = [];
   formImage.files = [];
 }
 //发布评论
 const submitData = (comFatherId: number, comRootId: number) => {
-  let jage = true;
-  let formData = new FormData();
-  comImg.value = [];
-  let reg = /^\s+$/g;
-  if (!reg.test(conten.value)) {
-    if (formImage.files.length == 0 && conten.value == "") {
-      ElMessage.warning("评论数据为空");
-    } else {
-      for (let i = 0; i < formImage.files.length; i++) {
-        jage = formImage.files[i].raw.type.startsWith("image/");
-        if (!jage) {
-          ElMessage.warning("文件类型错误");
-          i = formImage.files.length;
-        } else {
-          comImg.value.push(formImage.files[i].raw);
-          formData.append(`comImg[${i}]`, formImage.files[i].raw);
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    let jage = true;
+    let formData = new FormData();
+    let comImg:any[] = [];
+    let reg = /^\s+$/g;
+    if (!reg.test(conten.value)) {
+      if (formImage.files.length == 0 && conten.value == "") {
+        ElMessage.warning("评论数据为空");
+      } else {
+        for (let i = 0; i < formImage.files.length; i++) {
+          jage = formImage.files[i].raw.type.startsWith("image/");
+          if (!jage) {
+            ElMessage.warning("文件类型错误");
+            i = formImage.files.length;
+          } else {
+            comImg.push(formImage.files[i].raw);
+            formData.append(`comImg[${i}]`, formImage.files[i].raw);
+          }
+        }
+        if (jage) {
+          commentNews.comContent = conten.value;
+          commentNews.comRootId = comRootId;
+          commentNews.comFatherId = comFatherId;
+          forums.addComment(commentNews, formData).then((res) => {
+            if (res == 20000) {
+              ElMessage.success("评论成功");
+              sentMessage(singleData.value.postUserId,conten.value,"PostComment",singleData.value.postId)
+              forums.selectComment(Number(datas), userinfo.value.userId);
+              conten.value = "";
+              formImage.files = [];
+            } else {
+              ElMessage.error("评论失败");
+            }
+          });
         }
       }
-      if (jage) {
-        commentNews.comContent = conten.value;
-        commentNews.comRootId = comRootId;
-        commentNews.comFatherId = comFatherId;
-        forums.addComment(commentNews, formData).then((res) => {
-          if (res == 20000) {
-            ElMessage.success("评论成功");
-            forums.selectComment(Number(data),userinfo.value.userId);
-            conten.value = "";
-            comImg.value = [];
-            formImage.files = [];
-          } else {
-            ElMessage.error("评论失败");
-          }
-        });
-      }
+    } else {
+      ElMessage.warning("输入的内容为空格");
     }
-  } else {
-    ElMessage.warning("输入的内容为空格");
   }
 };
 //删除评论
@@ -321,40 +357,108 @@ const deleteCom = (ids: number) => {
   });
 };
 //添加评论弹窗
-const addCom = (id: number) => {
+const addCom = (id: number,fatherId:number) => {
   commentVisible.value = true;
   commentNews.comFatherId = id;
   commentNews.comRootId = id;
+  sendFatherId.value = fatherId
 };
 //确认添加
 const sureCom = () => {
-  submitData(commentNews.comFatherId, commentNews.comRootId);
-  commentVisible.value = false;
-};
-//点赞
-function comLike(comId: number, status: number, index: number) {
-  forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
-    if (status == 1) {
-      if (res == 20000) {
-        discuss.value[index].likes = true;
-        ElMessage.success("点赞成功");
-      } else if (res == 53003) {
-        ElMessage.warning("请勿重复点赞");
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    let jage = true;
+    let formData = new FormData();
+    let comImg:any[] = [];
+    let reg = /^\s+$/g;
+    if (!reg.test(contens.value)) {
+      if (formImages.files.length == 0 && contens.value == "") {
+        ElMessage.warning("评论数据为空");
       } else {
-        ElMessage.error("点赞失败");
+        for (let i = 0; i < formImages.files.length; i++) {
+          jage = formImages.files[i].raw.type.startsWith("image/");
+          if (!jage) {
+            ElMessage.warning("文件类型错误");
+            i = formImages.files.length;
+          } else {
+            comImg.push(formImages.files[i].raw);
+            formData.append(`comImg[${i}]`, formImages.files[i].raw);
+          }
+        }
+        if (jage) {
+          commentNews.comContent = contens.value;
+          forums.addComment(commentNews, formData).then((res) => {
+            if (res == 20000) {
+              ElMessage.success("评论成功");
+              sentMessage(sendFatherId.value,contens.value,"CommentReply",commentNews.comFatherId)
+              forums.selectComment(Number(datas), userinfo.value.userId);
+              contens.value = "";
+              formImages.files = [];
+            } else {
+              ElMessage.error("评论失败");
+            }
+          });
+        }
+        commentVisible.value = false;
       }
     } else {
-      if (res == 20000) {
-        discuss.value[index].likes = false;
-        ElMessage.success("取消点赞");
-      } else if (res == 53004) {
-        ElMessage.warning("请勿重复取消");
-      } else {
-        ElMessage.error("取消点赞失败");
-      }
+      ElMessage.warning("输入的内容为空格");
     }
-  });
+  }
+};
+//删除图片
+const handleRemoves = (file: UploadFile) => {
+  const index = formImages.files.indexOf(file);
+  if (index !== -1) {
+    formImages.files.splice(index, 1);
+    ElMessage.success("移除成功");
+  }
+};
+//清空数据
+function cleardatas() {
+  contens.value = "";
+  formImages.files = [];
 }
+//点赞
+function comLike(
+  comId: number,
+  status: number,
+  index: number,
+  comUserId: number
+) {
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    forums.LikesComment(comId, status, userinfo.value.userId).then((res) => {
+      if (status == 1) {
+        if (res == 20000) {
+          discuss.value[index].likes = true;
+          ElMessage.success("点赞成功");
+          sentMessage(comUserId, "点赞了你的评论", "CommentLike", comId);
+        } else if (res == 53003) {
+          ElMessage.warning("请勿重复点赞");
+        } else {
+          ElMessage.error("点赞失败");
+        }
+      } else {
+        if (res == 20000) {
+          discuss.value[index].likes = false;
+          ElMessage.success("取消点赞");
+        } else if (res == 53004) {
+          ElMessage.warning("请勿重复取消");
+        } else {
+          ElMessage.error("取消点赞失败");
+        }
+      }
+    });
+  }
+}
+watch(status, (newStatus) => {
+  if (newStatus === "OPEN") {
+    console.log("WebSocket connection established");
+  }
+});
 </script>
 
 <style lang="scss" scoped>

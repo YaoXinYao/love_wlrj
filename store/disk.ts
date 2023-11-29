@@ -1,3 +1,4 @@
+import { number } from "echarts";
 import { defineStore } from "pinia";
 import { getAlltag, getFileTaglist, getFilelist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
@@ -41,9 +42,55 @@ export const useDiskstore = defineStore("disk", {
         //正在下载的文件信息
         downfile: "",
       },
+      //上传窗口所需参数
+      uploadProps: {
+        uploadFileTotalByte: 1, //总片数
+        alreadyByte: 1,
+        HavePassed: [],
+        curUpFile: {
+          File: null, //当前正在传输的文件信息，
+          ParseMd5: false, //是否正在检索文件
+          FileUpSpend: 0, // 当前下上传速度
+          upedChunk: 0, // 正在上传第几片
+        },
+      },
+      //我的收藏列表
     };
   },
   actions: {
+    //清除filequeue
+    async updatefilequeue() {
+      this.filequeue = [];
+    },
+    //添加已经传过的文件的名字
+    async updateFilename(val: string) {
+      this.uploadProps.HavePassed.push(val);
+    },
+    //更新已经上传的总分片
+    async updatereadyByte(val: number) {
+      this.uploadProps.alreadyByte += val;
+    },
+    async updatereader(val: number) {
+      this.uploadProps.alreadyByte = val;
+    },
+    //更新正在上传的分片
+    async updateChunk(val: number) {
+      this.uploadProps.curUpFile.upedChunk = val;
+    },
+    //上传文件的总片数
+    async updateTotalByte(val: number) {
+      //更新总字节
+      this.uploadProps.uploadFileTotalByte = val;
+    },
+    //更新当前文件的下载进度
+    //正在上传的文件
+    async updateFile(file: File) {
+      this.uploadProps.curUpFile.File = file;
+    },
+    //MD5 解析
+    async updateMd5(val: boolean) {
+      this.uploadProps.curUpFile.ParseMd5 = val;
+    },
     //获取标签
     async getAllfiletag() {
       const res = await getAlltag();
@@ -75,18 +122,20 @@ export const useDiskstore = defineStore("disk", {
     async changeSearch(val: string) {
       this.Searchtext = val;
     },
+    //添加文件队列
     async changequeue(file: File) {
       if (this.filequeue.length >= 5) {
         ElMessage({ message: "不能超过五个", type: "info" });
       } else {
         this.filequeue.push(file);
-        ElMessage({
-          message: `${file.name}已添加`,
-          type: "success",
-          offset: 64,
+        ElNotification({
+          title: "新增文件",
+          message: h("i", { style: "color: teal" }, `${file.name}已添加`),
+          duration: 1000,
         });
       }
     },
+    //删除队列中具体文件
     async deletequeue(filename: string) {
       const copyQueue = [...this.filequeue]; // 使用扩展运算符复制数组以避免直接修改原始数组
       const newArr = copyQueue.filter((item) => {
@@ -103,7 +152,6 @@ export const useDiskstore = defineStore("disk", {
     },
     //改变某一个的收藏状态
     async changeUncomment(id: number) {
-      console.log("触发");
       console.log(id);
       const index = this.Filelist.dataList.findIndex((item) => item.id == id);
       console.log(index);

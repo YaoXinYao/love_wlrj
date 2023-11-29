@@ -7,13 +7,8 @@
           <span class="right"></span>
           <span class="top"></span>
           <div class="userHead">
-            <img
-              :src="
-                userinfo.userPicture === '未设置'
-                  ? '/images/female.png'
-                  : userinfo.userPicture
-              "
-            />
+            <img v-if="userinfo.userPicture != '未设置'" :src="userinfo.userPicture"/>
+            <img v-if="userinfo.userPicture == '未设置'" :src="'/images/female.png'"/>
           </div>
         </div>
         <div class="userInfo">
@@ -21,15 +16,16 @@
             {{ userinfo.userName }}<span>{{ userinfo.roleName }}</span>
           </div>
           <ul>
-            <li>作品</li>
-            <li>点赞</li>
-            <li>收藏</li>
+            <li @click="changeStatus('artic')">作品</li>
+            <li @click="changeStatus('like')">点赞</li>
+            <li @click="changeStatus('collect')">收藏</li>
+            <li class="showHome"><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
           </ul>
         </div>
       </div>
       <div class="newsbg"></div>
     </div>
-    <div class="main">
+    <div class="main" v-loading="loading">
       <div class="introduce">
         <div class="triangle"></div>
         <div class="con">关于我</div>
@@ -38,10 +34,11 @@
           <li>班级：{{ userinfo.userClass }}</li>
           <li>年级: {{ userinfo.userGrade }}</li>
           <li>作品: {{ total }}</li>
+          <li><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
         </ul>
       </div>
       <div class="article">
-        <ul>
+        <ul v-if="posts.length != 0">
           <li class="details" v-for="(item, index) in posts" :key="index">
             <div v-if="item.photos.length == 0" class="noImg">
               <div class="detailsTitle">
@@ -69,9 +66,31 @@
                 </NuxtLink>
               </div>
               <div class="detailsData">
-                <span>{{ item.postView }}阅读</span>
-                <span>{{ item.postLike }}点赞</span>
-                <span>{{ item.postCollect }}收藏</span>
+                <div>
+                  <span>{{ item.postView }}阅读</span>
+                  <span>{{ item.postLike }}点赞</span>
+                  <span>{{ item.postCollect }}收藏</span>
+                </div>
+                <div>
+                  <el-button
+                    type="danger"
+                    v-if="jage == 'artic'"
+                    @click="deletePost(item.postId)"
+                    >删除</el-button
+                  >
+                  <el-button
+                    type="warning"
+                    v-if="jage == 'like'"
+                    @click="deleteData(item.postId, 'Like')"
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="warning"
+                    v-if="jage == 'collect'"
+                    @click="deleteData(item.postId, 'Collect')"
+                    >取消</el-button
+                  >
+                </div>
               </div>
             </div>
             <div v-if="item.photos.length != 0" class="withImg">
@@ -98,8 +117,8 @@
                     "
                     >{{ item.postTitle }}</NuxtLink
                   >
+                  <span>{{ item.postTime }}</span>
                 </div>
-                <div class="timer">{{ item.postTime }}</div>
                 <div class="content">
                   <NuxtLink
                     @click="
@@ -112,17 +131,44 @@
                   >
                 </div>
                 <div class="data">
-                  <span>{{ item.postView }}阅读</span>
-                  <span>{{ item.postLike }}点赞</span>
-                  <span>{{ item.postCollect }}收藏</span>
+                  <div>
+                    <span>{{ item.postView }}阅读</span>
+                    <span>{{ item.postLike }}点赞</span>
+                    <span>{{ item.postCollect }}收藏</span>
+                  </div>
+                  <div>
+                    <el-button
+                      type="danger"
+                      v-if="jage == 'artic'"
+                      @click="deletePost(item.postId)"
+                      >删除</el-button
+                    >
+                    <el-button
+                      type="warning"
+                      v-if="jage == 'like'"
+                      @click="deleteData(item.postId, 'Like')"
+                      >取消</el-button
+                    >
+                    <el-button
+                      type="warning"
+                      v-if="jage == 'collect'"
+                      @click="deleteData(item.postId, 'Collect')"
+                      >取消</el-button
+                    >
+                  </div>
                 </div>
               </div>
             </div>
           </li>
-          <el-pagination layout="prev, pager, next" :total="total" 
-          @current-change="handleCurrentChange"
+          <el-pagination
+            v-if="total != 0"
+            layout="prev, pager, next"
+            :total="total"
+            :page-size="pages"
+            @current-change="handleCurrentChange"
           />
         </ul>
+        <img class="noData" v-if="posts.length == 0" src="/images/暂无.svg" />
       </div>
     </div>
   </div>
@@ -134,23 +180,95 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-let { total} = storeToRefs(forums);
+let { total } = storeToRefs(forums);
+let pages = 15;
+let loading = ref(true)
 
 let posts = ref<any[]>([]);
+let jage = ref("artic");
 onMounted(() => {
   forums
-    .userPosts(1, 8, undefined, undefined, undefined, userinfo.value.userId)
+    .userPosts(1, pages, undefined, undefined, undefined, userinfo.value.userId)
     .then((res) => {
       posts.value = res;
+      loading.value = false
     });
 });
+//分页
 const handleCurrentChange = (val: number) => {
+  getStatus(val);
+};
+//查询帖子
+function getStatus(pageNo: number) {
+  loading.value = true
+  if (jage.value == "artic") {
     forums
-    .userPosts(val, 8, undefined, undefined, undefined, userinfo.value.userId)
-    .then((res) => {
-      posts.value = res;
-    });
+      .userPosts(
+        pageNo,
+        pages,
+        undefined,
+        undefined,
+        undefined,
+        userinfo.value.userId
+      )
+      .then((res) => {
+        posts.value = res;
+      });
+  } else if (jage.value == "like") {
+    forums
+      .getKeeps("User", pageNo, pages, "Like", userinfo.value.userId)
+      .then((res) => {
+        posts.value = res;
+      });
+  } else {
+    forums
+      .getKeeps("User", pageNo, pages, "Collect", userinfo.value.userId)
+      .then((res) => {
+        posts.value = res;
+      });
+  }
+  loading.value = false
 }
+//切换状态查询帖子
+function changeStatus(status: string) {
+  jage.value = status;
+  getStatus(1);
+}
+//取消点赞或收藏
+const deleteData = (postId: number, type: string) => {
+  forums.addlike(postId, 0, type, userinfo.value.userId).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("取消成功");
+      let index = posts.value.findIndex((item) => {
+        if (item.postId == postId) {
+          return true;
+        }
+      });
+      posts.value.splice(index, 1);
+    } else {
+      ElMessage.success("取消失败");
+    }
+  });
+};
+//删除帖子
+const deletePost = (id: number) => {
+  let ids = [];
+  ids[0] = id;
+  forums.deletePosts(ids).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("删除成功");
+      let index = posts.value.findIndex((item) => {
+        if (item.postId == id) {
+          return true;
+        }
+      });
+      posts.value.splice(index, 1);
+      total.value = total.value - 1
+    }else{
+      ElMessage.error("删除失败")
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -182,6 +300,8 @@ const handleCurrentChange = (val: number) => {
       flex: 1;
       overflow: hidden;
       margin-left: 20px;
+      min-height: 200px;
+      position: relative;
       ul {
         list-style: none;
         li {
@@ -193,6 +313,16 @@ const handleCurrentChange = (val: number) => {
           margin-bottom: 20px;
           box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
         }
+      }
+      .noData {
+        width: 200px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
       }
     }
   }
@@ -275,6 +405,9 @@ const handleCurrentChange = (val: number) => {
         li {
           cursor: pointer;
           position: relative;
+        }
+        .showHome{
+          display: none;
         }
         li::after {
           content: "";
@@ -366,11 +499,14 @@ const handleCurrentChange = (val: number) => {
       .detailsData {
         position: absolute;
         display: flex;
-        min-width: 200px;
-        justify-content: space-around;
+        width: calc(100% - 50px);
+        justify-content: space-between;
         bottom: 10px;
+        margin-right: 50px;
         span {
           display: inline-block;
+          margin-right: 15px;
+          margin-bottom: 7px;
         }
       }
     }
@@ -400,16 +536,20 @@ const handleCurrentChange = (val: number) => {
       }
       .news {
         flex: 1;
+        position: relative;
         .title {
-          cursor: pointer;
           height: 20px;
           line-height: 20px;
           font-size: 18px;
+          position: relative;
           margin-bottom: 10px;
-        }
-        .timer {
-          font-size: 16px;
-          margin-bottom: 10px;
+          cursor: pointer;
+          span {
+            display: inline-block;
+            position: absolute;
+            right: 50px;
+            font-size: 16px;
+          }
         }
         .content {
           text-indent: 2em;
@@ -423,11 +563,14 @@ const handleCurrentChange = (val: number) => {
         .data {
           position: absolute;
           display: flex;
-          min-width: 200px;
-          justify-content: space-around;
+          justify-content: space-between;
+          flex-wrap: wrap;
           bottom: 10px;
+          width: calc(100% - 50px);
           span {
             display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 7px;
           }
         }
       }
@@ -436,6 +579,14 @@ const handleCurrentChange = (val: number) => {
   .el-pagination {
     --el-pagination-bg-color: rgb(244, 248, 251);
     --el-pagination-button-disabled-bg-color: rgb(244, 248, 251);
+  }
+}
+@media screen and (max-width: 800px) {
+  .showHome{
+    display: block !important;
+  }
+  .introduce{
+    display: none;
   }
 }
 </style>

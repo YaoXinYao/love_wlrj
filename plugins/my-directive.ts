@@ -27,4 +27,19 @@ export default defineNuxtPlugin((nuxtApp) => {
       observer.observe(el);
     },
   });
+  //点击组件外部，触发对应事件
+  nuxtApp.vueApp.directive("click-outside", {
+    beforeMount(el: any, binding: any) {
+      el.clickOutsideEvent = function (event: MouseEvent) {
+        // 检查点击事件是否在元素外部发生
+        if (!(el === event.target || el.contains(event.target))) {
+          binding.value(event); // 如果是，则调用提供的方法
+        }
+      };
+      document.addEventListener("click", el.clickOutsideEvent);
+    },
+    unmounted(el: any) {
+      document.removeEventListener("click", el.clickOutsideEvent);
+    },
+  });
 });

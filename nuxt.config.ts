@@ -45,6 +45,10 @@ export default defineNuxtConfig({
           type: "text/javascript",
           src: "/staticjs/font_4330669_ghs4q6fkhna.js",
         },
+        {
+          type: "text/javascript",
+          src: "/staticjs/phaser.min.js",
+        },
       ],
       noscript: [{ children: "Javascript is required" }],
     },
@@ -65,13 +69,13 @@ export default defineNuxtConfig({
     devProxy: {
       //论坛管理
       "/api": {
-        target: "http://115.159.84.43:19491/forum/swagger/forum",
+        target: "http://152.136.161.44:19491/forum/swagger/forum",
         changeOrigin: true,
         prependPath: true,
       },
       //网盘接口
       "/disk": {
-        target: "http://115.159.84.43:19491/disk/swagger",
+        target: "http://112.125.120.78:19520/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -83,7 +87,7 @@ export default defineNuxtConfig({
       },
       //用户接口
       "/zinfo": {
-        target: "http://112.125.120.78:8666",
+        target: "http://152.136.161.44:19491/user/swagger/",
         changeOrigin: true,
         prependPath: true,
       },
@@ -97,15 +101,9 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-
       //考核模块
       "/access": {
-        target: "http://115.159.84.43:19491/assess/swagger/assess/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      "/forum": {
-        target: "http://115.159.84.43:19491/forum/swagger/forum/",
+        target: "http://152.136.161.44:19491/assess/swagger/assess/",
         changeOrigin: true,
         prependPath: true,
       },

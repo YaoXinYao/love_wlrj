@@ -53,7 +53,7 @@ useHeader();
   .Mydisk {
     display: flex;
     width: 100%;
-    height: 85vh;
+    min-height: 85vh;
     .diskleft {
       width: 2.5rem;
       padding-inline: 0.1rem;

@@ -12,7 +12,8 @@ import {
   defaultRole,
   deleteGroup,
   insertGroup,
-  updateUserGroup
+  updateUserGroup,
+  updateByGrade
 } from "~/service/staff";
 export interface Staffs {
   modelState: boolean;
@@ -29,6 +30,7 @@ export interface Staffs {
   moreDelete:number[];
   isSignle:boolean;
   manageGroup:boolean;
+  manageRole:boolean;
   curTable:number;
 }
 export const useStaffStore = defineStore("staff", {
@@ -48,6 +50,7 @@ export const useStaffStore = defineStore("staff", {
       moreDelete:[],
       isSignle:false,
       manageGroup:false,
+      manageRole:false,
       curTable:1
     };
   },
@@ -80,6 +83,12 @@ export const useStaffStore = defineStore("staff", {
     //为导入用户设置默认角色
     async defaultRoles(roleId:number){
       let {data} = await defaultRole(roleId)
+      return data.value?.code
+    },
+    //修改某个年级的角色
+    async updateGrade(grade:string,roleId:number){
+      let {data} = await updateByGrade(grade,roleId)
+      console.log("修改角色",data.value);
       return data.value?.code
     },
     //删除组别

@@ -7,3 +7,9 @@ export const selectCarousel = ()=>{
 export const deleteCarousel = (carouselId:number)=>{
     return hyRequest.request("/zinfo/user/carousel/deleteCarousel","DELETE",{carouselId})
 }
+//添加轮播
+export const addCarousel = (query: any, params: FormData) => {
+    return hyRequest.request("/zinfo/user/carousel/insertCarousel","POST", query, {
+      body: params
+    });
+  };

@@ -18,6 +18,17 @@ export interface Diskstore {
     downSpend: string;
     downfile: string;
   };
+  uploadProps: {
+    uploadFileTotalByte: number;
+    alreadyByte: number;
+    HavePassed: string[];
+    curUpFile: {
+      File: File | null; //当前正在传输的文件信息，
+      ParseMd5: boolean; //是否正在检索文件
+      FileUpSpend: number; // 当前下上传速度
+      upedChunk: number; //正在上传的分片
+    };
+  };
 }
 export interface Fileprops {
   id: number;

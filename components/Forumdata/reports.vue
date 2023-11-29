@@ -1,13 +1,20 @@
 <template>
-  <div class="tablePost">
-    <el-form label-position="top" label-width="100px">
-      <el-form-item label="新帖标题">
+  <div class="tablePost" v-loading="loading">
+    <el-form
+      label-position="top"
+      label-width="100px"
+      ref="rulesFormRef"
+      :model="postNews"
+      :rules="rules"
+      status-icon
+    >
+      <el-form-item label="新帖标题" prop="postTitle">
         <el-input v-model="postNews.postTitle" />
       </el-form-item>
-      <el-form-item label="正文内容">
+      <el-form-item label="正文内容" prop="postContent">
         <el-input type="textarea" v-model="postNews.postContent" />
       </el-form-item>
-      <el-form-item label="新帖标签">
+      <el-form-item label="新帖标签" prop="labelId">
         <el-select
           v-model="postNews.labelId"
           multiple
@@ -24,8 +31,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="新帖分栏">
-        <el-select v-model="selectValue" placeholder="选择分栏">
+      <el-form-item label="新帖分栏" prop="postSubId">
+        <el-select v-model="postNews.postSubId" placeholder="选择分栏">
           <el-option
             v-for="(item, index) in subfields"
             :key="index"
@@ -71,8 +78,10 @@
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="uploadPhoto"> 发布 </el-button>
-        <el-button @click="clearNews">重置</el-button>
+        <el-button type="primary" @click="uploadPhoto(rulesFormRef)">
+          发布
+        </el-button>
+        <el-button @click="clearNews(rulesFormRef)">重置</el-button>
       </el-form-item>
     </el-form>
     <el-dialog v-model="dialogVisible" style="max-width: 400px">
@@ -85,72 +94,114 @@ import { reactive, ref } from "vue";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
 import { forumManage, forumStore } from "~/store/forum";
-import type { UploadFile } from "element-plus";
-import {useHomestore} from "~/store/home"
-const router = useRouter()
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import type { FormInstance, FormRules, UploadFile } from "element-plus";
+import { useHomestore } from "~/store/home";
+const router = useRouter();
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
-let selectValue = ref("");
+let loading = ref(false)
 let manages = forumManage();
 let forumData = forumStore();
 let { subfields, labels } = storeToRefs(manages);
 let formImage = reactive<any>({
   files: [],
 });
+interface RuleForm {
+  labelId: any[];
+  postContent: string;
+  postSubId: string;
+  postTitle: string;
+  postUserId: number;
+}
 let postImg = ref<any[]>([]);
-let postNews = reactive<any>({
+const rulesFormRef = ref<FormInstance>();
+let postNews = reactive<RuleForm>({
   labelId: [],
   postContent: "",
-  postSubId: Number(selectValue.value),
+  postSubId: "",
   postTitle: "",
   postUserId: userinfo.value.userId,
+});
+const rules = reactive({
+  postTitle: [
+    { required: true, message: "请输入标题", trigger: "blur" },
+    { min: 3, max: 20, message: "长度应该在3到20之间", trigger: "blur" },
+  ],
+  postSubId: [
+    {
+      required: true,
+      message: "请选择分栏",
+      trigger: "change",
+    },
+  ],
+  labelId: [
+    {
+      required: true,
+      message: "请选择标签",
+      trigger: "change",
+    },
+  ],
+  postContent: [{ required: true, message: "请输入内容", trigger: "blur" }],
 });
 onMounted(() => {
   manages.labelInfo(1, 100);
   manages.subfieldInfo(1, 100);
 });
-watch(selectValue, (newValue) => {
-  postNews.postSubId = Number(newValue);
-});
 //--------------获取上传文件-----------
 //文件上传
-const uploadPhoto = () => {
-  let jage = true;
-  postImg.value = [];
-  for (let i = 0; i < formImage.files.length; i++) {
-    jage = formImage.files[i].raw.type.startsWith("image/");
-    if (!jage) {
-      ElMessage.warning("文件类型错误");
-      return;
-    } else {
-      postImg.value.push(formImage.files[i].raw);
-    }
-  }
-  if (jage) {
-    let formData = new FormData();
-    postImg.value.forEach((item: any, index: number) => {
-      formData.append(`postImg[${index}]`, item);
-    });
-    forumData.addCard(postNews, formData).then((result) => {
-      if (result == 20000) {
-        ElMessage.success("发布帖子成功");
-        router.push("/forum/home")
-      } else {
-        ElMessage.error("发布帖子失败");
+const uploadPhoto = async (formEl: FormInstance | undefined) => {
+  loading.value = true
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      let jage = true;
+      postImg.value = [];
+      for (let i = 0; i < formImage.files.length; i++) {
+        jage = formImage.files[i].raw.type.startsWith("image/");
+        if (!jage) {
+          ElMessage.warning("文件类型错误");
+          return;
+        } else {
+          postImg.value.push(formImage.files[i].raw);
+        }
       }
-    });
-  }
+      if (jage) {
+        let formData = new FormData();
+        postImg.value.forEach((item: any, index: number) => {
+          formData.append(`postImg[${index}]`, item);
+        });
+        let sid = Number(postNews.postSubId);
+        const otherContent = {
+          labelId: postNews.labelId,
+          postContent: postNews.postContent,
+          postTitle: postNews.postTitle,
+          postUserId: postNews.postUserId,
+          postSubId:sid
+        };
+        
+        forumData.addCard(otherContent,formData).then((result) => {
+          if (result == 20000) {
+            ElMessage.success("发布帖子成功");
+            router.push("/forum/home");
+          } else {
+            ElMessage.error("发布帖子失败");
+          }
+        });
+        loading.value = false
+      }
+    } else {
+      loading.value = false
+    }
+  });
 };
-function clearNews() {
+function clearNews(formEl: FormInstance | undefined) {
+  if (!formEl) return;
+  formEl.resetFields();
   formImage.files = [];
-  selectValue.value = "";
-  postNews.labelId = [];
-  postNews.postContent = "";
   postImg.value = [];
-  postNews.postTitle = "";
 }
 //删除图片
 const handleRemove = (file: UploadFile) => {

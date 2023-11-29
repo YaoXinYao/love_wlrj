@@ -12,7 +12,7 @@
             <template #title>后台管理</template>
           </el-menu-item>
           <el-menu-item index="/admin/staff">
-            <el-icon><icon-menu /></el-icon>
+            <el-icon><User /></el-icon>
             <template #title
               ><NuxtLink to="/admin/staff" @click="skipAdd($event)"
                 >人员管理</NuxtLink
@@ -27,12 +27,16 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/">
-            <el-icon><document /></el-icon>
-            <template #title>权限管理</template>
+          <el-menu-item index="/admin/authority" v-if="userinfo.roleId == 3">
+            <el-icon><Filter /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/authority" @click="skipAdd($event)"
+                >权限管理</NuxtLink
+              ></template
+            >
           </el-menu-item>
           <el-menu-item index="/admin/rotationChart">
-            <el-icon><document /></el-icon>
+            <el-icon><PictureRounded /></el-icon>
             <template #title
               ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
                 >轮播管理</NuxtLink
@@ -47,15 +51,15 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/announcement">
-            <el-icon><document /></el-icon>
+          <el-menu-item index="/admin/announcement" v-if="userinfo.roleId != 1">
+            <el-icon><Calendar /></el-icon>
             <template #title
               ><NuxtLink to="/admin/announcement" @click="skipAdd($event)"
                 >公告管理</NuxtLink
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/leaveling">
+          <el-menu-item index="/admin/leaveling" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
               ><NuxtLink to="/admin/leaveling" @click="skipAdd($event)"
@@ -63,16 +67,19 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/attendanceTime">
-            <el-icon><document /></el-icon>
+          <el-menu-item
+            index="/admin/attendanceTime"
+            v-if="userinfo.roleId != 1"
+          >
+            <el-icon><Timer /></el-icon>
             <template #title
               ><NuxtLink to="/admin/attendanceTime" @click="skipAdd($event)"
                 >考勤时间管理</NuxtLink
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/checking">
-            <el-icon><document /></el-icon>
+          <el-menu-item index="/admin/checking" v-if="userinfo.roleId != 1">
+            <el-icon><Stopwatch /></el-icon>
             <template #title
               ><NuxtLink to="/admin/checking" @click="skipAdd($event)"
                 >考勤管理</NuxtLink
@@ -91,7 +98,7 @@
       </el-aside>
       <el-container>
         <el-header>
-          <div class="icons">
+          <div class="headMain">
             <el-icon
               size="20px"
               v-if="isCollapse == false"
@@ -101,13 +108,14 @@
             <el-icon size="20px" v-if="isCollapse == true" @click="handleFold()"
               ><Expand
             /></el-icon>
+            <el-breadcrumb separator="/">
+              <el-breadcrumb-item>后台管理</el-breadcrumb-item>
+              <el-breadcrumb-item v-for="(item, index) in title" :key="index">
+                {{ item.name }}
+              </el-breadcrumb-item>
+            </el-breadcrumb>
           </div>
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item>后台管理</el-breadcrumb-item>
-            <el-breadcrumb-item v-for="(item, index) in title" :key="index">
-              {{ item.name }}
-            </el-breadcrumb-item>
-          </el-breadcrumb>
+          <div class="headHome"><NuxtLink to="/">返回首页</NuxtLink></div>
         </el-header>
         <el-main>
           <slot></slot>
@@ -120,6 +128,7 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminStore } from "~/store/admin";
+import { useHomestore } from "~/store/home";
 import {
   Document,
   Menu as IconMenu,
@@ -127,14 +136,23 @@ import {
   Setting,
   Expand,
   Fold,
+  User,
+  Filter,
+  PictureRounded,
+  Timer,
+  Stopwatch,
+  Calendar,
+  Monitor,
 } from "@element-plus/icons-vue";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 const route = useRoute();
 let defaultRoute = ref("");
 let isCollapse = ref(false);
 let windowWidth = ref(0);
 onMounted(() => {
   windowWidth.value = window.innerWidth;
-  if (windowWidth.value < 600) {
+  if (windowWidth.value < 700) {
     isCollapse.value = true;
   }
   defaultRoute.value = route.path;
@@ -220,12 +238,23 @@ function skipAdd(a: any) {
 .el-header {
   padding: 20px 10px;
   display: flex;
+  justify-content: space-between;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid #ddd;
   box-shadow: 0px 2px 3px 0px #c3cdd6;
-  min-height:60px !important;
+  min-height: 60px !important;
   --el-header-height: auto;
+  .headMain{
+    display: flex;
+  }
+  .headHome{
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  .headHome:hover{
+    color: #48c6ef;
+  }
   .el-breadcrumb {
     margin-left: 15px;
     overflow: hidden;

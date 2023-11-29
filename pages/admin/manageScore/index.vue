@@ -8,7 +8,6 @@
     <AddScoreInfo
       :dialogVisible="scoreDialogVisible"
       @addAlert="scoreHandle"
-      :id="addScoreID"
       ref="addScoreRef"
     />
     <el-form :inline="true" :model="searchKeys">
@@ -27,6 +26,9 @@
       style="width: 100%"
       ref="tableRef"
       v-loading="isLoading"
+      @expand-change="onExpand"
+      :row-key="handleRow"
+      :expand-row-keys="rowKeyArr"
     >
       <el-table-column type="expand">
         <template #default="props">
@@ -36,12 +38,12 @@
               成绩<el-button
                 style="margin-left: 10px; width: 55px; height: 30px"
                 type="success"
-                @click="scoreAlert(props.row.id)"
+                @click="scoreAlert(props.row)"
                 >添加</el-button
               >
             </h3>
             <el-table
-              :data="props.row.sonTable"
+              :data="props.row.scoreList"
               :border="childBorder"
               class="accessScore"
             >
@@ -66,12 +68,25 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column label="姓名" prop="name" />
-              <el-table-column label="代码" prop="code" />
-              <el-table-column label="完成度" prop="final" />
-              <el-table-column label="基础知识" prop="base" />
-              <el-table-column label="平时分" prop="usual" />
+              <el-table-column
+                v-for="(item, index) in props.row.templates"
+                :key="index"
+                :label="item.name"
+                :prop="item.name"
+              />
             </el-table>
+            <div class="pagination">
+              <el-pagination
+                v-model:current-page="props.row.pageInfo.pageIndex"
+                v-model:page-size="props.row.pageInfo.allPage"
+                :page-sizes="[5, 10, 15, 20]"
+                small
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="props.row.pageInfo.allCount"
+                @size-change="handleScoreSizeChange"
+                @current-change="handleScoreCurrentChange"
+              />
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -130,30 +145,34 @@ import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
 import {
   deleteAccessService,
   getAllAccessService,
+  getScoreByAccessService,
+  getTemplateService,
   getUserInfoById,
 } from "~/service/user";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
-import type { AccessResInfoType } from "~/types/Access";
+import type { AccessResInfoType, ScorePageInfoListType } from "~/types/Access";
 definePageMeta({
   layout: "manag",
 });
-
-const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
 
 const AccessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
 const accessDialogVisible = ref(false);
 const scoreDialogVisible = ref(false);
-const addScoreID = ref();
+const addScoreNeedInfo = ref<AccessResInfoType>();
+const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
 const { pageInfo, searchKey } = storeToRefs(AccessPageInfoStore);
+
+const rowKeyArr = ref<any>([]);
+
+function handleRow(row: any) {
+  return row.id;
+}
 
 const accessInfo = ref<Array<AccessResInfoType>>([]);
 
-// watch(accessInfo.value, (newValue) => {
-//   console.log(newValue);
-// });
 const getAccessInfo = async (props: {
   keyword?: string;
   currentPage: number;
@@ -176,13 +195,65 @@ const getAccessInfo = async (props: {
       } else {
         accessInfo.value[i].publisherName = "未知";
       }
+      // let scores = await getScoreByAccessService({
+      //   nodePage: 1,
+      //   pageSize: 10,
+      //   pId: accessInfo.value[i].id,
+      // });
+      // console.log(scores);
+      // accessInfo.value[i].sonTable=scores.data.value.data.records
     }
   }
   pageInfo.value.currentPage = accessInfoRes.data.value.data.current;
   pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
   pageInfo.value.total = accessInfoRes.data.value.data.total;
   isLoading.value = false;
-  console.log(accessInfo.value);
+};
+
+const onExpand = async (row: any, expend: any) => {
+  let pageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
+  row.pageInfo = pageInfo;
+  let ids = handleRow(row);
+  let index = rowKeyArr.value?.indexOf(ids);
+  if (index === -1) {
+    rowKeyArr.value?.push(ids);
+  } else {
+    rowKeyArr.value?.splice(index, 1);
+  }
+
+  console.log(row.id);
+
+  let templateRes = await getTemplateService(row.id);
+  let scoreInfoRes = await getScoreByAccessService({
+    nodePage: 1,
+    pageSize: 2,
+    pId: row.id,
+  });
+  console.log(scoreInfoRes);
+
+  if (scoreInfoRes.data.value.code == 20000) {
+    let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
+    pageInfo = { pageIndex, allPage, allCount, size };
+    row.pageInfo = pageInfo;
+    const list = scoreInfoRes.data.value.data.list;
+    let scoreList = new Array(list.length);
+    row.templates = templateRes.data.value.data.types;
+    console.log(list);
+
+    for (let i = 0; i < list.length; i++) {
+      let scores = list[i].scores;
+      let obj: { [x: string]: string } = {};
+      obj.id = list[i].id;
+      for (let j = 0; j < scores.length; j++) {
+        obj[scores[j].name] = scores[j].score;
+      }
+      scoreList.push(obj);
+      console.log(scoreList);
+    }
+    row.scoreList = scoreList;
+  } else {
+    return null;
+  }
 };
 
 const resetInfo = () => {
@@ -213,46 +284,6 @@ const searchAccess = async () => {
     pageInfo.value.pageSize = accessInfoRes.data.value.data.size;
     pageInfo.value.total = accessInfoRes.data.value.data.total;
   }
-};
-
-const getScore = (row: any, expandedRows: any) => {
-  const isExpanded = expandedRows.includes(row);
-  console.log(expandedRows);
-  //判断开启下拉和关闭下拉
-  if (!isExpanded) {
-    return;
-  }
-  let sonTable = [
-    {
-      name: "张三",
-      code: 0,
-      final: 0,
-      base: 0,
-      usual: 0,
-      comments: [
-        {
-          name: "person1",
-          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-        },
-        {
-          name: "person1",
-          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-        },
-        {
-          name: "person1",
-          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-        },
-        {
-          name: "person1",
-          commentInfo: "这是评价这是评价这是评价这是评价这是评价",
-        },
-      ],
-    },
-  ];
-
-  // let index = accessInfo.value?.findIndex((obj) => obj.id === row.id);
-
-  row.sonTable = markRaw(sonTable);
 };
 
 getAccessInfo({
@@ -306,11 +337,11 @@ const childBorder = ref(false);
 const addAlert = () => {
   accessDialogVisible.value = !accessDialogVisible.value;
 };
-const scoreAlert = (id: number) => {
-  addScoreID.value = id;
+const scoreAlert = (props: AccessResInfoType) => {
+  addScoreNeedInfo.value = props;
+
   scoreDialogVisible.value = !scoreDialogVisible.value;
-  console.log(id);
-  addScoreRef.value?.postId(id);
+  addScoreRef.value?.postId(props);
 };
 
 const accessHandle = (props: boolean) => {
@@ -337,7 +368,6 @@ const deleteAccess = (ids: Array<number>) => {
   })
     .then(async () => {
       let res = await deleteAccessService(ids);
-      console.log(res);
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
@@ -363,8 +393,12 @@ const deleteAccess = (ids: Array<number>) => {
     });
 };
 
-//添加成绩
-const addScoreAlert = () => {};
+const handleScoreSizeChange = (val: number) => {
+  console.log(val);
+};
+const handleScoreCurrentChange = (val: number) => {
+  console.log(val);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -415,5 +449,11 @@ const addScoreAlert = () => {};
     height: auto;
     line-height: 25px;
   }
+}
+
+.pagination {
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
 }
 </style>

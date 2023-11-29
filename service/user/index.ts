@@ -67,6 +67,17 @@ export const getUserInfoById = (id: number) => {
   });
 };
 
+//通过年级查询用户
+export const searchUserByGradeService = (
+  userGrade: string,
+  userName: string
+) => {
+  return hyRequest.get<IResultData<any>>("/coustom/user/user/selectUser", {
+    userGrade,
+    userName,
+  });
+};
+
 //修改密码
 export const updateUserPassword = (props: UpdatePassType) => {
   return hyRequest.put<IResultData<any>>(`/coustom/user/user/updatePassword`, {
@@ -119,9 +130,14 @@ export const deleteAccessService = (ids: Array<number>) => {
 
 //添加某个考核的成绩
 export const addAccessScore = (props: ScoreAddType) => {
-  return hyRequest.post<IResultData<any>>(`/access/studyPlan/delete`, "", {
+  return hyRequest.post<IResultData<any>>(`/access/grade/add`, "", {
     body: JSON.stringify(props),
   });
+};
+
+//获取某个考核的信息
+export const getAccessInfo = (id: number) => {
+  return hyRequest.get<IResultData<any>>(`/access/studyPlan/select`, { id });
 };
 
 //获取试卷模版
@@ -129,4 +145,17 @@ export const getTemplateService = (id: number) => {
   return hyRequest.get<IResultData<any>>(`/access/templates/search`, {
     id,
   });
+};
+
+//获取某次考核用户的成绩
+export const getScoreByAccessService = (props: {
+  nodePage: number;
+  pageSize: number;
+  pId?: number;
+  studentId?: number;
+}) => {
+  return hyRequest.get<IResultData<any>>(
+    `/access/grade/getGradeByStudentId`,
+    props
+  );
 };

@@ -1,12 +1,12 @@
 <template>
-  <div class="main">
+  <div class="main" v-loading="loadings">
     <div class="title">
       <div>相关帖子</div>
       <div class="signleHome" v-if="userinfo.userId != 0">
-      <NuxtLink to="/forum/person">个人主页</NuxtLink>
+        <NuxtLink to="/forum/person">个人主页</NuxtLink>
       </div>
     </div>
-    <ul class="posts">
+    <ul class="posts" v-if="pagesData.length != 0">
       <li class="card" v-for="(item, index) in pagesData" :key="index">
         <div class="cardPhotos">
           <NuxtLink
@@ -15,9 +15,14 @@
                 path: '/forum/details',
                 query: { data: item.postId },
               })
-            ">
+            "
+          >
             <img
-              :src="item.photos.length ? item.photos[0] : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'"
+              :src="
+                item.photos.length != 0
+                  ? item.photos[0]
+                  : 'https://img2.baidu.com/it/u=2312383180,3750420672&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800'
+              "
             />
           </NuxtLink>
         </div>
@@ -46,7 +51,9 @@
             <li>
               <svg
                 v-if="item.likes == true"
-                @click="postLike(item.postId, 'Like', 0, index)"
+                @click="
+                  postLike(item.postId, 'Like', 0, index, item.postUserId)
+                "
                 t="1699003181186"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -64,7 +71,9 @@
               </svg>
               <svg
                 v-if="item.likes == false"
-                @click="postLike(item.postId, 'Like', 1, index)"
+                @click="
+                  postLike(item.postId, 'Like', 1, index, item.postUserId)
+                "
                 t="1699003334612"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -85,12 +94,16 @@
             <li>
               <el-icon
                 v-if="item.collect == false"
-                @click="postLike(item.postId, 'Collect', 1, index)"
+                @click="
+                  postLike(item.postId, 'Collect', 1, index, item.postUserId)
+                "
                 ><Star
               /></el-icon>
               <el-icon
                 v-if="item.collect == true"
-                @click="postLike(item.postId, 'Collect', 0, index)"
+                @click="
+                  postLike(item.postId, 'Collect', 0, index, item.postUserId)
+                "
                 ><StarFilled
                   color="yellow"
                   style="font-size: 23px; margin-top: -4px"
@@ -105,125 +118,175 @@
         </div>
       </li>
     </ul>
+    <div class="noDataImg" v-if="pagesData.length == 0">
+      <img class="noData" src="/images/暂无.svg" />
+    </div>
+    <div class="loadText" v-if="shows == 1" @click="nextData">
+      <span>点击加载更多</span>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ChatDotRound, Star, StarFilled, Sunny } from "@element-plus/icons-vue";
+import { useRoute } from "vue-router";
+import { useWebSocket } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { forumStore } from "~/store/forum";
 import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { datas, pages, uploadRender, postSubId, postSource } =
+const { datas, pages, uploadRender, postSubId, postSource, loadings } =
   storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
-let isLoading = ref(true);
+let shows = ref(1);
+const route = useRoute();
+const { status, data, send, open, close } = useWebSocket(
+  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/+${userinfo.value.userId}`,
+  {
+    autoReconnect: {
+      retries: 8,
+      delay: 1000,
+      onFailed() {
+        alert("Failed to connect WebSocket after 8 retries");
+      },
+    },
+  }
+);
 onMounted(() => {
   fetchData(userinfo.value.userId);
-  window.addEventListener("scroll", handleScroll);
 });
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
+//发送消息
+const sentMessage = (
+  msgAccept: number,
+  msgContent: string,
+  msgType: string,
+  msgContentId: number
+) => {
+  let obj = {
+    msgAccept,
+    msgContent,
+    msgSend: userinfo.value.userId,
+    msgType,
+    msgContentId,
+  };
+  send(JSON.stringify(obj));
+};
 //查询帖子
 function fetchData(userId: any) {
   if (postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(userId, pageNo.value, 10, postSource.value, postSubId.value)
+      .selectPost(userId, pageNo.value, 30, postSource.value, postSubId.value)
       .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value];
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
         }
-        isLoading.value = false;
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
       });
+    return;
   } else if (!postSource.value && postSubId.value != 0) {
     forums
-      .selectPost(userId, pageNo.value, 10, "", postSubId.value)
+      .selectPost(userId, pageNo.value, 30, "", postSubId.value)
       .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value, ...res];
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
         }
-        isLoading.value = false;
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
       });
+    return;
   } else if (postSource.value && postSubId.value == 0) {
     forums
-      .selectPost(userId, pageNo.value, 10, postSource.value)
+      .selectPost(userId, pageNo.value, 30, postSource.value)
       .then((res) => {
-        if (res) {
-          pagesData.value = [...pagesData.value, ...res];
+        for (let i = 0; i < res.length; i++) {
+          pagesData.value.push({ ...res[i] });
         }
-        isLoading.value = false;
+        pageNo.value++;
+        if (pageNo.value > pages.value) {
+          shows.value = 0;
+        }
       });
+    return;
   } else if (!postSource.value && postSubId.value == 0) {
-    forums.selectPost(userId, pageNo.value, 10).then((res) => {
-      if (res) {
-        pagesData.value = [...pagesData.value, ...res];
+    forums.selectPost(userId, pageNo.value, 30).then((res) => {
+      for (let i = 0; i < res.length; i++) {
+        pagesData.value.push({ ...res[i] });
       }
-      isLoading.value = false;
+      pageNo.value++;
+      if (pageNo.value > pages.value) {
+        shows.value = 0;
+      }
+    });
+    return;
+  }
+}
+const nextData = () => {
+  fetchData(userinfo.value.userId);
+};
+//点赞/收藏
+function postLike(
+  postId: number,
+  type: string,
+  status: number,
+  index: number,
+  postUserId: number
+) {
+  if (userinfo.value.userId == 0) {
+    ElMessage.warning("请先登录");
+  } else {
+    forums.addlike(postId, status, type, userinfo.value.userId).then((res) => {
+      if (status == 1) {
+        if (type == "Like") {
+          if (res == 20000) {
+            pagesData.value[index].likes = true;
+            ElMessage.success("点赞成功");
+            sentMessage(postUserId,"点赞了你的帖子","PostLike",postId)
+          } else if (res == 53003) {
+            ElMessage.warning("请勿重复点赞");
+          } else {
+            ElMessage.error("点赞失败");
+          }
+        } else {
+          if (res == 20000) {
+            pagesData.value[index].collect = true;
+            ElMessage.success("收藏成功");
+            sentMessage(postUserId,"收藏了了你的帖子","PostCollect",postId)
+          } else if (res == 53003) {
+            ElMessage.warning("请勿重复收藏");
+          } else {
+            ElMessage.error("收藏失败");
+          }
+        }
+      } else {
+        if (type == "Like") {
+          if (res == 20000) {
+            pagesData.value[index].likes = false;
+            ElMessage.success("取消点赞");
+          } else if (res == 53004) {
+            ElMessage.warning("请勿重复取消");
+          } else {
+            ElMessage.error("取消点赞失败");
+          }
+        } else {
+          if (res == 20000) {
+            pagesData.value[index].collect = false;
+            ElMessage.success("取消收藏");
+          } else if (res == 53004) {
+            ElMessage.warning("请勿重复取消");
+          } else {
+            ElMessage.error("取消收藏失败");
+          }
+        }
+      }
     });
   }
-  pageNo.value++;
-}
-function handleScroll() {
-  const scrollY = window.scrollY;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const windowHeight = window.innerHeight;
-  let distanceToBottom = scrollHeight - (scrollY + windowHeight);
-  if (pageNo.value > pages.value) {
-    isLoading.value = true;
-  } else {
-    if (distanceToBottom < 100 && !isLoading.value) {
-      fetchData(userinfo.value.userId);
-    }
-  }
-}
-//点赞/收藏
-function postLike(postId: number, type: string, status: number, index: number) {
-  forums.addlike(postId, status, type, userinfo.value.userId).then((res) => {
-    if (status == 1) {
-      if (type == "Like") {
-        if (res == 20000) {
-          pagesData.value[index].likes = true;
-          ElMessage.success("点赞成功");
-        } else if (res == 53003) {
-          ElMessage.warning("请勿重复点赞");
-        } else {
-          ElMessage.error("点赞失败");
-        }
-      } else {
-        if (res == 20000) {
-          pagesData.value[index].collect = true;
-          ElMessage.success("收藏成功");
-        } else if (res == 53003) {
-          ElMessage.warning("请勿重复收藏");
-        } else {
-          ElMessage.error("收藏失败");
-        }
-      }
-    } else {
-      if (type == "Like") {
-        if (res == 20000) {
-          pagesData.value[index].likes = false;
-          ElMessage.success("取消点赞");
-        } else if (res == 53004) {
-          ElMessage.warning("请勿重复取消");
-        } else {
-          ElMessage.error("取消点赞失败");
-        }
-      } else {
-        if (res == 20000) {
-          pagesData.value[index].collect = false;
-          ElMessage.success("取消收藏");
-        } else if (res == 53004) {
-          ElMessage.warning("请勿重复取消");
-        } else {
-          ElMessage.error("取消收藏失败");
-        }
-      }
-    }
-  });
 }
 watch(datas, (newValue, oldValue) => {
   if (uploadRender.value) {
@@ -356,6 +419,34 @@ watch(datas, (newValue, oldValue) => {
     .cardPhotos {
       border-radius: 0 15px 15px 0;
     }
+  }
+}
+.noDataImg {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  .noData {
+    width: 200px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+}
+.loadText {
+  width: 100%;
+  text-align: center;
+  height: 25px;
+  line-height: 25px;
+  font-size: 17px;
+  font-family: "阿里妈妈刀隶体";
+  margin-bottom: 15px;
+  cursor: pointer;
+  span:hover {
+    color: rgb(46, 158, 202);
   }
 }
 @media (max-width: 1015px) {

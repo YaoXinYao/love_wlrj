@@ -75,15 +75,28 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      :close-on-press-escape="false"
+      :show-close="false"
+      :close-on-click-modal="false"
+      v-model="dialogVisible2"
+      title="正在上传....."
+      width="70%"
+    >
+      <UploadLoding />
+      <template #footer></template>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-
+import { useHomestore } from "~/store/home";
 import { useDiskstore } from "~/store/disk";
-
+const homestore = useHomestore();
+const { userinfo } = storeToRefs(homestore);
+const dialogVisible = ref(false);
+const dialogVisible2 = ref(false);
 const input = ref<HTMLInputElement>();
-
 const isActive = ref(false);
 const curTag = ref([]);
 const disstore = useDiskstore();
@@ -119,33 +132,50 @@ function handleDrop(event: DragEvent) {
   }
   isActive.value = false;
 }
-const dialogVisible = ref(false);
 const handleClose = () => {
   dialogVisible.value = false;
   console.log(curTag.value); //标签ID
   uploadBt();
 };
 const uploadBt = async () => {
-  const chunks = createChunks(filequeue.value[0], 1024 * 1024);
-  const md5info = await HashMd5file(chunks);
-  await Filefragmentation(
-    filequeue.value[0],
+  // 开始上传列表
+  dialogVisible2.value = true;
+  //初始化上传片数为0
+  disstore.updatereader(1);
+  let totalChunk = 0;
+  const chunkSize = 1024 * 1024 * 5;
+  for (let item of filequeue.value) {
+    totalChunk += createChunks(item, chunkSize).length;
+  }
+  await disstore.updateTotalByte(totalChunk);
+  console.log(totalChunk);
+  await uploadFileQueue(filequeue.value, 0);
+  disstore.updatefilequeue();
+  dialogVisible2.value = false;
+  //上传完成
+};
+const uploadFileQueue = async (file: File[], index: number) => {
+  if (index > file.length - 1) return; // 终止条件
+  //设置正在传送的文件
+  disstore.updateFile(file[index]);
+  disstore.updateMd5(true);
+  // const chunks = createChunks(file[index], 1024 * 1024);
+  const md5info = await calculateFileHash(file[index]);
+  console.log(md5info);
+  disstore.updateMd5(false);
+  //计算完成
+  await startUpload(
+    file[index],
     0,
     md5info as string,
     userinfo.value.userName,
     curTag.value
   );
-  ElMessage({ message: "上传成功！", type: "success" });
-  filequeue.value.shift();
-  /*  const res = await uploadfile(
-    {
-      uploaderId: 7,
-      uploadName: "赵子豪",
-      fileTypeIdList: [1, 2],
-    },
-    filequeue.value[0],
-    progress
-  ); */
+  //一个文件传输完毕之后进行的操作
+  disstore.updateFilename(filequeue.value[index].name);
+  disstore.updatereadyByte(1);
+  // 修正递归调用
+  await uploadFileQueue(file, index + 1);
 };
 </script>
 <style scoped lang="scss">

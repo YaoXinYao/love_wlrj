@@ -31,7 +31,8 @@
           >公告</span
         >
       </h3>
-      <p>这是公告内容这是公告内容这是公告内容这是公告内容这是公告内容</p>
+      <p v-if="newNotice">{{ newNotice.noticeContent }}</p>
+      <p v-if="!newNotice">暂无公告</p>
     </div>
     <NuxtLink
       to="/personalInfoPage/userTimetable"
@@ -62,8 +63,13 @@ import { Right } from "@element-plus/icons-vue";
 import "animate.css";
 import { useHomestore } from "../../../store/home";
 import { storeToRefs } from "pinia";
+import { getNewNotice } from "~/service/message";
 const homeStore = useHomestore();
 const { userinfo } = storeToRefs(homeStore);
+
+//公告
+let noticeInfoRes = await getNewNotice();
+let newNotice = noticeInfoRes.data.value.data.records[0];
 </script>
 
 <style lang="scss" scoped>
