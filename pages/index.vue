@@ -15,7 +15,6 @@
 <script setup lang="ts">
 import { useHomestore } from "~/store/home";
 const usehomestore = useHomestore();
-usehomestore.getWapper(); //获取轮播图
 usehomestore.ChangeisRequireanim(true);
 </script>
 <style lang="scss">
