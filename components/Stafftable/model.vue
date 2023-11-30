@@ -116,7 +116,7 @@
       <el-form-item label="班级" :label-width="formLabelWidth">
         <el-input v-bind:value="signleInfo.userClass" disabled />
       </el-form-item>
-      <el-form-item label="方向" :label-width="formLabelWidth">
+      <el-form-item label="方向" :label-width="formLabelWidth" v-if="userinfo.roleId == 3">
         <el-select v-model="signleInfo.groupName">
           <el-option
             v-for="item in signleInfo.singleTeam"
@@ -125,6 +125,9 @@
             :value="item.groupId"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="方向" :label-width="formLabelWidth" v-if="userinfo.roleId != 3">
+        <el-input v-bind:value="signleInfo.groupName" disabled />
       </el-form-item>
       <el-form-item label="博客链接" :label-width="formLabelWidth">
         <el-input v-bind:value="signleInfo.userBlog" disabled />
@@ -192,6 +195,9 @@ import type {
   UploadInstance,
   UploadUserFile,
 } from "element-plus";
+import {useHomestore} from "~/store/home"
+let userData = useHomestore()
+let {userinfo} = storeToRefs(userData)
 const formLabelWidth = "80px";
 const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
