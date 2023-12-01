@@ -10,8 +10,8 @@
             >
               <nuxt-link to="/messageCenter/postLike"
                 ><el-badge
-                  :value="notReadInfo.postLikeCnt"
-                  :hidden="!(notReadInfo.postLikeCnt > 0)"
+                  :value="notReadNum.postLikeCnt"
+                  :hidden="!(notReadNum.postLikeCnt > 0)"
                   :max="99"
                   class="item"
                   ><span class="iconfont">&#xec7f;</span>帖子点赞</el-badge
@@ -25,8 +25,8 @@
             >
               <nuxt-link to="/messageCenter/postCollect"
                 ><el-badge
-                  :value="notReadInfo.postCollectCnt"
-                  :hidden="!(notReadInfo.postCollectCnt > 0)"
+                  :value="notReadNum.postCollectCnt"
+                  :hidden="!(notReadNum.postCollectCnt > 0)"
                   :max="99"
                   class="item"
                   ><span class="iconfont">&#xe65e;</span>帖子收藏</el-badge
@@ -38,8 +38,8 @@
             >
               <nuxt-link to="/messageCenter/comment"
                 ><el-badge
-                  :value="notReadInfo.postCommentCnt"
-                  :hidden="!(notReadInfo.postCommentCnt > 0)"
+                  :value="notReadNum.postCommentCnt"
+                  :hidden="!(notReadNum.postCommentCnt > 0)"
                   :max="99"
                   class="item"
                   ><span class="iconfont">&#xe8b4;</span>帖子评论</el-badge
@@ -53,8 +53,8 @@
             >
               <nuxt-link to="/messageCenter/commentLike"
                 ><el-badge
-                  :value="notReadInfo.commentLikeCnt"
-                  :hidden="!(notReadInfo.commentLikeCnt > 0)"
+                  :value="notReadNum.commentLikeCnt"
+                  :hidden="!(notReadNum.commentLikeCnt > 0)"
                   :max="99"
                   class="item"
                 >
@@ -70,8 +70,8 @@
             >
               <nuxt-link to="/messageCenter/commentReply"
                 ><el-badge
-                  :value="notReadInfo.commentReplyCnt"
-                  :hidden="!(notReadInfo.commentReplyCnt > 0)"
+                  :value="notReadNum.commentReplyCnt"
+                  :hidden="!(notReadNum.commentReplyCnt > 0)"
                   :max="99"
                   class="item"
                   ><span class="iconfont">&#xe8b4;</span>评论回复</el-badge
@@ -85,7 +85,12 @@
           <NuxtPage class="animate__animated animate__fadeIn"></NuxtPage>
           <el-pagination
             v-show="pageInfo.total"
-            style="height: 100px; width: max-content; margin-left: 10px"
+            style="
+              height: 60px;
+              width: max-content;
+              margin-left: 10px;
+              margin-bottom: 20px;
+            "
             v-model:current-page="pageInfo.currentPage"
             v-model:page-size="pageInfo.pageSize"
             :page-sizes="[5, 10, 15]"
@@ -113,15 +118,8 @@ let { userinfo } = storeToRefs(homeStore);
 import { useMessageStore } from "~/store/message";
 import { useGetMessageInfo } from "../hooks/useGetMessageInfo";
 const messageStore = useMessageStore();
-const { curType, pageInfo, infoList } = storeToRefs(messageStore);
+const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
 const route = useRoute();
-let notReadInfo = reactive({
-  commentLikeCnt: 0,
-  commentReplyCnt: 0,
-  postCollectCnt: 0,
-  postCommentCnt: 0,
-  postLikeCnt: 0,
-});
 
 onMounted(() => {
   getInfo();
@@ -163,12 +161,13 @@ const {
   postCommentCnt,
   postLikeCnt,
 } = notReadInfoRes.data.value.data;
-notReadInfo.commentLikeCnt = commentLikeCnt;
-notReadInfo.commentReplyCnt = commentReplyCnt;
-notReadInfo.postCollectCnt = postCollectCnt;
-notReadInfo.postCommentCnt = postCommentCnt;
-notReadInfo.postLikeCnt = postLikeCnt;
-console.log(notReadInfoRes);
+messageStore.ChangeNotReadNum({
+  commentLikeCnt,
+  commentReplyCnt,
+  postCollectCnt,
+  postCommentCnt,
+  postLikeCnt,
+});
 
 const getInfo = async () => {
   let messageRes = await useGetMessageInfo({
@@ -178,7 +177,6 @@ const getInfo = async () => {
     userId: userinfo.value.userId,
   });
 
-  console.log(messageRes);
   if (messageRes) {
     let { current, pages, total, pageSize } = messageRes?.resPageInfo;
     messageStore.ChangePageInfo({
@@ -188,7 +186,6 @@ const getInfo = async () => {
     });
 
     infoList.value = messageRes.infoResList;
-    console.log(pageInfo.value);
   }
 };
 

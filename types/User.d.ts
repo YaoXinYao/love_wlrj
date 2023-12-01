@@ -25,4 +25,15 @@ export interface UserAllInfoType {
   groupName: string;
   roleId: number;
   roleName: string;
+  interviewList?: Array<InterviewType> | null;
+}
+
+export interface InterviewType {
+  id: number;
+  studentId: number;
+  interviewterId: number;
+  comment: string;
+  createTime: string;
+  updateTime: string | null;
+  pid: number;
 }

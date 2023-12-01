@@ -41,10 +41,16 @@
 
 <script setup lang="ts">
 import { gsap } from "gsap";
-import { storeToRefs } from "pinia";
-import { useHomestore } from "~/store/home";
-const homestore = useHomestore();
-const { Wrapper } = storeToRefs(homestore);
+import type { IResultData } from "~/service/forum";
+import type { WrapperType } from "~/types/Home";
+const Wrapper = ref<WrapperType[]>([]);
+const { data } = await useFetch<IResultData<WrapperType[]>>(
+  "/zinfo/user/carousel/selectAllCarousel",
+  {
+    method: "get",
+    server: false,
+  }
+);
 const carousel = ref();
 onMounted(() => {
   //首屏划入标题
@@ -76,6 +82,15 @@ onMounted(() => {
       { translateY: 0, opacity: 1 }
     );
 });
+watch(
+  data,
+  () => {
+    Wrapper.value = data.value?.data || [];
+  },
+  {
+    immediate: true,
+  }
+);
 function nextpage() {
   carousel.value.next();
 }

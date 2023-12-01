@@ -15,6 +15,13 @@ export const useMessageStore = defineStore("messageStore", {
       // curType: "PostCollect",
       curType: "PostLike",
       infoList: [],
+      notReadNum: {
+        commentLikeCnt: 0,
+        commentReplyCnt: 0,
+        postCollectCnt: 0,
+        postCommentCnt: 0,
+        postLikeCnt: 0,
+      },
     };
   },
   actions: {
@@ -28,6 +35,10 @@ export const useMessageStore = defineStore("messageStore", {
 
     ChangeInfoList(info: any) {
       this.infoList = info;
+    },
+
+    ChangeNotReadNum(props: NotReadNumType) {
+      this.notReadNum = props;
     },
   },
   //持久化操作

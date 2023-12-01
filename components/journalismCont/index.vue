@@ -56,6 +56,9 @@ import  Markdown  from '@/components/markdown/index.vue';
 import {insertNew} from '@/service/journalism/journalism'
 
 
+
+console.log(Authuserid())
+
 const hide = ref(true)
 const isClear = ref(false)
 const fileInput = ref()
@@ -91,8 +94,8 @@ const refForm = reactive<IProps>({
 const ruleFormRef = ref<FormInstance>()
 
 function validateTitle(rule:any,value:any,callback:any){
-    if (value.length < 3 || value.length > 10) {
-        callback(new Error('长度必须在3到10之间'));
+    if (value.length < 3 || value.length > 25) {
+        callback(new Error('长度必须在3到25之间'));
     } else {
         // 检查开头和结尾是否有空格
         if (value.trim() !== value) {
@@ -134,17 +137,15 @@ const handleFile = ()=>{
 
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-    let content = markRef.value.handleGetValue()
+    let content = markRef.value?.handleGetValue()
     // console.log(content)
-    refForm.newsContent = content
+    refForm.newsContent = content as string
     if (!formEl) return
     const result = await formEl.validate((valid, fields) => {
         if (valid) {
-        // console.log('submit!')
-        return true
+            return true
         } else {
-        // console.log('error submit!', fields)
-        return false
+            return false
         }
     })
     if(result){
@@ -157,7 +158,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 form[item] = refForm[item as formEn]
             }
         }
-        // console.log(form,fileList)        
+        form.newsUserId = Authuserid()
+        console.log(form,fileList)        
         ElMessageBox.confirm(
             '确定发布新闻嘛？',
             '发布新闻',
@@ -169,7 +171,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         ).then(()=>{
             insertNew(form,fileList).then(res=>{
                 // console.log('上传图片')
-                // console.log(res.data)
+                console.log(res.data.value)
                 // console.log(res)
                 let data = res.data.value
                 if(data.code === 20000){

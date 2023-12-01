@@ -16,6 +16,15 @@ export interface MessageType {
   pageInfo: MessagePageInfoType;
   curType: MessageTypes;
   infoList: any;
+  notReadNum: NotReadNumType;
+}
+
+export interface NotReadNumType {
+  commentLikeCnt: number;
+  commentReplyCnt: number;
+  postCollectCnt: number;
+  postCommentCnt: number;
+  postLikeCnt: number;
 }
 
 export interface MessagePageInfoType {

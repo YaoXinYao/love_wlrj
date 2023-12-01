@@ -67,14 +67,25 @@ export const getUserInfoById = (id: number) => {
   });
 };
 
-//通过年级查询用户
+//通过年级查询用户(不分页)
 export const searchUserByGradeService = (
-  userGrade: string,
-  userName: string
+  userGrade: string | number,
+  userName?: string
 ) => {
   return hyRequest.get<IResultData<any>>("/coustom/user/user/selectUser", {
     userGrade,
     userName,
+  });
+};
+
+//条件查询用户（分页）
+export const searchUserervice = (props: {
+  pageNo: number;
+  pageSize: number;
+  userGrade: number | string;
+}) => {
+  return hyRequest.get<IResultData<any>>("/coustom/user/user/selectAllUser", {
+    ...props,
   });
 };
 
@@ -110,8 +121,9 @@ export const getTypesByIdService = (id: number) => {
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
+  console.log({ ...props });
   return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, "", {
-    body: JSON.stringify(props),
+    body: JSON.stringify({ ...props }),
   });
 };
 
@@ -165,6 +177,13 @@ export const getScoreByAccessService = (props: {
   );
 };
 
+//删除成绩
+export const deleteScoreService = (ids: Array<number>) => {
+  return hyRequest.delete<IResultData<any>>(`/access/grade/delete`, {
+    ids,
+  });
+};
+
 //添加面评
 export const addInterviewService = (props: {
   content: string;
@@ -174,7 +193,12 @@ export const addInterviewService = (props: {
   return hyRequest.post<IResultData<any>>(`/access/interview/add`, props);
 };
 
+//删除面评
+export const deleteInterviewService = (ids: Array<number>) => {
+  return hyRequest.delete<IResultData<any>>(`/access/interview/delete`, { ids });
+};
+
 //获得面评
 export const getInterviewService = (props: { id: number; pId: number }) => {
-  return hyRequest.get<IResultData<any>>(`/access/interview/add`, props);
+  return hyRequest.get<IResultData<any>>(`/access/interview/list`, props);
 };

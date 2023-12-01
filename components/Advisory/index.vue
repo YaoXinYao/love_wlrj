@@ -1,43 +1,47 @@
 <template>
-  <div class="advisory">
-    <div class="news">
-      <div class="newstitle">热点新闻</div>
-      <div class="newscontainer">
-        <div
-          class="newsleft"
-          :style="{
-            backgroundImage: `url(${HotNews?.records[curIndexnews]?.newsImg})`,
-          }"
-        ></div>
-        <div class="newsright">
-          <div class="newsrighttop">
-            <NuxtLink
-              :to="`/articlemd/${item.newsId}`"
-              target="_blank"
-              :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
-              v-for="(item, index) in HotNews.records"
-              :key="index"
-              @mouseenter="() => changenews(index)"
-            >
-              <div class="newsposotion">
-                <div class="newsitemTime">{{ timereg(item.newsTime) }}</div>
-                <div class="newitemContent">{{ item.newsTitle }}</div>
-              </div>
-              <div class="borderitem"></div>
-            </NuxtLink>
-          </div>
-          <div class="newsrightbootom">
-            <div class="bottomPrev" @click="prePage">
-              <i class="iconfont icon-xiangxia-copy"></i>
+  <ClientOnly>
+    <div class="advisory">
+      <div class="news">
+        <div class="newstitle">热点新闻</div>
+        <div class="newscontainer">
+          <div
+            class="newsleft"
+            :style="{
+              backgroundImage: `url(${
+                HotNews.records[curIndexnews]?.newsImg || ''
+              })`,
+            }"
+          ></div>
+          <div class="newsright">
+            <div class="newsrighttop">
+              <NuxtLink
+                :to="`/articlemd/${item.newsId}`"
+                target="_blank"
+                :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
+                v-for="(item, index) in HotNews.records"
+                :key="index"
+                @mouseenter="() => changenews(index)"
+              >
+                <div class="newsposotion">
+                  <div class="newsitemTime">{{ timereg(item.newsTime) }}</div>
+                  <div class="newitemContent">{{ item.newsTitle }}</div>
+                </div>
+                <div class="borderitem"></div>
+              </NuxtLink>
             </div>
-            <div class="bottomNext" @click="nextPage">
-              <i class="iconfont icon-xiangxia-copy"></i>
+            <div class="newsrightbootom">
+              <div class="bottomPrev" @click="prePage">
+                <i class="iconfont icon-xiangxia-copy"></i>
+              </div>
+              <div class="bottomNext" @click="nextPage">
+                <i class="iconfont icon-xiangxia-copy"></i>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </ClientOnly>
 </template>
 <script setup lang="ts">
 import { gsap } from "gsap";
@@ -49,38 +53,6 @@ const curPage = ref(1);
 const homestore = useHomestore();
 homestore.getHotnews(curPage.value);
 const { HotNews } = storeToRefs(homestore);
-/* const news = ref({
-  newarr: [
-    {
-      imgsrc:
-        "https://download.cocos.com/CocosPortal/image/2169866ba6074376beaa772389d813f8/2169866ba6074376beaa772389d813f8.jpg",
-      descid: "1",
-      title: "23级第一次考核",
-      time: "2023.11.10",
-    },
-    {
-      imgsrc:
-        "https://download.cocos.com/CocosPortal/image/335b68eeb65f4cf983a507355cb287a8/335b68eeb65f4cf983a507355cb287a8.jpeg",
-      descid: "2",
-      title: "未来小组年会",
-      time: "2023.11.10",
-    },
-    {
-      imgsrc:
-        "https://lmy-1311156074.cos.ap-nanjing.myqcloud.com/test/1ff7894ef990fe71a5cf95febdfa226a_0.png",
-      descid: "3",
-      title: "宝宝喜提loopy",
-      time: "2023.11.10",
-    },
-    {
-      imgsrc:
-        "https://download.cocos.com/CocosPortal/image/7aa2bd4db4f24d21bd359912648356ca/7aa2bd4db4f24d21bd359912648356ca.jpg",
-      descid: "",
-      title: "庆祝新中国成立",
-      time: "1949.10.01",
-    },
-  ],
-}); */
 const nextPage = () => {
   if (curPage.value >= HotNews.value.pages) {
     return;

@@ -19,16 +19,18 @@ export const useGetMessageInfo = async (
   console.log(messageInfoRes);
 
   let baseInfo = messageInfoRes.data.value.data;
-  messageInfoData.data = baseInfo.records;
-  if (messageInfoData.data.length == 0) {
-    return null;
-  }
   let resPageInfo = {
     current: baseInfo.current,
     pages: baseInfo.pages,
     total: baseInfo.total,
     pageSize: baseInfo.size,
   };
+  messageInfoData.data = baseInfo.records;
+
+  if (messageInfoData.data.length == 0) {
+    infoResList = null;
+    return { infoResList, resPageInfo };
+  }
 
   for (let i = 0; i < messageInfoData.data.length; i++) {
     //查询信息发送者信息

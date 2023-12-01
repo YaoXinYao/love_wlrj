@@ -13,7 +13,7 @@ export interface AddAccessType {
   subscribers: string;
   type: string;
   typeId: number | undefined;
-  types: Array<AccessItem>;
+  types?: Array<AccessItem>;
 }
 
 export interface MyObject {
@@ -40,6 +40,9 @@ export interface AccessResInfoType {
   typeName?: string;
   updateTime: string | null;
   sonTable?: Array<any>;
+  managePageInfo: ?any;
+  scoreList?: any;
+  templates?: any;
 }
 
 export interface AccessPageInfoType {

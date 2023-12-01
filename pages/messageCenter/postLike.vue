@@ -1,7 +1,7 @@
 <template>
   <div class="app">
-    <div v-show="isNull"><el-empty description="暂无数据" /></div>
-    <ul class="infinite-list" v-show="!isNull">
+    <div v-show="!pageInfo.total"><el-empty description="暂无数据" /></div>
+    <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
         :key="index"
@@ -29,41 +29,32 @@ messageStore.ChangePageInfo({
   currentPage: 1,
   total: 0,
 });
+const isNull = ref(false);
 onMounted(() => {
   getInfo();
 });
-const isNull = ref(false);
+
 const getInfo = async () => {
-  messageStore.ChangeInfoList([]);
   let messageRes = await useGetMessageInfo({
     pageNo: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
     type: curType.value,
     userId: userinfo.value.userId,
   });
-
-  console.log(messageRes);
-  if (messageRes) {
-    let { current, pages, total, pageSize } = messageRes?.resPageInfo;
-    messageStore.ChangePageInfo({
-      pageSize: pageSize,
-      currentPage: current,
-      total: total,
-    });
-
+  messageStore.ChangePageInfo({
+    pageSize: messageRes?.resPageInfo.pageSize,
+    currentPage: messageRes?.resPageInfo.current,
+    total: messageRes?.resPageInfo.total,
+  });
+  if (messageRes.infoResList) {
     messageStore.ChangeInfoList(messageRes.infoResList);
-
-    console.log(pageInfo.value);
   } else {
+    messageStore.ChangeInfoList([]);
     isNull.value = true;
   }
 };
 
-watch(pageInfo.value, (newValue) => {
-  if (newValue.total == 0) {
-    isNull.value = true;
-  }
-});
+console.log(pageInfo.value);
 </script>
 <style scoped>
 .infinite-list {

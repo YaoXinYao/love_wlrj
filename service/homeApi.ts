@@ -116,14 +116,7 @@ export function GetWrapper() {
 }
 // 热点新闻
 export function GetHotnews(params: Hotnews) {
-  return Hyrequire.get<IResultData<NewsRoot>>(
-    "/notice/news/select",
-    {
-      ...params,
-    },
-    {
-      lazy: true,
-      server: false,
-    }
-  );
+  return Hyrequire.get<IResultData<NewsRoot>>("/notice/news/select", {
+    ...params,
+  });
 }

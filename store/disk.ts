@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { GetDisjinfo, LookMyfile } from "~/service/disk";
+import { GetDisjinfo, LookMyfile, SearchFile } from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
@@ -90,6 +90,14 @@ export const useDiskstore = defineStore("disk", {
     };
   },
   actions: {
+    //Search获取我的文件信息
+    async getMySearchFile(searchinner: string) {
+      const res = await SearchFile({
+        keyword: searchinner,
+        userId: Authuserid(),
+      });
+      this.Myfile.SearchItem = res.data.value.data;
+    },
     //获取网盘信息
     async getDiskinfo() {
       const res = await GetDisjinfo();
