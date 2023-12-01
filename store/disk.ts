@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { GetDisjinfo, LookMyfile, SearchFile } from "~/service/disk";
+import {
+  GetDisjinfo,
+  LookMyfile,
+  SearchFile,
+  SearchMyfile,
+} from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
@@ -57,6 +62,7 @@ export const useDiskstore = defineStore("disk", {
       //我的收藏列表
       Mylove: {
         Search: "",
+        SearchItem: [],
         curIndex: 1,
         PageSize: 10,
         Loading: false,
@@ -90,9 +96,17 @@ export const useDiskstore = defineStore("disk", {
     };
   },
   actions: {
+    //Search我的收藏
+    async SearchMylovefile(searchinner: string) {
+      const res = await SearchFile({
+        keyword: searchinner,
+        userId: Authuserid(),
+      });
+      this.Mylove.SearchItem = res.data.value.data;
+    },
     //Search获取我的文件信息
     async getMySearchFile(searchinner: string) {
-      const res = await SearchFile({
+      const res = await SearchMyfile({
         keyword: searchinner,
         userId: Authuserid(),
       });
@@ -242,6 +256,14 @@ export const useDiskstore = defineStore("disk", {
       this.Mylove.FileList.dataList[index].is_collection == 0
         ? (this.Mylove.FileList.dataList[index].is_collection = 1)
         : (this.Mylove.FileList.dataList[index].is_collection = 0);
+    },
+    async changeUncomment3(id: number) {
+      console.log(id);
+      const index = this.Mylove.SearchItem.findIndex((item) => item.id == id);
+      console.log(index);
+      this.Mylove.SearchItem[index].is_collection == 0
+        ? (this.Mylove.SearchItem[index].is_collection = 1)
+        : (this.Mylove.SearchItem[index].is_collection = 0);
     },
   },
 });

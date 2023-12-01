@@ -38,8 +38,8 @@ const searchModel = ref(0); // 0 标签搜索  1，name搜索
 function searchFile() {
   if (searchText.value == "")
     return ElMessage({ message: "请输入搜索内容", type: "warning" });
-  /* searchModel.value = 1;
-  diskstore.changeSearch(searchText.value); */
+  //searchModel.value = 1;
+  //diskstore.changeSearch(searchText.value);
   ElMessage({ message: "搜索功能暂未开放", type: "warning" });
 }
 //监听 curIndex 的变化，页数切换，watch巧妙监听

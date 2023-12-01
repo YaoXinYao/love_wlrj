@@ -31,6 +31,7 @@ export interface Diskstore {
   };
   Mylove: {
     Search?: string;
+    SearchItem: Fileprops[];
     curIndex: number;
     PageSize: number;
     Loading: boolean;

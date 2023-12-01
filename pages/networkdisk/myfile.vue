@@ -61,6 +61,15 @@
               plain
               >分享</ElButton
             >
+            <el-popconfirm
+              title="确定删除?"
+              @confirm="() => deleteFile(scope.row.id)"
+              confirm-button-type="danger"
+            >
+              <template #reference>
+                <el-button>删除</el-button>
+              </template>
+            </el-popconfirm>
             <el-switch
               v-model="Filepublic[scope.row.name].public"
               :loading="Filepublic[scope.row.name].loading"
@@ -126,6 +135,15 @@
               plain
               >分享</ElButton
             >
+            <el-popconfirm
+              title="确定删除?"
+              @confirm="() => deleteFile(scope.row.id)"
+              confirm-button-type="danger"
+            >
+              <template #reference>
+                <el-button>删除</el-button>
+              </template>
+            </el-popconfirm>
             <el-switch
               v-model="Filepublic[scope.row.name].public"
               :loading="Filepublic[scope.row.name].loading"
@@ -149,6 +167,7 @@
         </span>
       </template>
     </el-dialog>
+    <DownCom />
   </div>
 </template>
 <script setup lang="ts">
@@ -168,6 +187,11 @@ const Filepublic = ref<{
     loading: boolean;
   };
 }>({});
+/**
+ *
+ * @param name 文件名称，
+ * @param id 文件id
+ */
 const beforeChange2 = async (name: string, id: number) => {
   Filepublic.value[name].loading = true;
   try {
@@ -192,7 +216,14 @@ const beforeChange2 = async (name: string, id: number) => {
     return false;
   }
 };
-
+const deleteFile = async (fileid: number) => {
+  console.log(fileid);
+  /*  const res = await uploaddeleteFile({ fileId: fileid, userId: Authuserid() });
+  console.log(res.data.value); */
+};
+/**
+ * 加载列表
+ */
 const loadingfilelist = async () => {
   await diskstore.getMyfile();
   Myfile.value.FileList.dataList.forEach((item) => {
@@ -202,6 +233,9 @@ const loadingfilelist = async () => {
     };
   });
 };
+/**
+ * 文件搜索
+ */
 const SearchChange = debounce(async (val: string) => {
   if (val == "") return;
   loading.value = true;
@@ -214,6 +248,9 @@ const SearchChange = debounce(async (val: string) => {
   });
   loading.value = false;
 }, 500);
+/**
+ * 搜索窗口关闭之后，刷新列表
+ */
 const BeforeClonehander = async () => {
   await loadingfilelist();
 };
@@ -235,7 +272,6 @@ const BeforeClonehander = async () => {
     padding-left: 0.1rem;
     display: flex;
     width: 100%;
-    display: b;
     justify-content: space-between;
     .headerUp {
       display: block;

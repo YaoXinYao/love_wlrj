@@ -67,6 +67,7 @@ export const useHomestore = defineStore("home", {
     //获取热点新闻
     async getHotnews(curIndex: number) {
       const res = await GetHotnews({ pageNo: curIndex, pageSize: 4 });
+      console.log(res.data);
       this.HotNews = res.data.value.data || [];
     },
     async getWapper() {

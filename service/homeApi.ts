@@ -114,9 +114,12 @@ export function GetWrapper() {
     "/coustom/user/carousel/selectAllCarousel"
   );
 }
-// 热点新闻
+// 热点新闻 这是那个usefetch请求
 export function GetHotnews(params: Hotnews) {
-  return Hyrequire.get<IResultData<NewsRoot>>("/notice/news/select", {
-    ...params,
-  });
+  return Hyrequire.get<IResultData<NewsRoot>>(
+    "/notice/news/select",
+    {
+      ...params,
+    },
+  );
 }
