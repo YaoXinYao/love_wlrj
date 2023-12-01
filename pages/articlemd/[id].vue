@@ -45,6 +45,9 @@ function changewide() {
 function copyURL() {
   copyToClipboard(window.location + route.fullPath);
 }
+useHead({
+  title: data.value!.data.newsTitle || "未来软件工作室",
+});
 </script>
 <style scoped lang="scss">
 //媒体查询布局
