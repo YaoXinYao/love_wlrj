@@ -3,6 +3,8 @@ import type {
   unCollectType,
   MyfileType,
   ToProvate,
+  SearchMyfileType,
+  Fileprops,
 } from "~/types/disk";
 import Hyrequire from "./index";
 import type { IResultData } from "~/types/Userlogin";
@@ -32,13 +34,6 @@ export function uploadfile(
     file,
     progress
   );
-  /* return Hyrequire.post<IResultData<any>>(
-    `/disk/disk/file/updateFile?${filetag}&uploadName=${uploadName}&uploaderId=${uploaderId}`,
-    {},
-    {
-      body: file,
-    }
-  ); */
 }
 //取消收藏
 export function unCollectionFile(params: unCollectType) {
@@ -72,4 +67,17 @@ export function FileToPublic(params: ToProvate) {
 // 获取网盘总览信息
 export function GetDisjinfo() {
   return Hyrequire.get("/disk/disk/file/getDiskOverview");
+}
+/**
+ *
+ * @param params 搜索文件参数
+ * @returns 返回搜索结果的promise对象
+ */
+export function SearchFile(params: SearchMyfileType) {
+  return Hyrequire.get<IResultData<Fileprops[]>>(
+    "/disk/disk/file/searchCollectionFile",
+    {
+      ...params,
+    }
+  );
 }

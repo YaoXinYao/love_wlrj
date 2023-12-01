@@ -18,6 +18,15 @@ export interface blogRoot {
 interface blogitem {
   [key: string]: item[];
 }
+export interface Articlemd {
+  newsContent: string;
+  newsId: number;
+  newsImg: string;
+  newsTime: string;
+  newsTitle: string;
+  newsUserId: number;
+  user: item;
+}
 interface item {
   userId?: number;
   userAccount?: string;

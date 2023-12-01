@@ -108,3 +108,7 @@ export interface ToProvate {
   fileId: number;
   userId: number;
 }
+export interface SearchMyfileType {
+  keyword: string;
+  userId: number;
+}

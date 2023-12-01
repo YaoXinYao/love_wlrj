@@ -1,17 +1,14 @@
 <template>
   <div class="article">
     <div :class="`articleleft ${iswidescreen ? 'activeleft' : ''}`">
-      <h1>{{ data.data.newsTitle }}</h1>
-      <h4>{{ data.data.newsTime }}</h4>
+      <h1>{{ data!.data.newsTitle }}</h1>
+      <h4>{{ data!.data.newsTime }}</h4>
       <MarkdownDis :mark-text="markText" />
     </div>
     <div :class="`articleright ${iswidescreen ? 'activeright' : ''}`">
       <div class="headerImg">
-        <img
-          src="https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~50x50.awebp"
-          alt=""
-        />
-        <div class="authname">赵子豪</div>
+        <img :src="data?.data.user.userPicture" alt="" />
+        <div class="authname">{{ data?.data.user.userName }}</div>
       </div>
     </div>
     <div class="markdownoptions">
@@ -32,15 +29,16 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { IResultData } from "~/service/forum";
+import type { Articlemd } from "~/types/Home";
 const route = useRoute();
 const iswidescreen = ref(false);
 const markText = ref("");
 useHeader();
-const { data, pending, error, refresh } = await useFetch<any>(
-  `/notice/news/selectById?newsId=${route.params.id}`
-);
-console.log(data.value);
-markText.value = data.value.data.newsContent;
+const { data, pending, error, refresh } = await useFetch<
+  IResultData<Articlemd>
+>(`/notice/news/selectById?newsId=${route.params.id}`);
+markText.value = data.value!.data.newsContent;
 function changewide() {
   iswidescreen.value = !iswidescreen.value;
 }
