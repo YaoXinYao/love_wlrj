@@ -68,6 +68,7 @@
 import type { FormInstance, FormRules } from "element-plus";
 import {
   addAccessScore,
+  getAccessInfo,
   getTemplateService,
   searchUserByGradeService,
 } from "~/service/user";
@@ -77,19 +78,18 @@ import type {
   ScoreAddType,
 } from "~/types/Access";
 import type { UserAllInfoType } from "~/types/User";
-const props = defineProps({
-  dialogVisible: {
-    type: Boolean,
-    default: false,
-  },
-});
+let dialogVisible = ref(false);
+
+function changes(data: boolean) {
+  dialogVisible.value = data;
+}
 
 const loading = ref(false);
 const options = ref<Array<UserAllInfoType>>([]);
-const access = ref();
-let dialogVisible = ref(false);
+const accessInfo = ref<AccessResInfoType>();
+
 let types = reactive<{ data: Array<AccessItem> }>({ data: [] });
-const scoreInfoRef = ref();
+const scoreInfoRef = ref<FormInstance>();
 const scoreInfo = reactive<ScoreAddType>({
   pid: -1,
   scores: [],
@@ -101,21 +101,21 @@ const changeState = () => {
   dialogVisible.value = false;
 };
 
-watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
-  dialogVisible.value = newValue;
-});
-
 const emit = defineEmits(["addAlert", "update_score_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
+  console.log(newValue);
   dialogVisible.value = newValue;
-  emit("addAlert", dialogVisible.value);
+  emit("addAlert", true);
 });
 
 const searchUserByGrade = async (val: string) => {
   if (val.trim() != "") {
     loading.value = true;
 
-    let res = await searchUserByGradeService(access.value.subscribers, val);
+    let res = await searchUserByGradeService(
+      accessInfo.value?.subscribers as string,
+      val
+    );
     console.log(res);
     if (res.data.value.code == 20000) {
       options.value = res.data.value.data;
@@ -125,59 +125,69 @@ const searchUserByGrade = async (val: string) => {
   }
 };
 
-async function postId(accessInfo: AccessResInfoType) {
-  access.value = accessInfo;
-  console.log("子组件：", accessInfo);
-  scoreInfo.pid = access.value.id;
+async function postId(id: number) {
+  scoreInfo.pid = id;
 
-  if (accessInfo.id == -1) {
-    ElMessage({
-      type: "error",
-      message: "获取模版失败",
-    });
-  } else {
-    const templateDataRes = await getTemplateService(accessInfo.id);
-    if (templateDataRes.data.value.code === 20000) {
-      types.data = JSON.parse(
-        JSON.stringify(templateDataRes.data.value.data.types)
-      );
-
-      for (let i = 0; i < types.data.length; i++) {
-        types.data[i].score = 0;
-      }
-    } else {
+  let accessInfoRes = await getAccessInfo(id);
+  if (accessInfoRes.data.value.code == 20000) {
+    accessInfo.value = accessInfoRes.data.value.data;
+    if (!id) {
       ElMessage({
         type: "error",
         message: "获取模版失败",
       });
+    } else {
+      const templateDataRes = await getTemplateService(id);
+      if (templateDataRes.data.value.code === 20000) {
+        types.data = JSON.parse(
+          JSON.stringify(templateDataRes.data.value.data.types)
+        );
+
+        for (let i = 0; i < types.data.length; i++) {
+          types.data[i].score = 0;
+        }
+      }
     }
+  } else {
+    ElMessage({
+      type: "error",
+      message: "获取考核信息失败",
+    });
   }
 }
 
-defineExpose({ postId });
-
+defineExpose({ postId, changes });
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
+      console.log(types.data);
       for (let i = 0; i < types.data.length; i++) {
         scoreInfo.scores.push({
           name: types.data[i].name,
           score: types.data[i].score,
         });
+        console.log(scoreInfo.scores);
       }
       const data: ScoreAddType = {
-        pid: access.value.id,
+        pid: accessInfo.value?.id as number,
         scores: scoreInfo.scores,
         studentId: scoreInfo.studentId,
       };
+      console.log(data);
+
       let res = await addAccessScore(data);
+      console.log(res);
+
       if (res.data.value.code == 20000) {
         ElMessage({
           type: "success",
           message: "添加成功",
         });
         formEl.resetFields();
+        scoreInfoRef.value?.resetFields();
+        scoreInfo.scores = [];
+        types.data = [];
         emit("update_score_event", true);
         dialogVisible.value = false;
       } else {

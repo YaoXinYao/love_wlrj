@@ -5,11 +5,16 @@
       @addAlert="accessHandle"
       @update_event="updateEvent"
     />
-    <AddScoreInfo
+
+    <ScoreTable
       :dialogVisible="scoreDialogVisible"
-      @addAlert="scoreHandle"
-      @update_score_event="updateScoreEvent"
-      ref="addScoreRef"
+      @scoreAlert="scoreHandle"
+      ref="watchScoreRef"
+    />
+    <InterviewList
+      :dialogVisible="interviewDialogVisible"
+      @interviewAlert="interviewHandle"
+      ref="watchInterviewRef"
     />
     <el-form :inline="true" :model="manageSearchKeys">
       <el-form-item label="考核名称"
@@ -27,13 +32,9 @@
       style="width: 100%"
       ref="tableRef"
       v-loading="isLoading"
-      @expand-change="onExpand"
-      :row-key="handleRow"
-      :expand-row-keys="rowKeyArr"
     >
-      <el-table-column type="expand">
+      <!-- <el-table-column type="expand">
         <template #default="props">
-          <!-- <div>{{ props.row }}</div> -->
           <div class="accessInfo">
             <h3>
               成绩<el-button
@@ -43,65 +44,11 @@
                 >添加</el-button
               >
             </h3>
-            <el-table
-              :data="props.row.scoreList"
-              :border="childBorder"
-              class="accessScore"
-            >
-              <el-table-column type="expand">
-                <template #default="accessComment">
-                  <div class="accessInfo">
-                    <h3>评语</h3>
-                    <div>
-                      <div
-                        class="commentItem"
-                        v-for="(c, index) in accessComment.row.comments"
-                        :key="index"
-                      >
-                        <span class="reviewer"
-                          ><img src="@/assets/image/评价.png" alt="" />评语{{
-                            index + 1
-                          }}</span
-                        >
-                        <p>{{ c.commentInfo }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column label="姓名" prop="name" />
-              <el-table-column label="学号" prop="studentId" />
-              <el-table-column
-                v-for="(item, index) in props.row.templates"
-                :key="index"
-                :label="item.name"
-                :prop="item.name"
-              />
-
-              <el-table-column label="操作"
-                ><el-button type="warning" @click="updateScore(props.row)"
-                  >修改</el-button
-                >
-                <el-button type="danger" @click="deleteScore(props.row)"
-                  >删除</el-button
-                ></el-table-column
-              >
-            </el-table>
-            <div class="pagination">
-              <el-pagination
-                v-model:current-page="props.row.managePageInfo.pageIndex"
-                v-model:page-size="props.row.managePageInfo.allPage"
-                :page-sizes="[5, 10, 15, 20]"
-                small
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="props.row.managePageInfo.allCount"
-                @size-change="handleScoreSizeChange"
-                @current-change="handleScoreCurrentChange"
-              />
-            </div>
+            {{ props.row }}
+            <ScoreTable :row="props.row" @change_row="changeRowData" />
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="考核名称" prop="plan" />
       <el-table-column label="类别" prop="type">
         <template #default="scope"
@@ -126,6 +73,14 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
+          <el-button
+            type="warning"
+            plain
+            size="small"
+            style="width: 55px; height: 32px"
+            @click="watchAccess(scope.row)"
+            >查看</el-button
+          >
           <el-button
             type="danger"
             plain
@@ -152,8 +107,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
+import { reactive, ref, watch } from "vue";
+
+import ScoreTable from "@/components/ScoreTable/index.vue";
+import InterviewList from "@/components/InterviewList/index.vue";
 import {
   deleteAccessService,
   getAllAccessService,
@@ -166,6 +123,7 @@ import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
 import type { AccessResInfoType, ScorePageInfoListType } from "~/types/Access";
+
 definePageMeta({
   layout: "manag",
 });
@@ -173,9 +131,13 @@ definePageMeta({
 const AccessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
 const accessDialogVisible = ref(false);
+
 const scoreDialogVisible = ref(false);
+const interviewDialogVisible = ref(false);
 const addScoreNeedInfo = ref<AccessResInfoType>();
-const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
+
+const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
+const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
 const { managePageInfo, manageSearchKey } = storeToRefs(AccessPageInfoStore);
 
 const rowKeyArr = ref<any>([]);
@@ -227,58 +189,65 @@ const getAccessInfo = async (props: {
   isLoading.value = false;
 };
 
-const onExpand = async (row: any, expandedRows: any) => {
-  if (!expandedRows.includes(row)) {
-    return;
-  }
+// const onExpand = async (row: any) => {
+//   console.log(row);
 
-  let managePageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
-  row.managePageInfo = managePageInfo;
-  let ids = handleRow(row);
-  let index = rowKeyArr.value?.indexOf(ids);
-  if (index === -1) {
-    rowKeyArr.value?.push(ids);
-  } else {
-    rowKeyArr.value?.splice(index, 1);
-  }
+//   let rowIndex = -1;
+//   for (let i = 0; i < accessInfo.value.length; i++) {
+//     if (row.id == accessInfo.value[i].id) {
+//       rowIndex = i;
+//     }
+//   }
+//   let managePageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
+//   console.log(accessInfo.value[rowIndex]);
 
-  let templateRes = await getTemplateService(row.id);
-  if (templateRes.data.value.code == 400006) {
-    return;
-  }
+//   accessInfo.value[rowIndex].managePageInfo = managePageInfo;
+//   let ids = handleRow(row);
+//   let index = rowKeyArr.value?.indexOf(ids);
+//   if (index === -1) {
+//     rowKeyArr.value?.push(ids);
+//   } else {
+//     rowKeyArr.value?.splice(index, 1);
+//     return;
+//   }
 
-  let scoreInfoRes = await getScoreByAccessService({
-    nodePage: 1,
-    pageSize: 2,
-    pId: row.id,
-  });
+//   let templateRes = await getTemplateService(row.id);
+//   if (templateRes.data.value.code == 400006) {
+//     return;
+//   }
 
-  if (scoreInfoRes.data.value.code == 20000) {
-    let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
-    managePageInfo = { pageIndex, allPage, allCount, size };
-    row.managePageInfo = managePageInfo;
-    const list = scoreInfoRes.data.value.data.list;
-    let scoreList = new Array(list.length);
-    row.templates = templateRes.data.value.data.types;
+//   let scoreInfoRes = await getScoreByAccessService({
+//     nodePage: 1,
+//     pageSize: 2,
+//     pId: row.id,
+//   });
 
-    for (let i = 0; i < list.length; i++) {
-      let scores = list[i].scores;
-      let obj: { [x: string]: string } = {};
-      obj.id = list[i].id;
-      for (let j = 0; j < scores.length; j++) {
-        obj[scores[j].name] = scores[j].score;
-      }
-      let studentNameRes = await getUserInfoById(list[i].studentId);
+//   if (scoreInfoRes.data.value.code == 20000) {
+//     let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
+//     managePageInfo = { pageIndex, allPage, allCount, size };
+//     accessInfo.value[rowIndex].managePageInfo = managePageInfo;
+//     const list = scoreInfoRes.data.value.data.list;
+//     let scoreList = new Array(list.length);
+//     accessInfo.value[rowIndex].templates = templateRes.data.value.data.types;
 
-      obj["name"] = studentNameRes.data.value.data.userName;
-      obj["studentId"] = studentNameRes.data.value.data.userAccount;
-      scoreList.push(obj);
-    }
-    row.scoreList = scoreList;
-  } else {
-    return null;
-  }
-};
+//     for (let i = 0; i < list.length; i++) {
+//       let scores = list[i].scores;
+//       let obj: { [x: string]: string } = {};
+//       obj.id = list[i].id;
+//       for (let j = 0; j < scores.length; j++) {
+//         obj[scores[j].name] = scores[j].score;
+//       }
+//       let studentNameRes = await getUserInfoById(list[i].studentId);
+
+//       obj["name"] = studentNameRes.data.value.data.userName;
+//       obj["studentId"] = studentNameRes.data.value.data.userAccount;
+//       scoreList.push(obj);
+//     }
+//     accessInfo.value[rowIndex].scoreList = scoreList;
+//   } else {
+//     return null;
+//   }
+// };
 
 const resetInfo = () => {
   managePageInfo.value.currentPage = 1;
@@ -356,24 +325,20 @@ let manageSearchKeys = reactive({
 });
 
 const parentBorder = ref(false);
-const childBorder = ref(false);
 
 const addAlert = () => {
   accessDialogVisible.value = !accessDialogVisible.value;
 };
-const scoreAlert = (props: AccessResInfoType) => {
-  addScoreNeedInfo.value = props;
-
-  scoreDialogVisible.value = !scoreDialogVisible.value;
-  addScoreRef.value?.postId(props);
-};
-
 const accessHandle = (props: boolean) => {
   accessDialogVisible.value = props;
 };
 
 const scoreHandle = (props: boolean) => {
   scoreDialogVisible.value = props;
+};
+
+const interviewHandle = (props: boolean) => {
+  interviewDialogVisible.value = props;
 };
 const updateEvent = (props: boolean) => {
   manageSearchKey.value = "";
@@ -385,14 +350,6 @@ const updateEvent = (props: boolean) => {
   }
 };
 
-const updateScoreEvent = (props: boolean) => {
-  if (props) {
-    getAccessInfo({
-      currentPage: managePageInfo.value.currentPage,
-      pageSize: managePageInfo.value.pageSize,
-    });
-  }
-};
 const deleteAccess = (ids: Array<number>) => {
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
     confirmButtonText: "OK",
@@ -426,20 +383,30 @@ const deleteAccess = (ids: Array<number>) => {
     });
 };
 
-const handleScoreSizeChange = (val: number) => {
-  console.log(val);
-};
-const handleScoreCurrentChange = (val: number) => {
-  console.log(val);
+const watchAccess = (row: any) => {
+  console.log(row);
+
+  if (row.type == "笔试") {
+    scoreDialogVisible.value = true;
+    watchScoreRef.value?.scoreTableId(row.id);
+  } else {
+    interviewDialogVisible.value = true;
+    watchInterviewRef.value?.interviewId(row.subscribers,row.id);
+  }
 };
 
-const deleteScore = (row: any) => {
-  console.log(row);
-};
-
-const updateScore = (row: any) => {
-  console.log(row);
-};
+// const changeRowData = (row: any) => {
+//   console.log(row);
+//   let index = -1;
+//   for (let i = 0; i < accessInfo.value.length; i++) {
+//     if (accessInfo.value[i].id == row.id) {
+//       index = i;
+//     }
+//   }
+//   if (index != -1) {
+//     console.log(accessInfo.value[index]);
+//   }
+// };
 </script>
 
 <style lang="scss" scoped>
@@ -470,28 +437,6 @@ const updateScore = (row: any) => {
     }
   }
 }
-.commentItem {
-  font-family: "Times New Roman", Times, serif;
-  margin-bottom: 10px;
-  border-bottom: 1px dashed #ccc;
-  margin-left: 8px;
-  .reviewer {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    color: $groupColor;
-    height: 30px;
-
-    img {
-      width: 20px;
-    }
-  }
-  p {
-    height: auto;
-    line-height: 25px;
-  }
-}
-
 .pagination {
   margin: 10px 0;
   display: flex;

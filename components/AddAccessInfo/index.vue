@@ -64,6 +64,7 @@
             />
           </el-form-item>
           <el-form-item
+            v-show="accessInfo.type == '笔试'"
             v-for="(item, index) in accessInfo.types"
             :key="index"
             :label="`考核项${index + 1}`"
@@ -89,7 +90,7 @@
               /></span>
             </div>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-show="accessInfo.type == '笔试'">
             <el-button type="success" plain @click="addAccess"
               >添加考核项</el-button
             >
@@ -162,7 +163,7 @@ watch(dialogVisible, (newValue, oldValue) => {
 const accessInfo = reactive<AddAccessType>({
   plan: "",
   typeId: undefined,
-  type: "",
+  type: "笔试",
   deadline: "",
   subscribers: "",
   additional: "",
@@ -222,14 +223,14 @@ const rules = reactive<FormRules<typeof accessInfo>>({
 });
 
 const removeDomain = (item: AccessItem) => {
-  const index = accessInfo.types.indexOf(item);
+  const index = accessInfo.types?.indexOf(item) as number;
   if (index !== -1) {
-    accessInfo.types.splice(index, 1);
+    accessInfo.types?.splice(index, 1);
   }
 };
 
 const addAccess = () => {
-  accessInfo.types.push({
+  accessInfo.types?.push({
     name: "",
     rate: 0,
   });
@@ -251,17 +252,23 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     console.log(accessInfo);
     console.log(obj);
 
-    let sum: number = 0;
-    for (let i = 0; i < accessInfo.types.length; i++) {
-      sum = sum * 1 + accessInfo.types[i].rate * 1;
-    }
+    if (accessInfo.type == "笔试") {
+      let sum: number = 0;
+      if (accessInfo.types) {
+        for (let i = 0; i < accessInfo.types.length; i++) {
+          sum = sum * 1 + accessInfo.types[i]?.rate * 1;
+        }
+      }
 
-    if (sum != 1) {
-      ElMessage({
-        type: "warning",
-        message: "考核项分数百分比和为1",
-      });
-      return;
+      if (sum != 1) {
+        ElMessage({
+          type: "warning",
+          message: "考核项分数百分比和为1",
+        });
+        return;
+      }
+    } else {
+      accessInfo.types = undefined;
     }
 
     addAccessService(accessInfo).then((res) => {

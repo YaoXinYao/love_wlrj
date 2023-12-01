@@ -1,6 +1,5 @@
 <template>
   <div class="item" ref="target">
-    {{ props.data.id }}
     <div class="noticeContent">
       {{ props.data.info }}
     </div>
@@ -29,40 +28,49 @@ const target = ref();
 
 const emit = defineEmits(["addAlert", "info_event"]);
 
-const deleteMessage = async () => {
-  let res = await deleteMessageInfoService([props.data.id]);
+const deleteMessage = () => {
+  ElMessageBox.confirm("你确定要删除该消息吗？")
+    .then(async () => {
+      messageStore.ChangeInfoList([]);
+      let res = await deleteMessageInfoService([props.data.id]);
 
-  if (res.data.value.code == 20000) {
-    ElMessage({
-      type: "success",
-      message: "删除成功",
-    });
-    let messageRes = await useGetMessageInfo({
-      pageNo: pageInfo.value.currentPage,
-      pageSize: pageInfo.value.pageSize,
-      type: curType.value,
-      userId: userinfo.value.userId,
-    });
+      if (res.data.value.code == 20000) {
+        ElMessage({
+          type: "success",
+          message: "删除成功",
+        });
+        let messageRes = await useGetMessageInfo({
+          pageNo: pageInfo.value.currentPage,
+          pageSize: pageInfo.value.pageSize,
+          type: curType.value,
+          userId: userinfo.value.userId,
+        });
 
-    console.log(messageRes);
+        console.log(messageRes);
 
-    if (messageRes) {
-      let { current, pages, total, pageSize } = messageRes?.resPageInfo;
-      messageStore.ChangePageInfo({
-        pageSize: pageSize,
-        currentPage: current,
-        total: total,
+        messageStore.ChangePageInfo({
+          pageSize: messageRes?.resPageInfo.pageSize,
+          currentPage: messageRes?.resPageInfo.current,
+          total: messageRes?.resPageInfo.total,
+        });
+        if (messageRes) {
+          messageStore.ChangeInfoList(messageRes.infoResList);
+        } else {
+          messageStore.ChangeInfoList([]);
+        }
+      } else {
+        ElMessage({
+          type: "error",
+          message: "删除失败",
+        });
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消删除操作",
       });
-
-      infoList.value = messageRes.infoResList;
-      console.log(pageInfo.value);
-    }
-  } else {
-    ElMessage({
-      type: "error",
-      message: "删除失败",
     });
-  }
 };
 
 //stop调用之后就会停止观察
