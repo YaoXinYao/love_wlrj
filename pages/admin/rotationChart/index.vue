@@ -15,9 +15,9 @@
         >
           <div class="operate">
             <div>
-              <el-button type="danger" @click="deletajage(item.carouselId)"
-                >删除</el-button
-              >
+              <el-icon class="delete" @click="deletajage(item.carouselId)"
+                ><CircleClose
+              /></el-icon>
             </div>
           </div>
         </div>
@@ -205,6 +205,14 @@ const deleteInfo = () => {
       width: 30px;
       height: 30px;
       margin-left: 20px;
+    }
+    .el-icon {
+      font-size: 40px;
+      color: #fcfcfc;
+      margin-left: 20px;
+    }
+    .el-icon:hover {
+      cursor: pointer;
     }
   }
 }
