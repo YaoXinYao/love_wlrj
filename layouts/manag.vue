@@ -38,7 +38,7 @@
           <el-menu-item index="/admin/rotationChart">
             <el-icon><PictureRounded /></el-icon>
             <template #title
-              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
+              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)" v-if="userinfo.roleId != 1"
                 >轮播管理</NuxtLink
               ></template
             >
@@ -89,7 +89,7 @@
           <el-menu-item index="/admin/journalism">
             <el-icon><document /></el-icon>
             <template #title
-              ><NuxtLink to="/admin/journalism" @click="skipAdd($event)"
+              ><NuxtLink to="/admin/journalism" @click="skipAdd($event)" v-if="userinfo.roleId != 1"
                 >新闻管理</NuxtLink
               ></template
             >

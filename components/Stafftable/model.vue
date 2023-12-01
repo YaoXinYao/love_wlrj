@@ -119,7 +119,7 @@
       <el-form-item label="方向" :label-width="formLabelWidth" v-if="userinfo.roleId == 3">
         <el-select v-model="signleInfo.groupName">
           <el-option
-            v-for="item in signleInfo.singleTeam"
+            v-for="item in teamData"
             :key="item.groupId"
             :label="item.groupName"
             :value="item.groupId"

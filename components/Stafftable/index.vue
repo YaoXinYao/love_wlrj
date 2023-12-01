@@ -76,15 +76,7 @@ const handleSelectionChange = (val: any[]) => {
   }
 };
 const handleEdit = (row: any) => {
-  let singleTeam = [];
-  staffData.getGroup(row.userGrade).then((res) => {
-    if (res?.code == 20000) {
-      singleTeam = res?.data;
-      signleInfo.value = {...row,singleTeam}
-    } else {
-      ElMessage.error("获取组别失败");
-    }
-  });
+  signleInfo.value = row
   editModel.value = true;
 };
 const handleDelete = (row: any) => {

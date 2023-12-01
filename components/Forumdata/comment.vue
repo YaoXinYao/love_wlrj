@@ -5,14 +5,7 @@
         <div class="cardTop">
           <div class="userInfo">
             <div>
-              <img
-                :src="
-                  item.head
-                    ? item.head
-                    : 'https://img0.baidu.com/it/u=1435639120,2241364006&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500'
-                "
-                alt=""
-              />
+              <img :src="item.head" alt=""/>
             </div>
             <div>
               <p>{{ item.comUserName }}</p>

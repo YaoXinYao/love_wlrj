@@ -23,8 +23,8 @@
           >搜索</el-button
         >
       </div>
-      <div v-if="userinfo.roleId == 3">
-        <el-button type="info" @click="manageRole = true">角色</el-button>
+      <div>
+        <el-button type="info" @click="manageRole = true" v-if="userinfo.roleId == 3">角色</el-button>
         <el-button type="warning" @click="manageGroup = true">组别</el-button>
         <el-button type="danger" @click="deleteModel = true">删除</el-button>
         <el-button type="success" @click="modelState = true">导入</el-button>

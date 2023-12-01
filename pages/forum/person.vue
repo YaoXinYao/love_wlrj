@@ -8,7 +8,7 @@
           <span class="top"></span>
           <div class="userHead">
             <img v-if="userinfo.userPicture != '未设置'" :src="userinfo.userPicture"/>
-            <img v-if="userinfo.userPicture == '未设置'" :src="'/images/female.png'"/>
+            <img v-if="userinfo.userPicture == '未设置'" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"/>
           </div>
         </div>
         <div class="userInfo">
@@ -19,6 +19,7 @@
             <li @click="changeStatus('artic')">作品</li>
             <li @click="changeStatus('like')">点赞</li>
             <li @click="changeStatus('collect')">收藏</li>
+            <li class="showHome"><NuxtLink to="/forum/report">发布帖子</NuxtLink></li>
             <li class="showHome"><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
           </ul>
         </div>
@@ -34,6 +35,7 @@
           <li>班级：{{ userinfo.userClass }}</li>
           <li>年级: {{ userinfo.userGrade }}</li>
           <li>作品: {{ total }}</li>
+          <li><NuxtLink to="/forum/report">发布帖子</NuxtLink></li>
           <li><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
         </ul>
       </div>
@@ -291,7 +293,7 @@ const deletePost = (id: number) => {
     justify-content: center;
     .introduce {
       flex: 0 0 150px;
-      height: 300px;
+      height: 350px;
       border-radius: 3px;
       border: 5px rgba(255, 255, 255, 0.74) solid;
       background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
@@ -582,6 +584,11 @@ const deletePost = (id: number) => {
   }
 }
 @media screen and (max-width: 800px) {
+  .userInfo{
+    ul{
+      width: 300px !important;
+    }
+  }
   .showHome{
     display: block !important;
   }
