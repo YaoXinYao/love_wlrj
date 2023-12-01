@@ -15,9 +15,9 @@
         >
           <div class="operate">
             <div>
-              <el-icon class="delete" @click="deletajage(item.carouselId)"
-                ><CircleClose
-              /></el-icon>
+              <el-button type="danger" @click="deletajage(item.carouselId)"
+                >删除</el-button
+              >
             </div>
           </div>
         </div>
@@ -42,12 +42,12 @@
       </template>
     </el-dialog>
     <el-dialog v-model="rotatinState" title="提示信息" width="450px">
-      <el-form label-width="5em">
+      <el-form label-width="5em" v-loading = "loading">
         <el-form-item label="标题">
-          <el-input v-model="carouselTitle" />
+          <el-input v-model="carouselTitle"/>
         </el-form-item>
         <el-form-item label="介绍">
-          <el-input v-model="carouselContent" />
+          <el-input v-model="carouselContent"/>
         </el-form-item>
         <el-form-item label="轮播图">
           <el-upload
@@ -89,8 +89,14 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="subminInfo">确定</el-button>
-          <el-button @click="shutInfo"> 取消 </el-button>
+          <el-button
+            type="primary"
+            @click="subminInfo"
+            :loading="loading"
+            :disabled="loading"
+            >确定</el-button
+          >
+          <el-button @click="shutInfo" :disabled="loading"> 取消 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -111,7 +117,7 @@ import { useRotationStore } from "~/store/rotation";
 let rotatinDelete = ref(false);
 let rotatinState = ref(false);
 const rotationsInfo = useRotationStore();
-const { carouselItem } = storeToRefs(rotationsInfo);
+const { carouselItem, loading } = storeToRefs(rotationsInfo);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
@@ -140,20 +146,18 @@ const subminInfo = () => {
     carouselContent: carouselContent.value,
     carouselTitle: carouselTitle.value,
   };
-  rotationsInfo
-    .postCarousel(obj, formdata)
-    .then((res) => {
-      if (res == 20000) {
-        ElMessage.success("添加成功");
-        rotationsInfo.getCarousel();
-        rotatinState.value = false;
-        carouselContent.value = "";
-        carouselTitle.value = "";
-        photos.value = [];
-      } else {
-        ElMessage.error("添加失败,上传图片过大");
-      }
-    })
+  rotationsInfo.postCarousel(obj, formdata).then((res) => {
+    if (res == 20000) {
+      ElMessage.success("添加成功");
+      rotationsInfo.getCarousel();
+      rotatinState.value = false;
+      carouselContent.value = "";
+      carouselTitle.value = "";
+      photos.value = [];
+    } else {
+      ElMessage.error("添加失败,上传图片过大");
+    }
+  });
 };
 const shutInfo = () => {
   rotatinState.value = false;
@@ -202,22 +206,7 @@ const deleteInfo = () => {
       height: 30px;
       margin-left: 20px;
     }
-    .el-icon {
-      font-size: 30px;
-      color: #fcfcfc;
-      margin-left: 20px;
-    }
-    .el-icon:hover {
-      cursor: pointer;
-    }
   }
-}
-.el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
 }
 .dialog-footer button:first-child {
   margin-right: 10px;
