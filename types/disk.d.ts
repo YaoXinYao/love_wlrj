@@ -113,3 +113,10 @@ export interface SearchMyfileType {
   keyword: string;
   userId: number;
 }
+export interface FilePrevviewList {
+  filePreviewId: any;
+  filePreviewName: any;
+  filePreviewNumber: any;
+  filePreviewUrl: string;
+  fileId: any;
+}

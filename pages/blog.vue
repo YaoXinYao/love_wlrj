@@ -40,28 +40,21 @@ useHeader();
 import gsap from "gsap";
 import type { IResultData } from "~/service/forum";
 import type { blogRoot, blogitem } from "~/types/Home";
-const { data } = await useFetch<
-  IResultData<{
-    [key: string]: blogitem[];
-  }>
->("/zinfo/user/user/selectBlog", {
-  method: "get",
-  server: false,
-});
 const newblog = ref<blogRoot>({
   data: {},
 });
-watch(
-  data,
-  () => {
-    newblog.value.data = data.value!.data;
-  },
-  {
-    immediate: true,
-  }
-);
+const fetchdate = async () => {
+  const { data } = await useFetch<
+    IResultData<{
+      [key: string]: blogitem[];
+    }>
+  >("/zinfo/user/user/selectBlog");
+  newblog.value.data = data.value!.data;
+};
 const curGrade = ref<string>("2021");
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
+  await fetchdate();
   loading();
 });
 function loading() {

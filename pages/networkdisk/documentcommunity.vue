@@ -46,8 +46,8 @@ function searchFile() {
 const { AllType, curTag, Pagesize, curIndex } = storeToRefs(diskstore);
 diskstore.getAllfiletag();
 diskstore.getFilelistitem();
-watch([curIndex, Pagesize, curTag], () => {
-  diskstore.getFilelistitem();
+watch([curIndex, Pagesize, curTag], async () => {
+  await diskstore.getFilelistitem();
 });
 </script>
 <style scoped lang="scss">

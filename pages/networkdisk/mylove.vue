@@ -13,6 +13,7 @@
         description="还没有收藏文件"
       />
       <el-table
+        element-loading-text="加载中..."
         v-show="Mylove.FileList.dataList.length !== 0"
         v-loading="Mylove.Loading"
         ref="multipleTableRef"
@@ -40,7 +41,12 @@
           label="文件大小"
           show-overflow-tooltip
         />
-        <el-table-column property="address" label="操作" show-overflow-tooltip>
+        <el-table-column
+          property="address"
+          label="操作"
+          show-overflow-tooltip
+          min-width="100"
+        >
           <template #default="scope">
             <ElButton
               type="primary"
@@ -53,6 +59,9 @@
               @click="() => copyToClipboard(scope.row.url)"
               plain
               >分享</ElButton
+            >
+            <ElButton type="warning" @click="() => openPrew(scope.row.id)" plain
+              >预览</ElButton
             >
             <ElButton
               style="width: 0.7rem"
@@ -95,14 +104,20 @@
         placeholder="输入文件名"
       />
       <el-table
+        element-loading-text="加载中..."
         v-loading="loading"
         :data="Mylove.SearchItem"
         style="width: 100%"
       >
         <el-table-column prop="name" label="文件名" width="400" />
         <el-table-column prop="uploadDate" label="上传时间" width="180" />
-        <el-table-column prop="fileSize" label="文件大小" width="180" />
-        <el-table-column property="address" label="操作" show-overflow-tooltip>
+        <el-table-column prop="fileSize" label="文件大小" width="100" />
+        <el-table-column
+          property="address"
+          label="操作"
+          show-overflow-tooltip
+          min-width="180"
+        >
           <template #default="scope">
             <ElButton
               type="primary"
@@ -115,6 +130,9 @@
               @click="() => copyToClipboard(scope.row.url)"
               plain
               >分享</ElButton
+            >
+            <ElButton type="warning" @click="() => openPrew(scope.row.id)" plain
+              >预览</ElButton
             >
             <ElButton
               style="width: 0.7rem"
@@ -145,6 +163,7 @@ import { Favoritefile } from "~/service/homeApi";
 import { storeToRefs } from "pinia";
 import { useDiskstore } from "~/store/disk";
 import { unCollectionFile } from "~/service/disk";
+const { openPrew } = usePrew();
 const dialogVisible = ref(false);
 const searchInner = ref("");
 const diskstore = useDiskstore();

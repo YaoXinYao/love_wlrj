@@ -7,8 +7,8 @@
     </div>
     <div :class="`articleright ${iswidescreen ? 'activeright' : ''}`">
       <div class="headerImg">
-        <img :src="data?.data.user.userPicture" alt="" />
-        <div class="authname">{{ data?.data.user.userName }}</div>
+        <img :src="data?.data.user?.userPicture || ''" alt="" />
+        <div class="authname">{{ data?.data.user?.userName || "" }}</div>
       </div>
     </div>
     <div class="markdownoptions">
@@ -55,7 +55,7 @@ useHead({
   .articleleft {
     transition-duration: 0.3s;
     width: 100% !important;
-    height: auto;
+    min-height: 5rem;
     background: #fff;
     margin-right: 0.5rem;
     border-radius: 0.1rem;
@@ -86,7 +86,7 @@ useHead({
   .articleleft {
     transition-duration: 0.3s;
     width: 8rem;
-    height: auto;
+    min-height: 5rem;
     background: #fff;
     margin-right: 0.5rem;
     border-radius: 0.1rem;

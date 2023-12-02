@@ -82,6 +82,11 @@
           </div>
         </div>
         <div class="modelblur"></div>
+        <div class="lefttopHome" @click="navigateTo('/')">
+          <svg class="icon" aria-hidden="true">
+            <use :xlink:href="`#icon-fanhui`"></use>
+          </svg>
+        </div>
       </div>
       <canvas style="position: fixed" ref="canvasRef"></canvas>
     </div>
@@ -122,7 +127,7 @@ function LoginModelChange() {
     })
     .to(".modelblur", {
       visibility: "visible",
-      backdropFilter: "blur(15px)",
+      backdropFilter: "blur(5px)",
       duration: 0.5,
     })
     .to(".modelblur", {
@@ -364,23 +369,37 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     .loginbox {
+      position: relative;
       z-index: 999999;
       width: 8rem;
       height: 4rem;
       padding: 0.5rem;
       padding-top: 0.2rem;
-      left: 50%;
-      top: 50%;
       background-color: white;
       border-radius: 10px;
-      background-image: url(/images/22_open.4ea5f239.png),
-        url(/images/33_open.f7d7f655.png);
+      background-image: url("/images/22_open.4ea5f239.png"),
+        url("/images/33_open.f7d7f655.png");
       box-shadow: 0 4px 14px 0 rgb(0 0 0 / 16%);
       background-position: 0 100%, 100% 100%;
       background-repeat: no-repeat, no-repeat;
       background-size: 14%;
       display: flex;
-
+      .lefttopHome {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 0;
+        height: 0;
+        cursor: pointer;
+        border-left: 60px solid rgb(0, 136, 255); /* 底边宽度，颜色可以更改 */
+        border-bottom: 60px solid transparent; /* 高度，透明表示没有右边的边框 */
+        svg {
+          position: absolute;
+          left: -0.57rem;
+          transform: scale(0.6);
+          top: 0.05rem;
+        }
+      }
       .loginboxleft {
         width: 40%;
         height: 100%;

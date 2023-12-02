@@ -12,7 +12,6 @@ export function debounce<T extends (...args: any[]) => void>(
   delay: number
 ): (...args: Parameters<T>) => void {
   let timerId: NodeJS.Timeout;
-
   return function (this: any, ...args: Parameters<T>) {
     if (timerId) {
       clearTimeout(timerId);
@@ -121,17 +120,31 @@ export const exportFile = async (
   }
 };
 // 复制到粘贴板
-export const copyToClipboard = async (text: string): Promise<void> => {
+export const copyToClipboard = async (text: string) => {
   try {
-    // 使用 Clipboard API 将文本复制到剪贴板
-    const newtext = `@未来软件所有：
-    ${text}`;
-    await navigator.clipboard.writeText(newtext);
-    ElMessage({ message: "复制链接成功", type: "success" });
+    // 检查浏览器是否支持 Clipboard API
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(`@未来软件版权所有 \n${text}`);
+      ElMessage({ message: "复制链接成功", type: "success" });
+    } else {
+      // 如果不支持，回退到使用 textarea 和 execCommand
+      const textarea = document.createElement("textarea");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      textarea.value = `@未来软件版权所有 \n${text}`;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+
+      ElMessage({ message: "复制链接成功", type: "success" });
+    }
   } catch (err) {
+    console.error("复制链接失败:", err);
     ElMessage({ message: "复制链接失败", type: "error" });
   }
 };
+
 //匹配后缀
 export function filetype2(val: string) {
   const reg = /\.([a-zA-Z0-9]+)$/;
@@ -339,15 +352,23 @@ export async function Filefragmentation(
 
 //生成图标
 export function iconfontType(val: string) {
-  const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
-  if (FileType[filetype]) {
-    return FileType[filetype];
-  } else {
+  try {
+    const filetype: FileTyperoot = val.toLocaleLowerCase() as FileTyperoot;
+    if (FileType[filetype]) {
+      return FileType[filetype];
+    } else {
+      return FileType.other;
+    }
+  } catch (error) {
     return FileType.other;
   }
 }
 // 文件类型
 export function filetype(val: string) {
-  const reg = /\.([a-zA-Z0-9]+)$/;
-  return val.match(reg)![1];
+  try {
+    const reg = /\.([a-zA-Z0-9]+)$/;
+    return val.match(reg)![1];
+  } catch (error) {
+    return "";
+  }
 }

@@ -4,6 +4,7 @@ import {
   LookMyfile,
   SearchFile,
   SearchMyfile,
+  uploaddeleteFile,
 } from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
@@ -96,6 +97,22 @@ export const useDiskstore = defineStore("disk", {
     };
   },
   actions: {
+    //删除回调，前台删除
+    async SearchFileReplce(filedid: number) {
+      const res = await uploaddeleteFile({
+        fileId: filedid,
+        userId: Authuserid(),
+      });
+      console.log(res.data.value);
+      if (res.data.value.code !== 20000)
+        return ElMessage({ message: "删除失败", type: "error" });
+      const copy = [...this.Myfile.SearchItem];
+      const newarr = copy.filter((item) => {
+        return item.id != filedid;
+      });
+      this.Myfile.SearchItem = newarr;
+      ElMessage({ message: "删除成功", type: "success" });
+    },
     //Search我的收藏
     async SearchMylovefile(searchinner: string) {
       const res = await SearchFile({
@@ -173,6 +190,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Pagesize,
         types: this.curTag.map((item) => `types=${item}`).join("&") || "types=",
       });
+      console.log(res.data.value.data);
       this.Filelist = res.data.value.data;
       this.Loading = false;
     },
