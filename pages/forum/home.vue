@@ -21,11 +21,11 @@ let {userinfo} = storeToRefs(userData)
 .home {
   .addPost {
     position: fixed;
-    right: 10px;
+    right: 30px;
     bottom: 200px;
     padding: 7px;
     border-radius: 50%;
-    background-color: #8ad0ff;
+    background-color: #72bff3;
     .el-icon {
       color: aliceblue;
       font-size: 20px;

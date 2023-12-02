@@ -11,7 +11,7 @@ definePageMeta({
 
 <style lang="scss" scoped>
 .forum {
-  background-color: rgba(244,248,251);
+  background-image: linear-gradient(to top, #e7f0fd 0%, #ccdef4 100%);
   min-height: calc(100vh - 136px);
 }
 </style>

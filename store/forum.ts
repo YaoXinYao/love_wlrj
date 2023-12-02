@@ -47,7 +47,6 @@ export interface singleType {
 export interface cards {
   postSubId: number;
   postSource: string;
-  uploadRender: boolean;
   pages: number;
   datas: any[];
   discuss: any[];
@@ -74,7 +73,6 @@ export const forumStore = defineStore("forumInfo", {
     return {
       postSubId: 0,
       postSource: "",
-      uploadRender: false,
       pages: 0,
       datas: [],
       discuss: [],
