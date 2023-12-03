@@ -101,7 +101,7 @@ const changeState = () => {
   dialogVisible.value = false;
 };
 
-const emit = defineEmits(["addAlert", "update_score_event"]);
+const emit = defineEmits(["addAlert", "add_score_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
   console.log(newValue);
   dialogVisible.value = newValue;
@@ -188,7 +188,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         scoreInfoRef.value?.resetFields();
         scoreInfo.scores = [];
         types.data = [];
-        emit("update_score_event", true);
+        emit("add_score_event", true);
         dialogVisible.value = false;
       } else {
         ElMessage({
@@ -198,7 +198,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       }
       console.log(res);
     } else {
-      console.log("错误");
+      ElMessage({
+        type: "warning",
+        message: "表单填写不规范",
+      });
     }
   });
 };

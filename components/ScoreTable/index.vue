@@ -2,20 +2,34 @@
   <ClientOnly>
     <AddScoreInfo
       @addAlert="scoreHandle"
-      @update_score_event="updateScoreEvent"
+      @add_score_event="addScoreEvent"
       ref="addScoreRef"
     />
+    <!-- <UpdateScoreInfo
+      @updateAlert="scoreUpdateHandle"
+      @add_score_event="updateScoreEvent"
+      ref="updateScoreRef"
+    /> -->
 
     <el-dialog
       v-model="dialogVisible"
-      title="成绩"
       draggable
+      width="max-content"
       :closed="changeState"
     >
-      <div>
-        <el-button type="success" @click="addScoreBtn">添加</el-button>
-      </div>
-      <el-table :data="scoreListData" class="accessScore">
+      <template #header>
+        <div class="my-header">
+          <h3>成绩列表</h3>
+          <!-- <el-button
+            type="success"
+            @click="addScoreBtn"
+            style="margin-right: 20px"
+            >添加</el-button
+          > -->
+        </div>
+      </template>
+
+      <el-table :data="scoreListData" class="accessScore" :fit="true">
         <el-table-column label="姓名" prop="name" />
         <el-table-column label="学号" prop="studentId" />
         <el-table-column
@@ -27,12 +41,20 @@
 
         <el-table-column label="操作">
           <template #default="scope"
-            ><el-button type="warning" @click="updateScore(scope.row.id)"
-              >修改</el-button
-            >
-            <el-button type="danger" @click="deleteScore(scope.row.id)"
-              >删除</el-button
-            ></template
+            ><div>
+              <!-- <el-button
+                size="small"
+                type="warning"
+                @click="updateScore(scope.row)"
+                >修改</el-button
+              > -->
+              <el-button
+                size="small"
+                type="danger"
+                @click="deleteScore(scope.row.id)"
+                >删除</el-button
+              >
+            </div></template
           ></el-table-column
         >
       </el-table>
@@ -42,7 +64,6 @@
           v-model:current-page="managePageInfo.pageIndex"
           v-model:page-size="managePageInfo.size"
           :page-sizes="[5, 10, 15]"
-          small
           layout="total, sizes, prev, pager, next, jumper"
           :total="managePageInfo.allCount"
           @size-change="handleScoreSizeChange"
@@ -61,15 +82,22 @@ import {
   getUserInfoById,
 } from "~/service/user";
 import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
+import UpdateScoreInfo from "@/components/UpdateScoreInfo/index.vue";
 
 const props = defineProps(["id", "dialogVisible"]);
 const emit = defineEmits(["scoreAlert"]);
 let dialogVisible = ref(false);
 const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
+const updateScoreRef = ref<InstanceType<typeof UpdateScoreInfo>>();
 const scoreHandle = (props: boolean) => {
   scoreDialogVisible.value = props;
 };
+
+const scoreUpdateHandle = (props: boolean) => {
+  scoreUpdateDialogVisible.value = props;
+};
 const scoreDialogVisible = ref(false);
+const scoreUpdateDialogVisible = ref(false);
 const scoreListData = ref();
 let pId = ref(-1);
 const changeState = () => {
@@ -137,6 +165,7 @@ const getInfo = async () => {
       scoreList.push(obj);
     }
     scoreListData.value = scoreList;
+    console.log(scoreListData.value);
   } else {
     return null;
   }
@@ -183,11 +212,19 @@ const deleteScore = async (id: any) => {
 
 const updateScore = (row: any) => {
   console.log(row);
+  updateScoreRef.value?.postTemplate(row, pId.value);
+  updateScoreRef.value?.updateAlertchanges(true);
 };
 
 function scoreTableId(id: number) {
   pId.value = id;
 }
+
+const addScoreEvent = (prop: boolean) => {
+  if (prop) {
+    getInfo();
+  }
+};
 
 const updateScoreEvent = (prop: boolean) => {
   if (prop) {
@@ -198,4 +235,21 @@ const updateScoreEvent = (prop: boolean) => {
 defineExpose({ scoreTableId });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.my-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+
+  h3 {
+    font-size: 20px;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+</style>

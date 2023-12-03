@@ -206,4 +206,17 @@ let newNotice = noticeInfoRes.data.value.data.records[0];
   color: #fff;
   letter-spacing: 6px;
 }
+
+@media screen and (max-width: 850px) {
+  .userInfoModule,
+  .newNoticeModule {
+    grid-column: 1/4;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .qqAccount {
+    display: none !important;
+  }
+}
 </style>

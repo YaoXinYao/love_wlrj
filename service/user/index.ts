@@ -67,6 +67,16 @@ export const getUserInfoById = (id: number) => {
   });
 };
 
+//通过账号查询用户
+export const getUserInfoByAccount = (account: string) => {
+  return hyRequest.get<IResultData<any>>(
+    "/coustom/user/user/getLoginUserByPassword",
+    {
+      account,
+    }
+  );
+};
+
 //通过年级查询用户(不分页)
 export const searchUserByGradeService = (
   userGrade: string | number,
@@ -109,15 +119,32 @@ export const getAllGrade = () => {
   return hyRequest.get<IResultData<any>>(`/coustom/user/user/selectAllGrade`);
 };
 
-//获取所有类别
-export const getAllTypes = () => {
+//获取所有类型
+export const getAllTypesService = () => {
   return hyRequest.get<IResultData<any>>(`/access/type/list`);
 };
 
-//根据id搜索类别
+//根据id搜索类型
 export const getTypesByIdService = (id: number) => {
   return hyRequest.get<IResultData<any>>(`/access/type/get`, { id });
 };
+
+//添加类型
+export const addAccessTypeService = (typeName: string) => {
+  return hyRequest.post<IResultData<any>>(`/access/type/add`, { typeName });
+};
+
+//删除类型
+export const deleteTypeByIdService = (ids: Array<number | string>) => {
+  return hyRequest.delete<IResultData<any>>(`/access/type/delete`, "", {
+    body: JSON.stringify(ids),
+  });
+};
+
+//修改类型
+export const updateTypeService=(props:{id:string|number,name:string})=>{
+  return hyRequest.put<IResultData<any>>(`/access/type/update`, { ...props });
+}
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
@@ -188,17 +215,21 @@ export const deleteScoreService = (ids: Array<number>) => {
 export const addInterviewService = (props: {
   content: string;
   PId: number;
-  studentId: number;
+  studentId: number | string;
 }) => {
   return hyRequest.post<IResultData<any>>(`/access/interview/add`, props);
 };
 
 //删除面评
 export const deleteInterviewService = (ids: Array<number>) => {
-  return hyRequest.delete<IResultData<any>>(`/access/interview/delete`, { ids });
+  console.log(ids);
+
+  return hyRequest.delete<IResultData<any>>(`/access/interview/delete`, {
+    ids,
+  });
 };
 
 //获得面评
-export const getInterviewService = (props: { id: number; pId: number }) => {
+export const getInterviewService = (props: { id: number; pId?: number }) => {
   return hyRequest.get<IResultData<any>>(`/access/interview/list`, props);
 };

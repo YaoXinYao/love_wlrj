@@ -1,10 +1,10 @@
 <template>
   <div class="app">
     <div v-show="!pageInfo.total"><el-empty description="暂无数据" /></div>
-    <ul class="infinite-list"  v-show="pageInfo.total">
+    <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
-        :key="index"
+        :key="info.id"
         class="noticeItem animate__animated animate__fadeIn"
       >
         <Info :data="info" :type="'CommentLike'" />
@@ -20,9 +20,10 @@ import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
 const messageStore = useMessageStore();
 messageStore.ChangeCurType("CommentLike");
 import { useHomestore } from "~/store/home";
+import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
-const { curType, pageInfo, infoList } = storeToRefs(messageStore);
+const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);
 
 messageStore.ChangePageInfo({
   pageSize: 5,
@@ -32,7 +33,21 @@ messageStore.ChangePageInfo({
 const isNull = ref(false);
 onMounted(() => {
   getInfo();
+  isUpdate.value.CommentLike = false;
+  useGetNotReadMessage();
 });
+
+watch(
+  () => isUpdate.value.CommentLike,
+  (newValue) => {
+    console.log(newValue);
+
+    if (newValue) {
+      getInfo();
+      isUpdate.value.CommentLike = false;
+    }
+  }
+);
 
 const getInfo = async () => {
   let messageRes = await useGetMessageInfo({
@@ -46,15 +61,14 @@ const getInfo = async () => {
     currentPage: messageRes?.resPageInfo.current,
     total: messageRes?.resPageInfo.total,
   });
-  if (messageRes.infoResList) {
+
+  if (messageRes.infoResList.length != 0) {
     messageStore.ChangeInfoList(messageRes.infoResList);
   } else {
     messageStore.ChangeInfoList([]);
     isNull.value = true;
   }
 };
-
-console.log(pageInfo.value);
 </script>
 <style scoped>
 .infinite-list {

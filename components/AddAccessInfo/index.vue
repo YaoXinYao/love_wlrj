@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { addAccessService, getAllGrade, getAllTypes } from "~/service/user";
+import { addAccessService, getAllGrade, getAllTypesService } from "~/service/user";
 import type {
   AccessTypesType,
   AccessItem,
@@ -125,7 +125,7 @@ onMounted(() => {
     allGrade = res.data.value.data;
   });
 
-  getAllTypes().then((res) => {
+  getAllTypesService().then((res) => {
     typeList = res.data.value.data;
   });
 });

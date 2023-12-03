@@ -53,7 +53,8 @@ export interface AccessPageInfoType {
 export interface AccessStoreType {
   managePageInfo: { currentPage: number; pageSize: number; total: number };
   manageSearchKey: string;
-  selfPageInfo: { currentPage: number; pageSize: number; total: number };
+  selfWrittenPageInfo: { currentPage: number; pageSize: number; total: number };
+  selfInterviewPageInfo: { currentPage: number; pageSize: number; total: number };
   selfSearchKey: string;
 }
 
@@ -80,3 +81,10 @@ export interface ScorePageInfoListType {
 //   scores: Array<ScoreType>;
 //   pid: number;
 // }
+
+//考核类型的接口返回类型
+export interface TypesType {
+  id: number;
+  typeName: string;
+  createTime: string;
+}

@@ -1,14 +1,14 @@
 <template>
   <div class="container animate__animated animate__fadeIn">
     <client-only>
-      <ReturnPersonalPage style="margin-left: 50px" />
+      <ReturnPersonalPage />
       <h2>基本信息</h2>
       <el-form
         ref="baseInfoRef"
         :model="baseInfo"
         status-icon
         :rules="rules"
-        label-width="120px"
+        label-width="70px"
         class="demo-baseInfo"
       >
         <el-form-item label="qq" prop="qq">
@@ -32,7 +32,7 @@
         :model="updatePassInfo"
         status-icon
         :rules="rules2"
-        label-width="120px"
+        label-width="70px"
         class="demo-updatePass"
       >
         <el-form-item label="新密码" prop="newPassword">
@@ -271,7 +271,7 @@ const sendCode = async () => {
     text-align: left;
     font-size: 21px;
     color: #666;
-    margin-left: 60px;
+    margin-left: 10px;
     margin-top: 20px;
     margin-bottom: 20px;
   }
