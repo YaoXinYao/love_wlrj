@@ -254,6 +254,7 @@ export const forumStore = defineStore("forumInfo", {
       let img: string = single.postImg;
       //分割图片
       let photos: string[] = img ? img.split(",") : [];
+      let photoShow = img ? true : false;
       let likes = false;
       let collect = false;
       //判断用户是否点赞
@@ -278,6 +279,7 @@ export const forumStore = defineStore("forumInfo", {
       Object.assign(this.singleData, {
         ...postData,
         photos,
+        photoShow,
         userName,
         head,
         likes,

@@ -1,76 +1,99 @@
 <template>
   <div class="deatils">
-    <div class="bgphoto"></div>
+    <div
+      class="bgphoto"
+      v-if="singleData.photoShow == true"
+      :style="{ backgroundImage: `url(${singleData.photos[0]})` }"
+    ></div>
+    <div class="bgphoto NoData" v-else></div>
+    <div class="header">
+      <NuxtLink to="/">首页</NuxtLink> >
+      <NuxtLink to="/forum/home">论坛</NuxtLink> > 帖子详情
+    </div>
     <div class="signle">
-      <div class="header">
-        <NuxtLink to="/">首页</NuxtLink> >
-        <NuxtLink to="/forum/home">论坛</NuxtLink> > 帖子详情
-      </div>
       <div class="content">
         <div class="text">
-          <ul class="photos">
-            <li v-for="(item, i) in singleData.photos">
-              <img :src="item" />
-            </li>
-          </ul>
-          <h3>{{ singleData.postTitle }}</h3>
-          <div>{{ singleData.postContent }}</div>
-        </div>
-        <div class="comment">
-          <h4>欢迎大家进行交流</h4>
-          <el-input
-            type="textarea"
-            v-model="conten"
-            maxlength="600"
-            placeholder="留言评论"
-            show-word-limit
-            :autosize="{ minRows: 5, maxRows: 8 }"
-            input-style="margin-top:10px"
-          />
-          <el-upload
-            class="uploadimg"
-            action=""
-            list-type="picture-card"
-            :auto-upload="false"
-            :multiple="true"
-            accept="image/*"
-            v-model:file-list="formImage.files"
-          >
-            <el-icon><Plus /></el-icon>
-            <template #file="{ file }">
-              <div>
-                <img
-                  class="el-upload-list__item-thumbnail"
-                  :src="file.url"
-                  alt=""
-                />
-                <span class="el-upload-list__item-actions">
-                  <span
-                    class="el-upload-list__item-preview"
-                    @click="handlePictureCardPreview(file)"
-                  >
-                    <el-icon><zoom-in /></el-icon>
-                  </span>
-                  <span
-                    v-if="!disabled"
-                    class="el-upload-list__item-delete"
-                    @click="handleRemove(file)"
-                  >
-                    <el-icon><Delete /></el-icon>
-                  </span>
-                </span>
-              </div>
-            </template>
-          </el-upload>
-          <div class="btn">
-            <el-button type="primary" @click="submitData(0, 0)">提交</el-button>
-            <el-button type="info" @click="cleardata()">清空</el-button>
+          <h2>{{ singleData.postTitle }}</h2>
+          <div class="autorInfo">{{ singleData.userName }}<span>{{ singleData.postTime }}</span>
+              <span>
+                <svg
+                t="1701501024430"
+                class="icon"
+                viewBox="0 0 1024 1024"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                p-id="1962"
+                width="200"
+                height="200"
+              >
+                <path
+                  d="M808.29 492.73c-7.34-40.8-20.3-77.42-38.54-108.82-23.14-39.86-54.75-71.26-93.93-93.34a19.997 19.997 0 0 0-21.47 1.17 20.014 20.014 0 0 0-8.01 19.95c0.07 0.38 7.12 38.49 4.84 81.07-1.22 22.83-5.33 49.82-16.43 70.87-0.05 0.1-0.21 0.08-0.22-0.04-2.69-23.22-8.63-52.83-21.28-84.5-16.54-41.43-41.16-77.9-73.18-108.39-39.13-37.28-89.31-65.52-149.18-83.96h-0.01a20.146 20.146 0 0 0-24.96 7.29 20.002 20.002 0 0 0 2.04 24.74c0.01 0.01 0.01 0.02 0.02 0.03 10.43 20.99 58.24 159.32 0.64 260.3-5.47 9.59-2.13 21.81 7.46 27.28 9.6 5.47 21.81 2.13 27.28-7.46 38.09-66.78 36.45-144.41 28.36-197.78-3.79-24.99-9.15-46.23-13.85-61.89-0.03-0.1 0.07-0.18 0.16-0.14 36.5 15.44 67.89 35.47 93.64 59.81 27.8 26.27 49.26 57.71 63.78 93.45 25.08 61.71 20.86 115.73 20.82 116.22-0.76 8.44 3.9 16.59 11.91 20.12 5.73 2.52 12.32 1.98 17.87-0.92 22.32-11.65 39.23-31.43 50.28-58.82 8.28-20.53 13.25-45.45 14.78-74.06 0.86-16.01 0.54-31.36-0.26-44.72-0.01-0.1 0.12-0.16 0.2-0.09 17.13 14.99 31.78 32.84 43.78 53.39 15.89 27.21 27.29 59.25 33.87 95.26 11.44 62.55 4.25 115.75 4.18 116.26-0.02 0.13-0.03 0.25-0.05 0.38-7.38 60.32-31.02 107.43-70.28 140.02-29.59 24.57-68.69 41.59-116.81 50.95 18.89-27.24 23.67-64.61 14.17-111.28-0.6-2.96-6.36-29.44-26.61-58.47-19.25-27.61-55.91-63.41-121.2-77.15-7.8-1.64-15.93 1.31-20.54 7.8-4.59 6.47-5.04 14.85-0.97 21.65 1.44 2.71 19.8 39.36-8.31 90.53 0 0 0 0.01-0.01 0.01-2.68 3.89-11.56 17.36-18.66 34.99-11.77 29.22-13.16 56.3-4.03 78.29 1.95 4.7 4.34 9.14 7.16 13.3-41.35-9.92-75.16-28.15-100.99-54.54-51.07-52.2-53.69-118.44-53.28-137.51 1.31-60.04 39.32-106.53 39.67-106.95 0.06-0.08 0.13-0.15 0.19-0.23 51.94-63.82 48.85-126.1 48.6-130.07h-0.02c-0.64-10.46-9.3-18.73-19.91-18.73-11.05 0-20 8.95-20 20 0 0.47 0.04 0.93 0.07 1.4h-0.02s2.37 50.38-39.64 102.05c-3.24 3.9-47.29 58.36-48.89 131.64-0.4 18.58 1.49 47.71 12.78 81.04 11.11 32.77 28.57 61.48 51.89 85.31 22.92 23.43 51.24 41.69 84.15 54.3 36.62 14.02 79.35 21.13 126.99 21.13 104.19 0 184.86-23.12 239.78-68.71 47.33-39.3 75.74-95.07 84.42-165.78 0.62-4.46 7.86-60.34-4.24-127.65zM455.5 701.74c0.46-0.63 0.88-1.29 1.26-1.97 20.08-35.99 22.78-67.67 20.2-90.84-0.01-0.09 0.08-0.16 0.16-0.12 25.79 10.81 46.7 27.3 62.41 49.26 16.3 22.79 20.92 43.6 21.17 44.78 0.01 0.08 0.01 0.06 0.04 0.18 7.79 38.27 4.09 66.74-10.98 84.62-17.85 21.18-47.98 22.56-53.81 22.62h-0.02c-32.53-5.39-52.49-16.43-59.35-32.83-10.67-25.52 10.05-63.32 18.92-75.7z"
+                  p-id="1963"
+                  fill="#e16531"
+                ></path>
+              </svg>
+                {{ singleData.postView }}
+              </span>
           </div>
+          <div class="textContent">{{ singleData.postContent }}</div>
         </div>
       </div>
     </div>
     <div class="comments">
-      <div class="disscussHead"><span>评论</span></div>
+      <div :style="{ fontSize: '20px' }">评论</div>
+      <div class="comment">
+        <el-input
+          type="textarea"
+          v-model="conten"
+          maxlength="600"
+          placeholder="留言评论"
+          show-word-limit
+          :autosize="{ minRows: 5, maxRows: 8 }"
+          input-style="background:#edf1f2"
+        />
+        <el-upload
+          v-if="showImg || formImage.files.length!=0"
+          class="uploadimg"
+          action=""
+          list-type="picture-card"
+          :auto-upload="false"
+          :multiple="true"
+          accept="image/*"
+          v-model:file-list="formImage.files"
+        >
+          <el-icon><Plus /></el-icon>
+          <template #file="{ file }">
+            <div>
+              <img
+                class="el-upload-list__item-thumbnail"
+                :src="file.url"
+                alt=""
+              />
+              <span class="el-upload-list__item-actions">
+                <span
+                  class="el-upload-list__item-preview"
+                  @click="handlePictureCardPreview(file)"
+                >
+                  <el-icon><zoom-in /></el-icon>
+                </span>
+                <span
+                  v-if="!disabled"
+                  class="el-upload-list__item-delete"
+                  @click="handleRemove(file)"
+                >
+                  <el-icon><Delete /></el-icon>
+                </span>
+              </span>
+            </div>
+          </template>
+        </el-upload>
+        <div class="btn">
+          <el-button type="primary" @click="submitData(0, 0)">提交</el-button>
+          <el-button type="info" @click="cleardata()">清空</el-button>
+          <el-button type="warning" @click= "addImg">{{ showImg ? "取消图片" : "添加图片"}}</el-button>
+        </div>
+      </div>
+      <div class="disscussHead"><span>全部评论</span></div>
       <div class="discussNull" v-if="discuss.length == 0">
         <div></div>
       </div>
@@ -79,7 +102,7 @@
           <div class="cardTop">
             <div class="userInfo">
               <div>
-                <img :src="item.head" alt=""/>
+                <img :src="item.head" alt="" />
               </div>
               <div>
                 <p>{{ item.comUserName }}</p>
@@ -95,7 +118,9 @@
           </div>
           <div class="icon">
             <el-icon
-              ><ChatDotRound color="black" @click="addCom(item.comId,item.comUserId)"
+              ><ChatDotRound
+                color="black"
+                @click="addCom(item.comId, item.comUserId)"
             /></el-icon>
             <svg
               v-if="item.likes == true"
@@ -130,7 +155,7 @@
               ></path>
             </svg>
             <span
-              v-if="(item.comUserId == userinfo.userId)"
+              v-if="item.comUserId == userinfo.userId"
               @click="deleteCom(item.comId)"
               >删除</span
             >
@@ -211,6 +236,8 @@ let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
 const { singleData, discuss } = storeToRefs(forums);
+let conten = ref("");
+let contens = ref("");
 let commentNews = reactive<any>({
   comContent: "",
   comFatherId: 0,
@@ -218,12 +245,10 @@ let commentNews = reactive<any>({
   comRootId: 0,
   comUserId: userinfo.value.userId,
 });
-let conten = ref("");
 let formImage = reactive<any>({
   files: [],
 });
-let contens = ref("");
-let sendFatherId = ref(0)
+let sendFatherId = ref(0);
 let formImages = reactive<any>({
   files: [],
 });
@@ -231,6 +256,7 @@ const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let commentVisible = ref(false);
+let showImg = ref(false)
 let datas = useRoute().query.data;
 commentNews.comPostId = datas;
 const route = useRoute();
@@ -267,6 +293,13 @@ const sentMessage = (
   };
   send(JSON.stringify(obj));
 };
+//父评论添加图片
+const addImg=()=>{
+  if(showImg){
+    formImage.files=[]
+  }
+  showImg.value = !showImg.value
+}
 //删除图片
 const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
@@ -292,7 +325,7 @@ const submitData = (comFatherId: number, comRootId: number) => {
   } else {
     let jage = true;
     let formData = new FormData();
-    let comImg:any[] = [];
+    let comImg: any[] = [];
     let reg = /^\s+$/g;
     if (!reg.test(conten.value)) {
       if (formImage.files.length == 0 && conten.value == "") {
@@ -315,7 +348,12 @@ const submitData = (comFatherId: number, comRootId: number) => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
-              sentMessage(singleData.value.postUserId,conten.value,"PostComment",singleData.value.postId)
+              sentMessage(
+                singleData.value.postUserId,
+                conten.value,
+                "PostComment",
+                singleData.value.postId
+              );
               forums.selectComment(Number(datas), userinfo.value.userId);
               conten.value = "";
               formImage.files = [];
@@ -349,20 +387,20 @@ const deleteCom = (ids: number) => {
   });
 };
 //添加评论弹窗
-const addCom = (id: number,fatherId:number) => {
+const addCom = (id: number, fatherId: number) => {
   commentVisible.value = true;
   commentNews.comFatherId = id;
   commentNews.comRootId = id;
-  sendFatherId.value = fatherId
+  sendFatherId.value = fatherId;
 };
-//确认添加
+//确认添加二级评论
 const sureCom = () => {
   if (userinfo.value.userId == 0) {
     ElMessage.warning("请先登录");
   } else {
     let jage = true;
     let formData = new FormData();
-    let comImg:any[] = [];
+    let comImg: any[] = [];
     let reg = /^\s+$/g;
     if (!reg.test(contens.value)) {
       if (formImages.files.length == 0 && contens.value == "") {
@@ -383,7 +421,12 @@ const sureCom = () => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
-              sentMessage(sendFatherId.value,contens.value,"CommentReply",commentNews.comFatherId)
+              sentMessage(
+                sendFatherId.value,
+                contens.value,
+                "CommentReply",
+                commentNews.comFatherId
+              );
               forums.selectComment(Number(datas), userinfo.value.userId);
               contens.value = "";
               formImages.files = [];
@@ -455,61 +498,49 @@ watch(status, (newStatus) => {
 
 <style lang="scss" scoped>
 .deatils {
+  padding: 0 0 30px;
   .bgphoto {
     width: 100%;
     height: 380px;
-    background-image: url("/assets/image/back.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
     overflow: hidden;
+    background-position: center;
+  }
+  .bgphoto.NoData {
+    background-image: url("/assets/image/back.jpeg");
+  }
+  .header {
+    max-width: 1100px;
+    margin: 15px auto 25px;
+    a {
+      cursor: pointer;
+    }
   }
   .signle {
     max-width: 1100px;
-    margin: 15px auto 0px;
-    padding: 0 20px 20px 20px;
-    .header {
-      margin: 15px 0px 15px;
-      a {
-        cursor: pointer;
+    margin: 15px auto 25px;
+    padding: 30px 30px 30px 30px;
+    background: #f9fdff;
+    border-radius: 5px;
+    min-height: 200px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    .content {
+      h3 {
+        margin-bottom: 8px;
       }
-    }
-  }
-}
-.content {
-  min-height: 200px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  h3 {
-    margin-bottom: 8px;
-  }
-  .comment {
-    width: 460px;
-    .uploadimg {
-      margin: 15px 0px;
-    }
-  }
-  .text {
-    flex: 1;
-    margin-right: 40px;
-    .photos {
-      width: 100%;
-      margin-bottom: 20px;
-      list-style: none;
-      display: flex;
-      justify-content: left;
-      flex-wrap: wrap;
-      li {
-        width: 200px;
-        height: 200px;
-        overflow: hidden;
-        border-radius: 15px;
-        margin-right: 15px;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 15px;
+      .text {
+        margin-right: 40px;
+        line-height:24px;
+        .autorInfo{
+          margin:10px 0px;
+          color: rgb(124, 123, 123);
+          span{
+            margin-left: 40px;
+          }
+        }
+        .textContent{
+          
         }
       }
     }
@@ -532,7 +563,19 @@ watch(status, (newStatus) => {
 .comments {
   max-width: 1100px;
   margin: 0px auto;
-  padding: 0 20px 0 20px;
+  padding: 30px;
+  background: #f9fdff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  .comment {
+    margin-top: 20px;
+    .uploadimg {
+      margin: 15px 0px;
+    }
+    .btn{
+      margin-top: 10px;
+    }
+  }
   .disscussHead {
     margin-top: 15px;
     span {
