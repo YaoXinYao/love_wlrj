@@ -16,7 +16,12 @@
           method="put"
           :headers="{ Authorization: Authtoken() }"
         >
-          <img v-if="imageUrl" :src="userinfo.userPicture" class="avatar" />
+          <el-avatar
+            fit="cover"
+            v-if="imageUrl"
+            :src="userinfo.userPicture"
+            class="avatar"
+          />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
       </div>
@@ -84,8 +89,6 @@ const handleAvatarError = (
   ElMessage.error("上传失败");
   console.log(error);
 };
-
-
 </script>
 <style lang="scss" scoped>
 @font-face {
@@ -160,13 +163,14 @@ const handleAvatarError = (
 }
 
 .mainContainer {
-  width: 1000px;
+  width: $originalWidth;
   background-color: #fff;
   height: max-content;
   padding: 10px 20px;
   margin: auto;
   margin-top: -30px;
   border-radius: 10px;
+  transition: width 0.3s;
 }
 
 .avatar-uploader {
@@ -217,6 +221,30 @@ const handleAvatarError = (
     color: #666;
     font-size: 14px;
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .mainContainer {
+    width: $scaleWidth1;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .mainContainer {
+    width: $scaleWidth2;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .mainContainer {
+    width: $scaleWidth3;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .mainContainer {
+    width: $scaleWidth3;
   }
 }
 </style>

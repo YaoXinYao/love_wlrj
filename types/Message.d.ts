@@ -17,6 +17,15 @@ export interface MessageType {
   curType: MessageTypes;
   infoList: any;
   notReadNum: NotReadNumType;
+  isUpdate: IsUpdateType;
+}
+
+export interface IsUpdateType {
+  CommentLike: boolean;
+  CommentReply: boolean;
+  PostCollect: boolean;
+  PostComment: boolean;
+  PostLike: boolean;
 }
 
 export interface NotReadNumType {

@@ -109,49 +109,21 @@
 <script setup lang="ts">
 import "animate.css";
 import { useRoute } from "vue-router";
-import { useWebSocket } from "@vueuse/core";
+
 import { getNotReadInfo } from "~/service/message";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 import { useMessageStore } from "~/store/message";
-import { useGetMessageInfo } from "../hooks/useGetMessageInfo";
+import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
+import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 const messageStore = useMessageStore();
 const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
 const route = useRoute();
-
 onMounted(() => {
   getInfo();
 });
-
-const { status, data, send, open, close } = useWebSocket(
-  `ws://152.136.161.44:19491/forum/swagger/forum/websocket/${userinfo.value.userId}`,
-  {
-    autoReconnect: {
-      retries: 8,
-      delay: 1000,
-      onFailed() {
-        alert("Failed to connect WebSocket after 8 retries");
-      },
-    },
-    onConnected() {
-      console.log("连接成功");
-    },
-    onDisconnected() {
-      console.log("断开");
-    },
-    onMessage() {
-      console.log("来消息了");
-
-      const msg = JSON.parse(data.value);
-      console.log("消息", msg);
-    },
-    onError(err) {
-      console.error(err);
-    },
-  }
-);
 
 let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
 const {
@@ -192,11 +164,13 @@ const getInfo = async () => {
 const handleSizeChange = (val: number) => {
   pageInfo.value.pageSize = val;
   getInfo();
+  useGetNotReadMessage();
 };
 
 const handleCurrentChange = (val: number) => {
   pageInfo.value.currentPage = val;
   getInfo();
+  useGetNotReadMessage();
 };
 </script>
 

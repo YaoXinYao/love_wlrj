@@ -9,7 +9,12 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
         total: 0,
       },
       manageSearchKey: "",
-      selfPageInfo: {
+      selfWrittenPageInfo: {
+        currentPage: 1,
+        pageSize: 5,
+        total: 0,
+      },
+      selfInterviewPageInfo: {
         currentPage: 1,
         pageSize: 5,
         total: 0,
@@ -21,8 +26,8 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
     async ChangeHPageInfo(props: AccessPageInfoType) {
       this.managePageInfo = props;
     },
-    async ChangeSelfPageInfo(props: AccessPageInfoType) {
-      this.selfPageInfo = props;
+    async ChangeSelfWrittenPageInfo(props: AccessPageInfoType) {
+      this.selfWrittenPageInfo = props;
     },
   },
   //持久化操作
