@@ -1,13 +1,84 @@
-import { number } from 'echarts';
 <template>
   <ClientOnly>
     <el-dialog
-      v-model="dialogVisible"
-      title="评语"
-      draggable
-      :closed="changeState"
+      v-model="addInterviewDialogFormVisible"
+      title="添加面评"
+      :closed="changeAddInterviewState"
     >
-      <el-table :data="userList" style="width: 100%">
+      <el-form :model="form" ref="addInterviewRef">
+        <el-form-item
+          label="面评对象"
+          prop="studentId"
+          :rules="[
+            { required: true, message: '面评对象不能为空', trigger: 'blur' },
+          ]"
+        >
+          <el-select
+            v-model="form.studentId"
+            clearable
+            filterable
+            remote
+            :multiple="false"
+            :remote-method="searchUserByGrade"
+            :loading="loading"
+            placeholder="请输入关键字搜索用户"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.userId"
+              :label="item.userName"
+              :value="item.userId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="面评内容"
+          prop="content"
+          :rules="[
+            { required: true, message: '面评内容不能为空', trigger: 'blur' },
+          ]"
+        >
+          <el-input
+            type="textarea"
+            v-model="form.content"
+            autocomplete="off"
+            maxlength="200"
+            show-word-limit
+            placeholder="至多200字"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addInterviewDialogFormVisible = false"
+            >取消</el-button
+          >
+          <el-button type="primary" @click="addInterview(addInterviewRef)">
+            确认
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="dialogVisible" draggable :closed="changeState">
+      <template #header>
+        <div class="my-header">
+          <h3>面评列表</h3>
+          <el-button
+            type="success"
+            @click="addInterviewBtn"
+            style="margin-right: 20px"
+            >添加</el-button
+          >
+        </div>
+      </template>
+      <el-table
+        :data="userList"
+        style="width: 100%"
+        :row-key="rowKey"
+        :expand-row-keys="expandRowKeys"
+        @expand-change="onExpand"
+      >
         <el-table-column type="expand">
           <template #default="props">
             <span class="nullSpan" v-show="!props.row.interviewList"
@@ -21,9 +92,16 @@ import { number } from 'echarts';
             >
               <span class="reviewer"
                 ><img src="@/assets/image/评价.png" alt="" />评语{{ index + 1
-                }}<span class="interviewTime">{{ c.createTime }}</span></span
-              >
-              <p>{{ c.comment }}</p>
+                }}<span class="interviewTime"
+                  >{{ c.createTime
+                  }}<el-icon
+                    class="deleteInterview"
+                    @click="deleteInterview(c.id, props.row)"
+                    ><Delete /></el-icon></span
+              ></span>
+              <p>
+                {{ c.comment }}
+              </p>
             </div>
           </template>
         </el-table-column>
@@ -50,16 +128,36 @@ import { number } from 'echarts';
 </template>
 
 <script setup lang="ts">
-import { number } from "echarts";
-import { getInterviewService, searchUserervice } from "~/service/user";
+import {
+  addInterviewService,
+  deleteInterviewService,
+  getInterviewService,
+  searchUserByGradeService,
+  searchUserervice,
+} from "~/service/user";
 import type { UserAllInfoType } from "~/types/User";
+import { Delete } from "@element-plus/icons-vue";
+import type { FormInstance } from "element-plus";
 
 const props = defineProps(["id", "dialogVisible"]);
 const emit = defineEmits(["interviewAlert"]);
 let gradeNumber = ref(-1);
 let id = ref(-1);
+const options = ref<Array<UserAllInfoType>>([]);
+const addInterviewRef = ref<FormInstance>();
 let userList = ref<Array<UserAllInfoType>>([]);
 let dialogVisible = ref(false);
+const addInterviewDialogFormVisible = ref(false);
+const loading = ref(false);
+function rowKey(row: any) {
+  return row.userId + "";
+}
+const expandRowKeys = ref<string[]>([]);
+const form = reactive<{ content: string; studentId: number | string }>({
+  content: "",
+  studentId: "",
+});
+
 const pageInfo = reactive({
   pageNo: 1,
   pageSize: 5,
@@ -84,8 +182,6 @@ watch(id, (newValue) => {
 
 const getGradeUser = async (grade: number) => {
   let userListRes = await searchUserervice({ ...pageInfo, userGrade: grade });
-  console.log(userListRes);
-
   if (userListRes.data.value.code == 20000) {
     let { current, total, size } = userListRes.data.value.data;
     pageInfo.pageNo = current;
@@ -97,13 +193,10 @@ const getGradeUser = async (grade: number) => {
         id: userList.value[i].userId,
         pId: id.value,
       });
-      console.log(userList.value[i].userId, id.value);
-
-      console.log(interviewItemRes);
 
       if (interviewItemRes.data.value.code == 20000) {
         userList.value[i].interviewList = interviewItemRes.data.value.data;
-      } else if (interviewItemRes.data.value.code == 400006) {
+      } else {
         userList.value[i].interviewList = null;
       }
     }
@@ -125,9 +218,125 @@ const handleCurChange = (val: number) => {
   getGradeUser(gradeNumber.value);
 };
 
-const deleteInterview = (id: number) => {
-  console.log(id);
+const deleteInterview = async (interviewId: number, row: any) => {
+  console.log(interviewId);
+
+  console.log(row);
+  ElMessageBox.confirm("你确定要删除该消息吗？")
+    .then(async () => {
+      let deleteRes = await deleteInterviewService([interviewId]);
+      console.log(deleteRes);
+
+      if (deleteRes.data.value.code == 20000) {
+        ElMessage({
+          type: "success",
+          message: "删除成功",
+        });
+        let index = -1;
+        for (let i = 0; i < userList.value.length; i++) {
+          if (userList.value[i].userId == row.userId) {
+            index = i;
+          }
+        }
+        console.log(index);
+
+        let interviewItemRes = await getInterviewService({
+          id: row.userId,
+          pId: id.value,
+        });
+        console.log(interviewItemRes.data.value.code);
+        console.log(interviewItemRes.data.value.code == 20000);
+
+        if (interviewItemRes.data.value.code == 20000) {
+          userList.value[index].interviewList =
+            interviewItemRes.data.value.data;
+        } else {
+          userList.value[index].interviewList = null;
+        }
+
+        console.log(userList.value);
+      } else {
+        ElMessage({
+          type: "error",
+          message: "删除失败",
+        });
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消删除操作",
+      });
+    });
 };
+
+const addInterviewBtn = () => {
+  addInterviewDialogFormVisible.value = true;
+};
+
+//搜索用户
+const searchUserByGrade = async (val: string) => {
+  if (val.trim() != "") {
+    loading.value = true;
+
+    let res = await searchUserByGradeService(gradeNumber.value, val);
+    console.log(res);
+    if (res.data.value.code == 20000) {
+      options.value = res.data.value.data;
+    }
+    console.log(options.value);
+    loading.value = false;
+  }
+};
+//添加面评
+const addInterview = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.validate(async (vaild) => {
+    if (vaild) {
+      console.log(form.studentId);
+      let addInterviewRes = await addInterviewService({
+        content: form.content,
+        PId: id.value,
+        studentId: form.studentId,
+      });
+
+      console.log(addInterviewRes);
+      if (addInterviewRes.data.value.code == 20000) {
+        ElMessage({
+          type: "success",
+          message: "添加成功",
+        });
+        addInterviewDialogFormVisible.value = false;
+        formEl.resetFields();
+        getGradeUser(gradeNumber.value);
+      } else {
+        ElMessage({
+          type: "error",
+          message: "添加失败",
+        });
+      }
+    } else {
+      ElMessage({
+        type: "warning",
+        message: "请完善表单",
+      });
+    }
+  });
+};
+
+const onExpand = (row: any) => {
+  let id = rowKey(row);
+  let index = expandRowKeys.value?.indexOf(rowKey(row));
+  if (index == -1) {
+    expandRowKeys.value?.push(id);
+  } else {
+    expandRowKeys.value?.splice(index, 1);
+  }
+};
+const changeAddInterviewState = () => {
+  addInterviewDialogFormVisible.value = false;
+};
+
 //暴露方法接收试卷id和学生id
 function interviewId(grade: number, pId: number) {
   id.value = pId;
@@ -149,12 +358,15 @@ defineExpose({ interviewId });
 
 .commentItem {
   font-family: "Times New Roman", Times, serif;
-
   border-bottom: 1px dashed #ccc;
   margin-left: 40px;
 
   &:hover {
     background-color: aliceblue;
+
+    .deleteInterview {
+      opacity: 1;
+    }
   }
 
   .reviewer {
@@ -186,5 +398,26 @@ defineExpose({ interviewId });
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.deleteInterview {
+  font-size: 16px;
+  color: red;
+  margin-left: 10px;
+  line-height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.my-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+
+  h3 {
+    font-size: 20px;
+  }
 }
 </style>

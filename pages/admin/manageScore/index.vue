@@ -16,6 +16,12 @@
       @interviewAlert="interviewHandle"
       ref="watchInterviewRef"
     />
+
+    <AccessTypes
+      :dialogVisible="typeDialogVisible"
+      @typeAlert="typeHandle"
+      ref="typeRef"
+    />
     <el-form :inline="true" :model="manageSearchKeys">
       <el-form-item label="考核名称"
         ><el-input v-model="manageSearchKey" placeholder="考核名称" clearable
@@ -24,6 +30,7 @@
         <el-button type="primary" @click="searchAccess">搜索</el-button>
         <el-button type="warning" @click="resetInfo">重置</el-button>
         <el-button type="success" @click="addAlert">新增</el-button>
+        <el-button type="info" @click="accessTypeAlert">考核类型管理</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -33,22 +40,6 @@
       ref="tableRef"
       v-loading="isLoading"
     >
-      <!-- <el-table-column type="expand">
-        <template #default="props">
-          <div class="accessInfo">
-            <h3>
-              成绩<el-button
-                style="margin-left: 10px; width: 55px; height: 30px"
-                type="success"
-                @click="scoreAlert(props.row)"
-                >添加</el-button
-              >
-            </h3>
-            {{ props.row }}
-            <ScoreTable :row="props.row" @change_row="changeRowData" />
-          </div>
-        </template>
-      </el-table-column> -->
       <el-table-column label="考核名称" prop="plan" />
       <el-table-column label="类别" prop="type">
         <template #default="scope"
@@ -111,6 +102,7 @@ import { reactive, ref, watch } from "vue";
 
 import ScoreTable from "@/components/ScoreTable/index.vue";
 import InterviewList from "@/components/InterviewList/index.vue";
+import AccessTypes from "@/components/AccessTypes/index.vue";
 import {
   deleteAccessService,
   getAllAccessService,
@@ -134,10 +126,12 @@ const accessDialogVisible = ref(false);
 
 const scoreDialogVisible = ref(false);
 const interviewDialogVisible = ref(false);
+const typeDialogVisible = ref(false);
 const addScoreNeedInfo = ref<AccessResInfoType>();
 
 const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
 const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
+const typeRef = ref<InstanceType<typeof AccessTypes>>();
 const { managePageInfo, manageSearchKey } = storeToRefs(AccessPageInfoStore);
 
 const rowKeyArr = ref<any>([]);
@@ -329,6 +323,11 @@ const parentBorder = ref(false);
 const addAlert = () => {
   accessDialogVisible.value = !accessDialogVisible.value;
 };
+
+const accessTypeAlert=()=>{
+ typeDialogVisible.value=!typeDialogVisible.value 
+}
+
 const accessHandle = (props: boolean) => {
   accessDialogVisible.value = props;
 };
@@ -340,6 +339,11 @@ const scoreHandle = (props: boolean) => {
 const interviewHandle = (props: boolean) => {
   interviewDialogVisible.value = props;
 };
+
+const typeHandle = (props: boolean) => {
+  typeDialogVisible.value = props;
+};
+
 const updateEvent = (props: boolean) => {
   manageSearchKey.value = "";
   if (props) {
@@ -391,7 +395,7 @@ const watchAccess = (row: any) => {
     watchScoreRef.value?.scoreTableId(row.id);
   } else {
     interviewDialogVisible.value = true;
-    watchInterviewRef.value?.interviewId(row.subscribers,row.id);
+    watchInterviewRef.value?.interviewId(row.subscribers, row.id);
   }
 };
 

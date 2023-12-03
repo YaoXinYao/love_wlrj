@@ -1,4 +1,4 @@
-import type { GetMessagePropsType } from "~/types/Message";
+import type { GetMessagePropsType } from "~/types/Message.s";
 import hyRequest, { type IResultData } from "../forum";
 
 export const getMessageInfo = (props: GetMessagePropsType) => {

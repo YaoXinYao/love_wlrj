@@ -5,7 +5,7 @@
       <div class="Adviserbox">
         <div class="Advcard AdviserLi">
           <div class="Advcardavter">
-            <img src="/images/l1.jpg" alt="" />
+            <img src="/images/teacher_Ggh.jpg" alt="" />
           </div>
           <div class="Advcardname">高国红</div>
           <div class="position">
@@ -28,7 +28,7 @@
         </div>
         <div class="Advcard AdviserLi2">
           <div class="Advcardavter">
-            <img src="/images/l2.png" alt="" />
+            <img src="/images/teacher_Lsy.jpg" alt="" />
           </div>
           <div class="Advcardname">李士勇</div>
           <div class="position">
@@ -144,13 +144,13 @@ function loading() {
         .Advcardavter {
           width: 100%;
           height: 1.3rem;
-
           display: flex;
           justify-content: center;
           img {
-            height: 1.3rem;
-            width: 1.3rem;
+            height: 100%;
+            object-fit: cover;
             border-radius: 50%;
+            vertical-align: top;
           }
         }
         .Advcardname {

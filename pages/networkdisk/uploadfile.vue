@@ -148,7 +148,6 @@ const uploadBt = async () => {
     totalChunk += createChunks(item, chunkSize).length;
   }
   await disstore.updateTotalByte(totalChunk);
-  console.log(totalChunk);
   await uploadFileQueue(filequeue.value, 0);
   disstore.updatefilequeue();
   dialogVisible2.value = false;

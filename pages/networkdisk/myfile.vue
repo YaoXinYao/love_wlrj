@@ -25,6 +25,7 @@
         description="还没有收藏文件"
       />
       <el-table
+        element-loading-text="加载中..."
         v-show="Myfile.FileList.dataList.length !== 0"
         v-loading="Myfile.Loading"
         ref="multipleTableRef"
@@ -47,7 +48,12 @@
           label="文件大小"
           show-overflow-tooltip
         />
-        <el-table-column property="address" label="操作" show-overflow-tooltip>
+        <el-table-column
+          property="address"
+          label="操作"
+          show-overflow-tooltip
+          min-width="100"
+        >
           <template #default="scope">
             <ElButton
               type="primary"
@@ -61,6 +67,18 @@
               plain
               >分享</ElButton
             >
+            <ElButton type="warning" @click="() => openPrew(scope.row.id)" plain
+              >预览</ElButton
+            >
+            <el-popconfirm
+              title="确定删除?"
+              @confirm="() => deleteFile(scope.row.id)"
+              confirm-button-type="danger"
+            >
+              <template #reference>
+                <el-button>删除</el-button>
+              </template>
+            </el-popconfirm>
             <el-switch
               v-model="Filepublic[scope.row.name].public"
               :loading="Filepublic[scope.row.name].loading"
@@ -105,14 +123,20 @@
         placeholder="输入文件名"
       />
       <el-table
+        element-loading-text="加载中..."
         v-loading="loading"
         :data="Myfile.SearchItem"
         style="width: 100%"
       >
-        <el-table-column prop="name" label="文件名" width="400" />
-        <el-table-column prop="uploadDate" label="上传时间" width="180" />
-        <el-table-column prop="fileSize" label="文件大小" width="180" />
-        <el-table-column property="address" label="操作" show-overflow-tooltip>
+        <el-table-column prop="name" label="文件名" min-width="40" />
+        <el-table-column prop="uploadDate" label="上传时间" min-width="60" />
+        <el-table-column prop="fileSize" label="文件大小" width="90" />
+        <el-table-column
+          property="options"
+          label="操作"
+          show-overflow-tooltip
+          min-width="100"
+        >
           <template #default="scope">
             <ElButton
               type="primary"
@@ -126,6 +150,18 @@
               plain
               >分享</ElButton
             >
+            <ElButton type="warning" @click="() => openPrew(scope.row.id)" plain
+              >预览</ElButton
+            >
+            <el-popconfirm
+              title="确定删除?"
+              @confirm="() => diskstore.SearchFileReplce(scope.row.id)"
+              confirm-button-type="danger"
+            >
+              <template #reference>
+                <el-button>删除</el-button>
+              </template>
+            </el-popconfirm>
             <el-switch
               v-model="Filepublic[scope.row.name].public"
               :loading="Filepublic[scope.row.name].loading"
@@ -149,12 +185,14 @@
         </span>
       </template>
     </el-dialog>
+    <DownCom />
   </div>
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { FileToPrivate, FileToPublic } from "~/service/disk";
+import { FileToPrivate, FileToPublic, uploaddeleteFile } from "~/service/disk";
 import { useDiskstore } from "~/store/disk";
+const { openPrew } = usePrew();
 const diskstore = useDiskstore();
 const dialogVisible = ref(false);
 const loading = ref(false);
@@ -168,6 +206,11 @@ const Filepublic = ref<{
     loading: boolean;
   };
 }>({});
+/**
+ *
+ * @param name 文件名称，
+ * @param id 文件id
+ */
 const beforeChange2 = async (name: string, id: number) => {
   Filepublic.value[name].loading = true;
   try {
@@ -192,7 +235,16 @@ const beforeChange2 = async (name: string, id: number) => {
     return false;
   }
 };
-
+const deleteFile = async (fileid: number) => {
+  const res = await uploaddeleteFile({ fileId: fileid, userId: Authuserid() });
+  if (res.data.value.code !== 20000)
+    return ElMessage({ message: "删除失败", type: "error" });
+  await loadingfilelist();
+  ElMessage({ message: "删除成功", type: "success" });
+};
+/**
+ * 加载列表
+ */
 const loadingfilelist = async () => {
   await diskstore.getMyfile();
   Myfile.value.FileList.dataList.forEach((item) => {
@@ -202,6 +254,9 @@ const loadingfilelist = async () => {
     };
   });
 };
+/**
+ * 文件搜索
+ */
 const SearchChange = debounce(async (val: string) => {
   if (val == "") return;
   loading.value = true;
@@ -214,6 +269,9 @@ const SearchChange = debounce(async (val: string) => {
   });
   loading.value = false;
 }, 500);
+/**
+ * 搜索窗口关闭之后，刷新列表
+ */
 const BeforeClonehander = async () => {
   await loadingfilelist();
 };
@@ -235,7 +293,6 @@ const BeforeClonehander = async () => {
     padding-left: 0.1rem;
     display: flex;
     width: 100%;
-    display: b;
     justify-content: space-between;
     .headerUp {
       display: block;

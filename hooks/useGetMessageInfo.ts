@@ -6,8 +6,6 @@ import type { GetMessagePropsType, MessageInfoResType } from "~/types/Message";
 export const useGetMessageInfo = async (
   messageInfoProps: GetMessagePropsType
 ) => {
-  console.log(messageInfoProps);
-
   const messageInfoData = reactive<{ data: Array<MessageInfoResType> }>({
     data: [],
   });
@@ -28,7 +26,7 @@ export const useGetMessageInfo = async (
   messageInfoData.data = baseInfo.records;
 
   if (messageInfoData.data.length == 0) {
-    infoResList = null;
+    infoResList = [];
     return { infoResList, resPageInfo };
   }
 

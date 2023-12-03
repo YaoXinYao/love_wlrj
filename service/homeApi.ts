@@ -16,7 +16,7 @@ import type {
   Tagparams,
   WrapperType,
 } from "~/types/Home";
-import type { Filelist } from "~/types/disk";
+import type { Filelist, FilePrevviewList } from "~/types/disk";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
@@ -114,9 +114,18 @@ export function GetWrapper() {
     "/coustom/user/carousel/selectAllCarousel"
   );
 }
-// 热点新闻
+// 热点新闻 这是那个usefetch请求
 export function GetHotnews(params: Hotnews) {
   return Hyrequire.get<IResultData<NewsRoot>>("/notice/news/select", {
     ...params,
   });
+}
+// 获取文件预览图
+export function getFilePreviewList(fileId: number) {
+  return Hyrequire.get<IResultData<FilePrevviewList[]>>(
+    "/disk/disk/file/getFilePreviewList",
+    {
+      fileId,
+    }
+  );
 }

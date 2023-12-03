@@ -3,6 +3,7 @@ import type {
   MessagePageInfoType,
   MessageType,
   MessageTypes,
+  NotReadNumType,
 } from "~/types/Message";
 export const useMessageStore = defineStore("messageStore", {
   state(): MessageType {
@@ -21,6 +22,13 @@ export const useMessageStore = defineStore("messageStore", {
         postCollectCnt: 0,
         postCommentCnt: 0,
         postLikeCnt: 0,
+      },
+      isUpdate: {
+        CommentLike: false,
+        CommentReply: false,
+        PostCollect: false,
+        PostComment: false,
+        PostLike: false,
       },
     };
   },

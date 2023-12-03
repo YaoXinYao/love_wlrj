@@ -1,58 +1,55 @@
 <template>
-  <ClientOnly>
-    <div class="advisory">
-      <div class="news">
-        <div class="newstitle">热点新闻</div>
-        <div class="newscontainer">
-          <div
-            class="newsleft"
-            :style="{
-              backgroundImage: `url(${
-                HotNews.records[curIndexnews]?.newsImg || ''
-              })`,
-            }"
-          ></div>
-          <div class="newsright">
-            <div class="newsrighttop">
-              <NuxtLink
-                :to="`/articlemd/${item.newsId}`"
-                target="_blank"
-                :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
-                v-for="(item, index) in HotNews.records"
-                :key="index"
-                @mouseenter="() => changenews(index)"
-              >
-                <div class="newsposotion">
-                  <div class="newsitemTime">{{ timereg(item.newsTime) }}</div>
-                  <div class="newitemContent">{{ item.newsTitle }}</div>
-                </div>
-                <div class="borderitem"></div>
-              </NuxtLink>
+  <div class="advisory">
+    <div class="news">
+      <div class="newstitle">热点新闻</div>
+      <div class="newscontainer">
+        <div
+          class="newsleft"
+          :style="{
+            backgroundImage: `url(${
+              HotNews.records[curIndexnews]?.newsImg || ''
+            })`,
+          }"
+        ></div>
+        <div class="newsright">
+          <div class="newsrighttop">
+            <NuxtLink
+              :to="`/articlemd/${item.newsId}`"
+              target="_blank"
+              :class="`newsitem ${curIndexnews == index ? 'newshover' : ''}`"
+              v-for="(item, index) in HotNews.records"
+              :key="index"
+              @mouseenter="() => changenews(index)"
+            >
+              <div class="newsposotion">
+                <div class="newsitemTime">{{ timereg(item.newsTime) }}</div>
+                <div class="newitemContent">{{ item.newsTitle }}</div>
+              </div>
+              <div class="borderitem"></div>
+            </NuxtLink>
+          </div>
+          <div class="newsrightbootom">
+            <div class="bottomPrev" @click="prePage">
+              <i class="iconfont icon-xiangxia-copy"></i>
             </div>
-            <div class="newsrightbootom">
-              <div class="bottomPrev" @click="prePage">
-                <i class="iconfont icon-xiangxia-copy"></i>
-              </div>
-              <div class="bottomNext" @click="nextPage">
-                <i class="iconfont icon-xiangxia-copy"></i>
-              </div>
+            <div class="bottomNext" @click="nextPage">
+              <i class="iconfont icon-xiangxia-copy"></i>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </ClientOnly>
+  </div>
 </template>
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { storeToRefs } from "pinia";
-import { useHomestore } from "~/store/home";
+import { useHotnews } from "~/store/HotNews";
+const Hotnews = useHotnews();
+const { HotNews } = storeToRefs(Hotnews);
 const curIndexnews = ref(0);
 const curPage = ref(1);
-const homestore = useHomestore();
-homestore.getHotnews(curPage.value);
-const { HotNews } = storeToRefs(homestore);
 const nextPage = () => {
   if (curPage.value >= HotNews.value.pages) {
     return;
@@ -67,10 +64,12 @@ const prePage = () => {
   curIndexnews.value = 0;
   curPage.value--;
 };
-watch(curPage, () => {
-  homestore.getHotnews(curPage.value);
+watch(curPage, async () => {
+  await Hotnews.getHotnews(curPage.value);
 });
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
+  await Hotnews.getHotnews(curPage.value);
   loading();
 });
 function changenews(value: number) {

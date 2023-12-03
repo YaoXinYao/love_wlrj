@@ -39,7 +39,7 @@
         property="address"
         label="操作"
         show-overflow-tooltip
-        min-width="60"
+        min-width="80"
       >
         <template #default="scope">
           <ElButton
@@ -53,6 +53,9 @@
             @click="() => copyToClipboard(scope.row.url)"
             plain
             >分享</ElButton
+          >
+          <ElButton type="warning" @click="() => openPrew(scope.row.id)" plain
+            >预览</ElButton
           >
           <ElButton
             style="width: 0.7rem"
@@ -87,6 +90,7 @@ import { storeToRefs } from "pinia";
 import { useDiskstore } from "~/store/disk";
 import { unCollectionFile } from "~/service/disk";
 const diskstore = useDiskstore();
+const { openPrew } = usePrew();
 const { Filelist, Pagesize, Loading, curIndex, down } = storeToRefs(diskstore);
 //收藏防抖
 const Favoritefilesend = Mythrottle(async (id: number) => {
