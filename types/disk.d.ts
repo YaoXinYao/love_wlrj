@@ -31,6 +31,7 @@ export interface Diskstore {
   };
   Mylove: {
     Search?: string;
+    SearchItem: Fileprops[];
     curIndex: number;
     PageSize: number;
     Loading: boolean;
@@ -111,4 +112,11 @@ export interface ToProvate {
 export interface SearchMyfileType {
   keyword: string;
   userId: number;
+}
+export interface FilePrevviewList {
+  filePreviewId: any;
+  filePreviewName: any;
+  filePreviewNumber: any;
+  filePreviewUrl: string;
+  fileId: any;
 }

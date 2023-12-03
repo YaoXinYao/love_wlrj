@@ -46,6 +46,9 @@ const homestore = useDiskstore();
 homestore.getDiskinfo();
 import { useWebSocket } from "@vueuse/core";
 import type { MessageType } from "~/types/disk";
+useHead({
+  title: "小组网盘",
+});
 const { status, data, send, open, close } = useWebSocket(
   `ws://112.125.120.78:19520/disk/websocket/${Authuserid()}`,
   {

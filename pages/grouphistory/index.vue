@@ -48,6 +48,9 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
 useHeader();
+useHead({
+  title: "小组历史",
+});
 const num = ref(null);
 const curYear = ref(0);
 const yearDate = ref([

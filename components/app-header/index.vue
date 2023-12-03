@@ -152,6 +152,9 @@
               <el-dropdown-item>
                 <NuxtLink to="/admin/staff"> 进入后台 </NuxtLink>
               </el-dropdown-item>
+              <el-dropdown-item>
+                <NuxtLink to="/forum/person"> 我的帖子 </NuxtLink>
+              </el-dropdown-item>
               <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>

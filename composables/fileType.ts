@@ -30,4 +30,5 @@ export const FileType = {
   bat: "icon-bat",
   ini: "icon-ini",
   jar: "icon-jar",
+  mp3: "icon-mp3",
 };

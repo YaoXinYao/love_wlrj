@@ -81,3 +81,15 @@ export function SearchFile(params: SearchMyfileType) {
     }
   );
 }
+//搜索自己文件
+export function SearchMyfile(parmas: SearchMyfileType) {
+  return Hyrequire.get("/disk/disk/file/searchUploadFile", {
+    ...parmas,
+  });
+}
+//删除文件
+export function uploaddeleteFile(params: ToProvate) {
+  return Hyrequire.request("/disk/disk/file/updateFileDelete", "put", {
+    ...params,
+  });
+}

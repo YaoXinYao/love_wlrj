@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { GetDisjinfo, LookMyfile, SearchFile } from "~/service/disk";
+import {
+  GetDisjinfo,
+  LookMyfile,
+  SearchFile,
+  SearchMyfile,
+  uploaddeleteFile,
+} from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
 import type { Diskstore } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
@@ -57,6 +63,7 @@ export const useDiskstore = defineStore("disk", {
       //我的收藏列表
       Mylove: {
         Search: "",
+        SearchItem: [],
         curIndex: 1,
         PageSize: 10,
         Loading: false,
@@ -90,9 +97,33 @@ export const useDiskstore = defineStore("disk", {
     };
   },
   actions: {
+    //删除回调，前台删除
+    async SearchFileReplce(filedid: number) {
+      const res = await uploaddeleteFile({
+        fileId: filedid,
+        userId: Authuserid(),
+      });
+      console.log(res.data.value);
+      if (res.data.value.code !== 20000)
+        return ElMessage({ message: "删除失败", type: "error" });
+      const copy = [...this.Myfile.SearchItem];
+      const newarr = copy.filter((item) => {
+        return item.id != filedid;
+      });
+      this.Myfile.SearchItem = newarr;
+      ElMessage({ message: "删除成功", type: "success" });
+    },
+    //Search我的收藏
+    async SearchMylovefile(searchinner: string) {
+      const res = await SearchFile({
+        keyword: searchinner,
+        userId: Authuserid(),
+      });
+      this.Mylove.SearchItem = res.data.value.data;
+    },
     //Search获取我的文件信息
     async getMySearchFile(searchinner: string) {
-      const res = await SearchFile({
+      const res = await SearchMyfile({
         keyword: searchinner,
         userId: Authuserid(),
       });
@@ -159,6 +190,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Pagesize,
         types: this.curTag.map((item) => `types=${item}`).join("&") || "types=",
       });
+      console.log(res.data.value.data);
       this.Filelist = res.data.value.data;
       this.Loading = false;
     },
@@ -242,6 +274,14 @@ export const useDiskstore = defineStore("disk", {
       this.Mylove.FileList.dataList[index].is_collection == 0
         ? (this.Mylove.FileList.dataList[index].is_collection = 1)
         : (this.Mylove.FileList.dataList[index].is_collection = 0);
+    },
+    async changeUncomment3(id: number) {
+      console.log(id);
+      const index = this.Mylove.SearchItem.findIndex((item) => item.id == id);
+      console.log(index);
+      this.Mylove.SearchItem[index].is_collection == 0
+        ? (this.Mylove.SearchItem[index].is_collection = 1)
+        : (this.Mylove.SearchItem[index].is_collection = 0);
     },
   },
 });
