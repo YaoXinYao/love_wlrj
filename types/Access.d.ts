@@ -43,6 +43,7 @@ export interface AccessResInfoType {
   managePageInfo: ?any;
   scoreList?: any;
   templates?: any;
+  interviewList?: Array<InterviewItem>;
 }
 
 export interface AccessPageInfoType {
@@ -54,7 +55,11 @@ export interface AccessStoreType {
   managePageInfo: { currentPage: number; pageSize: number; total: number };
   manageSearchKey: string;
   selfWrittenPageInfo: { currentPage: number; pageSize: number; total: number };
-  selfInterviewPageInfo: { currentPage: number; pageSize: number; total: number };
+  selfInterviewPageInfo: {
+    currentPage: number;
+    pageSize: number;
+    total: number;
+  };
   selfSearchKey: string;
 }
 
@@ -87,4 +92,14 @@ export interface TypesType {
   id: number;
   typeName: string;
   createTime: string;
+}
+
+export interface InterviewItem {
+  id: number | string;
+  studentId: number | string;
+  interviewterId: number | string;
+  comment: string;
+  createTime: string;
+  updateTime: string | null;
+  pid: string | number;
 }

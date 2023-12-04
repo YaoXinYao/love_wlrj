@@ -65,7 +65,7 @@
       <el-pagination
         v-model:current-page="selfWrittenPageInfo.currentPage"
         v-model:page-size="selfWrittenPageInfo.pageSize"
-        :page-sizes="[5, 10, 15, 20]"
+        :page-sizes="[5, 10, 15]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="selfWrittenPageInfo.total"
         @size-change="handleSizeChange"

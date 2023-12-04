@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <ClientOnly>
-      <el-dialog v-model="isEdit" title="课程信息" width="30%" draggable>
+      <el-dialog
+        v-model="isEdit"
+        title="课程信息"
+        draggable
+        class="addCourseAlert"
+        @close="closeEvent"
+      >
         <el-form
           :model="currentEditCourse.info"
           label-position="top"
@@ -9,7 +15,11 @@
           ref="ruleFormRef"
         >
           <el-form-item label="课程名" prop="courseName">
-            <el-input v-model="currentEditCourse.info.courseName" />
+            <el-input
+              v-model="currentEditCourse.info.courseName"
+              show-word-limit
+              maxlength="20"
+            />
           </el-form-item>
           <el-form-item label="单双周/连续周" prop="courseIsDouble">
             <el-select
@@ -325,23 +335,24 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
           }
         });
       } else {
-        updateTimetable({ ...currentEditCourse.info, courseUserId:userinfo.value.userId }).then(
-          async (res) => {
-            if (res.data.value.code === 20000) {
-              ElMessage({
-                type: "success",
-                message: "修改成功",
-              });
-              timetableList.value = await useGetTimetable(userinfo.value.userId);
-              isEdit.value = false;
-            } else {
-              ElMessage({
-                type: "error",
-                message: "修改失败",
-              });
-            }
+        updateTimetable({
+          ...currentEditCourse.info,
+          courseUserId: userinfo.value.userId,
+        }).then(async (res) => {
+          if (res.data.value.code === 20000) {
+            ElMessage({
+              type: "success",
+              message: "修改成功",
+            });
+            timetableList.value = await useGetTimetable(userinfo.value.userId);
+            isEdit.value = false;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "修改失败",
+            });
           }
-        );
+        });
       }
     }
   });
@@ -396,6 +407,11 @@ const deleteCourseFun = () => {
       });
     });
 };
+
+const closeEvent = () => {
+  isEdit.value = false;
+  ruleFormRef.value?.resetFields();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -420,5 +436,15 @@ const deleteCourseFun = () => {
 
 .courseInfo {
   text-align: center;
+}
+
+.addCourseAlert {
+  width: 50%;
+}
+
+@media screen and (max-width: 650px) {
+  .addCourseAlert {
+    width: 100% !important;
+  }
 }
 </style>

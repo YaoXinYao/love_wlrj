@@ -1,5 +1,5 @@
-import type { GetMessagePropsType } from "~/types/Message.s";
 import hyRequest, { type IResultData } from "../forum";
+import type { GetMessagePropsType } from "~/types/Message";
 
 export const getMessageInfo = (props: GetMessagePropsType) => {
   return hyRequest.get<IResultData<any>>("/messageInterface/message/select", {
