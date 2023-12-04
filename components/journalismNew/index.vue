@@ -1,4 +1,3 @@
-import { reactive } from 'vue';
 <template>
     <div class="announcement" v-loading="loading">
         <div class="content">
@@ -18,9 +17,11 @@ import { reactive } from 'vue';
             </el-timeline>
         </div> 
         <div>
-            <el-dialog :align-center="true" :center="true"  v-model="dialogTableVisible" width="60%">
+            <el-dialog :align-center="true"  v-model="dialogTableVisible" width="60%" :close-on-press-escape="false">
                 <template #header>
-                    <h1>{{ newJournalism.newsTitle ? newJournalism.newsTitle: newJournalism.newsTitle }}</h1>
+                    <div style="text-align: center;">
+                        <h1>{{ newJournalism.newsTitle ? newJournalism.newsTitle: newJournalism.newsTitle }}</h1>
+                    </div>
 
                     <div class="dialogs">
                         <el-form>
@@ -36,13 +37,15 @@ import { reactive } from 'vue';
                                         :class="{'full-screen':isFullScreen}" 
                                         @click="toggleFullscrent"
                                         @wheel.passive="handleWheel"
+                                        @keyup.esc.stop="handleESC"
                                     >
                                         <img  
                                             ref="ImgRef" 
                                             :src="newJournalism.newsImg" 
-                                            :style="{ transform: `scale(${scale})` }"
+                                            :style="isFullScreen ? { transform: `scale(${scale})` } : ''"
                                             :class="{showPicture:true,'full-screen-img':isFullScreen}" 
                                             alt=""
+                                            @keyup.esc.stop="handleESC"
                                         >
                                     </div>
                                 </div>
@@ -54,9 +57,6 @@ import { reactive } from 'vue';
                             </el-form-item>
                         </el-form>
                     </div>
-                </template>
-                <template #footer>
-                    
                 </template>
             </el-dialog>
         </div>
@@ -182,6 +182,15 @@ function toggleFullscrent(){
 }
 
 
+function handleESC(event:any){
+    console.log(event)
+    console.log('按了esc')
+    if(isFullScreen.value){
+        console.log(23232)
+    }
+}
+
+
 defineExpose({handleAnnouncement})
 </script>
 
@@ -228,7 +237,7 @@ defineExpose({handleAnnouncement})
             display: flex;
             flex: 1;
             justify-content: flex-end;
-            text-align: left;
+            // text-align: left;
         }
         .picContent{
             display: flex;
