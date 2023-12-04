@@ -1,0 +1,10 @@
+.w-e-toolbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: transparent !important;
+}
+
+.w-e-text-container {
+  max-width: 980px;
+  margin: 0 auto;
+}
