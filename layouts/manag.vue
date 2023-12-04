@@ -35,10 +35,10 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/rotationChart">
+          <el-menu-item index="/admin/rotationChart" v-if="userinfo.roleId != 1">
             <el-icon><PictureRounded /></el-icon>
             <template #title
-              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)" v-if="userinfo.roleId != 1"
+              ><NuxtLink to="/admin/rotationChart" @click="skipAdd($event)"
                 >轮播管理</NuxtLink
               ></template
             >
@@ -86,10 +86,10 @@
               ></template
             >
           </el-menu-item>
-          <el-menu-item index="/admin/journalism">
+          <el-menu-item index="/admin/journalism" v-if="userinfo.roleId != 1">
             <el-icon><document /></el-icon>
             <template #title
-              ><NuxtLink to="/admin/journalism" @click="skipAdd($event)" v-if="userinfo.roleId != 1"
+              ><NuxtLink to="/admin/journalism" @click="skipAdd($event)"
                 >新闻管理</NuxtLink
               ></template
             >

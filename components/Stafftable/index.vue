@@ -9,20 +9,20 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" v-if="userinfo.roleId == 3"/>
-      <el-table-column property="userGrade" label="年级" width="100">
+      <el-table-column property="userGrade" label="年级">
       </el-table-column>
-      <el-table-column property="userAccount" label="学号" width="180">
+      <el-table-column property="userAccount" label="学号">
       </el-table-column>
-      <el-table-column property="userName" label="姓名" width="120" />
-      <el-table-column property="userSexVal" label="性别" width="60" />
-      <el-table-column label="班级" width="100">
+      <el-table-column property="userName" label="姓名"/>
+      <el-table-column property="userSexVal" label="性别"/>
+      <el-table-column label="班级">
         <template #default="scope">{{ scope.row.userClass }}</template>
       </el-table-column>
-      <el-table-column property="groupName" label="方向" width="100">
+      <el-table-column property="groupName" label="方向">
         </el-table-column>
       <el-table-column #default="scope" label="操作">
         <el-button size="small" @click="handleEdit(scope.row)">详情</el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId == 3"
+        <el-button size="small" type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId >= scope.row.roleId"
           >删除</el-button
         >
       </el-table-column>
