@@ -3,6 +3,7 @@ import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 import type { CourseType } from "~/types/Course";
 import type { AddAccessType, MyObject, ScoreAddType } from "~/types/Access";
+import { number } from "echarts";
 const BASEURL = "http://124.222.153.56:19591";
 //添加课表
 export const addTimetable = (props: CourseType) => {
@@ -142,9 +143,12 @@ export const deleteTypeByIdService = (ids: Array<number | string>) => {
 };
 
 //修改类型
-export const updateTypeService=(props:{id:string|number,name:string})=>{
+export const updateTypeService = (props: {
+  id: string | number;
+  name: string;
+}) => {
   return hyRequest.put<IResultData<any>>(`/access/type/update`, { ...props });
-}
+};
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
@@ -232,4 +236,15 @@ export const deleteInterviewService = (ids: Array<number>) => {
 //获得面评
 export const getInterviewService = (props: { id: number; pId?: number }) => {
   return hyRequest.get<IResultData<any>>(`/access/interview/list`, props);
+};
+
+//获得某个用户参与的所有面试
+export const getUserInterviewService = (props: {
+  nodePage: number;
+  pageSize: number;
+  id: number | string;
+}) => {
+  return hyRequest.get<IResultData<any>>(`/access/interview/getPIds`, {
+    ...props,
+  });
 };

@@ -25,15 +25,20 @@
         ></span>
       </div>
     </NuxtLink>
-    <div class="newNoticeModule animate__animated animate__lightSpeedInRight">
+    <NuxtLink
+      to="/proclamation"
+      class="newNoticeModule animate__animated animate__lightSpeedInRight"
+    >
       <h3>
         <img src="@/assets/image/公告.png" class="noticeIcon" /><span
           >公告</span
         >
       </h3>
-      <p v-if="newNotice">{{ newNotice.noticeContent }}</p>
+      <p v-if="newNotice" class="noticeContent">
+        {{ newNotice.noticeContent }}
+      </p>
       <p v-if="!newNotice">暂无公告</p>
-    </div>
+    </NuxtLink>
     <NuxtLink
       to="/personalInfoPage/userTimetable"
       class="userTimetableModule animate__animated animate__fadeInUp"
@@ -205,6 +210,11 @@ let newNotice = noticeInfoRes.data.value.data.records[0];
   font-family: "阿里妈妈黑体";
   color: #fff;
   letter-spacing: 6px;
+}
+
+.noticeContent {
+  line-height: 20px;
+  letter-spacing: 0.3em;
 }
 
 @media screen and (max-width: 850px) {

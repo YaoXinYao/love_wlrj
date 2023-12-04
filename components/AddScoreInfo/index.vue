@@ -190,6 +190,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         types.data = [];
         emit("add_score_event", true);
         dialogVisible.value = false;
+      } else if (res.data.value.code === 51000) {
+        ElMessage({
+          type: "error",
+          message: "该用户已录入成绩，请勿重复录入！",
+        });
       } else {
         ElMessage({
           type: "error",

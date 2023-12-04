@@ -6,7 +6,7 @@
                     ref="formRef" 
                     :rules="rules" 
                     :model="form"  
-                    label-width="120px" 
+                    label-width="80px" 
                     label-position="left"
                     :hide-required-asterisk="hide"
                 >
@@ -199,6 +199,10 @@ const onSubmit = () => {
         display: flex;
         justify-content: center;
     }
+}
+
+@media (max-width: 430px) {
+
 }
 </style>
 

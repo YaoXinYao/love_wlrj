@@ -98,7 +98,10 @@
           </div>
         </div>
         <div class="HeaderNavItem">
-          <span>公告</span>
+          <NuxtLink to="/proclamation">
+            <span>公告</span>
+          </NuxtLink>
+          
         </div>
         <div class="HeaderNavItem">
           <NuxtLink to="/forum/home">

@@ -6,7 +6,7 @@
         title="添加考核信息"
         width="30%"
         draggable
-        :closed="changeState"
+        @closed="changeState"
       >
         <el-form
           ref="accessInfoRef"
@@ -15,7 +15,12 @@
           :rules="rules"
         >
           <el-form-item prop="plan" label="考核名称">
-            <el-input v-model="accessInfo.plan" placeholder="20字以内" />
+            <el-input
+              v-model="accessInfo.plan"
+              placeholder="20字以内"
+              maxlength="20"
+              show-word-limit
+            />
           </el-form-item>
 
           <el-form-item prop="type" label="考核类别">
@@ -60,6 +65,8 @@
               v-model="accessInfo.additional"
               :rows="2"
               type="textarea"
+              maxlength="100"
+              show-word-limit
               placeholder="补充..."
             />
           </el-form-item>
@@ -91,7 +98,11 @@
             </div>
           </el-form-item>
           <el-form-item v-show="accessInfo.type == '笔试'">
-            <el-button type="success" plain @click="addAccess"
+            <el-button
+              type="success"
+              plain
+              @click="addAccess"
+              :disabled="!isCanAdd"
               >添加考核项</el-button
             >
           </el-form-item>
@@ -110,9 +121,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { addAccessService, getAllGrade, getAllTypesService } from "~/service/user";
+import {
+  addAccessService,
+  getAllGrade,
+  getAllTypesService,
+} from "~/service/user";
 import type {
   AccessTypesType,
   AccessItem,
@@ -120,6 +135,7 @@ import type {
 } from "~/types/Access";
 let allGrade: Array<string>;
 let typeList: Array<AccessTypesType>;
+const isCanAdd = ref<boolean>(true);
 onMounted(() => {
   getAllGrade().then((res) => {
     allGrade = res.data.value.data;
@@ -135,6 +151,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  roleId: {
+    type: Number,
+  },
 });
 
 let dialogVisible = ref(false);
@@ -143,8 +162,19 @@ const accessInfoRef = ref<FormInstance>();
 //弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
 const changeState = () => {
   console.log("关闭");
-
   dialogVisible.value = false;
+  accessInfo.plan = "";
+  accessInfo.typeId = undefined;
+  accessInfo.type = "笔试";
+  accessInfo.deadline = "";
+  accessInfo.subscribers = "";
+  accessInfo.additional = "";
+  accessInfo.types = [
+    {
+      name: "",
+      rate: 0.0,
+    },
+  ];
 };
 
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
@@ -169,10 +199,22 @@ const accessInfo = reactive<AddAccessType>({
   additional: "",
   types: [
     {
-      name: "选择",
+      name: "",
       rate: 0.0,
     },
   ],
+});
+
+watch(accessInfo, (newValue) => {
+  console.log(newValue);
+  if (newValue.types) {
+    if (newValue.types?.length >= 6) {
+      console.log("大于");
+      isCanAdd.value = false;
+    } else {
+      isCanAdd.value = true;
+    }
+  }
 });
 
 const validateNull = (rule: any, value: any, callback: any) => {
