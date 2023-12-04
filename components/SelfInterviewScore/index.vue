@@ -48,11 +48,11 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        v-model:current-page="selfInterviewPageInfo.currentPage"
-        v-model:page-size="selfInterviewPageInfo.pageSize"
+        v-model:current-page="pageInfo.currentPage"
+        v-model:page-size="pageInfo.pageSize"
         :page-sizes="[5, 10, 15]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="selfInterviewPageInfo.total"
+        :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -71,15 +71,13 @@ import {
   getInterviewService,
   getUserInterviewService,
 } from "~/service/user";
-import { useAccessPageInfoStore } from "~/store/accessPageInfo";
-import { useHomestore } from "~/store/home";
-import type { AccessResInfoType } from "~/types/Access";
-const accessPageInfoStore = useAccessPageInfoStore();
-let { selfInterviewPageInfo } = storeToRefs(accessPageInfoStore);
-//获取当前登录用户信息
-const homeStore = useHomestore();
-let { userinfo } = storeToRefs(homeStore);
-let userId = userinfo.value.userId;
+import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
+const props = defineProps(["userId"]);
+const pageInfo = ref<AccessPageInfoType>({
+  currentPage: 1,
+  pageSize: 5,
+  total: 0,
+});
 
 const interviewList = ref<Array<AccessResInfoType>>([]);
 
@@ -87,35 +85,35 @@ onMounted(async () => {
   getInfo();
 });
 const handleSizeChange = (val: number) => {
-  selfInterviewPageInfo.value.pageSize = val;
+  pageInfo.value.pageSize = val;
   getInfo();
 };
 
 const handleCurrentChange = (val: number) => {
-  selfInterviewPageInfo.value.currentPage = val;
+  pageInfo.value.currentPage = val;
   getInfo();
 };
 
 const getInfo = async () => {
   interviewScoreList.value = [];
   let scoreInfoRes = await getUserInterviewService({
-    nodePage: selfInterviewPageInfo.value.currentPage,
-    pageSize: selfInterviewPageInfo.value.pageSize,
-    id: userId,
+    nodePage: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+    id: props.userId,
   });
 
   console.log(scoreInfoRes.data.value);
 
   if (scoreInfoRes.data.value.code == 20000) {
     const { pageIndex, size, allCount } = scoreInfoRes.data.value.data;
-    selfInterviewPageInfo.value.currentPage = pageIndex;
-    selfInterviewPageInfo.value.pageSize = size;
-    selfInterviewPageInfo.value.total = allCount;
+    pageInfo.value.currentPage = pageIndex;
+    pageInfo.value.pageSize = size;
+    pageInfo.value.total = allCount;
     let pIdList = scoreInfoRes.data.value.data.list;
     for (let i = 0; i < pIdList.length; i++) {
       let InterviewListItem = await getAccessInfo(pIdList[i]);
       let interviewItem = await getInterviewService({
-        id: userId,
+        id: props.userId,
         pId: pIdList[i],
       });
       interviewList.value[i] = InterviewListItem.data.value.data;

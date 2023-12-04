@@ -103,3 +103,9 @@ export interface InterviewItem {
   updateTime: string | null;
   pid: string | number;
 }
+
+export interface AccessPageInfoType {
+  currentPage: number;
+  pageSize: number;
+  total: number;
+}

@@ -19,13 +19,20 @@
     </div>
     <!-- 成绩分析echart图，暂无法实现 -->
     <!-- <div class="echarts"><Echarts /></div> -->
-    <SelfWrittenScore v-show="scoreType == '笔试'" />
-    <SelfInterviewScore v-show="scoreType == '面试'" />
+    <SelfWrittenScore v-show="scoreType == '笔试'" :userId="userId" />
+    <SelfInterviewScore v-show="scoreType == '面试'" :userId="userId" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
+//获取当前登录用户信息
+import { useHomestore } from "~/store/home";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
+
+let userId = userinfo.value.userId;
 const scoreType = ref("笔试");
 
 let typeOptions = ref([

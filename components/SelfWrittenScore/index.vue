@@ -63,11 +63,11 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        v-model:current-page="selfWrittenPageInfo.currentPage"
-        v-model:page-size="selfWrittenPageInfo.pageSize"
+        v-model:current-page="pageInfo.currentPage"
+        v-model:page-size="pageInfo.pageSize"
         :page-sizes="[5, 10, 15]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="selfWrittenPageInfo.total"
+        :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -87,45 +87,42 @@ import {
   getScoreByAccessService,
   getTemplateService,
 } from "~/service/user";
-import { useAccessPageInfoStore } from "~/store/accessPageInfo";
-import { useHomestore } from "~/store/home";
-import type { AccessResInfoType, ScorePageInfoListType } from "~/types/Access";
-const accessPageInfoStore = useAccessPageInfoStore();
-let { selfWrittenPageInfo, selfSearchKey } = storeToRefs(accessPageInfoStore);
-//获取当前登录用户信息
-const homeStore = useHomestore();
-let { userinfo } = storeToRefs(homeStore);
-
-let userId = userinfo.value.userId;
+import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
+const props = defineProps(["userId"]);
+const pageInfo = ref<AccessPageInfoType>({
+  currentPage: 1,
+  pageSize: 5,
+  total: 0,
+});
 
 onMounted(async () => {
   getInfo();
 });
 const handleSizeChange = (val: number) => {
-  selfWrittenPageInfo.value.pageSize = val;
+  pageInfo.value.pageSize = val;
   getInfo();
 };
 
 const handleCurrentChange = (val: number) => {
-  selfWrittenPageInfo.value.currentPage = val;
+  pageInfo.value.currentPage = val;
   getInfo();
 };
 
 const getInfo = async () => {
   writtenScoreList.value = [];
   let scoreInfoRes = await getScoreByAccessService({
-    nodePage: selfWrittenPageInfo.value.currentPage,
-    pageSize: selfWrittenPageInfo.value.pageSize,
-    studentId: userId,
+    nodePage: pageInfo.value.currentPage,
+    pageSize: pageInfo.value.pageSize,
+    studentId: props.userId,
   });
 
   let scoreInfo = scoreInfoRes.data.value;
   let scoreInfoData = scoreInfo.data.list;
 
   if (scoreInfo.code == 20000) {
-    selfWrittenPageInfo.value.currentPage = scoreInfo.data.pageIndex;
-    selfWrittenPageInfo.value.pageSize = scoreInfo.data.size;
-    selfWrittenPageInfo.value.total = scoreInfo.data.allCount;
+    pageInfo.value.currentPage = scoreInfo.data.pageIndex;
+    pageInfo.value.pageSize = scoreInfo.data.size;
+    pageInfo.value.total = scoreInfo.data.allCount;
     for (let i = 0; i < scoreInfoData.length; i++) {
       let scoreList = new Array(scoreInfoData.length);
       let obj: { [x: string]: string } = {};
@@ -135,7 +132,7 @@ const getInfo = async () => {
       let interviewList = null;
       if (scoreInfoData[i].type == "面评") {
         let getInterviewRes = await getInterviewService({
-          id: userId,
+          id: props.userId,
           pId: scoreInfoData[i].pid,
         });
 
