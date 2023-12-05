@@ -53,6 +53,7 @@ import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 definePageMeta({
   layout: "person",
+  roles: 1,
 });
 
 const homeStore = useHomestore();
@@ -237,12 +238,6 @@ const handleAvatarError = (
 }
 
 @media screen and (max-width: 650px) {
-  .mainContainer {
-    width: $scaleWidth3;
-  }
-}
-
-@media screen and (max-width: 450px) {
   .mainContainer {
     width: $scaleWidth3;
   }

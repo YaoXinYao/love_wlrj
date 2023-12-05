@@ -93,7 +93,7 @@ useObserver(target, updateMsgStatus, props.data.id);
 .item {
   display: inline-block;
   width: 100%;
-  height: 60px;
+  height: max-content;
   overflow: hidden;
   background-color: #fff;
   padding: 0 0 5px 5px;
@@ -121,22 +121,26 @@ useObserver(target, updateMsgStatus, props.data.id);
   z-index: 0;
 }
 .noticeContent {
-  width: 80%;
-  height: 30px;
-  line-height: 30px;
+  display: block;
+  width: calc(100% - 50px);
+  margin-right: 50px;
+  height: max-content;
+  line-height: 25px;
   font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
   color: #666;
+  letter-spacing: 0.1em;
 }
 
 .noticeDate {
+  display: block;
+  width: 90%;
+  margin-left: 5%;
+  text-align: right;
   font-size: 12px;
   color: #959595;
-  position: absolute;
-  right: 30px;
-  bottom: 5px;
 }
 
 .deleteBox {
