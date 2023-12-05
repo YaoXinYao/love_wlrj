@@ -298,8 +298,8 @@ const deletePost = (id: number) => {
   }
   .main {
     max-width: 1000px;
-    margin: 20px auto;
-    padding: 10px 0px;
+    margin: 20px auto 0px;
+    padding: 10px 0px 30px;
     display: flex;
     justify-content: center;
     .introduce {
@@ -508,18 +508,18 @@ const deletePost = (id: number) => {
         -webkit-line-clamp: 2;
         overflow: hidden;
         cursor: pointer;
+        height:90px;
       }
       .detailsData {
         position: absolute;
         display: flex;
         width: calc(100% - 50px);
         justify-content: space-between;
-        bottom: 10px;
+        bottom: 0px;
         margin-right: 50px;
         span {
           display: inline-block;
           margin-right: 15px;
-          margin-bottom: 7px;
         }
       }
     }
@@ -573,18 +573,18 @@ const deletePost = (id: number) => {
           -webkit-line-clamp: 2;
           overflow: hidden;
           cursor: pointer;
+          height:90px
         }
         .data {
           position: absolute;
           display: flex;
           justify-content: space-between;
           flex-wrap: wrap;
-          bottom: 10px;
           width: calc(100% - 50px);
+          bottom: 0px;
           span {
             display: inline-block;
             margin-right: 15px;
-            margin-bottom: 7px;
           }
         }
       }

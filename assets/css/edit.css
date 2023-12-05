@@ -12,3 +12,15 @@
 .el-drawer__header {
   margin-bottom: 0 !important;
 }
+
+.w-e-toolbar .w-e-bar-item:last-child .w-e-menu-tooltip-v5 {
+  display: none;
+}
+
+.w-e-toolbar .w-e-bar-item:nth-child(26) {
+  display: none;
+}
+
+.w-e-bar-divider {
+  background-color: transparent !important;
+}

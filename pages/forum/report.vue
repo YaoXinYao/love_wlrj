@@ -199,6 +199,7 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
         }
       }
       if (jage) {
+        dialog.value = false;
         let formData = new FormData();
         postImg.value.forEach((item: any, index: number) => {
           formData.append(`postImg[${index}]`, item);
@@ -211,11 +212,11 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
           postUserId: postNews.postUserId,
           postSubId: sid,
         };
-        console.log("发布帖子的值", otherContent);
-
         forums.addCard(otherContent, formData).then((result) => {
           if (result == 20000) {
             ElMessage.success("发布帖子成功");
+            newPostContent.value=""
+            newPostTitle.value=""
             router.push("/forum/home");
           } else {
             ElMessage.error("发布帖子失败");
