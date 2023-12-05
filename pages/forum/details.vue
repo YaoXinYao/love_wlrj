@@ -541,7 +541,7 @@ watch(status, (newStatus) => {
           }
         }
         .textContent{
-          
+          overflow: hidden;
         }
       }
     }
@@ -672,5 +672,8 @@ watch(status, (newStatus) => {
     max-width: 90%;
     overflow: hidden;
   }
+}
+p{
+  word-wrap:break-word;
 }
 </style>

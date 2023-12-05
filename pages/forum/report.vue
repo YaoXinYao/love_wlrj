@@ -10,6 +10,7 @@
           <div>
             <img :src="userinfo.userPicture" alt="头像" />
           </div>
+          <div><span><NuxtLink to="/forum/home">返回论坛社区</NuxtLink></span></div>
         </div>
       </div>
     </div>
@@ -215,8 +216,8 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
         forums.addCard(otherContent, formData).then((result) => {
           if (result == 20000) {
             ElMessage.success("发布帖子成功");
-            newPostContent.value=""
-            newPostTitle.value=""
+            newPostContent.value = "";
+            newPostTitle.value = "";
             router.push("/forum/home");
           } else {
             ElMessage.error("发布帖子失败");
@@ -286,6 +287,19 @@ const handleRemove = (file: UploadFile) => {
         margin-left: 20px;
         border-radius: 50%;
         border: 1px solid rgb(208, 208, 208);
+      }
+      span {
+        margin-left: 20px;
+        line-height: 50px;
+        cursor: pointer;
+        font-size: 16px;
+        font-family: PingFangSC-Semibold, PingFang SC;
+        font-weight: normal;
+        color: #222226;
+        text-align: center;
+      }
+      span:hover{
+      color: rgb(57, 182, 231);
       }
     }
   }
