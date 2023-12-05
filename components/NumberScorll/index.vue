@@ -36,7 +36,8 @@ let timer = null;
 const numberItem = ref<HTMLSpanElement | null>(null);
 // 处理传递过来的数字，转化为数组
 function numToArr() {
-  const str = props.num.toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+  const num = props.num || 0;
+  const str = num.toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
   numArr.value = str.split("");
 }
 function rollNum() {

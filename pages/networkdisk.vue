@@ -41,6 +41,9 @@
 
 <script setup lang="ts">
 useHeader();
+definePageMeta({
+  roles: 1,
+});
 import { useDiskstore } from "~/store/disk";
 const homestore = useDiskstore();
 homestore.getDiskinfo();
