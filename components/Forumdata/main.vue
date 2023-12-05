@@ -52,21 +52,20 @@
               })
             "
             class="cardTitle"
-            >{{ item.postTitle }}</NuxtLink
+            >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
           >
           <div class="cardUser">
             发表于<span>{{ item.postTime }}</span
             >|<span>{{ item.userName }}</span>
           </div>
-          <div class="cardContent">
-            {{ item.postContent }}
+          <div class="cardContent" v-html="decodeURIComponent(item.postContent)">
           </div>
           <ul class="icons">
             <li>
               <svg
-                v-if="item.likes == true"
+                v-if="item.likes == false"
                 @click="
-                  postLike(item.postId, 'Like', 0, index, item.postUserId)
+                  postLike(item.postId, 'Like', 1, index, item.postUserId)
                 "
                 t="1701500911398"
                 class="icon"
@@ -83,9 +82,9 @@
                 ></path>
               </svg>
               <svg
-                v-if="item.likes == false"
+                v-if="item.likes == true"
                 @click="
-                  postLike(item.postId, 'Like', 1, index, item.postUserId)
+                  postLike(item.postId, 'Like', 0, index, item.postUserId)
                 "
                 t="1701500927693"
                 class="icon"

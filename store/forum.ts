@@ -53,6 +53,8 @@ export interface cards {
   singleData: any;
   total: number;
   loadings: boolean;
+  newPostContent:string;
+  newPostTitle:string
 }
 export interface forums {
   labelModel: boolean;
@@ -79,6 +81,8 @@ export const forumStore = defineStore("forumInfo", {
       singleData: {},
       total: 0,
       loadings: false,
+      newPostContent:"",
+      newPostTitle:""
     };
   },
   actions: {

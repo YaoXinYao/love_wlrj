@@ -7,8 +7,14 @@
           <span class="right"></span>
           <span class="top"></span>
           <div class="userHead">
-            <img v-if="userinfo.userPicture != '未设置'" :src="userinfo.userPicture"/>
-            <img v-if="userinfo.userPicture == '未设置'" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"/>
+            <img
+              v-if="userinfo.userPicture != '未设置'"
+              :src="userinfo.userPicture"
+            />
+            <img
+              v-if="userinfo.userPicture == '未设置'"
+              src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
+            />
           </div>
         </div>
         <div class="userInfo">
@@ -19,8 +25,12 @@
             <li @click="changeStatus('artic')">作品</li>
             <li @click="changeStatus('like')">点赞</li>
             <li @click="changeStatus('collect')">收藏</li>
-            <li class="showHome"><NuxtLink to="/forum/report">发布帖子</NuxtLink></li>
-            <li class="showHome"><NuxtLink to="/forum/home">返回论坛首页</NuxtLink></li>
+            <li class="showHome">
+              <NuxtLink to="/forum/report">发布帖子</NuxtLink>
+            </li>
+            <li class="showHome">
+              <NuxtLink to="/forum/home">返回论坛首页</NuxtLink>
+            </li>
           </ul>
         </div>
       </div>
@@ -51,7 +61,7 @@
                       query: { data: item.postId },
                     })
                   "
-                  >{{ item.postTitle }}</NuxtLink
+                  >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
                 >
                 <span>{{ item.postTime }}</span>
               </div>
@@ -63,8 +73,8 @@
                       query: { data: item.postId },
                     })
                   "
+                   v-html="decodeURIComponent(item.postContent)"
                 >
-                  {{ item.postContent }}
                 </NuxtLink>
               </div>
               <div class="detailsData">
@@ -117,7 +127,7 @@
                         query: { data: item.postId },
                       })
                     "
-                    >{{ item.postTitle }}</NuxtLink
+                    >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
                   >
                   <span>{{ item.postTime }}</span>
                 </div>
@@ -129,11 +139,12 @@
                         query: { data: item.postId },
                       })
                     "
-                    >{{ item.postContent }}</NuxtLink
+                    v-html="decodeURIComponent(item.postContent)"
+                    ></NuxtLink
                   >
                 </div>
                 <div class="data">
-                  <div>
+                  <div style="margin-top: 6px;">
                     <span>{{ item.postView }}阅读</span>
                     <span>{{ item.postLike }}点赞</span>
                     <span>{{ item.postCollect }}收藏</span>
@@ -184,7 +195,7 @@ let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
 let { total } = storeToRefs(forums);
 let pages = 15;
-let loading = ref(true)
+let loading = ref(true);
 
 let posts = ref<any[]>([]);
 let jage = ref("artic");
@@ -193,7 +204,7 @@ onMounted(() => {
     .userPosts(1, pages, undefined, undefined, undefined, userinfo.value.userId)
     .then((res) => {
       posts.value = res;
-      loading.value = false
+      loading.value = false;
     });
 });
 //分页
@@ -202,7 +213,7 @@ const handleCurrentChange = (val: number) => {
 };
 //查询帖子
 function getStatus(pageNo: number) {
-  loading.value = true
+  loading.value = true;
   if (jage.value == "artic") {
     forums
       .userPosts(
@@ -229,7 +240,7 @@ function getStatus(pageNo: number) {
         posts.value = res;
       });
   }
-  loading.value = false
+  loading.value = false;
 }
 //切换状态查询帖子
 function changeStatus(status: string) {
@@ -265,9 +276,9 @@ const deletePost = (id: number) => {
         }
       });
       posts.value.splice(index, 1);
-      total.value = total.value - 1
-    }else{
-      ElMessage.error("删除失败")
+      total.value = total.value - 1;
+    } else {
+      ElMessage.error("删除失败");
     }
   });
 };
@@ -408,7 +419,7 @@ const deletePost = (id: number) => {
           cursor: pointer;
           position: relative;
         }
-        .showHome{
+        .showHome {
           display: none;
         }
         li::after {
@@ -538,6 +549,7 @@ const deletePost = (id: number) => {
       }
       .news {
         flex: 1;
+        overflow: hidden;
         position: relative;
         .title {
           height: 20px;
@@ -584,15 +596,15 @@ const deletePost = (id: number) => {
   }
 }
 @media screen and (max-width: 800px) {
-  .userInfo{
-    ul{
+  .userInfo {
+    ul {
       width: 300px !important;
     }
   }
-  .showHome{
+  .showHome {
     display: block !important;
   }
-  .introduce{
+  .introduce {
     display: none;
   }
 }

@@ -2,10 +2,10 @@
   <div class="editUtil">
     <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <div class="editTitle">
-      <textarea placeholder="请输入文章标题（5～20个字）"></textarea>
+      <el-input placeholder="请输入文章标题(5~20个字)" v-model="newPostTitle"></el-input>
     </div>
     <Editor
-      v-model="valueHtml"
+      v-model="newPostContent"
       style="height: 400px"
       :defaultConfig="editorConfig"
       :mode="mode"
@@ -15,19 +15,21 @@
 </template>
 <script lang="ts" setup>
 import "~/assets/css/edit.scss";
+import {storeToRefs} from "pinia"
+import {forumStore} from "~/store/forum"
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+let forums = forumStore()
+let {newPostContent,newPostTitle} = storeToRefs(forums)
+
 let mode = ref("default");
 // 编辑器实例，必须用 shallowRef
 //shallowRef()来创建响应式对象，以避免深度响应带来的性能开销,它是浅响应
 const editorRef = shallowRef();
-// 内容 HTML
-const valueHtml = ref(""); //保存编辑器中的HTMl内容
 const toolbarConfig = {}; //菜单栏配置
 const editorConfig = { placeholder: "请输入内容..." }; //编辑器配置
 
-// 组件销毁时，也及时销毁编辑器
-//onBeforeUnmount(函数:在组件卸载之前调用的函数。在这里，它检查Editor实例是否存在，如果存在，则销毁它。这是一种良好的实践，以避免内存泄漏。
+//组件销毁时，也及时销毁编辑器 onBeforeUnmount(函数:在组件卸载之前调用的函数。在这里，它检查Editor实例是否存在，如果存在，则销毁它。这是一种良好的实践，以避免内存泄漏。
 onBeforeUnmount(() => {
   const editor = editorRef.value;
   if (editor == null) return;
@@ -35,7 +37,7 @@ onBeforeUnmount(() => {
 });
 //handleCreated 函数:这是一个事件处理函数，它将在Editor组件创建后被调用。在这个函数中，它将Edito实例保存到editorRef引用中。
 const handleCreated = (editor: any) => {
-  editorRef.value = editor; // 记录 editor 实例，重要！
+  editorRef.value = editor;
 };
 </script>
 
@@ -47,7 +49,7 @@ const handleCreated = (editor: any) => {
     max-width: 980px;
     margin: 30px auto 0px;
   }
-  textarea {
+  .el-input {
     width: 100%;
     height: 50px;
     line-height: 50px;

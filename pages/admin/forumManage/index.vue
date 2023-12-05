@@ -1,5 +1,5 @@
 <template>
-  <div class="forum"  v-loading = "loading">
+  <div class="forum" v-loading="loading">
     <el-form :inline="true" :model="condition">
       <el-form-item label="标题">
         <el-input v-model="condition.title" placeholder="帖子名称" />
@@ -20,10 +20,16 @@
       <el-form-item>
         <el-button type="primary" @click="selectPosts">搜索</el-button>
         <el-button type="info" @click="reset">重置</el-button>
-        <el-button type="success" @click="labelModel = true" v-if="userinfo.roleId != 1"
+        <el-button
+          type="success"
+          @click="labelModel = true"
+          v-if="userinfo.roleId != 1"
           >标签管理</el-button
         >
-        <el-button type="warning" @click="subfieldModel = true" v-if="userinfo.roleId != 1"
+        <el-button
+          type="warning"
+          @click="subfieldModel = true"
+          v-if="userinfo.roleId != 1"
           >分栏管理</el-button
         >
       </el-form-item>
@@ -35,31 +41,23 @@
         :cell-style="{ 'text-align': 'center' }"
         style="width: 100%"
       >
-        <el-table-column
-          property="postTime"
-          label="时间"
-        ></el-table-column>
-        <el-table-column
-          property="userName"
-          label="发帖人"
-        ></el-table-column>
-        <el-table-column
-          property="postTitle"
-          label="标题"
-        ></el-table-column>
-        <el-table-column
-          property="subName"
-          label="分栏"
-        ></el-table-column>
-        <el-table-column
-          property="postView"
-          label="浏览量"
-        ></el-table-column>
+        <el-table-column property="postTime" label="时间"></el-table-column>
+        <el-table-column property="userName" label="发帖人"></el-table-column>
+        <el-table-column #default="scope" label="标题">
+          <span v-html="decodeURIComponent(scope.row.postTitle)"></span>
+        </el-table-column>
+        <el-table-column property="subName" label="分栏"></el-table-column>
+        <el-table-column property="postView" label="浏览量"></el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button type="success" @click="handleEdit(scope.row)"
             >查看</el-button
           >
-          <el-button type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId != 1">删除</el-button>
+          <el-button
+            type="danger"
+            @click="handleDelete(scope.row)"
+            v-if="userinfo.roleId != 1"
+            >删除</el-button
+          >
         </el-table-column>
       </el-table>
       <el-pagination
@@ -73,7 +71,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <forummanage-model :condition="condition "></forummanage-model>
+    <forummanage-model :condition="condition"></forummanage-model>
     <forummanage-labelmodel></forummanage-labelmodel>
   </div>
 </template>
@@ -81,9 +79,9 @@
 import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 import { ref } from "vue";
 const small = ref(false);
 const background = ref(false);
@@ -100,7 +98,7 @@ let {
   mtotal,
   deleteId,
   loading,
-  currentPage
+  currentPage,
 } = storeToRefs(manages);
 let condition = reactive({
   title: "",
@@ -142,10 +140,10 @@ const handleEdit = (row: any) => {
   postInfos.value = row;
   lookModel.value = true;
 };
-const handleDelete = (row:any)=>{
-  deleteId.value.push(row.postId)
-  deleteModel.value = true
-}
+const handleDelete = (row: any) => {
+  deleteId.value.push(row.postId);
+  deleteModel.value = true;
+};
 </script>
 
 <style lang="scss" scoped>

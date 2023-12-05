@@ -13,117 +13,148 @@
         </div>
       </div>
     </div>
-    <ForumdataReportEdit />
-    <el-drawer
-      ref="drawerRef"
-      v-model="dialog"
-      title="发布文章"
-      direction="ltr"
-      class="demo-drawer"
-      size="50%"
-    >
-      <div class="demo-drawer__content">
-        <el-form
-          label-position="top"
-          label-width="100px"
-          ref="rulesFormRef"
-          :model="postNews"
-          :rules="rules"
-          status-icon
-        >
-          <el-form-item label="新帖标签" prop="labelId" :label-width="formLabelWidth">
-            <el-select
-              multiple
-              collapse-tags
-              collapse-tags-tooltip
-              :max-collapse-tags="3"
-              placeholder="请选择标签"
+    <div v-loading="loading">
+      <ClientOnly>
+        <WangEdit />
+      </ClientOnly>
+      <el-drawer
+        v-model="dialog"
+        direction="ltr"
+        class="demo-drawer"
+        :show-close="false"
+        size="400"
+      >
+        <template #header="{ titleId, titleClass }">
+          <h4 :id="titleId" :class="titleClass" class="my-title">发布新帖</h4>
+        </template>
+        <div class="demo-drawer__content">
+          <el-form
+            label-position="top"
+            label-width="100px"
+            ref="rulesFormRef"
+            :model="postNews"
+            :rules="rules"
+            status-icon
+          >
+            <el-form-item
+              label="新帖标签"
+              prop="labelId"
+              :label-width="formLabelWidth"
             >
-              <el-option
-                v-for="item in labels"
-                :key="item.labelId"
-                :label="item.labelName"
-                :value="item.labelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="新帖分栏" prop="postSubId" :label-width="formLabelWidth">
-            <el-select placeholder="选择分栏">
-              <el-option
-                v-for="(item, index) in subfields"
-                :key="index"
-                :label="item.subName"
-                :value="item.subId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="添加图片" :label-width="formLabelWidth">
-            <el-upload
-              action=""
-              list-type="picture-card"
-              :auto-upload="false"
-              :multiple="true"
-              accept="image/*"
-              v-model:file-list="formImage.files"
+              <el-select
+                multiple
+                collapse-tags
+                collapse-tags-tooltip
+                :max-collapse-tags="3"
+                placeholder="请选择标签"
+                v-model="postNews.labelId"
+              >
+                <el-option
+                  v-for="item in labels"
+                  :key="item.labelId"
+                  :label="item.labelName"
+                  :value="item.labelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="新帖分栏"
+              prop="postSubId"
+              :label-width="formLabelWidth"
             >
-              <el-icon><Plus /></el-icon>
-              <template #file="{ file }">
-                <div>
-                  <img
-                    class="el-upload-list__item-thumbnail"
-                    :src="file.url"
-                    alt=""
-                  />
-                  <span class="el-upload-list__item-actions">
-                    <span class="el-upload-list__item-preview">
-                      <el-icon><zoom-in /></el-icon>
+              <el-select placeholder="选择分栏" v-model="postNews.postSubId">
+                <el-option
+                  v-for="(item, index) in subfields"
+                  :key="index"
+                  :label="item.subName"
+                  :value="item.subId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="添加图片" :label-width="formLabelWidth">
+              <el-upload
+                action=""
+                list-type="picture-card"
+                :auto-upload="false"
+                :multiple="true"
+                accept="image/*"
+                v-model:file-list="formImage.files"
+              >
+                <el-icon><Plus /></el-icon>
+                <template #file="{ file }">
+                  <div>
+                    <img
+                      class="el-upload-list__item-thumbnail"
+                      :src="file.url"
+                      alt=""
+                    />
+                    <span class="el-upload-list__item-actions">
+                      <span
+                        class="el-upload-list__item-preview"
+                        @click="handlePictureCardPreview(file)"
+                      >
+                        <el-icon><zoom-in /></el-icon>
+                      </span>
+                      <span
+                        class="el-upload-list__item-delete"
+                        @click="handleRemove(file)"
+                      >
+                        <el-icon><Delete /></el-icon>
+                      </span>
                     </span>
-                    <span class="el-upload-list__item-delete">
-                      <el-icon><Delete /></el-icon>
-                    </span>
-                  </span>
-                </div>
-              </template>
-            </el-upload>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">确定并发布</el-button>
-            <el-button>取消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-drawer>
+                  </div>
+                </template>
+              </el-upload>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="uploadPhoto(rulesFormRef)"
+                >确定并发布</el-button
+              >
+              <el-button @click="cancelForm(rulesFormRef)">取消</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-drawer>
+    </div>
+
+    <el-dialog v-model="dialogVisible" style="max-width: 400px">
+      <img w-full :src="dialogImageUrl" alt="Preview Image" />
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
+import "~/assets/css/edit.scss";
 import { storeToRefs } from "pinia";
 import { useHomestore } from "~/store/home";
-import { forumManage } from "~/store/forum";
-import type { FormInstance } from "element-plus";
+import { forumManage, forumStore } from "~/store/forum";
+import type { FormInstance, UploadFile } from "element-plus";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
+const router = useRouter();
 let userData = useHomestore();
 let manages = forumManage();
+let forums = forumStore();
 let { userinfo } = storeToRefs(userData);
 let { subfields, labels } = storeToRefs(manages);
+let { newPostContent, newPostTitle } = storeToRefs(forums);
 
+let loading = ref(false);
 let dialog = ref(false);
-const formLabelWidth = '80px'
+let dialogImageUrl = ref("");
+let dialogVisible = ref(false);
+const formLabelWidth = "80px";
+let postImg = ref<any[]>([]);
 let formImage = reactive<any>({
   files: [],
 });
 interface RuleForm {
   labelId: any[];
-  postContent: string;
   postSubId: string;
-  postTitle: string;
   postUserId: number;
 }
 const rulesFormRef = ref<FormInstance>();
 let postNews = reactive<RuleForm>({
   labelId: [],
-  postContent: "",
   postSubId: "",
-  postTitle: "",
   postUserId: userinfo.value.userId,
 });
 const rules = reactive({
@@ -149,6 +180,76 @@ onMounted(() => {
   manages.labelInfo(1, 100);
   manages.subfieldInfo(1, 100);
 });
+
+//上传帖子
+const uploadPhoto = async (formEl: FormInstance | undefined) => {
+  loading.value = true;
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      let jage = true;
+      postImg.value = [];
+      for (let i = 0; i < formImage.files.length; i++) {
+        jage = formImage.files[i].raw.type.startsWith("image/");
+        if (!jage) {
+          ElMessage.warning("文件类型错误");
+          return;
+        } else {
+          postImg.value.push(formImage.files[i].raw);
+        }
+      }
+      if (jage) {
+        let formData = new FormData();
+        postImg.value.forEach((item: any, index: number) => {
+          formData.append(`postImg[${index}]`, item);
+        });
+        let sid = Number(postNews.postSubId);
+        const otherContent = {
+          labelId: postNews.labelId,
+          postContent: newPostContent.value,
+          postTitle: newPostTitle.value,
+          postUserId: postNews.postUserId,
+          postSubId: sid,
+        };
+        console.log("发布帖子的值", otherContent);
+
+        forums.addCard(otherContent, formData).then((result) => {
+          if (result == 20000) {
+            ElMessage.success("发布帖子成功");
+            router.push("/forum/home");
+          } else {
+            ElMessage.error("发布帖子失败");
+          }
+        });
+        loading.value = false;
+      }
+    } else {
+      loading.value = false;
+    }
+  });
+};
+//关闭抽屉
+const cancelForm = (formEl: FormInstance | undefined) => {
+  dialog.value = false;
+  if (!formEl) return;
+  formEl.resetFields();
+  formImage.files = [];
+  postImg.value = [];
+};
+//图片预览
+const handlePictureCardPreview = (file: UploadFile) => {
+  dialogImageUrl.value = file.url!;
+  dialogVisible.value = true;
+};
+//删除图片
+const handleRemove = (file: UploadFile) => {
+  const index = formImage.files.indexOf(file);
+  if (index !== -1) {
+    formImage.files.splice(index, 1);
+    postImg.value.splice(index, 1);
+    ElMessage.success("移除成功");
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -186,6 +287,29 @@ onMounted(() => {
         border: 1px solid rgb(208, 208, 208);
       }
     }
+  }
+}
+.el-form {
+  width: 100%;
+  .el-form-item {
+    margin-bottom: 0px;
+    margin-top: 15px;
+  }
+  .el-input__inner {
+    height: 36px;
+    line-height: 36px;
+  }
+  .el-select {
+    width: 100%;
+  }
+}
+.my-title {
+  font-size: 20px;
+}
+.el-dialog {
+  overflow: hidden;
+  img {
+    width: 100%;
   }
 }
 </style>
