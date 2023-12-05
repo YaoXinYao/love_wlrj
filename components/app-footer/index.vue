@@ -11,9 +11,18 @@
           </ul>
           <ul>
             <h6>小组网盘</h6>
-            <li>最热文件</li>
-            <li>下载排行榜</li>
-            <li>文件分类</li>
+            <NuxtLink to="/networkdisk/uploadfile">
+              <li>上传文件</li>
+            </NuxtLink>
+            <NuxtLink to="/networkdisk/documentcommunity">
+              <li>文件社区</li>
+            </NuxtLink>
+            <NuxtLink to="/networkdisk/mylove">
+              <li>我的收藏</li>
+            </NuxtLink>
+            <NuxtLink to="/networkdisk/myfile">
+              <li>我的文件</li>
+            </NuxtLink>
           </ul>
           <ul>
             <h6>文档服务</h6>
@@ -23,10 +32,9 @@
           </ul>
           <ul>
             <h6>公告</h6>
-            <li>讲课公告</li>
-            <li>算法公告</li>
-            <li>活动公告</li>
-            <li>热点</li>
+            <NuxtLink to="/proclamation">
+              <li>讲课公告</li>
+            </NuxtLink>
           </ul>
           <ul>
             <h6>小组周边</h6>

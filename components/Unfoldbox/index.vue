@@ -16,24 +16,25 @@
             @open="handleOpen"
             @close="handleClose"
           >
-            <el-sub-menu index="1">
-              <template #title>
-                <i class="iconfont icon-chanpincanshu"></i>
-                <span>产品</span>
-              </template>
-              <el-menu-item index="1-1">未来小组</el-menu-item>
-              <el-menu-item index="1-2">未来小组</el-menu-item>
-              <el-menu-item index="1-3">未来小组</el-menu-item>
-              <el-menu-item index="1-4">未来小组</el-menu-item>
-            </el-sub-menu>
             <el-sub-menu index="2">
               <template #title>
                 <i class="iconfont icon-wangpan"> </i>
                 <span> 小组网盘</span>
               </template>
-              <el-menu-item index="1-1">热门资源</el-menu-item>
-              <el-menu-item index="1-2">下载排行榜</el-menu-item>
-              <el-menu-item index="1-3">文件分类</el-menu-item>
+              <el-menu-item index="1-1">
+                <NuxtLink to="/networkdisk/uploadfile"> 上传文件 </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="1-2">
+                <NuxtLink to="/networkdisk/documentcommunity">
+                  文件社区
+                </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="1-3">
+                <NuxtLink to="/networkdisk/mylove"> 我的收藏 </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="1-3">
+                <NuxtLink to="/networkdisk/myfile"> 我的文件 </NuxtLink>
+              </el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="4">
               <template #title>
@@ -44,24 +45,14 @@
               <el-menu-item index="4-2">学习资料</el-menu-item>
               <el-menu-item index="4-3">软件资源</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="5">
+            <el-menu-item index="5">
               <template #title>
                 <i class="iconfont icon-gonggao"> </i>
-                <span>小组公告</span>
+                <NuxtLink to="/blog" target="_parent">
+                  <span>小组公告</span>
+                </NuxtLink>
               </template>
-              <el-menu-item index="5-1">讲课公告</el-menu-item>
-              <el-menu-item index="5-2">算法公告</el-menu-item>
-              <el-menu-item index="5-3">活动公告</el-menu-item>
-            </el-sub-menu>
-            <el-sub-menu index="6">
-              <template #title>
-                <i class="iconfont icon--strategy"> </i>
-                <span>小组周边</span>
-              </template>
-              <el-menu-item index="6-1">精美手办</el-menu-item>
-              <el-menu-item index="6-2">文创产品</el-menu-item>
-              <el-menu-item index="6-3">饰品</el-menu-item>
-            </el-sub-menu>
+            </el-menu-item>
             <el-sub-menu index="8">
               <template #title>
                 <i class="iconfont icon--strategy"> </i>
@@ -70,16 +61,35 @@
               <el-menu-item index="8-1">
                 <NuxtLink to="/blog">博客展示</NuxtLink>
               </el-menu-item>
-              <el-menu-item index="8-2">关于我们</el-menu-item>
+              <el-menu-item index="8-2">
+                <NuxtLink to="/grouphistory">小组历史</NuxtLink>
+              </el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="7">
+            <el-menu-item index="7" v-show="Authtoken() == ''">
               <template #title>
                 <i class="iconfont icon-login"> </i>
-                <NuxtLink to="/blog" target="_parent">
+                <NuxtLink to="/login" target="_parent">
                   <span>登录</span>
                 </NuxtLink>
               </template>
             </el-menu-item>
+            <el-sub-menu index="9" v-show="Authtoken() != ''">
+              <template #title>
+                <span>个人中心</span>
+              </template>
+              <el-menu-item index="9-1">
+                <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="9-2">
+                <NuxtLink to="/networkdisks"> 我的网盘 </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="9-3">
+                <NuxtLink to="/admin/staff"> 进入后台 </NuxtLink>
+              </el-menu-item>
+              <el-menu-item index="9-4" @click="homestore.exitlogin"
+                >退出登录</el-menu-item
+              >
+            </el-sub-menu>
           </el-menu>
         </ClientOnly>
       </div>
@@ -88,6 +98,8 @@
 </template>
 
 <script setup lang="ts">
+import { useHomestore } from "~/store/home";
+const homestore = useHomestore();
 const isflod = ref(false);
 function changeflod(val: boolean) {
   isflod.value = val;

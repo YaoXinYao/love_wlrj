@@ -13,7 +13,6 @@
     </div>
   </template>
 </template>
-
 <script setup lang="ts">
 definePageMeta({
   layout: "custom",
@@ -26,6 +25,7 @@ useHead({
   title: "未找到该页面",
 });
 onMounted(() => {
+  console.log("加载中");
   //@ts-ignore
   window.game = new CatchTheCatGame({
     w: 11,
@@ -58,7 +58,7 @@ body {
 #returnHome {
   text-align: center;
   /* border: solid 1px 
-  grey; */
+	grey; */
   margin-top: 10px;
   display: flex;
   flex-direction: column;

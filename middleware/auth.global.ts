@@ -4,6 +4,7 @@ import { useHomestore } from "~/store/home";
 export default defineNuxtRouteMiddleware((to, from) => {
   const homestore = useHomestore();
   const { userinfo, user } = storeToRefs(homestore);
+
   //用户权限信息从token解析获取，
   if (to.meta.roles) {
     if (user.value.token == "") {
@@ -14,7 +15,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
     //检验是否登陆过期
     const { exp } = jwtDecode(user.value.token);
     if (!isTokenExpired({ expiration: exp as number })) {
-      if (userinfo.value.roleId >= to.meta.roles) {
+      const res = jwtDecode<any>(user.value.token);
+      if (res.roleId >= to.meta.roles) {
         //满足权限
         return true;
       } else {

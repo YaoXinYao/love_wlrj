@@ -49,6 +49,10 @@ export default defineNuxtConfig({
           type: "text/javascript",
           src: "/staticjs/phaser.min.js",
         },
+        {
+          type: "text/javascript",
+          src: "/staticjs/catch-the-cat.js",
+        },
       ],
       noscript: [{ children: "Javascript is required" }],
     },
@@ -138,9 +142,9 @@ export default defineNuxtConfig({
     "/articlemd/**": {
       ssr: false,
     },
-    "/proclamation":{
-      ssr:false
-    }
+    "/proclamation": {
+      ssr: false,
+    },
   },
   MonacoEditor: {
     dest: "_monaco",
