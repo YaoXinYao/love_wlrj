@@ -318,8 +318,7 @@ const deletePost = (id: number) => {
       ul {
         list-style: none;
         li {
-          min-height: 150px;
-          max-height: 170px;
+          height: 180px;
           border-radius: 7px;
           background-color: rgb(237 237 237 / 40%);
           padding: 10px;
@@ -334,7 +333,6 @@ const deletePost = (id: number) => {
         left: 0;
         right: 0;
         top: 0;
-        bottom: 0;
         margin: auto;
       }
     }
@@ -515,8 +513,10 @@ const deletePost = (id: number) => {
         display: flex;
         width: calc(100% - 50px);
         justify-content: space-between;
-        bottom: 0px;
+        bottom: 10px;
         margin-right: 50px;
+        height: 32px;
+        line-height: 32px;
         span {
           display: inline-block;
           margin-right: 15px;
@@ -581,7 +581,9 @@ const deletePost = (id: number) => {
           justify-content: space-between;
           flex-wrap: wrap;
           width: calc(100% - 50px);
-          bottom: 0px;
+          bottom: 10px;
+          height: 32px;
+          line-height: 32px;
           span {
             display: inline-block;
             margin-right: 15px;

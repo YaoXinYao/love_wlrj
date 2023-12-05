@@ -118,7 +118,9 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
-      this.loadings = true;
+      if(pageNo == 1){
+        this.loadings = true;
+      }
       const { data } = await getPost(
         pageNo,
         pageSize,
