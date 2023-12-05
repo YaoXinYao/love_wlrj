@@ -104,7 +104,9 @@ import type { FormInstance, FormRules } from 'element-plus'
 import signStore from '@/store/checking'
 import {storeToRefs} from 'pinia'
 
-
+definePageMeta({
+    roles:3
+})
 
 const inputRef = ref()
 const isHighlighted = ref(false)

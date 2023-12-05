@@ -17,13 +17,13 @@
             </el-timeline>
         </div> 
         <div>
-            <el-dialog :align-center="true"  v-model="dialogTableVisible" width="60%" :close-on-press-escape="false">
+            <el-dialog :align-center="true"  v-model="dialogTableVisible" width="60%" @keydown="handleESC">
                 <template #header>
                     <div style="text-align: center;">
                         <h1>{{ newJournalism.newsTitle ? newJournalism.newsTitle: newJournalism.newsTitle }}</h1>
                     </div>
 
-                    <div class="dialogs">
+                    <div class="dialogs" >
                         <el-form>
                             <el-form-item>
                                 <div   class="announceContent">
@@ -37,7 +37,6 @@
                                         :class="{'full-screen':isFullScreen}" 
                                         @click="toggleFullscrent"
                                         @wheel.passive="handleWheel"
-                                        @keyup.esc.stop="handleESC"
                                     >
                                         <img  
                                             ref="ImgRef" 
@@ -183,10 +182,9 @@ function toggleFullscrent(){
 
 
 function handleESC(event:any){
-    console.log(event)
-    console.log('按了esc')
-    if(isFullScreen.value){
-        console.log(23232)
+    
+    if(event.key == 'Escape'){
+        isFullScreen.value = false
     }
 }
 
