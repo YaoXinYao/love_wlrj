@@ -85,15 +85,11 @@
           <NuxtPage class="animate__animated animate__fadeIn"></NuxtPage>
           <el-pagination
             v-show="pageInfo.total"
-            style="
-              height: 60px;
-              width: max-content;
-              margin-left: 10px;
-              margin-bottom: 20px;
-            "
+            class="pagination"
             v-model:current-page="pageInfo.currentPage"
             v-model:page-size="pageInfo.pageSize"
             :page-sizes="[5, 10, 15]"
+            small
             :background="true"
             layout="total, sizes, prev, pager, next, jumper"
             :total="pageInfo.total"
@@ -121,6 +117,10 @@ import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 const messageStore = useMessageStore();
 const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
 const route = useRoute();
+definePageMeta({
+  roles: 1,
+});
+
 onMounted(() => {
   getInfo();
 });
@@ -202,6 +202,7 @@ const handleCurrentChange = (val: number) => {
   margin: 0 auto;
   margin-top: 175px;
   padding-bottom: 50px;
+  transition: width 0.3s;
 }
 
 .siderBar {
@@ -266,13 +267,37 @@ const handleCurrentChange = (val: number) => {
   height: max-content;
   position: relative;
   border-radius: 10px;
-  overflow-x: hidden;
+  overflow-x: auto;
   min-height: 400px;
   // overflow: auto;
+}
+
+@media screen and (max-width: 1050px) {
+  .mainContent {
+    width: $scaleWidth1;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .mainContent {
+    width: $scaleWidth2;
+  }
+}
+@media screen and (max-width: 650px) {
+  .mainContainer {
+    width: $scaleWidth3;
+  }
 }
 
 .active {
   background-color: #fff;
   color: #8babfc;
+}
+
+.pagination {
+  height: 50px;
+  width: max-content;
+  margin-left: 20px;
+  margin-bottom: 20px;
 }
 </style>
