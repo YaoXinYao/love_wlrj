@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <ClientOnly>
-      <el-dialog v-model="isEdit" title="课程信息" width="30%" draggable>
+      <el-dialog
+        v-model="isEdit"
+        title="课程信息"
+        draggable
+        class="addCourseAlert"
+        @close="closeEvent"
+      >
         <el-form
           :model="currentEditCourse.info"
           label-position="top"
@@ -9,7 +15,11 @@
           ref="ruleFormRef"
         >
           <el-form-item label="课程名" prop="courseName">
-            <el-input v-model="currentEditCourse.info.courseName" />
+            <el-input
+              v-model="currentEditCourse.info.courseName"
+              show-word-limit
+              maxlength="20"
+            />
           </el-form-item>
           <el-form-item label="单双周/连续周" prop="courseIsDouble">
             <el-select
@@ -214,14 +224,10 @@ const ruleFormRef = ref<FormInstance>();
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 
-const props = defineProps({
-  isEditCourse: Boolean,
-  isOthers: Boolean,
-  othersInfo: Array<CourseDetail[]>,
-});
+const props = defineProps(["isEditCourse", "userId"]);
 
 const timetableList = ref<Course[]>([]);
-useGetTimetable(userinfo.value.userId).then((res) => {
+useGetTimetable(props.userId).then((res) => {
   timetableList.value = res;
 });
 let weekDay = [
@@ -297,7 +303,7 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
 
       let courseWeek = weekDay.indexOf(currentEditCourse.week) as number;
       courseWeek++;
-      let props = {
+      let addProps = {
         courseId: null,
         courseBeginDate,
         courseEndDate,
@@ -306,16 +312,16 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
         courseName,
         courseOrder: currentEditCourse.courseOrder * 1 + 1,
         courseWeek,
-        courseUserId: userinfo.value.userId,
+        courseUserId: props.userId,
       };
       if (currentEditCourse.info.courseId == "-1") {
-        addTimetable(props).then(async (res) => {
+        addTimetable(addProps).then(async (res) => {
           if (res.data.value.code === 20000) {
             ElMessage({
               type: "success",
               message: "添加成功",
             });
-            timetableList.value = await useGetTimetable(userinfo.value.userId);
+            timetableList.value = await useGetTimetable(props.userId);
             isEdit.value = false;
           } else {
             ElMessage({
@@ -325,23 +331,24 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
           }
         });
       } else {
-        updateTimetable({ ...currentEditCourse.info, courseUserId:userinfo.value.userId }).then(
-          async (res) => {
-            if (res.data.value.code === 20000) {
-              ElMessage({
-                type: "success",
-                message: "修改成功",
-              });
-              timetableList.value = await useGetTimetable(userinfo.value.userId);
-              isEdit.value = false;
-            } else {
-              ElMessage({
-                type: "error",
-                message: "修改失败",
-              });
-            }
+        updateTimetable({
+          ...currentEditCourse.info,
+          courseUserId: props.userId,
+        }).then(async (res) => {
+          if (res.data.value.code === 20000) {
+            ElMessage({
+              type: "success",
+              message: "修改成功",
+            });
+            timetableList.value = await useGetTimetable(props.userId);
+            isEdit.value = false;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "修改失败",
+            });
           }
-        );
+        });
       }
     }
   });
@@ -378,7 +385,7 @@ const deleteCourseFun = () => {
               type: "success",
               message: "删除成功",
             });
-            timetableList.value = await useGetTimetable(userinfo.value.userId);
+            timetableList.value = await useGetTimetable(props.userId);
           } else {
             ElMessage({
               type: "error",
@@ -395,6 +402,11 @@ const deleteCourseFun = () => {
         message: "已取消删除操作",
       });
     });
+};
+
+const closeEvent = () => {
+  isEdit.value = false;
+  ruleFormRef.value?.resetFields();
 };
 </script>
 
@@ -420,5 +432,15 @@ const deleteCourseFun = () => {
 
 .courseInfo {
   text-align: center;
+}
+
+.addCourseAlert {
+  width: 50%;
+}
+
+@media screen and (max-width: 650px) {
+  .addCourseAlert {
+    width: 100% !important;
+  }
 }
 </style>

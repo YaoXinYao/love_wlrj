@@ -38,27 +38,22 @@
         <el-table-column
           property="postTime"
           label="时间"
-          width="180"
         ></el-table-column>
         <el-table-column
           property="userName"
           label="发帖人"
-          width="150"
         ></el-table-column>
         <el-table-column
           property="postTitle"
           label="标题"
-          width="200"
         ></el-table-column>
         <el-table-column
           property="subName"
           label="分栏"
-          width="120"
         ></el-table-column>
         <el-table-column
           property="postView"
           label="浏览量"
-          width="120"
         ></el-table-column>
         <el-table-column #default="scope" label="操作">
           <el-button type="success" @click="handleEdit(scope.row)"

@@ -138,6 +138,9 @@ export default defineNuxtConfig({
     "/articlemd/**": {
       ssr: false,
     },
+    "/proclamation":{
+      ssr:false
+    }
   },
   MonacoEditor: {
     dest: "_monaco",

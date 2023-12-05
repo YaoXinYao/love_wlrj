@@ -8,7 +8,7 @@
 
       <ul class="nav">
         <li><NuxtLink to="/forum/home">论坛</NuxtLink></li>
-        <li><NuxtLink to="/forum/home">公告</NuxtLink></li>
+        <li><NuxtLink to="/proclamation">公告</NuxtLink></li>
         <li><NuxtLink to="/networkdisk">网盘</NuxtLink></li>
       </ul>
       <div class="navUser">

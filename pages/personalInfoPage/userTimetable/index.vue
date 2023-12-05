@@ -7,11 +7,19 @@
       <ReturnPersonalPage />
     </div>
 
-    <Timetable :isEditCourse="true" />
+    <Timetable :isEditCourse="true" :userId="userId" />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+//获取当前登录用户信息
+import { useHomestore } from "~/store/home";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
+
+let userId = userinfo.value.userId;
+</script>
 
 <style lang="scss" scoped>
 .btn {

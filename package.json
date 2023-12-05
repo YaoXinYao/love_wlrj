@@ -30,6 +30,7 @@
     "@pinia/nuxt": "^0.4.11",
     "@vueuse/core": "^10.6.1",
     "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "animate.css": "^4.1.1",
     "axios": "^1.2.0",
     "base-64": "^1.0.0",

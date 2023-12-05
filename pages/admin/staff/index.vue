@@ -25,10 +25,10 @@
       </div>
       <div>
         <el-button type="info" @click="manageRole = true" v-if="userinfo.roleId == 3">角色</el-button>
-        <el-button type="warning" @click="manageGroup = true">组别</el-button>
-        <el-button type="danger" @click="deleteModel = true">删除</el-button>
-        <el-button type="success" @click="modelState = true">导入</el-button>
-        <el-button type="primary" @click="downTemplate" class="downfile"
+        <el-button type="warning" @click="manageGroup = true" v-if="userinfo.roleId != 1">组别</el-button>
+        <el-button type="danger" @click="deleteModel = true" v-if="userinfo.roleId == 3">删除</el-button>
+        <el-button type="success" @click="modelState = true" v-if="userinfo.roleId != 1">导入</el-button>
+        <el-button type="primary" @click="downTemplate" class="downfile" v-if="userinfo.roleId != 1"
           >下载导入模板</el-button
         >
       </div>

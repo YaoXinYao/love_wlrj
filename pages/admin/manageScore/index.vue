@@ -8,6 +8,8 @@
 
     <ScoreTable
       :dialogVisible="scoreDialogVisible"
+      :getGrade="getGrade"
+      :roleId="roleId"
       @scoreAlert="scoreHandle"
       ref="watchScoreRef"
     />
@@ -29,8 +31,12 @@
       <el-form-item>
         <el-button type="primary" @click="searchAccess">搜索</el-button>
         <el-button type="warning" @click="resetInfo">重置</el-button>
-        <el-button type="success" @click="addAlert">新增</el-button>
-        <el-button type="info" @click="accessTypeAlert">考核类型管理</el-button>
+        <el-button type="success" @click="addAlert" v-if="roleId != 1"
+          >新增</el-button
+        >
+        <el-button type="info" @click="accessTypeAlert" v-if="roleId != 1"
+          >考核类型管理</el-button
+        >
       </el-form-item>
     </el-form>
     <el-table
@@ -39,6 +45,7 @@
       style="width: 100%"
       ref="tableRef"
       v-loading="isLoading"
+      :show-overflow-tooltip="true"
     >
       <el-table-column label="考核名称" prop="plan" />
       <el-table-column label="类别" prop="type">
@@ -70,6 +77,7 @@
             size="small"
             style="width: 55px; height: 32px"
             @click="watchAccess(scope.row)"
+            :disabled="isDisableByGrade(scope.row.subscribers, false)"
             >查看</el-button
           >
           <el-button
@@ -77,7 +85,8 @@
             plain
             size="small"
             style="width: 55px; height: 32px"
-            @click="deleteAccess(scope.row.id)"
+            @click="deleteAccess(scope.row)"
+            :disabled="isDisableByGrade(scope.row.subscribers, true)"
             >删除</el-button
           >
         </template>
@@ -98,27 +107,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
-
+import { reactive, ref, onMounted } from "vue";
 import ScoreTable from "@/components/ScoreTable/index.vue";
 import InterviewList from "@/components/InterviewList/index.vue";
 import AccessTypes from "@/components/AccessTypes/index.vue";
 import {
   deleteAccessService,
   getAllAccessService,
-  getScoreByAccessService,
-  getTemplateService,
+  getLoginUser,
   getTypesByIdService,
   getUserInfoById,
 } from "~/service/user";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
-import type { AccessResInfoType, ScorePageInfoListType } from "~/types/Access";
-
-definePageMeta({
-  layout: "manag",
-});
+import type { AccessResInfoType } from "~/types/Access";
 
 const AccessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
@@ -127,21 +130,53 @@ const accessDialogVisible = ref(false);
 const scoreDialogVisible = ref(false);
 const interviewDialogVisible = ref(false);
 const typeDialogVisible = ref(false);
-const addScoreNeedInfo = ref<AccessResInfoType>();
 
 const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
 const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
 const typeRef = ref<InstanceType<typeof AccessTypes>>();
 const { managePageInfo, manageSearchKey } = storeToRefs(AccessPageInfoStore);
-
-const rowKeyArr = ref<any>([]);
-
-function handleRow(row: any) {
-  return row.id;
-}
-
 const accessInfo = ref<Array<AccessResInfoType>>([]);
+const getGrade = ref<number>(0);
+const roleId = ref<number>(1);
+onMounted(async () => {
+  let userInfoRes = await getLoginUser();
+  if (userInfoRes.data.value.code == 20000) {
+    getGrade.value = userInfoRes.data.value.data.userGrade as number;
+    roleId.value = userInfoRes.data.value.data.roleId;
+  }
+});
 
+definePageMeta({
+  layout: "manag",
+});
+
+const isDisableByGrade = (grade: number, isEqual: boolean) => {
+  if (isEqual) {
+    if (getGrade.value >= grade) {
+      return true;
+    }
+  } else {
+    if (getGrade.value > grade) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const isDisableByRole = (role: number, isEqual: boolean) => {
+  if (isEqual) {
+    if (roleId.value <= role) {
+      return true;
+    }
+  } else {
+    if (roleId.value < role) {
+      return true;
+    }
+  }
+
+  return false;
+};
 const getAccessInfo = async (props: {
   keyword?: string;
   currentPage: number;
@@ -155,8 +190,6 @@ const getAccessInfo = async (props: {
   });
 
   accessInfo.value = accessInfoRes.data.value.data.records;
-  console.log(accessInfo.value);
-
   if (accessInfo.value) {
     for (let i = 0; i < accessInfo.value.length; i++) {
       let user = await getUserInfoById(accessInfo.value[i].publisher as number);
@@ -182,66 +215,6 @@ const getAccessInfo = async (props: {
   managePageInfo.value.total = accessInfoRes.data.value.data.total;
   isLoading.value = false;
 };
-
-// const onExpand = async (row: any) => {
-//   console.log(row);
-
-//   let rowIndex = -1;
-//   for (let i = 0; i < accessInfo.value.length; i++) {
-//     if (row.id == accessInfo.value[i].id) {
-//       rowIndex = i;
-//     }
-//   }
-//   let managePageInfo = { pageIndex: 1, allPage: 0, allCount: 0, size: 0 };
-//   console.log(accessInfo.value[rowIndex]);
-
-//   accessInfo.value[rowIndex].managePageInfo = managePageInfo;
-//   let ids = handleRow(row);
-//   let index = rowKeyArr.value?.indexOf(ids);
-//   if (index === -1) {
-//     rowKeyArr.value?.push(ids);
-//   } else {
-//     rowKeyArr.value?.splice(index, 1);
-//     return;
-//   }
-
-//   let templateRes = await getTemplateService(row.id);
-//   if (templateRes.data.value.code == 400006) {
-//     return;
-//   }
-
-//   let scoreInfoRes = await getScoreByAccessService({
-//     nodePage: 1,
-//     pageSize: 2,
-//     pId: row.id,
-//   });
-
-//   if (scoreInfoRes.data.value.code == 20000) {
-//     let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
-//     managePageInfo = { pageIndex, allPage, allCount, size };
-//     accessInfo.value[rowIndex].managePageInfo = managePageInfo;
-//     const list = scoreInfoRes.data.value.data.list;
-//     let scoreList = new Array(list.length);
-//     accessInfo.value[rowIndex].templates = templateRes.data.value.data.types;
-
-//     for (let i = 0; i < list.length; i++) {
-//       let scores = list[i].scores;
-//       let obj: { [x: string]: string } = {};
-//       obj.id = list[i].id;
-//       for (let j = 0; j < scores.length; j++) {
-//         obj[scores[j].name] = scores[j].score;
-//       }
-//       let studentNameRes = await getUserInfoById(list[i].studentId);
-
-//       obj["name"] = studentNameRes.data.value.data.userName;
-//       obj["studentId"] = studentNameRes.data.value.data.userAccount;
-//       scoreList.push(obj);
-//     }
-//     accessInfo.value[rowIndex].scoreList = scoreList;
-//   } else {
-//     return null;
-//   }
-// };
 
 const resetInfo = () => {
   managePageInfo.value.currentPage = 1;
@@ -321,12 +294,26 @@ let manageSearchKeys = reactive({
 const parentBorder = ref(false);
 
 const addAlert = () => {
+  if (roleId.value == 1) {
+    ElMessage({
+      type: "warning",
+      message: "您还未获得该权限哦！",
+    });
+    return;
+  }
   accessDialogVisible.value = !accessDialogVisible.value;
 };
 
-const accessTypeAlert=()=>{
- typeDialogVisible.value=!typeDialogVisible.value 
-}
+const accessTypeAlert = () => {
+  if (roleId.value == 1) {
+    ElMessage({
+      type: "warning",
+      message: "您还未获得该权限哦！",
+    });
+    return;
+  }
+  typeDialogVisible.value = !typeDialogVisible.value;
+};
 
 const accessHandle = (props: boolean) => {
   accessDialogVisible.value = props;
@@ -354,14 +341,21 @@ const updateEvent = (props: boolean) => {
   }
 };
 
-const deleteAccess = (ids: Array<number>) => {
+const deleteAccess = (row: any) => {
+  if (getGrade.value >= (row.subscribers as number)) {
+    ElMessage({
+      type: "warning",
+      message: "您还未获得该权限哦！",
+    });
+    return;
+  }
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
     type: "warning",
   })
     .then(async () => {
-      let res = await deleteAccessService(ids);
+      let res = await deleteAccessService(row.id);
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
@@ -388,8 +382,13 @@ const deleteAccess = (ids: Array<number>) => {
 };
 
 const watchAccess = (row: any) => {
-  console.log(row);
-
+  if (getGrade.value > (row.subscribers as number)) {
+    ElMessage({
+      type: "warning",
+      message: "您还未获得该权限哦！",
+    });
+    return;
+  }
   if (row.type == "笔试") {
     scoreDialogVisible.value = true;
     watchScoreRef.value?.scoreTableId(row.id);
@@ -398,19 +397,6 @@ const watchAccess = (row: any) => {
     watchInterviewRef.value?.interviewId(row.subscribers, row.id);
   }
 };
-
-// const changeRowData = (row: any) => {
-//   console.log(row);
-//   let index = -1;
-//   for (let i = 0; i < accessInfo.value.length; i++) {
-//     if (accessInfo.value[i].id == row.id) {
-//       index = i;
-//     }
-//   }
-//   if (index != -1) {
-//     console.log(accessInfo.value[index]);
-//   }
-// };
 </script>
 
 <style lang="scss" scoped>

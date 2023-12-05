@@ -60,7 +60,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="dialogVisible" draggable :closed="changeState">
+    <el-dialog v-model="dialogVisible" draggable @closed="changeState">
       <template #header>
         <div class="my-header">
           <h3>面评列表</h3>
@@ -165,6 +165,7 @@ const pageInfo = reactive({
 });
 const changeState = () => {
   dialogVisible.value = false;
+  expandRowKeys.value.length = 0;
 };
 
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {

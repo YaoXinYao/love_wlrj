@@ -64,6 +64,68 @@
       </div>
     </div>
   </ClientOnly>
+    <ClientOnly>
+        <div class="leaveing">
+            <div>
+                <el-form 
+                    ref="formRef" 
+                    :rules="rules" 
+                    :model="form"  
+                    label-width="80px" 
+                    label-position="left"
+                    :hide-required-asterisk="hide"
+                >
+                    <el-form-item prop="leaveReason" label="请假理由" >
+                        <el-input v-model="form.leaveReason" />
+                    </el-form-item>
+                    <el-form-item prop="leaveType" label="请假类型">
+                    <el-select v-model="form.leaveType" placeholder="请假类型">
+                        <el-option label="事假" value="2" />
+                        <el-option label="病假" value="1" />
+                        <el-option label="其他" value="3" />
+                    </el-select>
+                    </el-form-item>
+                    <el-form-item label="请假时间">
+                        <el-col :span="11">
+                            <el-form-item prop="leaveBeginTime">
+                                <el-date-picker
+                                    v-model="form.leaveBeginTime"
+                                    type="datetime"
+                                    placeholder="开始时间"
+                                    style="width: 100%"
+                                    format="YYYY-MM-DD HH:mm"
+                                    @visible-change="handleCurrent"
+                                />
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="1" class="text-center">
+                            <span class="text-gray-500">-</span>
+                        </el-col>
+                        <el-col :span="11">
+                            <el-form-item prop="leaveEndTime">
+                                <el-date-picker
+                                    v-model="form.leaveEndTime"
+                                    type="datetime"
+                                    placeholder="结束时间"
+                                    style="width: 100%"
+                                    format="YYYY-MM-DD HH:mm"
+                                    value-format="YYYY-MM-DD HH:mm:ss"
+                                    @visible-change="handles"
+                                />
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm(formRef)">确定</el-button>
+                    <el-button>取消</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div>
+                <leaveContent ref="contentRef"></leaveContent>
+            </div>
+        </div>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -203,6 +265,8 @@ const onSubmit = () => {
     justify-content: center;
   }
 }
+
+
 </style>
 
 <style lang="scss">

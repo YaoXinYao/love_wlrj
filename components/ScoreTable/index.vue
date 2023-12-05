@@ -20,12 +20,13 @@
       <template #header>
         <div class="my-header">
           <h3>成绩列表</h3>
-          <!-- <el-button
+          <el-button
             type="success"
             @click="addScoreBtn"
             style="margin-right: 20px"
+            v-if="isHaveAuthority"
             >添加</el-button
-          > -->
+          >
         </div>
       </template>
 
@@ -39,7 +40,7 @@
           :prop="item.name"
         />
 
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="isHaveAuthority">
           <template #default="scope"
             ><div>
               <!-- <el-button
@@ -77,6 +78,7 @@
 <script setup lang="ts">
 import {
   deleteScoreService,
+  getAccessInfo,
   getScoreByAccessService,
   getTemplateService,
   getUserInfoById,
@@ -84,7 +86,7 @@ import {
 import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
 import UpdateScoreInfo from "@/components/UpdateScoreInfo/index.vue";
 
-const props = defineProps(["id", "dialogVisible"]);
+const props = defineProps(["id", "dialogVisible", "getGrade", "roleId"]);
 const emit = defineEmits(["scoreAlert"]);
 let dialogVisible = ref(false);
 const addScoreRef = ref<InstanceType<typeof AddScoreInfo>>();
@@ -93,11 +95,9 @@ const scoreHandle = (props: boolean) => {
   scoreDialogVisible.value = props;
 };
 
-const scoreUpdateHandle = (props: boolean) => {
-  scoreUpdateDialogVisible.value = props;
-};
 const scoreDialogVisible = ref(false);
 const scoreUpdateDialogVisible = ref(false);
+const isHaveAuthority = ref<boolean>(false);
 const scoreListData = ref();
 let pId = ref(-1);
 const changeState = () => {
@@ -121,10 +121,22 @@ watch(dialogVisible, (newValue, oldValue) => {
   emit("scoreAlert", dialogVisible.value);
 });
 
-watch(pId, (newValue) => {
+watch(pId, async (newValue) => {
   console.log(newValue);
   pId.value = newValue;
   if (newValue != -1) {
+    let accessInfoRes = await getAccessInfo(pId.value);
+    if (accessInfoRes.data.value.code == 20000) {
+      if (
+        (accessInfoRes.data.value.data.subscribers as number) <=
+          props.getGrade &&
+        props.roleId != 3
+      ) {
+        isHaveAuthority.value = false;
+      } else {
+        isHaveAuthority.value = true;
+      }
+    }
     getInfo();
   }
 });
@@ -221,12 +233,6 @@ function scoreTableId(id: number) {
 }
 
 const addScoreEvent = (prop: boolean) => {
-  if (prop) {
-    getInfo();
-  }
-};
-
-const updateScoreEvent = (prop: boolean) => {
   if (prop) {
     getInfo();
   }
