@@ -45,7 +45,7 @@ import type { IResultData } from "~/service/forum";
 import type { WrapperType } from "~/types/Home";
 const Wrapper = ref<WrapperType[]>([]);
 const { data } = await useFetch<IResultData<WrapperType[]>>(
-  "/zinfo/user/carousel/selectAllCarousel",
+  "/coustom/user/carousel/selectAllCarousel",
   {
     method: "get",
     server: false,

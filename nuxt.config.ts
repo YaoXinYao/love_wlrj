@@ -111,7 +111,6 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-
       //消息
       "/messageInterface": {
         target: "http://152.136.161.44:19491/forum/swagger/forum/",
