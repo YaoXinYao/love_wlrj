@@ -7,7 +7,6 @@
         </NuxtLink>
         <i @click="isflod = false" class="iconfont icon-guanbi"></i>
       </div>
-
       <div class="flodinner">
         <ClientOnly>
           <el-menu
@@ -23,17 +22,6 @@
               </template>
               <el-menu-item index="1-1">
                 <NuxtLink to="/networkdisk/uploadfile"> 上传文件 </NuxtLink>
-              </el-menu-item>
-              <el-menu-item index="1-2">
-                <NuxtLink to="/networkdisk/documentcommunity">
-                  文件社区
-                </NuxtLink>
-              </el-menu-item>
-              <el-menu-item index="1-3">
-                <NuxtLink to="/networkdisk/mylove"> 我的收藏 </NuxtLink>
-              </el-menu-item>
-              <el-menu-item index="1-3">
-                <NuxtLink to="/networkdisk/myfile"> 我的文件 </NuxtLink>
               </el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="4">
@@ -81,7 +69,7 @@
                 <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
               </el-menu-item>
               <el-menu-item index="9-2">
-                <NuxtLink to="/networkdisks"> 我的网盘 </NuxtLink>
+                <NuxtLink to="/networkdisk/uploadfile"> 上传文件 </NuxtLink>
               </el-menu-item>
               <el-menu-item index="9-3">
                 <NuxtLink to="/admin/staff"> 进入后台 </NuxtLink>

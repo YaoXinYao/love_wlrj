@@ -78,6 +78,14 @@ const { status, data, send, open, close } = useWebSocket(
 );
 </script>
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .diskleft {
+    display: none !important;
+  }
+  .diskright {
+    width: 100% !important;
+  }
+}
 .networkdisk {
   padding-block: 0.8rem;
   padding-bottom: 0.1rem;

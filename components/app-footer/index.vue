@@ -36,12 +36,6 @@
               <li>讲课公告</li>
             </NuxtLink>
           </ul>
-          <ul>
-            <h6>小组周边</h6>
-            <li>精美小挂件</li>
-            <li>文创</li>
-            <li>饰品</li>
-          </ul>
         </div>
         <div class="containerbottom">
           <span>2023 @ weilai.com 版权所有</span>
