@@ -30,10 +30,7 @@ let mode = ref("default");
 //shallowRef()来创建响应式对象，以避免深度响应带来的性能开销,它是浅响应
 const editorRef = shallowRef();
 const toolbarConfig = {
-  excludeKeys: [
-    "uploadImage",
-    "uploadVideo"
-  ]
+  excludeKeys: ["uploadImage", "uploadVideo"],
 }; //菜单栏配置
 const editorConfig = {
   type: "md",
