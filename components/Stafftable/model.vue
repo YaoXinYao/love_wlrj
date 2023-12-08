@@ -1,123 +1,38 @@
 <template>
-  <!-- 管理组别 -->
-  <el-dialog v-model="manageGroup" title="组别管理" width="440px">
-    <el-tag
-      v-for="item in teamData"
-      :key="item.groupId"
-      class="mx-1"
-      closable
-      :type="getRandomTagType()as'success' | 'info' | 'warning' | 'danger' | ''"
-      @close="handleClose(item.groupId)"
-    >
-      {{ item.groupName }}
-    </el-tag>
-    <el-input
-      v-if="inputVisible"
-      v-model="inputGroup"
-      class="ml-1 w-20"
-      size="small"
-      @keyup.enter="handleInputConfirm"
-    />
-    <el-button
-      v-else
-      class="button-new-tag ml-1"
-      size="small"
-      @click="showInput"
-    >
-      + 添加标签
-    </el-button>
-  </el-dialog>
-  <!-- 批量导入成员 -->
-  <!-- ElementUI的Upload组件的action属性指定上传文件的URL地址。 -->
-  <el-dialog v-model="modelState" title="成员导入" width="500px">
-    <div class="condition">
-      <el-select v-model="team" placeholder="请选择组别">
-        <el-option
-          v-for="item in teamData"
-          :key="item.groupId"
-          :label="item.groupName"
-          :value="item.groupId"
-        />
-      </el-select>
-      <el-select v-model="role" placeholder="请选择角色">
-        <el-option
-          v-for="item in roleData"
-          :key="item.roleId"
-          :label="item.roleName"
-          :value="item.roleId"
-        />
-      </el-select>
-    </div>
-    <el-upload
-      class="upload-demo"
-      ref="uploadFiles"
-      action="/zinfo/user/user/importUser"
-      method="post"
-      :auto-upload="false"
-      :multiple="false"
-      :limit="1"
-      accept=".xls,.xlsx"
-      drag
-      :headers="{ Authorization: Authtoken() }"
-      :before-upload="handelUpload"
-      :on-error="errorFun"
-      :on-success="successFun"
-      :on-exceed="exceedFun"
-      :on-change="changeFun"
-      :before-remove="beforeRemove"
-    >
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">将文件拖拽到此处或者<em>点击上传</em></div>
-      <template #tip>
-        <div class="el-upload__tip">仅允许导入xls,xlsx文件</div>
-      </template>
-    </el-upload>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="submitFiles">确定</el-button>
-        <el-button @click="closeDialog"> 取消 </el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <!-- 删除弹窗 -->
-  <el-dialog v-model="deleteModel" title="提示信息" width="400px">
-    <span>确定要删除成员数据？</span>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="deleteStaff">确定</el-button>
-        <el-button @click="deleteModel = false"> 取消 </el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <!-- 查看成员信息 -->
-  <el-dialog v-model="editModel" title="成员信息" width="400px" class="edit">
-    <el-form>
-      <el-form-item label="姓名" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userName" disabled />
-      </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userSexVal" disabled />
-      </el-form-item>
-      <el-form-item label="学号" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userAccount" disabled />
-      </el-form-item>
-      <el-form-item label="邮箱" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userEmail" disabled />
-      </el-form-item>
-      <el-form-item label="QQ" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userQq" disabled />
-      </el-form-item>
-      <el-form-item label="年级" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userGrade" disabled />
-      </el-form-item>
-      <el-form-item label="角色" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.roleName" disabled />
-      </el-form-item>
-      <el-form-item label="班级" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userClass" disabled />
-      </el-form-item>
-      <el-form-item label="方向" :label-width="formLabelWidth" v-if="userinfo.roleId == 3">
-        <el-select v-model="signleInfo.groupName">
+  <div>
+    <!-- 管理组别 -->
+    <el-dialog v-model="manageGroup" title="组别管理" width="440px">
+      <el-tag
+        v-for="item in teamData"
+        :key="item.groupId"
+        class="mx-1"
+        closable
+        :type="getRandomTagType()as'success' | 'info' | 'warning' | 'danger' | ''"
+        @close="handleClose(item.groupId)"
+      >
+        {{ item.groupName }}
+      </el-tag>
+      <el-input
+        v-if="inputVisible"
+        v-model="inputGroup"
+        class="ml-1 w-20"
+        size="small"
+        @keyup.enter="handleInputConfirm"
+      />
+      <el-button
+        v-else
+        class="button-new-tag ml-1"
+        size="small"
+        @click="showInput"
+      >
+        + 添加标签
+      </el-button>
+    </el-dialog>
+    <!-- 批量导入成员 -->
+    <!-- ElementUI的Upload组件的action属性指定上传文件的URL地址。 -->
+    <el-dialog v-model="modelState" title="成员导入" width="500px">
+      <div class="condition">
+        <el-select v-model="team" placeholder="请选择组别">
           <el-option
             v-for="item in teamData"
             :key="item.groupId"
@@ -125,65 +40,220 @@
             :value="item.groupId"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="方向" :label-width="formLabelWidth" v-if="userinfo.roleId != 3">
-        <el-input v-bind:value="signleInfo.groupName" disabled />
-      </el-form-item>
-      <el-form-item label="博客链接" :label-width="formLabelWidth">
-        <el-input v-bind:value="signleInfo.userBlog" disabled />
-      </el-form-item>
-      <!-- <el-form-item label="成绩" :label-width="formLabelWidth">
-        <el-button type="success">成绩详情</el-button>
-      </el-form-item> -->
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="editGroup">修改</el-button>
-        <el-button @click="editModel = false">关闭</el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <el-dialog v-model="deleteConfrom" title="提示信息" width="400px">
-    <span>确定要删除此组别？</span>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="shutSure">确定</el-button>
-        <el-button @click="deleteConfrom = false"> 取消 </el-button>
-      </span>
-    </template>
-  </el-dialog>
-  <el-dialog
-    v-model="manageRole"
-    title="修改角色"
-    width="540px"
-    class="setRole"
-  >
-    确定要将
-    <el-select v-model="setGrade" placeholder="请选择年级">
-      <el-option
-        v-for="item in grades"
-        :key="item"
-        :label="item"
-        :value="item"
+        <el-select v-model="role" placeholder="请选择角色">
+          <el-option
+            v-for="item in roleData"
+            :key="item.roleId"
+            :label="item.roleName"
+            :value="item.roleId"
+          />
+        </el-select>
+      </div>
+      <el-upload
+        class="upload-demo"
+        ref="uploadFiles"
+        action="/zinfo/user/user/importUser"
+        method="post"
+        :auto-upload="false"
+        :multiple="false"
+        :limit="1"
+        accept=".xls,.xlsx"
+        drag
+        :headers="{ Authorization: Authtoken() }"
+        :before-upload="handelUpload"
+        :on-error="errorFun"
+        :on-success="successFun"
+        :on-exceed="exceedFun"
+        :on-change="changeFun"
+        :before-remove="beforeRemove"
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖拽到此处或者<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip">仅允许导入xls,xlsx文件</div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="submitFiles">确定</el-button>
+          <el-button @click="closeDialog"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <!-- 删除弹窗 -->
+    <el-dialog v-model="deleteModel" title="提示信息" width="400px">
+      <span>确定要删除成员数据？</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="deleteStaff">确定</el-button>
+          <el-button @click="deleteModel = false"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <!-- 查看成员信息 -->
+    <el-dialog v-model="editModel" title="成员信息" width="400px" class="edit">
+      <el-form>
+        <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userName" disabled />
+        </el-form-item>
+        <el-form-item label="性别" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userSexVal" disabled />
+        </el-form-item>
+        <el-form-item label="学号" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userAccount" disabled />
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userEmail" disabled />
+        </el-form-item>
+        <el-form-item label="QQ" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userQq" disabled />
+        </el-form-item>
+        <el-form-item label="年级" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userGrade" disabled />
+        </el-form-item>
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.roleName" disabled />
+        </el-form-item>
+        <el-form-item label="班级" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userClass" disabled />
+        </el-form-item>
+        <el-form-item
+          label="方向"
+          :label-width="formLabelWidth"
+          v-if="userinfo.roleId == 3"
+        >
+          <el-select v-model="signleInfo.groupName">
+            <el-option
+              v-for="item in teamData"
+              :key="item.groupId"
+              :label="item.groupName"
+              :value="item.groupId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="方向"
+          :label-width="formLabelWidth"
+          v-if="userinfo.roleId != 3"
+        >
+          <el-input v-bind:value="signleInfo.groupName" disabled />
+        </el-form-item>
+        <el-form-item label="博客链接" :label-width="formLabelWidth">
+          <el-input v-bind:value="signleInfo.userBlog" disabled />
+        </el-form-item>
+        <el-form-item
+          label="成绩"
+          :label-width="formLabelWidth"
+          @click="personScore = true"
+        >
+          <el-button type="success">成绩详情</el-button>
+        </el-form-item>
+        <el-form-item
+          label="课表"
+          :label-width="formLabelWidth"
+          @click="personCourse = true"
+        >
+          <el-button type="success">课程信息</el-button>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="editGroup">修改</el-button>
+          <el-button @click="editModel = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="deleteConfrom" title="提示信息" width="400px">
+      <span>确定要删除此组别？</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="shutSure">确定</el-button>
+          <el-button @click="deleteConfrom = false"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+      v-model="manageRole"
+      title="修改角色"
+      width="540px"
+      class="setRole"
+    >
+      确定要将
+      <el-select v-model="setGrade" placeholder="请选择年级">
+        <el-option
+          v-for="item in grades"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </el-select>
+      设置成
+      <el-select v-model="setRole" placeholder="请选择角色">
+        <el-option
+          v-for="item in roleData"
+          :key="item.roleId"
+          :label="item.roleName"
+          :value="item.roleId"
+        />
+      </el-select>
+      这个角色吗？
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="upadterole">确定</el-button>
+          <el-button @click="updateShut"> 取消 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+      v-model="personScore"
+      title="查看成绩"
+      style="--el-dialog-width: max-content"
+    >
+      <div class="headerBox">
+        考核类型：
+        <el-select
+          v-model="scoreType"
+          class="m-2"
+          placeholder="Select"
+          style="width: 100px"
+        >
+          <el-option
+            v-for="item in typeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+      <SelfWrittenScore
+        v-show="scoreType == '笔试'"
+        :userId="signleInfo.userId"
       />
-    </el-select>
-    设置成
-    <el-select v-model="setRole" placeholder="请选择角色">
-      <el-option
-        v-for="item in roleData"
-        :key="item.roleId"
-        :label="item.roleName"
-        :value="item.roleId"
+      <SelfInterviewScore
+        v-show="scoreType == '面试'"
+        :userId="signleInfo.userId"
       />
-    </el-select>
-    这个角色吗？
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="upadterole">确定</el-button>
-        <el-button @click="updateShut"> 取消 </el-button>
-      </span>
-    </template>
-  </el-dialog>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="personScore = false"
+            >关闭</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
+    <div>
+      <el-dialog v-model="personCourse" title="课程详情" class="tableCourse">
+        <Timetable :isEditCourse="true" :userId="signleInfo.userId" />
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button type="primary" @click="personCourse = false"
+              >关闭</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
@@ -195,9 +265,9 @@ import type {
   UploadInstance,
   UploadUserFile,
 } from "element-plus";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 const formLabelWidth = "80px";
 const staffStore = useStaffStore();
 const uploadFiles = ref<UploadInstance>();
@@ -230,6 +300,13 @@ let deleteConfrom = ref(false);
 let ids = 0;
 let inputGroup = ref("");
 const inputVisible = ref(false);
+let personScore = ref(false);
+let personCourse = ref(false);
+const scoreType = ref("笔试");
+let typeOptions = ref([
+  { value: "笔试", label: "笔试" },
+  { value: "面试", label: "面试" },
+]);
 onMounted(() => {
   staffStore.getGrades();
 });
@@ -290,8 +367,8 @@ function submitFiles() {
             setTimeout(() => {
               modelState.value = false;
               uploadFiles.value!.clearFiles();
-              team.value=""
-              role.value=""
+              team.value = "";
+              role.value = "";
             }, 1000);
           } else {
             ElMessage.error("导入失败");
@@ -346,8 +423,8 @@ const changeFun = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
 function closeDialog() {
   uploadFiles.value!.clearFiles();
   modelState.value = false;
-  team.value=""
-  role.value=""
+  team.value = "";
+  role.value = "";
 }
 //删除成员
 function deleteStaff() {
@@ -538,6 +615,24 @@ const updateShut = () => {
 .setRole {
   .el-select {
     width: 150px;
+  }
+}
+.headerBox {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+}
+:deep(.el-dialog.tableCourse) {
+  width: 780px;
+}
+@media screen and (max-width: 900px) {
+  :deep(.el-dialog.tableCourse) {
+    width: 90%;
+    overflow: hidden;
+  }
+  :deep(.el-dialog) {
+    width: 90%;
+    overflow: hidden;
   }
 }
 </style>
