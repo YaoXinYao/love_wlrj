@@ -1,3 +1,4 @@
+<!-- 个人信息修改页 -->
 <template>
   <div class="container animate__animated animate__fadeIn">
     <client-only>
@@ -100,15 +101,15 @@ import type { FormInstance, FormRules } from "element-plus";
 import { EMAILREG, PASSWORDREG } from "@/assets/data/tsConstant";
 import {
   updateUserSelfInformation,
-  getLoginUser,
   sendEmail,
   updateUserPassword,
 } from "~/service/user";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
+import { useLoginout } from "../../../hooks/useLoginout";
 //获取当前登录用户信息
 const homeStore = useHomestore();
-let { userinfo, user } = storeToRefs(homeStore);
+let { userinfo } = storeToRefs(homeStore);
 
 const baseInfoRef = ref<FormInstance>();
 
@@ -116,6 +117,7 @@ const updatePassInfoRef = ref<FormInstance>();
 const btnText = ref("发送验证码");
 const isDisabled = ref(false);
 
+//校验是否为控制
 const checkNullContent = (rule: any, value: any, callback: any) => {
   if (!value) {
     return callback(new Error("输入内容不得为空"));
@@ -124,19 +126,16 @@ const checkNullContent = (rule: any, value: any, callback: any) => {
   }
 };
 
+//校验密码是否符合规范
 const validatePass = (rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error("请输入密码"));
-  } else if (!PASSWORDREG.test(value)) {
+  if (!PASSWORDREG.test(value)) {
     callback(new Error("密码格式不正确"));
   } else {
-    if (updatePassInfo.newPassword.trim() !== "") {
-      if (!updatePassInfoRef.value) return;
-      updatePassInfoRef.value.validateField("newPassword", () => null);
-    }
     callback();
   }
 };
+
+//校验二次输入的密码和第一次是否相同
 const validateCheckPass = (rule: any, value: any, callback: any) => {
   if (value.trim() === "") {
     callback(new Error("请再次输入密码！"));
@@ -147,6 +146,7 @@ const validateCheckPass = (rule: any, value: any, callback: any) => {
   }
 };
 
+//校验邮箱是否符合规范
 const validateEmail = (rule: any, value: any, callback: any) => {
   if (value.trim() === "") {
     callback(new Error("请输入邮箱"));
@@ -157,12 +157,14 @@ const validateEmail = (rule: any, value: any, callback: any) => {
   }
 };
 
+//基础信息部分
 const baseInfo = reactive({
   qq: userinfo.value.userQq,
   email: userinfo.value.userEmail,
   blog: userinfo.value.userBlog,
 });
 
+//修改密码部分
 const updatePassInfo = reactive({
   newPassword: "",
   againPassword: "",
@@ -170,6 +172,7 @@ const updatePassInfo = reactive({
   code: "",
 });
 
+//定义校验规则
 const rules = reactive<FormRules<typeof baseInfo>>({
   qq: [{ validator: checkNullContent, trigger: "blur" }],
   email: [{ validator: validateEmail, trigger: "blur" }],
@@ -182,6 +185,7 @@ const rules2 = reactive<FormRules<typeof updatePassInfo>>({
   code: [{ validator: checkNullContent, trigger: "blur" }],
 });
 
+//修改用户信息
 const updateSelfInformation = (formValidate: FormInstance | undefined) => {
   if (!formValidate) return;
   formValidate.validate((valid) => {
@@ -192,7 +196,6 @@ const updateSelfInformation = (formValidate: FormInstance | undefined) => {
       });
     } else {
       updateUserSelfInformation(baseInfo).then(async (res) => {
-        console.log(res);
         if (res.data.value.code == 20000) {
           ElMessage({
             type: "success",
@@ -210,14 +213,11 @@ const updateSelfInformation = (formValidate: FormInstance | undefined) => {
   });
 };
 
+//修改密码
 const updatePassword = (formValidate: FormInstance | undefined) => {
-  console.log(formValidate);
   if (!formValidate) return;
-  console.log(formValidate);
 
   formValidate.validate((valid) => {
-    console.log(valid);
-
     if (!valid) {
       ElMessage({
         type: "warning",
@@ -228,10 +228,11 @@ const updatePassword = (formValidate: FormInstance | undefined) => {
         if (res.data.value.code == 20000) {
           ElMessage({
             type: "success",
-            message: "修改成功",
+            message: "修改成功，请重新登录",
           });
           formValidate.resetFields();
-          homeStore.updateUserInfo();
+          // homeStore.updateUserInfo();
+          useLoginout();
         } else {
           ElMessage({
             type: "error",
@@ -243,6 +244,7 @@ const updatePassword = (formValidate: FormInstance | undefined) => {
   });
 };
 
+//发送验证码
 const sendCode = async () => {
   let num = 30;
   isDisabled.value = true;

@@ -46,8 +46,6 @@ onMounted(() => {
 watch(
   () => isUpdate.value.CommentLike,
   (newValue) => {
-    console.log(newValue);
-
     if (newValue) {
       getInfo();
       isUpdate.value.CommentLike = false;

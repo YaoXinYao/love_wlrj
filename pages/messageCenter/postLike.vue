@@ -46,8 +46,6 @@ onMounted(() => {
 watch(
   () => isUpdate.value.PostLike,
   (newValue) => {
-    console.log(newValue);
-
     if (newValue) {
       getInfo();
       isUpdate.value.PostLike = false;

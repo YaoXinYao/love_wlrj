@@ -1,3 +1,4 @@
+<!-- 没有用到该组件 -->
 <template>
   <div class="">
     <ClientOnly>
@@ -41,7 +42,8 @@
 
 <script setup lang="ts">
 import type { FormInstance } from "element-plus";
-import { getTemplateService, getUserInfoByAccount } from "~/service/user";
+import { getUserInfoByAccount } from "~/service/user";
+import { getTemplateService } from "~/service/access";
 import type { AccessItem, ScoreAddType } from "~/types/Access";
 let dialogVisible = ref(false);
 

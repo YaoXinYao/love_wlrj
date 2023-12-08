@@ -1,3 +1,4 @@
+<!-- 添加成绩的组件 -->
 <template>
   <div class="">
     <ClientOnly>
@@ -66,12 +67,12 @@
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus";
+import { searchUserByGradeService } from "~/service/user";
 import {
   addAccessScore,
   getAccessInfo,
   getTemplateService,
-  searchUserByGradeService,
-} from "~/service/user";
+} from "~/service/access";
 import type {
   AccessItem,
   AccessResInfoType,
@@ -103,7 +104,6 @@ const changeState = () => {
 
 const emit = defineEmits(["addAlert", "add_score_event"]);
 watch(dialogVisible, (newValue, oldValue) => {
-  console.log(newValue);
   dialogVisible.value = newValue;
   emit("addAlert", true);
 });
@@ -116,11 +116,9 @@ const searchUserByGrade = async (val: string) => {
       accessInfo.value?.subscribers as string,
       val
     );
-    console.log(res);
     if (res.data.value.code == 20000) {
       options.value = res.data.value.data;
     }
-    console.log(options.value);
     loading.value = false;
   }
 };
@@ -161,24 +159,19 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log(types.data);
       for (let i = 0; i < types.data.length; i++) {
         scoreInfo.scores.push({
           name: types.data[i].name,
           score: types.data[i].score,
         });
-        console.log(scoreInfo.scores);
       }
       const data: ScoreAddType = {
         pid: accessInfo.value?.id as number,
         scores: scoreInfo.scores,
         studentId: scoreInfo.studentId,
       };
-      console.log(data);
 
       let res = await addAccessScore(data);
-      console.log(res);
-
       if (res.data.value.code == 20000) {
         ElMessage({
           type: "success",
@@ -201,7 +194,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           message: "添加失败",
         });
       }
-      console.log(res);
     } else {
       ElMessage({
         type: "warning",

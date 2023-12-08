@@ -48,6 +48,30 @@ export const useMessageStore = defineStore("messageStore", {
     ChangeNotReadNum(props: NotReadNumType) {
       this.notReadNum = props;
     },
+
+    exitLogin() {
+      (this.pageInfo = {
+        currentPage: 1,
+        pageSize: 5,
+        total: 0,
+      }),
+        (this.curType = "PostLike"),
+        (this.infoList = []),
+        (this.notReadNum = {
+          commentLikeCnt: 0,
+          commentReplyCnt: 0,
+          postCollectCnt: 0,
+          postCommentCnt: 0,
+          postLikeCnt: 0,
+        }),
+        (this.isUpdate = {
+          CommentLike: false,
+          CommentReply: false,
+          PostCollect: false,
+          PostComment: false,
+          PostLike: false,
+        });
+    },
   },
   //持久化操作
   persist: true,

@@ -42,12 +42,12 @@
 <script setup lang="ts">
 import { ArrowDown } from "@element-plus/icons-vue";
 import { storeToRefs } from "pinia";
+import { useLoginout } from "~/hooks/useLoginout";
 import { useHomestore } from "~/store/home";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const exit = () => {
-  homeStore.exitlogin();
-  navigateTo("/");
+  useLoginout();
 };
 </script>
 
@@ -79,14 +79,16 @@ const exit = () => {
   width: $originalWidth;
   margin: 0 auto;
   height: 100%;
+  transition: all 0.3s;
 }
 .logoBox {
   display: flex;
+  justify-content: left;
   height: 100%;
   cursor: pointer;
 }
 .logo {
-  height: 60px;
+  height: 50px;
 }
 
 .logoText {
@@ -126,7 +128,6 @@ const exit = () => {
   display: flex;
   justify-content: right;
   align-items: center;
-  width: 200px;
   height: 60px;
 }
 
@@ -135,5 +136,31 @@ const exit = () => {
   color: #666;
   font-size: 18px;
   font-weight: 700;
+}
+
+@media screen and (max-width: 1050px) {
+  .headerContent {
+    width: $scaleWidth1;
+  }
+
+  .logoText {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .headerContent {
+    width: $scaleWidth2;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .headerContent {
+    width: $scaleWidth3;
+  }
+
+  .navUser {
+    justify-content: center;
+  }
 }
 </style>

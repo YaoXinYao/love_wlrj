@@ -1,3 +1,4 @@
+<!-- 后台成绩管理模块 -->
 <template>
   <div class="container">
     <AddAccessInfo
@@ -8,13 +9,13 @@
 
     <ScoreTable
       :dialogVisible="scoreDialogVisible"
-      :getGrade="getGrade"
-      :roleId="roleId"
       @scoreAlert="scoreHandle"
       ref="watchScoreRef"
     />
     <InterviewList
       :dialogVisible="interviewDialogVisible"
+      :getGrade="getGrade"
+      :roleId="roleId"
       @interviewAlert="interviewHandle"
       ref="watchInterviewRef"
     />
@@ -111,19 +112,18 @@ import { reactive, ref, onMounted } from "vue";
 import ScoreTable from "@/components/ScoreTable/index.vue";
 import InterviewList from "@/components/InterviewList/index.vue";
 import AccessTypes from "@/components/AccessTypes/index.vue";
+import { getLoginUser, getUserInfoById } from "~/service/user";
 import {
   deleteAccessService,
   getAllAccessService,
-  getLoginUser,
   getTypesByIdService,
-  getUserInfoById,
-} from "~/service/user";
+} from "~/service/access";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
 import type { AccessResInfoType } from "~/types/Access";
 
-const AccessPageInfoStore = useAccessPageInfoStore();
+const accessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
 const accessDialogVisible = ref(false);
 
@@ -134,7 +134,7 @@ const typeDialogVisible = ref(false);
 const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
 const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
 const typeRef = ref<InstanceType<typeof AccessTypes>>();
-const { managePageInfo, manageSearchKey } = storeToRefs(AccessPageInfoStore);
+const { managePageInfo, manageSearchKey } = storeToRefs(accessPageInfoStore);
 const accessInfo = ref<Array<AccessResInfoType>>([]);
 const getGrade = ref<number>(0);
 const roleId = ref<number>(1);
@@ -150,6 +150,11 @@ definePageMeta({
   layout: "manag",
 });
 
+/**
+ * 判断用户是否有权操作
+ * @param grade 考核对象年级
+ * @param isEqual 比较是是否包括本年级
+ */
 const isDisableByGrade = (grade: number, isEqual: boolean) => {
   if (isEqual) {
     if (getGrade.value >= grade) {
@@ -164,6 +169,7 @@ const isDisableByGrade = (grade: number, isEqual: boolean) => {
   return false;
 };
 
+//判断用户是否有权操作
 const isDisableByRole = (role: number, isEqual: boolean) => {
   if (isEqual) {
     if (roleId.value <= role) {
@@ -177,6 +183,8 @@ const isDisableByRole = (role: number, isEqual: boolean) => {
 
   return false;
 };
+
+//获取考核信息
 const getAccessInfo = async (props: {
   keyword?: string;
   currentPage: number;
@@ -216,6 +224,7 @@ const getAccessInfo = async (props: {
   isLoading.value = false;
 };
 
+//重置
 const resetInfo = () => {
   managePageInfo.value.currentPage = 1;
   manageSearchKey.value = "";
@@ -226,6 +235,7 @@ const resetInfo = () => {
   });
 };
 
+//搜索
 const searchAccess = async () => {
   if (manageSearchKey.value == "") {
     ElMessage({
@@ -315,6 +325,7 @@ const accessTypeAlert = () => {
   typeDialogVisible.value = !typeDialogVisible.value;
 };
 
+//同步子组件的dialogVisible值
 const accessHandle = (props: boolean) => {
   accessDialogVisible.value = props;
 };
@@ -341,6 +352,7 @@ const updateEvent = (props: boolean) => {
   }
 };
 
+//删除成绩
 const deleteAccess = (row: any) => {
   if (getGrade.value >= (row.subscribers as number)) {
     ElMessage({
@@ -394,7 +406,12 @@ const watchAccess = (row: any) => {
     watchScoreRef.value?.scoreTableId(row.id);
   } else {
     interviewDialogVisible.value = true;
-    watchInterviewRef.value?.interviewId(row.subscribers, row.id);
+    watchInterviewRef.value?.interviewId(
+      row.subscribers,
+      row.id,
+      getGrade.value,
+      roleId.value
+    );
   }
 };
 </script>

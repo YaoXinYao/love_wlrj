@@ -1,3 +1,4 @@
+<!-- 添加考核的组件 -->
 <template>
   <div class="">
     <ClientOnly>
@@ -123,11 +124,8 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import {
-  addAccessService,
-  getAllGrade,
-  getAllTypesService,
-} from "~/service/user";
+import { getAllGrade } from "~/service/user";
+import { getAllTypesService, addAccessService } from "~/service/access";
 import type {
   AccessTypesType,
   AccessItem,
@@ -141,7 +139,7 @@ onMounted(() => {
     allGrade = res.data.value.data;
   });
 
-  getAllTypesService().then((res) => {
+  getAllTypesService().then((res: any) => {
     typeList = res.data.value.data;
   });
 });
@@ -161,7 +159,6 @@ const accessInfoRef = ref<FormInstance>();
 
 //弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
 const changeState = () => {
-  console.log("关闭");
   dialogVisible.value = false;
   accessInfo.plan = "";
   accessInfo.typeId = undefined;
@@ -206,10 +203,8 @@ const accessInfo = reactive<AddAccessType>({
 });
 
 watch(accessInfo, (newValue) => {
-  console.log(newValue);
   if (newValue.types) {
     if (newValue.types?.length >= 6) {
-      console.log("大于");
       isCanAdd.value = false;
     } else {
       isCanAdd.value = true;
@@ -290,10 +285,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   });
   if (result) {
-    let obj = accessInfo;
-    console.log(accessInfo);
-    console.log(obj);
-
     if (accessInfo.type == "笔试") {
       let sum: number = 0;
       if (accessInfo.types) {
@@ -313,11 +304,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       accessInfo.types = undefined;
     }
 
-    addAccessService(accessInfo).then((res) => {
-      console.log(accessInfo);
-
-      console.log(res.data.value);
-
+    addAccessService(accessInfo).then((res: any) => {
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
