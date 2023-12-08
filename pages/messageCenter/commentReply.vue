@@ -1,6 +1,11 @@
 <template>
   <div class="app">
-    <div v-show="!pageInfo.total"><el-empty description="暂无数据" /></div>
+    <div v-show="!pageInfo.total && !isLoading">
+      <el-empty description="暂无数据" />
+    </div>
+    <div v-show="isLoading" class="isLoading">
+      <span>加载中...</span>
+    </div>
     <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
@@ -23,6 +28,7 @@ import { useHomestore } from "~/store/home";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const { curType, pageInfo, infoList } = storeToRefs(messageStore);
+const isLoading = ref(false);
 
 messageStore.ChangePageInfo({
   pageSize: 5,
@@ -35,6 +41,7 @@ onMounted(() => {
 });
 
 const getInfo = async () => {
+  isLoading.value = true;
   let messageRes = await useGetMessageInfo({
     pageNo: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
@@ -52,6 +59,7 @@ const getInfo = async () => {
     messageStore.ChangeInfoList([]);
     isNull.value = true;
   }
+  isLoading.value = false;
 };
 
 console.log(pageInfo.value);
@@ -67,13 +75,18 @@ console.log(pageInfo.value);
   width: 100%;
 }
 
-.isLoading,
-.isLoaded {
+.isLoading {
   display: inline-block;
   width: 100%;
   line-height: 30px;
   color: rgb(78, 111, 243);
   text-align: center;
   opacity: 0.5;
+
+  span {
+    display: inline-block;
+    font-size: 17px;
+    margin-top: 20px;
+  }
 }
 </style>
