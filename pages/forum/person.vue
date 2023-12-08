@@ -73,7 +73,7 @@
                       query: { data: item.postId },
                     })
                   "
-                   v-html="decodeURIComponent(item.postContent)"
+                  v-html="decodeURIComponent(item.postContent)"
                 >
                 </NuxtLink>
               </div>
@@ -140,11 +140,10 @@
                       })
                     "
                     v-html="decodeURIComponent(item.postContent)"
-                    ></NuxtLink
-                  >
+                  ></NuxtLink>
                 </div>
                 <div class="data">
-                  <div style="margin-top: 6px;">
+                  <div style="margin-top: 6px">
                     <span>{{ item.postView }}阅读</span>
                     <span>{{ item.postLike }}点赞</span>
                     <span>{{ item.postCollect }}收藏</span>
@@ -499,14 +498,20 @@ const deletePost = (id: number) => {
         }
       }
       .detailsContent {
-        text-indent: 2em;
         line-height: 23px;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
         cursor: pointer;
-        height:90px;
+        height: 90px;
+        padding: 0px 10px;
+        a {
+          display: inline-block;
+          p {
+            text-indent: 2em;
+          }
+        }
       }
       .detailsData {
         position: absolute;
@@ -566,14 +571,19 @@ const deletePost = (id: number) => {
           }
         }
         .content {
-          text-indent: 2em;
           line-height: 23px;
           display: -webkit-box;
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
           overflow: hidden;
           cursor: pointer;
-          height:90px
+          height: 90px;
+          a {
+            display: inline-block;
+            p{
+              text-indent: 2em;
+            }
+          }
         }
         .data {
           position: absolute;
@@ -593,8 +603,12 @@ const deletePost = (id: number) => {
     }
   }
   .el-pagination {
-    --el-pagination-bg-color: rgb(244, 248, 251);
-    --el-pagination-button-disabled-bg-color: rgb(244, 248, 251);
+    button {
+      background-color: transparent !important;
+    }
+    li {
+      background-color: transparent;
+    }
   }
 }
 @media screen and (max-width: 800px) {

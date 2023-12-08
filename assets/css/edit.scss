@@ -21,3 +21,6 @@
 .w-e-bar-divider{
   background-color: transparent !important;
 }
+.w-e-toolbar .w-e-bar-item:nth-child(24) {
+  display: none;
+}
