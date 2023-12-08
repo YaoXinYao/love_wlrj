@@ -61,7 +61,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { ref } from "vue";
 const parentBorder = ref(true);
 const childBorder = ref(false);
@@ -73,6 +72,8 @@ import {
 } from "~/service/user";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
 const props = defineProps(["userId"]);
+let userId = ref();
+userId.value = props.userId;
 const pageInfo = ref<AccessPageInfoType>({
   currentPage: 1,
   pageSize: 5,
@@ -82,8 +83,16 @@ const pageInfo = ref<AccessPageInfoType>({
 const interviewList = ref<Array<AccessResInfoType>>([]);
 
 onMounted(async () => {
-  getInfo();
+  interviewScoreList.value = [];
 });
+
+watch(
+  () => props.userId,
+  (newValue) => {
+    userId.value = newValue;
+    getInfo();
+  }
+);
 const handleSizeChange = (val: number) => {
   pageInfo.value.pageSize = val;
   getInfo();
@@ -95,14 +104,12 @@ const handleCurrentChange = (val: number) => {
 };
 
 const getInfo = async () => {
-  interviewScoreList.value = [];
+  interviewList.value = [];
   let scoreInfoRes = await getUserInterviewService({
     nodePage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
-    id: props.userId,
+    id: userId.value,
   });
-
-  console.log(scoreInfoRes.data.value);
 
   if (scoreInfoRes.data.value.code == 20000) {
     const { pageIndex, size, allCount } = scoreInfoRes.data.value.data;
@@ -113,7 +120,7 @@ const getInfo = async () => {
     for (let i = 0; i < pIdList.length; i++) {
       let InterviewListItem = await getAccessInfo(pIdList[i]);
       let interviewItem = await getInterviewService({
-        id: props.userId,
+        id: userId.value,
         pId: pIdList[i],
       });
       interviewList.value[i] = InterviewListItem.data.value.data;
@@ -121,6 +128,8 @@ const getInfo = async () => {
     }
   }
 };
+
+getInfo();
 </script>
 
 <style lang="scss" scoped>

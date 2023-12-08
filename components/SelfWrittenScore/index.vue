@@ -89,14 +89,24 @@ import {
 } from "~/service/user";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
 const props = defineProps(["userId"]);
+let userId = ref();
+userId.value = props.userId;
 const pageInfo = ref<AccessPageInfoType>({
   currentPage: 1,
   pageSize: 5,
   total: 0,
 });
 
-onMounted(async () => {
-  getInfo();
+watch(
+  () => props.userId,
+  (newValue) => {
+    userId.value = newValue;
+    getInfo();
+  }
+);
+
+onUnmounted(() => {
+  writtenScoreList.value = [];
 });
 const handleSizeChange = (val: number) => {
   pageInfo.value.pageSize = val;
@@ -113,7 +123,7 @@ const getInfo = async () => {
   let scoreInfoRes = await getScoreByAccessService({
     nodePage: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
-    studentId: props.userId,
+    studentId: userId.value,
   });
 
   let scoreInfo = scoreInfoRes.data.value;
@@ -132,7 +142,7 @@ const getInfo = async () => {
       let interviewList = null;
       if (scoreInfoData[i].type == "面评") {
         let getInterviewRes = await getInterviewService({
-          id: props.userId,
+          id: userId.value,
           pId: scoreInfoData[i].pid,
         });
 
@@ -158,6 +168,8 @@ const getInfo = async () => {
     return;
   }
 };
+
+getInfo();
 </script>
 
 <style lang="scss" scoped>

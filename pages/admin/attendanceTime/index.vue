@@ -8,6 +8,10 @@
 <script setup lang="ts">
 import  AttendanceHeader  from '@/components/attendanceHeader/index.vue';
 import  AttendanceContent  from '@/components/attendanceContent/index.vue';
+
+definePageMeta({
+    roles:3
+})
 </script>
 
 <style scoped>

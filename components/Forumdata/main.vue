@@ -52,21 +52,20 @@
               })
             "
             class="cardTitle"
-            >{{ item.postTitle }}</NuxtLink
+            >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
           >
           <div class="cardUser">
             发表于<span>{{ item.postTime }}</span
             >|<span>{{ item.userName }}</span>
           </div>
-          <div class="cardContent">
-            {{ item.postContent }}
+          <div class="cardContent" v-html="decodeURIComponent(item.postContent)">
           </div>
           <ul class="icons">
             <li>
               <svg
-                v-if="item.likes == true"
+                v-if="item.likes == false"
                 @click="
-                  postLike(item.postId, 'Like', 0, index, item.postUserId)
+                  postLike(item.postId, 'Like', 1, index, item.postUserId)
                 "
                 t="1701500911398"
                 class="icon"
@@ -83,9 +82,9 @@
                 ></path>
               </svg>
               <svg
-                v-if="item.likes == false"
+                v-if="item.likes == true"
                 @click="
-                  postLike(item.postId, 'Like', 1, index, item.postUserId)
+                  postLike(item.postId, 'Like', 0, index, item.postUserId)
                 "
                 t="1701500927693"
                 class="icon"
@@ -171,8 +170,11 @@
     <div class="noDataImg" v-if="pagesData.length == 0">
       <img class="noData" src="/images/暂无.svg" />
     </div>
-    <div class="loadText" v-if="shows == 1" @click="nextData">
+    <div class="loadText" v-if="shows == 1 && textLoading!=true" @click="nextData">
       <span>点击加载更多</span>
+    </div>
+    <div class="loadText" v-if="shows == 1 && textLoading==true">
+      <span>加载中，请稍候</span>
     </div>
   </div>
 </template>
@@ -192,6 +194,7 @@ const { pages, postSubId, postSource, loadings } = storeToRefs(forums);
 let pageNo = ref(1);
 let pagesData = ref<any[]>([]);
 let shows = ref(1);
+let textLoading = ref(false)
 const route = useRoute();
 const { status, data, send, open, close } = useWebSocket(
   `ws://152.136.161.44:19491/forum/swagger/forum/websocket/+${userinfo.value.userId}`,
@@ -239,6 +242,7 @@ const searchPost = (ids: number) => {
 };
 //查询帖子
 function fetchData(userId: any) {
+  textLoading.value = true
   if (postSubId.value == 0) {
     forums
       .selectPost(userId, pageNo.value, 30, postSource.value)
@@ -247,6 +251,8 @@ function fetchData(userId: any) {
           pagesData.value.push({ ...res[i] });
         }
         pageNo.value++;
+        loadings.value=false
+        textLoading.value = false
         if (pageNo.value > pages.value) {
           shows.value = 0;
         }

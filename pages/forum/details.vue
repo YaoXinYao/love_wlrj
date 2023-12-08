@@ -13,7 +13,7 @@
     <div class="signle">
       <div class="content">
         <div class="text">
-          <h2>{{ singleData.postTitle }}</h2>
+          <h2>{{ decodeURIComponent(singleData.postTitle) }}</h2>
           <div class="autorInfo">{{ singleData.userName }}<span>{{ singleData.postTime }}</span>
               <span>
                 <svg
@@ -35,7 +35,7 @@
                 {{ singleData.postView }}
               </span>
           </div>
-          <div class="textContent">{{ singleData.postContent }}</div>
+          <div class="textContent" v-html="decodeURIComponent(singleData.postContent)"></div>
         </div>
       </div>
     </div>
@@ -272,6 +272,7 @@ const { status, data, send, open, close } = useWebSocket(
     },
   }
 );
+let a ="<h1>111</h1>"
 onMounted(() => {
   let id = Number(datas);
   forums.getSingle(id, userinfo.value.userId);
@@ -540,7 +541,7 @@ watch(status, (newStatus) => {
           }
         }
         .textContent{
-          
+          overflow: hidden;
         }
       }
     }
@@ -671,5 +672,8 @@ watch(status, (newStatus) => {
     max-width: 90%;
     overflow: hidden;
   }
+}
+p{
+  word-wrap:break-word;
 }
 </style>

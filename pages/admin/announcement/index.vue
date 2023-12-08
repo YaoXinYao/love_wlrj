@@ -8,7 +8,7 @@
         </div>
         
         <ClientOnly>
-            <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%">
+            <el-dialog :align-center="true" :center="true"  v-model="isShow" width="40%" @keydown="handleKeyDown">
                 <template #header>
                     <h1>{{ announcementCon.noticeTitle ? announcementCon.noticeTitle: announcementCon.noticeType }}</h1>
                     <h4 style="margin-top: 20px;">{{ announcementCon.noticeType }}</h4>
@@ -28,11 +28,12 @@
                                         :class="{'full-screen':isFullScreen}" 
                                         @click="toggleFullscrent"
                                         @wheel.passive="handleWheel"
+                                        
                                     >
                                         <img  
                                             ref="ImgRef" 
                                             :src="announcementCon.noticeImg" 
-                                            :style="{ transform: `scale(${scale})` }"
+                                            :style="isFullScreen ? { transform: `scale(${scale})`} : ''"
                                             :class="{showPicture:true,'full-screen-img':isFullScreen}" 
                                             alt=""
                                         >
@@ -61,7 +62,6 @@
 import Header  from '@/components/recent-announcement/index.vue'
 import Content from '@/components/announcementContent/index.vue'
 import {ref } from 'vue'
-import type {anType} from '@/components/announcementContent/index.vue'
 import type {annoucement} from '@/store/store'
 
 const isShow = ref(false)
@@ -72,6 +72,11 @@ const minScale = ref(0.5)
 const maxScale = ref(2)
 const scaleStep = ref(0.1)
 
+definePageMeta({
+    roles:2
+})
+
+
 let announcementCon = ref<annoucement>({
     noticeTitle: '',
     noticeContent: '',
@@ -81,6 +86,7 @@ let announcementCon = ref<annoucement>({
     noticeId:0,
     noticeScope:'',
 })
+
 
 // announcementCon = handleChangesClick
 const contentRef = ref<InstanceType<typeof Content>>()
@@ -109,7 +115,7 @@ function handleNewValueClick(query:any){
 function handleWheel(event:any){
     if (isFullScreen.value) {
         // 阻止滚动事件的默认行为
-        event.preventDefault();
+        // event.preventDefault();
 
         // 计算缩放比例
         const delta = event.deltaY > 0 ? -scaleStep.value : scaleStep.value;
@@ -127,6 +133,14 @@ useHead({
 function toggleFullscrent(){
     // console.log(ImgRef.value)
     isFullScreen.value = !isFullScreen.value
+}
+
+
+function handleKeyDown(e:any){
+    console.log(e)
+    if(e.key == 'Escape'){
+        isFullScreen.value = false
+    }
 }
 
 
@@ -204,6 +218,7 @@ function toggleFullscrent(){
                 align-items: center;
                 justify-content: center;
                 cursor: zoom-out;
+                z-index: 9999;
                 .full-screen-img {
                     width: 100vw;
                     height: 100vh;

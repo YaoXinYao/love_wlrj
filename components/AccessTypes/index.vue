@@ -22,39 +22,42 @@
       @closed="changeTypesState"
     >
       <div>
-        <el-popconfirm
-          title="操作"
-          confirm-button-text="修改"
-          cancel-button-text="删除"
-          confirm-button-type="warning"
-          cancel-button-type="danger"
-          v-for="(t, index) in typesList"
-          :key="t.id"
-          @confirm="updateTag(t.id, t.typeName)"
-          @cancel="deleteTag(t.id)"
-        >
-          <template #reference
-            ><el-tag class="tag">{{ t.typeName }}</el-tag></template
-          ></el-popconfirm
-        >
+        <span v-if="isNull" class="nullBox">暂无数据</span>
 
-        <el-input
-          v-if="inputVisible"
-          ref="InputRef"
-          v-model="addTagValue"
-          class="ml-1 w-20"
-          size="small"
-          @keyup.enter.native="enterConfirm($event)"
-          @blur="handleInputConfirm"
-        />
-        <el-button
-          v-else
-          class="button-new-tag ml-1"
-          size="small"
-          @click="showInput"
-        >
-          +
-        </el-button>
+        <div v-if="!isNull">
+          <el-popconfirm
+            title="操作"
+            confirm-button-text="修改"
+            cancel-button-text="删除"
+            confirm-button-type="warning"
+            cancel-button-type="danger"
+            v-for="(t, index) in typesList"
+            :key="t.id"
+            @confirm="updateTag(t.id, t.typeName)"
+            @cancel="deleteTag(t.id)"
+          >
+            <template #reference>
+              <el-tag class="tag">{{ t.typeName }}</el-tag>
+            </template>
+          </el-popconfirm>
+          <el-input
+            v-if="inputVisible"
+            ref="InputRef"
+            v-model="addTagValue"
+            class="ml-1 w-20"
+            size="small"
+            @keyup.enter.native="enterConfirm($event)"
+            @blur="handleInputConfirm"
+          />
+          <el-button
+            v-else
+            class="button-new-tag ml-1"
+            size="small"
+            @click="showInput"
+          >
+            +
+          </el-button>
+        </div>
       </div>
     </el-dialog>
   </ClientOnly>
@@ -81,6 +84,7 @@ const updateTypeDialogVisible = ref(false);
 const addTagValue = ref("");
 const updateTypeText = ref("");
 const updateTypeId = ref();
+const isNull = ref<boolean>(false);
 
 const emit = defineEmits(["typeAlert"]);
 
@@ -100,6 +104,18 @@ const changeUpdateTypesState = () => {
   updateTypeDialogVisible.value = false;
   updateTypeId.value = "";
   updateTypeText.value = "";
+};
+
+const getTypesList = async () => {
+  let getTypesListRes = await getAllTypesService();
+  console.log(getTypesListRes);
+  if (getTypesListRes.data.value.code == 20000) {
+    typesList.value = getTypesListRes.data.value.data;
+    isNull.value = false;
+  } else {
+    typesList.value = [];
+    isNull.value = true;
+  }
 };
 
 const updateType = async () => {
@@ -140,11 +156,6 @@ watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
 });
 
-const getTypesList = async () => {
-  let getTypesListRes = await getAllTypesService();
-  typesList.value = getTypesListRes.data.value.data;
-};
-
 const showInput = () => {
   inputVisible.value = true;
   nextTick(() => {
@@ -166,6 +177,7 @@ const handleInputConfirm = async () => {
     } else {
       try {
         let addTypeRes = await addAccessTypeService(addTagValue.value);
+
         if (addTypeRes.data.value.code === 20000) {
           ElMessage({
             type: "success",
@@ -239,5 +251,13 @@ const deleteTag = (id: number | string) => {
 
 .ml-1 {
   width: 68px;
+}
+
+.nullBox {
+  display: inline-block;
+  width: 100%;
+  line-height: 30px;
+  text-align: center;
+  font-size: 16px;
 }
 </style>

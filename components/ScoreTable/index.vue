@@ -15,7 +15,7 @@
       v-model="dialogVisible"
       draggable
       width="max-content"
-      :closed="changeState"
+      @closed="changeState"
     >
       <template #header>
         <div class="my-header">
@@ -122,7 +122,6 @@ watch(dialogVisible, (newValue, oldValue) => {
 });
 
 watch(pId, async (newValue) => {
-  console.log(newValue);
   pId.value = newValue;
   if (newValue != -1) {
     let accessInfoRes = await getAccessInfo(pId.value);
@@ -157,8 +156,6 @@ const getInfo = async () => {
     pId: pId.value,
   });
   if (scoreInfoRes.data.value.code == 20000) {
-    console.log(scoreInfoRes.data.value.data);
-
     let { pageIndex, allPage, allCount, size } = scoreInfoRes.data.value.data;
     managePageInfo.value = { pageIndex, allPage, allCount, size };
     const list = scoreInfoRes.data.value.data.list;
@@ -177,7 +174,6 @@ const getInfo = async () => {
       scoreList.push(obj);
     }
     scoreListData.value = scoreList;
-    console.log(scoreListData.value);
   } else {
     return null;
   }
@@ -193,7 +189,6 @@ const handleScoreCurrentChange = (val: number) => {
 };
 
 const deleteScore = async (id: any) => {
-  console.log(id);
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
@@ -223,7 +218,6 @@ const deleteScore = async (id: any) => {
 };
 
 const updateScore = (row: any) => {
-  console.log(row);
   updateScoreRef.value?.postTemplate(row, pId.value);
   updateScoreRef.value?.updateAlertchanges(true);
 };

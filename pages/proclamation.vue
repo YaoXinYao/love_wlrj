@@ -24,15 +24,25 @@
                 </div>
             </div>
 
-            <template v-for="(item,index) in sortTIme" :key="index">
-                <div ref="divRef" class="proclamTitle">
+            <template  v-for="(item,index) in sortTIme" :key="index" >
+                <div ref="divRef"  
+                    class="proclamTitle" 
+                    v-show="divDispaly[item.index]"
+                    :style="{'transform': divDispaly[item.index] ? 'translateY(0)' : 'translateY(-3rem)',opacity: divDispaly[item.index] ? 1 : 0}" 
+                >
                     <div>
                         <h1>{{ index }}</h1>
                     </div>
                 </div>
-                <div class="proclamCenter"  >
+                <div 
+                    ref="divCenterRef" 
+                    class="proclamCenter" 
+                    v-show="divDispaly[item.index]"
+                    :style="{'transform': divDispaly[item.index] ? 'translateY(0)' : 'translateY(-3rem)',opacity: divDispaly[item.index] ? 1 : 0}"  
+
+                >
                     <div class="proclams"  >
-                        <div class="showProclam proclamList" v-for="items in item" :key="items.noticeId">
+                        <div class="showProclam proclamList" v-for="items in item.data" :key="items.noticeId">
                             <div class="proclamaPicture">
                                     <img class="proclamaPic" :src="items.noticeImg ? items.noticeImg : '/img/4.webp' "  alt="" >
                                     <div class="specialEffects"></div>
@@ -56,90 +66,6 @@
                     </div>
                 </div>
             </template>
-
-            <!-- <div class="proclamTitle">
-                <h1>2023年12月</h1>
-            </div>
-            <div class="proclamCenter">
-                <div class="proclams">
-                    <div class="showProclam proclamList">
-                        <div class="proclamaPicture">
-                                <img class="proclamaPic" :src="latestProclamation.noticeImg"  alt="" >
-                                <div class="specialEffects"></div>
-                        </div>
-                        <div class="proclamaDetail">
-                                <div style="font-size: 24px;text-align: center;">
-                                    {{latestProclamation.noticeTitle}}
-                                </div>
-                                <div>
-                                    {{latestProclamation.noticeContent}}
-                                </div>
-                        </div>
-                    </div>
-                    <div class="showProclam proclamList">
-                        <div class="proclamaPicture">
-                                <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
-                                <div class="specialEffects"></div>
-                        </div>
-                        <div class="proclamaDetail">
-                                <div style="font-size: 24px;text-align: center;">
-                                    {{latestProclamation.noticeTitle}}
-                                </div>
-                                <div>
-                                    {{latestProclamation.noticeContent}}
-                                </div>
-                        </div>
-                    </div>
-                    <div class="showProclam proclamList">
-                        <div class="proclamaPicture">
-                                <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
-                                <div class="specialEffects"></div>
-                        </div>
-                        <div class="proclamaDetail">
-                                <div style="font-size: 24px;text-align: center;">
-                                    {{latestProclamation.noticeTitle}}
-                                </div>
-                                <div>
-                                    {{latestProclamation.noticeContent}}
-                                </div>
-                        </div>
-                    </div>
-                    <div class="showProclam proclamList">
-                        <div class="proclamaPicture">
-                                <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
-                                <div class="specialEffects"></div>
-                        </div>
-                        <div class="proclamaDetail">
-                                <div style="font-size: 24px;text-align: center;">
-                                    {{latestProclamation.noticeTitle}}
-                                </div>
-                                <div>
-                                    {{latestProclamation.noticeContent}}
-                                </div>
-                        </div>
-                    </div>
-                    <div class="showProclam proclamList">
-                        <div class="proclamaPicture">
-                                <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
-                                <div class="specialEffects"></div>
-                        </div>
-                        <div class="proclamaDetail">
-                                <div style="font-size: 24px;text-align: center;">
-                                    {{latestProclamation.noticeTitle}}
-                                </div>
-                                <div>
-                                    {{latestProclamation.noticeContent}}
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="proclam">
-                <h1>最新公告</h1>
-            </div>
-            <div class="proclam">
-                <h1>最新公告</h1>
-            </div> -->
         </div>
     </ClientOnly>
 </template>
@@ -150,6 +76,9 @@ import {Calendar} from '@element-plus/icons-vue'
 import proclamationStore from '@/store/proclamation'
 import {storeToRefs} from 'pinia'
 
+definePageMeta({
+    roles:1
+})
 
 interface proclamationType {
     latestProclamation:string,
@@ -164,7 +93,8 @@ const time = ref()
 let sortTIme = ref()
 
 const divRef = ref()
-
+const divCenterRef = ref()
+const divDispaly = ref<boolean[]>([true])
 // const list = ref({})
 
 onMounted(async ()=>{
@@ -196,10 +126,16 @@ onMounted(async ()=>{
         //@ts-ignore
         arr.sort((a,b) => new Date(b[0]) - new Date(a[0]))
 
+        let index = 0
         let sortarr = {}
         arr.forEach(([key,item])=>{
             //@ts-ignore
-            sortarr[key] = item
+            sortarr[key] = {
+                index:index,
+                data: item
+            }
+            index++
+            divDispaly.value.push(false)
         })
 
         console.log(sortarr)
@@ -209,20 +145,20 @@ onMounted(async ()=>{
     changeList()
 
     window.addEventListener('scroll',(e)=>{
-        console.log(e)
-        console.log(window.innerHeight,window.scrollY)
-        console.log(divRef.value)
+        // console.log(e)
+        // console.log(window.innerHeight,window.scrollY)
+        // console.log(divRef.value)
         let arr = divRef.value
         for(let item in divRef.value){
-            console.log(divRef.value[item].offsetTop)
-            if(Number(item) > 1){
+            console.log(divDispaly.value)
+            if(Number(item) >= 1){
+                console.log(divRef.value[item])
                 if(window.innerHeight + window.scrollY >= divRef.value[item].offsetTop){
                     console.log('在')
+                    divDispaly.value[Number(item)] = true
                 }else{
                     console.log('不在')
                 }
-            }else{
-                divRef.value[item].display = 'flex'
             }
         }
     },{passive:true})
@@ -339,9 +275,8 @@ onMounted(async ()=>{
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        & > :not(:first-of-type){
-            display: none;
-        }
+        transition: opacity .8s cubic-bezier(.43, .2, .02, 1),transform 1s cubic-bezier(.43, .2, .02, 1);
+
     }
     .proclamCenter{
         display: flex;
@@ -454,6 +389,10 @@ onMounted(async ()=>{
             }
         }
     }
+
+    // > :nth-child(n + 4){
+    //     display: none;
+    // }
     
 }
 
