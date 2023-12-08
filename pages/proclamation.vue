@@ -388,12 +388,7 @@ onMounted(async ()=>{
                 }
             }
         }
-    }
-
-    // > :nth-child(n + 4){
-    //     display: none;
-    // }
-    
+    }   
 }
 
 
