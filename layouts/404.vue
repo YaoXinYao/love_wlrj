@@ -18,10 +18,12 @@
 definePageMeta({
   layout: "custom",
 });
+
 useHead({
   script() {
     return [{ src: "/staticjs/catch-the-cat.js" }];
   },
+  title: "未找到该页面",
 });
 onMounted(() => {
   //@ts-ignore
@@ -56,7 +58,7 @@ body {
 #returnHome {
   text-align: center;
   /* border: solid 1px 
-  grey; */
+	grey; */
   margin-top: 10px;
   display: flex;
   flex-direction: column;

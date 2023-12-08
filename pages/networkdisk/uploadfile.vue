@@ -56,7 +56,11 @@
     >
       <TransitionButton innertext="下一步" />
     </div>
-    <el-dialog v-model="dialogVisible" title="请选择文件分类标签" width="30%">
+    <el-dialog
+      v-model="dialogVisible"
+      class="diatag"
+      title="请选择文件分类标签"
+    >
       <div class="Tagselect">
         <el-select-v2
           class="selcet-v2"
@@ -178,6 +182,14 @@ const uploadFileQueue = async (file: File[], index: number) => {
 };
 </script>
 <style scoped lang="scss">
+@media screen and (max-width: 998px) {
+  .diatag {
+    width: 100% !important;
+  }
+  .selcet-v2 {
+    min-width: 180px !important;
+  }
+}
 .upload {
   height: 100%;
   width: 100%;
