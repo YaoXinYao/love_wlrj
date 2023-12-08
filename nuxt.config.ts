@@ -100,7 +100,7 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-      "/notice/": {
+      "/notice": {
         target: "http://152.136.161.44:19491/notice/swagger/notice/",
         changeOrigin: true,
         prependPath: true,

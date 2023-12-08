@@ -158,8 +158,11 @@
                   :max="99"
                   class="item"
                 >
-                  <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
+                  <NuxtLink to="/messageCenter/postLike"> 消息中心 </NuxtLink>
                 </el-badge>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
               </el-dropdown-item>
               <el-dropdown-item>
                 <NuxtLink to="/networkdisk"> 我的网盘 </NuxtLink>
