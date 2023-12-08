@@ -222,14 +222,37 @@ import { storeToRefs } from "pinia";
 let isEdit = ref(false);
 const ruleFormRef = ref<FormInstance>();
 const homeStore = useHomestore();
-let { userinfo } = storeToRefs(homeStore);
 
 const props = defineProps(["isEditCourse", "userId"]);
+let userId = ref();
+userId.value = props.userId;
+let isEditCourse = ref();
+isEditCourse.value = props.isEditCourse;
 
 const timetableList = ref<Course[]>([]);
-useGetTimetable(props.userId).then((res) => {
-  timetableList.value = res;
-});
+
+watch(
+  () => props.isEditCourse,
+  (newValue) => {
+    isEditCourse.value = newValue;
+  }
+);
+
+watch(
+  () => props.userId,
+  (newValue) => {
+    userId.value = newValue;
+    getTimetable();
+  }
+);
+
+const getTimetable = () => {
+  useGetTimetable(userId.value).then((res) => {
+    timetableList.value = res;
+  });
+};
+getTimetable();
+
 let weekDay = [
   "monday",
   "tuesday",
@@ -257,7 +280,7 @@ let currentEditCourse = reactive({
 });
 
 const handleCellClick = (row: any, column: any, event: any) => {
-  if (!props.isEditCourse) {
+  if (!isEditCourse.value) {
     return;
   }
   if (column.no != 0) {
@@ -312,7 +335,7 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
         courseName,
         courseOrder: currentEditCourse.courseOrder * 1 + 1,
         courseWeek,
-        courseUserId: props.userId,
+        courseUserId: userId.value,
       };
       if (currentEditCourse.info.courseId == "-1") {
         addTimetable(addProps).then(async (res) => {
@@ -321,7 +344,7 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
               type: "success",
               message: "添加成功",
             });
-            timetableList.value = await useGetTimetable(props.userId);
+            timetableList.value = await useGetTimetable(userId.value);
             isEdit.value = false;
           } else {
             ElMessage({
@@ -333,14 +356,14 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
       } else {
         updateTimetable({
           ...currentEditCourse.info,
-          courseUserId: props.userId,
+          courseUserId: userId.value,
         }).then(async (res) => {
           if (res.data.value.code === 20000) {
             ElMessage({
               type: "success",
               message: "修改成功",
             });
-            timetableList.value = await useGetTimetable(props.userId);
+            timetableList.value = await useGetTimetable(userId.value);
             isEdit.value = false;
           } else {
             ElMessage({
@@ -385,7 +408,7 @@ const deleteCourseFun = () => {
               type: "success",
               message: "删除成功",
             });
-            timetableList.value = await useGetTimetable(props.userId);
+            timetableList.value = await useGetTimetable(userId.value);
           } else {
             ElMessage({
               type: "error",
