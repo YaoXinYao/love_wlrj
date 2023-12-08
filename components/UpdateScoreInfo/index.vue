@@ -6,7 +6,7 @@
         title="修改考核成绩"
         width="30%"
         draggable
-        :closed="changeState"
+        @closed="changeState"
       >
         <el-form ref="scoreInfoRef">
           <el-form-item

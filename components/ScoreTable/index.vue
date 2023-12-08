@@ -15,7 +15,7 @@
       v-model="dialogVisible"
       draggable
       width="max-content"
-      :closed="changeState"
+      @closed="changeState"
     >
       <template #header>
         <div class="my-header">

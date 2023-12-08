@@ -31,7 +31,7 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            label="课程开始时间（双周课则为第二周周一）"
+            label="课程开始时间（开始时间为开课的周一）"
             prop="courseBeginDate"
           >
             <el-date-picker

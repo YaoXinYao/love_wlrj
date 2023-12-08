@@ -6,7 +6,7 @@
         title="添加考核成绩"
         width="30%"
         draggable
-        :closed="changeState"
+        @closed="changeState"
       >
         <el-form :model="scoreInfo" ref="scoreInfoRef">
           <el-form-item

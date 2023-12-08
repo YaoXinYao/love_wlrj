@@ -12,10 +12,20 @@
         class="demo-baseInfo"
       >
         <el-form-item label="qq" prop="qq">
-          <el-input v-model="baseInfo.qq" autocomplete="off" />
+          <el-input
+            v-model="baseInfo.qq"
+            autocomplete="off"
+            maxlength="15"
+            show-word-limit
+          />
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="baseInfo.email" autocomplete="off" />
+          <el-input
+            v-model="baseInfo.email"
+            autocomplete="off"
+            maxlength="40"
+            show-word-limit
+          />
         </el-form-item>
         <el-form-item label="博客" prop="blog">
           <el-input v-model="baseInfo.blog" autocomplete="off" />
@@ -52,7 +62,12 @@
           />
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="updatePassInfo.email" autocomplete="off" />
+          <el-input
+            v-model="updatePassInfo.email"
+            autocomplete="off"
+            maxlength="40"
+            show-word-limit
+          />
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <div style="display: flex">
@@ -157,7 +172,7 @@ const updatePassInfo = reactive({
 
 const rules = reactive<FormRules<typeof baseInfo>>({
   qq: [{ validator: checkNullContent, trigger: "blur" }],
-  email: [{ validator: checkNullContent, trigger: "blur" }],
+  email: [{ validator: validateEmail, trigger: "blur" }],
   blog: [{ validator: checkNullContent, trigger: "blur" }],
 });
 const rules2 = reactive<FormRules<typeof updatePassInfo>>({
