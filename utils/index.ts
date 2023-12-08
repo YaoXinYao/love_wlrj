@@ -372,3 +372,14 @@ export function filetype(val: string) {
     return "";
   }
 }
+export function isTokenExpired(token: { expiration: number }) {
+  const currentTimestamp = Math.floor(Date.now() / 1000); // 获取当前时间戳（以秒为单位）
+  // 假设token是一个包含expiration字段的JSON对象
+  const tokenExpiration = token.expiration;
+  // 检查token是否过期
+  if (tokenExpiration < currentTimestamp) {
+    return true; // 过期
+  } else {
+    return false; // 未过期
+  }
+}

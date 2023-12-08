@@ -71,7 +71,7 @@
             </ul>
           </div>
         </div>
-        <div class="HeaderNavItem">
+        <!--  <div class="HeaderNavItem">
           <span
             >技术文档
             <i
@@ -96,12 +96,11 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
         <div class="HeaderNavItem">
           <NuxtLink to="/proclamation">
             <span>公告</span>
           </NuxtLink>
-          
         </div>
         <div class="HeaderNavItem">
           <NuxtLink to="/forum/home">
@@ -132,22 +131,35 @@
           <TransitionButton innertext="登录"></TransitionButton>
         </NuxtLink>
         <el-dropdown v-if="user.token !== ''" :hide-on-click="false">
-          <div class="loginbox" style="">
-            <div
-              class="boximg"
-              :style="{
-                backgroundImage: `url(${
-                  userinfo.userPicture ||
-                  'https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~120x120.awebp'
-                })`,
-              }"
-            ></div>
-          </div>
-
+          <el-badge
+            :value="messagetotal"
+            :max="99"
+            :hidden="messagetotal == 0"
+            class="item"
+          >
+            <div class="loginbox" style="">
+              <div
+                class="boximg"
+                :style="{
+                  backgroundImage: `url(${
+                    userinfo.userPicture ||
+                    'https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~120x120.awebp'
+                  })`,
+                }"
+              ></div>
+            </div>
+          </el-badge>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
-                <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
+                <el-badge
+                  :value="messagetotal"
+                  :hidden="messagetotal == 0"
+                  :max="99"
+                  class="item"
+                >
+                  <NuxtLink to="/personalInfoPage/modules"> 个人中心 </NuxtLink>
+                </el-badge>
               </el-dropdown-item>
               <el-dropdown-item>
                 <NuxtLink to="/networkdisk"> 我的网盘 </NuxtLink>
@@ -171,8 +183,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
+import { useMessageStore } from "~/store/message";
+const messagestore = useMessageStore();
 const homestore = useHomestore(); //获取顶部状态
 const { header, isRequireanim, user, userinfo } = storeToRefs(homestore);
+const { notReadNum } = storeToRefs(messagestore);
 const headertype = {
   height: "0.8rem",
   backgroundColor: "white",
@@ -180,6 +195,15 @@ const headertype = {
   boxShadow: "-7px 3px 10px 0 rgba(0, 0, 0, 0.06)",
   isSpread: false,
 };
+const messagetotal = computed(() => {
+  return (
+    notReadNum.value.commentLikeCnt +
+    notReadNum.value.commentReplyCnt +
+    notReadNum.value.postCollectCnt +
+    notReadNum.value.postCommentCnt +
+    notReadNum.value.postLikeCnt
+  );
+});
 const exit = () => {
   homestore.exitlogin();
 };
@@ -450,6 +474,7 @@ function handlerscroll() {
         color: rgb(106, 106, 245);
         background-color: #fff;
         transition-duration: 0.3s;
+
         .boximg {
           content: "";
           display: block;

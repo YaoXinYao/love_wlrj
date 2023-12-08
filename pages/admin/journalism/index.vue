@@ -13,6 +13,10 @@ import  JournalismNew  from '@/components/journalismNew/index.vue';
 
 const newRef = ref<InstanceType<typeof JournalismNew>>()
 
+definePageMeta({
+    roles:2
+})
+
 function handleNew(data:any){
     // console.log(data)
     newRef.value?.handleAnnouncement(data)

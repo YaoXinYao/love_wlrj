@@ -120,3 +120,19 @@ export interface FilePrevviewList {
   filePreviewUrl: string;
   fileId: any;
 }
+//全局搜索文件属性
+export interface SearchItemtype {
+  id: number;
+  fileName: string;
+  userId: number;
+  fileType: string;
+  content: any;
+  urls: any;
+  status: number;
+  isDelete: number;
+}
+export interface SearchParams {
+  index: number;
+  keyword: string;
+  pageSize: number;
+}

@@ -3,7 +3,7 @@
     <el-dialog
       v-model="addInterviewDialogFormVisible"
       title="添加面评"
-      :closed="changeAddInterviewState"
+      @closed="changeAddInterviewState"
     >
       <el-form :model="form" ref="addInterviewRef">
         <el-form-item

@@ -5,6 +5,7 @@ import type {
   ToProvate,
   SearchMyfileType,
   Fileprops,
+  SearchParams,
 } from "~/types/disk";
 import Hyrequire from "./index";
 import type { IResultData } from "~/types/Userlogin";
@@ -90,6 +91,12 @@ export function SearchMyfile(parmas: SearchMyfileType) {
 //删除文件
 export function uploaddeleteFile(params: ToProvate) {
   return Hyrequire.request("/disk/disk/file/updateFileDelete", "put", {
+    ...params,
+  });
+}
+//网盘搜索
+export function DiskSearch(params: SearchParams) {
+  return Hyrequire.request("/disk/disk/es/searchES", "GET", {
     ...params,
   });
 }
