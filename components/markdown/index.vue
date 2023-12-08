@@ -1,6 +1,6 @@
 <template>
     <div class="doubleColumn">
-        <div class="leftColumn">
+        <div class="leftColumn">       
             <MonacoEditor 
                 v-model="value" 
                 lang="markdown" 

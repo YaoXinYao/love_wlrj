@@ -84,6 +84,9 @@ interface formConfig {
     queryDate:string,
 }
 
+definePageMeta({
+    roles:2
+})
 
 const leaveContentRef = ref<InstanceType<typeof leaveContent>>()
 const formRef = ref<FormInstance>()
