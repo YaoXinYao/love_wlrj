@@ -266,9 +266,6 @@ const { status, data, send, open, close } = useWebSocket(
     autoReconnect: {
       retries: 8,
       delay: 1000,
-      onFailed() {
-        alert("Failed to connect WebSocket after 8 retries");
-      },
     },
   }
 );
