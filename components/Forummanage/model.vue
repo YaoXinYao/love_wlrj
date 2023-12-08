@@ -11,7 +11,7 @@
         </el-form-item>
         <el-form-item label="标题" :label-width="formLabelWidth">
           <el-input
-            :value="postInfos.postTitle"
+            :value="decodeURIComponent(postInfos.postTitle)"
             :disabled="true"
             autosize
             type="textarea"
@@ -22,7 +22,7 @@
         </el-form-item>
         <el-form-item label="正文内容" :label-width="formLabelWidth">
           <el-input
-            :value="postInfos.postContent"
+            :value="decodeURIComponent(postInfos.postContent)"
             :disabled="true"
             autosize
             type="textarea"

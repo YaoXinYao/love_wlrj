@@ -53,6 +53,8 @@ export interface cards {
   singleData: any;
   total: number;
   loadings: boolean;
+  newPostContent:string;
+  newPostTitle:string
 }
 export interface forums {
   labelModel: boolean;
@@ -79,6 +81,8 @@ export const forumStore = defineStore("forumInfo", {
       singleData: {},
       total: 0,
       loadings: false,
+      newPostContent:"",
+      newPostTitle:""
     };
   },
   actions: {
@@ -114,7 +118,9 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
-      this.loadings = true;
+      if(pageNo == 1){
+        this.loadings = true;
+      }
       const { data } = await getPost(
         pageNo,
         pageSize,
