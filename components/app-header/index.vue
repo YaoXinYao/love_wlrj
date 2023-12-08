@@ -173,7 +173,7 @@
               <el-dropdown-item>
                 <NuxtLink to="/forum/person"> 我的帖子 </NuxtLink>
               </el-dropdown-item>
-              <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="useLoginout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -187,6 +187,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 import { useMessageStore } from "~/store/message";
+import { useLoginout } from "~/hooks/useLoginout";
 const messagestore = useMessageStore();
 const homestore = useHomestore(); //获取顶部状态
 const { header, isRequireanim, user, userinfo } = storeToRefs(homestore);
