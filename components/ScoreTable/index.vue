@@ -54,6 +54,7 @@
                 size="small"
                 type="danger"
                 @click="deleteScore(scope.row.id)"
+                v-if="userGrade < accessTargetGrade || userRoleId == 3"
                 >删除</el-button
               >
             </div></template
@@ -102,8 +103,13 @@ const scoreUpdateDialogVisible = ref(false);
 const isHaveAuthority = ref<boolean>(false);
 const scoreListData = ref();
 let pId = ref(-1);
+let userRoleId = ref<number>(1);
+let userGrade = ref<number>(0);
+let accessTargetGrade = ref<number>(1);
 const changeState = () => {
   dialogVisible.value = false;
+  templates.length = 0;
+  scoreListData.value.length = 0;
 };
 
 let managePageInfo = ref({
@@ -169,8 +175,7 @@ const getInfo = async () => {
       let obj: { [x: string]: string } = {};
       obj.id = list[i].id;
       for (let j = 0; j < scores.length; j++) {
-        let objKey = "" + scores[j].name + scores[j].rate;
-        obj[objKey] = scores[j].score;
+        obj[scores[j].name] = scores[j].score;
       }
       let studentNameRes = await getUserInfoById(list[i].studentId);
       obj["name"] = studentNameRes.data.value.data.userName;
@@ -194,8 +199,8 @@ const handleScoreCurrentChange = (val: number) => {
 
 const deleteScore = async (id: any) => {
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
     type: "warning",
   })
     .then(async () => {
@@ -226,8 +231,16 @@ const updateScore = (row: any) => {
   updateScoreRef.value?.updateAlertchanges(true);
 };
 
-function scoreTableId(id: number) {
+function scoreTableId(
+  accessTarget: number,
+  id: number,
+  userGradeProp: number,
+  userRoleProp: number
+) {
   pId.value = id;
+  accessTargetGrade.value = accessTarget;
+  userGrade.value = userGradeProp;
+  userRoleId.value = userRoleProp;
 }
 
 const addScoreEvent = (prop: boolean) => {

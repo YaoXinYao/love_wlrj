@@ -19,7 +19,7 @@
             <el-input
               v-model="currentEditCourse.info.courseName"
               show-word-limit
-              maxlength="20"
+              maxlength="40"
             />
           </el-form-item>
           <el-form-item label="单双周/连续周" prop="courseIsDouble">
@@ -390,8 +390,8 @@ const cellContentStyle = (row: any) => {
 //删除课表
 const deleteCourseFun = () => {
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {

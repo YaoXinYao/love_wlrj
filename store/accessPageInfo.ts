@@ -8,7 +8,8 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
         pageSize: 5,
         total: 0,
       },
-      manageSearchKey: "",
+      manageSearchGrade: "",
+      manageSearchName: "",
       selfWrittenPageInfo: {
         currentPage: 1,
         pageSize: 5,
@@ -31,23 +32,24 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
     },
 
     exitLogin() {
-      (this.managePageInfo = {
+      this.managePageInfo = {
         currentPage: 1,
         pageSize: 5,
         total: 0,
-      }),
-        (this.manageSearchKey = ""),
-        (this.selfWrittenPageInfo = {
-          currentPage: 1,
-          pageSize: 5,
-          total: 0,
-        }),
-        (this.selfInterviewPageInfo = {
-          currentPage: 1,
-          pageSize: 5,
-          total: 0,
-        }),
-        (this.selfSearchKey = "");
+      };
+      this.manageSearchGrade = "";
+      this.manageSearchName = "";
+      this.selfWrittenPageInfo = {
+        currentPage: 1,
+        pageSize: 5,
+        total: 0,
+      };
+      this.selfInterviewPageInfo = {
+        currentPage: 1,
+        pageSize: 5,
+        total: 0,
+      };
+      this.selfSearchKey = "";
     },
   },
   //持久化操作

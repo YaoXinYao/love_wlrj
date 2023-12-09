@@ -53,7 +53,8 @@ export interface AccessPageInfoType {
 }
 export interface AccessStoreType {
   managePageInfo: { currentPage: number; pageSize: number; total: number };
-  manageSearchKey: string;
+  manageSearchGrade: string;
+  manageSearchName: string;
   selfWrittenPageInfo: { currentPage: number; pageSize: number; total: number };
   selfInterviewPageInfo: {
     currentPage: number;

@@ -11,6 +11,8 @@
       :dialogVisible="scoreDialogVisible"
       @scoreAlert="scoreHandle"
       ref="watchScoreRef"
+      :getGrade="getGrade"
+      :roleId="roleId"
     />
     <InterviewList
       :dialogVisible="interviewDialogVisible"
@@ -27,7 +29,10 @@
     />
     <el-form :inline="true" :model="manageSearchKeys">
       <el-form-item label="考核名称"
-        ><el-input v-model="manageSearchKey" placeholder="考核名称" clearable
+        ><el-input v-model="manageSearchName" placeholder="考核名称" clearable
+      /></el-form-item>
+      <el-form-item label="考核年级"
+        ><el-input v-model="manageSearchGrade" placeholder="考核年级" clearable
       /></el-form-item>
       <el-form-item>
         <el-button type="primary" @click="searchAccess">搜索</el-button>
@@ -46,9 +51,8 @@
       style="width: 100%"
       ref="tableRef"
       v-loading="isLoading"
-      :show-overflow-tooltip="true"
     >
-      <el-table-column label="考核名称" prop="plan" />
+      <el-table-column label="考核名称" prop="plan" fixed />
       <el-table-column label="类别" prop="type">
         <template #default="scope"
           ><el-tag size="large">{{ scope.row.type }}</el-tag></template
@@ -97,6 +101,7 @@
       style="margin-top: 20px"
       v-model:current-page="managePageInfo.currentPage"
       v-model:page-size="managePageInfo.pageSize"
+      v-if="managePageInfo.total"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
       layout="total, sizes, prev, pager, next, jumper"
@@ -122,22 +127,25 @@ import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
 import type { AccessResInfoType } from "~/types/Access";
-
 const accessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
 const accessDialogVisible = ref(false);
-
 const scoreDialogVisible = ref(false);
 const interviewDialogVisible = ref(false);
 const typeDialogVisible = ref(false);
-
 const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
 const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
 const typeRef = ref<InstanceType<typeof AccessTypes>>();
-const { managePageInfo, manageSearchKey } = storeToRefs(accessPageInfoStore);
+const { managePageInfo, manageSearchGrade, manageSearchName } =
+  storeToRefs(accessPageInfoStore);
 const accessInfo = ref<Array<AccessResInfoType>>([]);
 const getGrade = ref<number>(0);
 const roleId = ref<number>(1);
+
+definePageMeta({
+  layout: "manag",
+});
+
 onMounted(async () => {
   let userInfoRes = await getLoginUser();
   if (userInfoRes.data.value.code == 20000) {
@@ -146,16 +154,15 @@ onMounted(async () => {
   }
 });
 
-definePageMeta({
-  layout: "manag",
-});
-
 /**
  * 判断用户是否有权操作
  * @param grade 考核对象年级
  * @param isEqual 比较是是否包括本年级
  */
 const isDisableByGrade = (grade: number, isEqual: boolean) => {
+  if (roleId.value == 3) {
+    return false;
+  }
   if (isEqual) {
     if (getGrade.value >= grade) {
       return true;
@@ -171,6 +178,9 @@ const isDisableByGrade = (grade: number, isEqual: boolean) => {
 
 //判断用户是否有权操作
 const isDisableByRole = (role: number, isEqual: boolean) => {
+  if (roleId.value == 3) {
+    return false;
+  }
   if (isEqual) {
     if (roleId.value <= role) {
       return true;
@@ -189,12 +199,14 @@ const getAccessInfo = async (props: {
   keyword?: string;
   currentPage: number;
   pageSize: number;
+  subscribers?: string;
 }) => {
   isLoading.value = true;
   const accessInfoRes = await getAllAccessService({
     name: props.keyword,
     nodePage: props.currentPage,
     pageSize: props.pageSize,
+    subscribers: props.subscribers,
   });
 
   accessInfo.value = accessInfoRes.data.value.data.records;
@@ -224,40 +236,39 @@ const getAccessInfo = async (props: {
   isLoading.value = false;
 };
 
-//重置
 const resetInfo = () => {
   managePageInfo.value.currentPage = 1;
-  manageSearchKey.value = "";
+  manageSearchGrade.value = "";
+  manageSearchName.value = "";
   getAccessInfo({
     keyword: "",
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
+    subscribers: "",
   });
 };
 
 //搜索
 const searchAccess = async () => {
-  if (manageSearchKey.value == "") {
+  if (manageSearchGrade.value == "" && manageSearchName.value == "") {
     ElMessage({
       type: "warning",
       message: "请输入关键词",
     });
   } else {
     managePageInfo.value.currentPage = 1;
-    const accessInfoRes = await getAllAccessService({
-      name: manageSearchKey.value,
-      nodePage: 1,
+    getAccessInfo({
+      keyword: manageSearchName.value,
+      subscribers: manageSearchGrade.value,
+      currentPage: 1,
       pageSize: managePageInfo.value.pageSize,
     });
-    accessInfo.value = accessInfoRes.data.value.data.records;
-    managePageInfo.value.currentPage = accessInfoRes.data.value.data.current;
-    managePageInfo.value.pageSize = accessInfoRes.data.value.data.size;
-    managePageInfo.value.total = accessInfoRes.data.value.data.total;
   }
 };
 
 getAccessInfo({
-  keyword: manageSearchKey.value,
+  keyword: manageSearchName.value,
+  subscribers: manageSearchGrade.value,
   currentPage: managePageInfo.value.currentPage,
   pageSize: managePageInfo.value.pageSize,
 });
@@ -265,7 +276,8 @@ getAccessInfo({
 const handleSizeChange = async (val: number) => {
   managePageInfo.value.pageSize = val;
   getAccessInfo({
-    keyword: manageSearchKey.value,
+    keyword: manageSearchName.value,
+    subscribers: manageSearchGrade.value,
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
   });
@@ -273,7 +285,8 @@ const handleSizeChange = async (val: number) => {
 const handleCurChange = async (val: number) => {
   managePageInfo.value.currentPage = val;
   getAccessInfo({
-    keyword: manageSearchKey.value,
+    keyword: manageSearchName.value,
+    subscribers: manageSearchGrade.value,
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
   });
@@ -343,7 +356,8 @@ const typeHandle = (props: boolean) => {
 };
 
 const updateEvent = (props: boolean) => {
-  manageSearchKey.value = "";
+  manageSearchName.value = "";
+  manageSearchGrade.value = "";
   if (props) {
     getAccessInfo({
       currentPage: managePageInfo.value.currentPage,
@@ -352,9 +366,8 @@ const updateEvent = (props: boolean) => {
   }
 };
 
-//删除成绩
 const deleteAccess = (row: any) => {
-  if (getGrade.value >= (row.subscribers as number)) {
+  if (getGrade.value >= (row.subscribers as number) && roleId.value != 3) {
     ElMessage({
       type: "warning",
       message: "您还未获得该权限哦！",
@@ -362,8 +375,8 @@ const deleteAccess = (row: any) => {
     return;
   }
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
     type: "warning",
   })
     .then(async () => {
@@ -374,7 +387,8 @@ const deleteAccess = (row: any) => {
           message: "删除成功",
         });
         getAccessInfo({
-          keyword: manageSearchKey.value,
+          keyword: manageSearchName.value,
+          subscribers: manageSearchGrade.value,
           currentPage: managePageInfo.value.currentPage,
           pageSize: managePageInfo.value.pageSize,
         });
@@ -403,7 +417,12 @@ const watchAccess = (row: any) => {
   }
   if (row.type == "笔试") {
     scoreDialogVisible.value = true;
-    watchScoreRef.value?.scoreTableId(row.id);
+    watchScoreRef.value?.scoreTableId(
+      row.subscribers,
+      row.id,
+      getGrade.value,
+      roleId.value
+    );
   } else {
     interviewDialogVisible.value = true;
     watchInterviewRef.value?.interviewId(

@@ -43,6 +43,7 @@ export const getAllAccessService = (props: {
   name?: string;
   nodePage: number;
   pageSize: number;
+  subscribers?: string;
 }) => {
   return hyRequest.get<IResultData<any>>(`/access/studyPlan/page`, {
     ...props,

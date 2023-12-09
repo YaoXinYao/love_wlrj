@@ -69,7 +69,7 @@
             type="success"
             @click="addInterviewBtn"
             style="margin-right: 20px"
-            v-if="!(gradeNumber <= userGrade && userRole != 3)"
+            v-if="gradeNumber < userGrade || userRole == 3"
             >添加</el-button
           >
         </div>
@@ -99,6 +99,7 @@
                   }}<el-icon
                     class="deleteInterview"
                     @click="deleteInterview(c.id, props.row)"
+                    v-if="gradeNumber < userGrade || userRole == 3"
                     ><Delete /></el-icon></span
               ></span>
               <p>
@@ -355,6 +356,7 @@ defineExpose({ interviewId });
   font-family: "Times New Roman", Times, serif;
   border-bottom: 1px dashed #ccc;
   margin-left: 40px;
+  cursor: pointer;
 
   &:hover {
     background-color: aliceblue;
