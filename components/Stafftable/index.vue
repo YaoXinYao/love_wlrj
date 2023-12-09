@@ -22,7 +22,7 @@
         </el-table-column>
       <el-table-column #default="scope" label="操作">
         <el-button size="small" @click="handleEdit(scope.row)">详情</el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId >= scope.row.roleId"
+        <el-button size="small" type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId >= scope.row.roleId && userinfo.roleId!=1"
           >删除</el-button
         >
       </el-table-column>

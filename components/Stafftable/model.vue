@@ -208,6 +208,7 @@
       v-model="personScore"
       title="查看成绩"
       style="--el-dialog-width: max-content"
+      :before-close="shutScore"
     >
       <div class="headerBox">
         考核类型：
@@ -235,7 +236,7 @@
       />
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="personScore = false"
+          <el-button type="primary" @click="shutScore"
             >关闭</el-button
           >
         </span>
@@ -577,6 +578,11 @@ const updateShut = () => {
   setRole.value = "";
   manageRole.value = false;
 };
+//关闭成绩弹窗
+const shutScore = ()=>{
+  personScore.value = false
+  scoreType.value="笔试"
+}
 </script>
 <style lang="scss" scoped>
 .el-button--text {
