@@ -79,13 +79,13 @@ export default defineNuxtConfig({
       },
       //网盘接口
       "/disk": {
-        target: "http://112.125.120.78:19520/",
+        target: "http://152.136.161.44:19491/disk/swagger",
         changeOrigin: true,
         prependPath: true,
       },
       //用户接口
       "/coustom": {
-        target: "http://112.125.120.78:8666/",
+        target: "http://152.136.161.44:19491/user/swagger",
         changeOrigin: true,
         prependPath: true,
       },
