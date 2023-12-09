@@ -39,7 +39,7 @@ export const deleteTimetable = (id: string) => {
 //修改用户基本信息
 export const updateUserSelfInformation = (props: UserBaseInfoType) => {
   return hyRequest.put<IResultData<any>>(
-    `/coustom/user/user/updateSelfInformation`,
+    `/zinfo/user/user/updateSelfInformation`,
     {
       ...props,
     }
@@ -48,19 +48,19 @@ export const updateUserSelfInformation = (props: UserBaseInfoType) => {
 
 //获取当前登录用户
 export const getLoginUser = () => {
-  return hyRequest.get<IResultData<any>>(`/coustom/user/user/getLoginUser`);
+  return hyRequest.get<IResultData<any>>(`/zinfo/user/user/getLoginUser`);
 };
 
 //发送验证码（type为0是登陆，1是修改密码）
 export const sendEmail = (props: { email: string; type: number }) => {
-  return hyRequest.post<IResultData<any>>(`/coustom/user/user/sendEmail`, {
+  return hyRequest.post<IResultData<any>>(`/zinfo/user/user/sendEmail`, {
     ...props,
   });
 };
 
 //通过id获取某个用户信息
 export const getUserInfoById = (id: number) => {
-  return hyRequest.get<IResultData<any>>("/coustom/user/user/getUserById", {
+  return hyRequest.get<IResultData<any>>("/zinfo/user/user/getUserById", {
     id,
   });
 };
@@ -68,7 +68,7 @@ export const getUserInfoById = (id: number) => {
 //通过账号查询用户
 export const getUserInfoByAccount = (account: string) => {
   return hyRequest.get<IResultData<any>>(
-    "/coustom/user/user/getLoginUserByPassword",
+    "/zinfo/user/user/getLoginUserByPassword",
     {
       account,
     }
@@ -80,7 +80,7 @@ export const searchUserByGradeService = (
   userGrade: string | number,
   userName?: string
 ) => {
-  return hyRequest.get<IResultData<any>>("/coustom/user/user/selectUser", {
+  return hyRequest.get<IResultData<any>>("/zinfo/user/user/selectUser", {
     userGrade,
     userName,
   });
@@ -92,28 +92,26 @@ export const searchUserervice = (props: {
   pageSize: number;
   userGrade: number | string;
 }) => {
-  return hyRequest.get<IResultData<any>>("/coustom/user/user/selectAllUser", {
+  return hyRequest.get<IResultData<any>>("/zinfo/user/user/selectAllUser", {
     ...props,
   });
 };
 
 //修改密码
 export const updateUserPassword = (props: UpdatePassType) => {
-  return hyRequest.put<IResultData<any>>(`/coustom/user/user/updatePassword`, {
+  return hyRequest.put<IResultData<any>>(`/zinfo/user/user/updatePassword`, {
     ...props,
   });
 };
 
 //修改头像
 export const updateUserAvatar = (file: any) => {
-  return hyRequest.put<IResultData<any>>(
-    `/coustom/user/user/updatePictureSelf`,
-    { file: file }
-  );
+  return hyRequest.put<IResultData<any>>(`/zinfo/user/user/updatePictureSelf`, {
+    file: file,
+  });
 };
 
 //获取所有年级
 export const getAllGrade = () => {
-  return hyRequest.get<IResultData<any>>(`/coustom/user/user/selectAllGrade`);
+  return hyRequest.get<IResultData<any>>(`/zinfo/user/user/selectAllGrade`);
 };
-

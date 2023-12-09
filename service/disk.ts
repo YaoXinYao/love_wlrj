@@ -10,7 +10,7 @@ import type {
 import Hyrequire from "./index";
 import type { IResultData } from "~/types/Userlogin";
 export function getfilelist(index: number, pagesize: number) {
-  return Hyrequire.request("/disk/disk/file/getAllUploadFileList", "GET", {
+  return Hyrequire.request("/api/disk/file/getAllUploadFileList", "GET", {
     index: index,
     pageSize: pagesize,
   });
@@ -31,7 +31,7 @@ export function uploadfile(
     .map((item) => `fileTypeIdList=${item}`)
     .join("&");
   return uploadFileWithProgress(
-    `/disk/disk/file/updateFile?${filetag}&uploadName=${uploadName}&uploaderId=${uploaderId}&md5=${md5}`,
+    `/api/disk/file/updateFile?${filetag}&uploadName=${uploadName}&uploaderId=${uploaderId}&md5=${md5}`,
     file,
     progress
   );
@@ -39,7 +39,7 @@ export function uploadfile(
 //取消收藏
 export function unCollectionFile(params: unCollectType) {
   return Hyrequire.request<IResultData<any>>(
-    "/disk/disk/file/unCollectionFile",
+    "/api/disk/file/unCollectionFile",
     "put",
     { ...params, userId: Authuserid() }
   );
@@ -47,7 +47,7 @@ export function unCollectionFile(params: unCollectType) {
 //查看自己上传的文件
 export function LookMyfile(params: MyfileType) {
   return Hyrequire.request<IResultData<any>>(
-    "/disk/disk/file/getUploadFileList",
+    "/api/disk/file/getUploadFileList",
     "GET",
     {
       ...params,
@@ -56,18 +56,18 @@ export function LookMyfile(params: MyfileType) {
 }
 //修改为私密
 export function FileToPrivate(params: ToProvate) {
-  return Hyrequire.request("/disk/disk/file/updateFileToPrivate", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileToPrivate", "put", {
     ...params,
   });
 }
 export function FileToPublic(params: ToProvate) {
-  return Hyrequire.request("/disk/disk/file/updateFileToPublic", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileToPublic", "put", {
     ...params,
   });
 }
 // 获取网盘总览信息
 export function GetDisjinfo() {
-  return Hyrequire.get("/disk/disk/file/getDiskOverview");
+  return Hyrequire.get("/api/disk/file/getDiskOverview");
 }
 /**
  *
@@ -76,7 +76,7 @@ export function GetDisjinfo() {
  */
 export function SearchFile(params: SearchMyfileType) {
   return Hyrequire.get<IResultData<Fileprops[]>>(
-    "/disk/disk/file/searchCollectionFile",
+    "/api/disk/file/searchCollectionFile",
     {
       ...params,
     }
@@ -84,19 +84,19 @@ export function SearchFile(params: SearchMyfileType) {
 }
 //搜索自己文件
 export function SearchMyfile(parmas: SearchMyfileType) {
-  return Hyrequire.get("/disk/disk/file/searchUploadFile", {
+  return Hyrequire.get("/api/disk/file/searchUploadFile", {
     ...parmas,
   });
 }
 //删除文件
 export function uploaddeleteFile(params: ToProvate) {
-  return Hyrequire.request("/disk/disk/file/updateFileDelete", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileDelete", "put", {
     ...params,
   });
 }
 //网盘搜索
 export function DiskSearch(params: SearchParams) {
-  return Hyrequire.request("/disk/disk/es/searchES", "GET", {
+  return Hyrequire.request("/api/disk/es/searchES", "GET", {
     ...params,
   });
 }

@@ -113,6 +113,7 @@ const yearDate = ref([
   },
 ]);
 watch(curYear, (cur, preval) => {
+  console.log(cur, preval);
   const durantion = Math.abs(
     Number(yearDate.value[cur].time.slice(0, 4)) -
       Number(yearDate.value[preval].time.slice(0, 4))
@@ -144,10 +145,14 @@ function tranform(nums: number, dur: number) {
     ease: "power1.inOut", // 缓动函数
   });
 }
+//BUG 已修复
 function changecur() {
   const pagenum = curYear.value;
-  if (pagenum >= yearDate.value.length) return;
-  curYear.value = curYear.value + 1;
+  if (pagenum >= yearDate.value.length - 1) {
+    return;
+  } else {
+    curYear.value = curYear.value + 1;
+  }
 }
 function Pagedele() {
   const pagenum = curYear.value;

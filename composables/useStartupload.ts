@@ -71,7 +71,7 @@ export async function startUpload(
   //  上传单片
   async function uploadChunk(xhr: XMLHttpRequest, formData: FormData) {
     return new Promise((resolve, reject) => {
-      xhr.open("POST", "/disk/disk/file/shardingUpload", true);
+      xhr.open("POST", "/api/disk/file/shardingUpload", true);
       xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
         }

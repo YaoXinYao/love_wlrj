@@ -4,7 +4,6 @@ import { useHomestore } from "~/store/home";
 export default defineNuxtRouteMiddleware((to, from) => {
   const homestore = useHomestore();
   const { userinfo, user } = storeToRefs(homestore);
-
   //用户权限信息从token解析获取，
   if (to.meta.roles) {
     if (user.value.token == "") {

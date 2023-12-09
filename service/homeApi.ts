@@ -20,7 +20,7 @@ import type { Filelist, FilePrevviewList } from "~/types/disk";
 //账号密码登录
 export function Userloginany(logininfo: loginparams) {
   return Hyrequire.request<IResultData<LoginRes>>(
-    "/zinfo/user/user/loginByPassword",
+    "/api/user/user/loginByPassword",
     "POST",
     {
       ...logininfo,
@@ -30,7 +30,7 @@ export function Userloginany(logininfo: loginparams) {
 //发送验证码
 export function sendEmeil(params: sendEmailparams) {
   return Hyrequire.request<IResultData<any>>(
-    "/zinfo/user/user/sendEmail",
+    "/api/user/user/sendEmail",
     "POST",
     {
       ...params,
@@ -40,7 +40,7 @@ export function sendEmeil(params: sendEmailparams) {
 //邮箱登录
 export function Userloginemail(params: Emailparams) {
   return Hyrequire.request<IResultData<any>>(
-    "/zinfo/user/user/loginByEmail",
+    "/api/user/user/loginByEmail",
     "POST",
     {
       ...params,
@@ -50,7 +50,7 @@ export function Userloginemail(params: Emailparams) {
 //获取用户信息
 export function getUserinfo2(account: any) {
   return Hyrequire.request<IResultData<Homestoreuserinfo>>(
-    "/zinfo/user/user/getLoginUserByPassword",
+    "/api/user/user/getLoginUserByPassword",
     "GET",
     {
       account,
@@ -63,18 +63,18 @@ export function getAllblog() {
     IResultData<{
       [key: string]: blogitem[];
     }>
-  >("/zinfo/user/user/selectBlog", "GET");
+  >("/api/user/user/selectBlog", "GET");
 }
 //查询所有标签
 export function getAlltag() {
   return Hyrequire.request<IResultData<Filetag[]>>(
-    "/disk/disk/type/selectAllTypes",
+    "/api/disk/type/selectAllTypes",
     "GET"
   );
 }
 //收藏文件
 export function Favoritefile(fileId: number) {
-  return Hyrequire.request("/disk/disk/file/collectionFile", "put", {
+  return Hyrequire.request("/api/disk/file/collectionFile", "put", {
     fileId,
     userId: Authuserid(),
   });
@@ -82,7 +82,7 @@ export function Favoritefile(fileId: number) {
 //获取文件列表
 export function getFilelist(params: Filelistprops) {
   return Hyrequire.request<IResultData<Filelist>>(
-    "/disk/disk/file/getAllUploadFileList",
+    "/api/disk/file/getAllUploadFileList",
     "GET",
     {
       ...params,
@@ -93,7 +93,7 @@ export function getFilelist(params: Filelistprops) {
 export function getFileTaglist(params: Tagparams) {
   console.log(params.types);
   return Hyrequire.request<IResultData<Filelist>>(
-    `/disk/disk/file/getFileListByTypes?${params.types}&pageSize=${
+    `/api/disk/file/getFileListByTypes?${params.types}&pageSize=${
       params.pageSize
     }&index=${params.index}&userId=${Authuserid()}`,
     "GET"
@@ -102,7 +102,7 @@ export function getFileTaglist(params: Tagparams) {
 //我的收藏
 export function GetMylovefile(params: Tagparams) {
   return Hyrequire.request<IResultData<Filelist>>(
-    `/disk/disk/file/getCollectionList?pageSize=${params.pageSize}&index=${
+    `/api/disk/file/getCollectionList?pageSize=${params.pageSize}&index=${
       params.index
     }&userId=${Authuserid()}`,
     "GET"
@@ -123,7 +123,7 @@ export function GetHotnews(params: Hotnews) {
 // 获取文件预览图
 export function getFilePreviewList(fileId: number) {
   return Hyrequire.get<IResultData<FilePrevviewList[]>>(
-    "/disk/disk/file/getFilePreviewList",
+    "/api/disk/file/getFilePreviewList",
     {
       fileId,
     }

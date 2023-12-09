@@ -321,13 +321,10 @@ export async function Filefragmentation(
   form.append("md5", md5);
   //数据填充完毕，开始上传
   try {
-    const { data } = await useFetch<any>(
-      "/disk/disk/file/shardingUploadAsync",
-      {
-        method: "post",
-        body: form,
-      }
-    );
+    const { data } = await useFetch<any>("/api/disk/file/shardingUploadAsync", {
+      method: "post",
+      body: form,
+    });
     //这个分片上传成功
     if (data.value!.code == 20000) {
       await Filefragmentation(file, chunkindex + 1, md5, uploadname, curTag);
