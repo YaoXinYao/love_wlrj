@@ -74,7 +74,7 @@
               <el-menu-item index="9-3">
                 <NuxtLink to="/admin/staff"> 进入后台 </NuxtLink>
               </el-menu-item>
-              <el-menu-item index="9-4" @click="homestore.exitlogin"
+              <el-menu-item index="9-4" @click="useLoginout"
                 >退出登录</el-menu-item
               >
             </el-sub-menu>
@@ -86,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+import { useLoginout } from "~/hooks/useLoginout";
 import { useHomestore } from "~/store/home";
 const homestore = useHomestore();
 const isflod = ref(false);
