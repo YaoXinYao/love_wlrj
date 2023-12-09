@@ -282,16 +282,19 @@ const shutClose = () => {
     max-width: none;
     min-width: none;
     width: 100%;
+    margin-bottom: 20px;
   }
   .freshman-1 {
     max-width: none;
     min-width: none;
     width: 100%;
+    margin-bottom: 20px;
   }
   .freshman-2 {
     max-width: none;
     min-width: none;
     width: 100%;
+    margin-bottom: 20px;
   }
 }
 </style>
