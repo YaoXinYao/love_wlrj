@@ -46,8 +46,6 @@ onMounted(() => {
 watch(
   () => isUpdate.value.PostCollect,
   (newValue) => {
-    console.log(newValue);
-
     if (newValue) {
       getInfo();
       isUpdate.value.PostCollect = false;

@@ -1,3 +1,4 @@
+<!-- 消息中心模块，本目录下代码基本一致，方便日后对某个模块进行调整 -->
 <template>
   <div class="app">
     <div v-show="!pageInfo.total && !isLoading">
@@ -12,6 +13,7 @@
         :key="info.id"
         class="noticeItem animate__animated animate__fadeIn"
       >
+        <!-- 消息组件 -->
         <Info :data="info" :type="'PostComment'" />
       </li>
     </ul>
@@ -45,8 +47,6 @@ onMounted(() => {
 watch(
   () => isUpdate.value.PostComment,
   (newValue) => {
-    console.log(newValue);
-
     if (newValue) {
       getInfo();
       isUpdate.value.PostComment = false;
@@ -56,12 +56,15 @@ watch(
 
 const getInfo = async () => {
   isLoading.value = true;
+
+  //通过自定义的hook获取消息
   let messageRes = await useGetMessageInfo({
     pageNo: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
     type: curType.value,
     userId: userinfo.value.userId,
   });
+
   messageStore.ChangePageInfo({
     pageSize: messageRes?.resPageInfo.pageSize,
     currentPage: messageRes?.resPageInfo.current,

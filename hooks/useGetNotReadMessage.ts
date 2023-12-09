@@ -1,3 +1,4 @@
+//用来获取未读消息数目
 import { getNotReadInfo } from "~/service/message";
 import { storeToRefs } from "pinia";
 import { useHomestore } from "~/store/home";
@@ -6,9 +7,7 @@ export const useGetNotReadMessage = async () => {
   const homeStore = useHomestore();
   let { userinfo } = storeToRefs(homeStore);
   const messageStore = useMessageStore();
-  const { curType, pageInfo, infoList } = storeToRefs(messageStore);
   let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
-  console.log(notReadInfoRes);
 
   const {
     commentLikeCnt,

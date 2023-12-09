@@ -1,6 +1,8 @@
+<!-- 个人成绩页面 -->
 <template>
   <div class="container animate__animated animate__fadeIn">
     <div class="headerBox">
+      <!-- 返回个人主页按钮的自定义组件 -->
       <ReturnPersonalPage />
 
       <el-select
@@ -19,6 +21,7 @@
     </div>
     <!-- 成绩分析echart图，暂无法实现 -->
     <!-- <div class="echarts"><Echarts /></div> -->
+    <!-- 笔试/面试成绩组件，需要传入用户id -->
     <SelfWrittenScore v-show="scoreType == '笔试'" :userId="userId" />
     <SelfInterviewScore v-show="scoreType == '面试'" :userId="userId" />
   </div>

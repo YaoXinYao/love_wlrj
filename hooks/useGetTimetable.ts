@@ -1,3 +1,4 @@
+//用来获取课表信息
 import { getTimetable } from "~/service/user";
 let weekDay = [
   "monday",
@@ -17,7 +18,7 @@ export const useGetTimetable = async (userId: number) => {
   for (let i = 0; i < timetableData.length; i++) {
     tableInfo[i].date = i;
     for (let j = 0; j < timetableData[i].length; j++) {
-      tableInfo[i][weekDay[timetableData[i][j].courseWeek-1]] =
+      tableInfo[i][weekDay[timetableData[i][j].courseWeek - 1]] =
         timetableData[i][j];
     }
 

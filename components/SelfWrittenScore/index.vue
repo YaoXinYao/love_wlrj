@@ -1,3 +1,4 @@
+<!-- 笔试类型考核组件 -->
 <template>
   <div class="selfScore">
     <el-table
@@ -45,7 +46,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="考核名称" prop="plan" />
+      <el-table-column label="考核名称" prop="plan" fixed />
       <el-table-column label="考核类型" prop="type">
         <template #default="scope"
           ><el-tag size="large">{{ scope.row.type }}</el-tag></template
@@ -76,7 +77,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { ref } from "vue";
 const parentBorder = ref(true);
 const childBorder = ref(false);
@@ -86,7 +86,7 @@ import {
   getInterviewService,
   getScoreByAccessService,
   getTemplateService,
-} from "~/service/user";
+} from "~/service/access";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
 const props = defineProps(["userId"]);
 let userId = ref();
@@ -118,6 +118,7 @@ const handleCurrentChange = (val: number) => {
   getInfo();
 };
 
+//获取笔试信息
 const getInfo = async () => {
   writtenScoreList.value = [];
   let scoreInfoRes = await getScoreByAccessService({

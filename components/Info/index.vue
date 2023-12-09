@@ -1,8 +1,25 @@
+<!-- 消息中心信息组件，可进行删除 -->
 <template>
   <div class="item" ref="target">
-    <div class="noticeContent">
-      {{ props.data.info }}
+    <div class="infoSender">
+      <el-avatar
+        style="margin-top: 5px"
+        :size="30"
+        :src="props.data.msgSendAvatar"
+      />
+      <span class="infoSenderName">{{ props.data.msgSendName }}</span>
     </div>
+    <NuxtLink
+      @click="
+        navigateTo({
+          path: '/forum/details',
+          query: { data: props.data.msgContentId },
+        })
+      "
+      class="noticeContent"
+    >
+      &emsp;&emsp;{{ props.data.infoContent }}
+    </NuxtLink>
     <span class="noticeDate">{{ props.data.date }}</span>
     <div class="deleteBox" @click="deleteMessage">
       <el-icon class="deleteIcon"><Delete /></el-icon>
@@ -25,8 +42,8 @@ const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const props = defineProps(["data", "type"]);
 const target = ref();
-
 const emit = defineEmits(["addAlert", "info_event"]);
+console.log(props.data);
 
 const deleteMessage = () => {
   ElMessageBox.confirm("你确定要删除该消息吗？")
@@ -45,8 +62,6 @@ const deleteMessage = () => {
           type: curType.value,
           userId: userinfo.value.userId,
         });
-
-        console.log(messageRes);
 
         messageStore.ChangePageInfo({
           pageSize: messageRes?.resPageInfo.pageSize,
@@ -73,19 +88,6 @@ const deleteMessage = () => {
     });
 };
 
-//stop调用之后就会停止观察
-// const { stop } = useIntersectionObserver(
-//   target,
-//   ([{ isIntersecting }], observerElement) => {
-//     if (isIntersecting) {
-//       console.log("出现了");
-//       stop();
-//       updateMsgStatus(props.data.id);
-//     }
-//   },
-//   { threshold: 0 }
-// );
-
 useObserver(target, updateMsgStatus, props.data.id);
 </script>
 
@@ -97,15 +99,28 @@ useObserver(target, updateMsgStatus, props.data.id);
   overflow: hidden;
   background-color: #fff;
   padding: 0 0 5px 5px;
-  border-radius: 5px;
+  border-radius: 2px;
   box-shadow: 1px 2px 5px #d9d9d9;
   position: relative;
-  margin-bottom: 10px;
 
   &:hover {
     .deleteBox {
       right: -50px;
     }
+
+    .noticeContent {
+      color: rgb(160, 203, 235);
+    }
+  }
+}
+
+.infoSender {
+  display: flex;
+
+  .infoSenderName {
+    display: inline-block;
+    line-height: 30px;
+    margin-left: 10px;
   }
 }
 
@@ -132,6 +147,7 @@ useObserver(target, updateMsgStatus, props.data.id);
   // white-space: nowrap;
   color: #666;
   letter-spacing: 0.1em;
+  cursor: pointer;
 }
 
 .noticeDate {

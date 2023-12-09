@@ -1,3 +1,4 @@
+<!-- 个人主页 -->
 <template>
   <div class="container">
     <div class="backgroung_img">
@@ -51,15 +52,16 @@ import {
 } from "element-plus";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
+const homeStore = useHomestore();
+let { userinfo, user } = storeToRefs(homeStore);
+const imageUrl = ref(userinfo.value.userPicture);
+
 definePageMeta({
   layout: "person",
   roles: 1,
 });
 
-const homeStore = useHomestore();
-let { userinfo, user } = storeToRefs(homeStore);
-const imageUrl = ref(userinfo.value.userPicture);
-
+//上传头像成功回调
 const handleAvatarSuccess: UploadProps["onSuccess"] = async (
   response,
   uploadFile
@@ -70,7 +72,6 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = async (
 };
 
 const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
-  console.log(rawFile.type);
   let imgTypes = ["image/png", "image/jpeg", "image/webp"];
   if (imgTypes.indexOf(rawFile.type) == -1) {
     ElMessage.error("图片格式只能为jpg、png、webp格式！");
@@ -82,13 +83,13 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
   return true;
 };
 
+//上传头像失败回调
 const handleAvatarError = (
   error: Error,
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
   ElMessage.error("上传失败");
-  console.log(error);
 };
 </script>
 <style lang="scss" scoped>

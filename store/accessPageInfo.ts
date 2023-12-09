@@ -29,6 +29,26 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
     async ChangeSelfWrittenPageInfo(props: AccessPageInfoType) {
       this.selfWrittenPageInfo = props;
     },
+
+    exitLogin() {
+      (this.managePageInfo = {
+        currentPage: 1,
+        pageSize: 5,
+        total: 0,
+      }),
+        (this.manageSearchKey = ""),
+        (this.selfWrittenPageInfo = {
+          currentPage: 1,
+          pageSize: 5,
+          total: 0,
+        }),
+        (this.selfInterviewPageInfo = {
+          currentPage: 1,
+          pageSize: 5,
+          total: 0,
+        }),
+        (this.selfSearchKey = "");
+    },
   },
   //持久化操作
   persist: true,

@@ -1,3 +1,4 @@
+<!-- 消息中心 -->
 <template>
   <ClientOnly>
     <div class="container">
@@ -125,6 +126,7 @@ onMounted(() => {
   getInfo();
 });
 
+//获取未读信息数量并存于store
 let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
 const {
   commentLikeCnt,
@@ -141,6 +143,7 @@ messageStore.ChangeNotReadNum({
   postLikeCnt,
 });
 
+//利用自己封装的hook获取消息数据
 const getInfo = async () => {
   let messageRes = await useGetMessageInfo({
     pageNo: pageInfo.value.currentPage,
@@ -212,6 +215,8 @@ const handleCurrentChange = (val: number) => {
   border-radius: 5px;
   color: #fff;
   overflow: auto;
+  position: sticky;
+  top: 0px;
 
   h2 {
     text-align: center;

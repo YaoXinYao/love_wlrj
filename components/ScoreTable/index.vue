@@ -1,3 +1,4 @@
+<!-- 后台笔试成绩组件 -->
 <template>
   <ClientOnly>
     <AddScoreInfo
@@ -36,7 +37,7 @@
         <el-table-column
           v-for="(item, index) in templates"
           :key="index"
-          :label="item.name"
+          :label="item.name + '(' + item.rate * 100 + '%)'"
           :prop="item.name"
         />
 
@@ -76,15 +77,16 @@
 </template>
 
 <script setup lang="ts">
+import { getUserInfoById } from "~/service/user";
 import {
   deleteScoreService,
   getAccessInfo,
   getScoreByAccessService,
   getTemplateService,
-  getUserInfoById,
-} from "~/service/user";
+} from "~/service/access";
 import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
 import UpdateScoreInfo from "@/components/UpdateScoreInfo/index.vue";
+import type { AccessItem } from "~/types/Access";
 
 const props = defineProps(["id", "dialogVisible", "getGrade", "roleId"]);
 const emit = defineEmits(["scoreAlert"]);
@@ -110,7 +112,7 @@ let managePageInfo = ref({
   allCount: 0,
   size: 5,
 });
-let templates: any;
+let templates: Array<AccessItem>;
 
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
   dialogVisible.value = newValue;
@@ -161,12 +163,14 @@ const getInfo = async () => {
     const list = scoreInfoRes.data.value.data.list;
     let scoreList = new Array(list.length);
     templates = templateRes.data.value.data.types;
+
     for (let i = 0; i < list.length; i++) {
       let scores = list[i].scores;
       let obj: { [x: string]: string } = {};
       obj.id = list[i].id;
       for (let j = 0; j < scores.length; j++) {
-        obj[scores[j].name] = scores[j].score;
+        let objKey = "" + scores[j].name + scores[j].rate;
+        obj[objKey] = scores[j].score;
       }
       let studentNameRes = await getUserInfoById(list[i].studentId);
       obj["name"] = studentNameRes.data.value.data.userName;

@@ -1,3 +1,4 @@
+<!-- 课表组件，可对某个用户课表进行增删改的擦偶偶 -->
 <template>
   <div class="container">
     <ClientOnly>
@@ -90,7 +91,7 @@
             >
           </template>
         </el-table-column>
-        <el-table-column fixed prop="monday" label="星期一">
+        <el-table-column prop="monday" label="星期一">
           <template #default="props">
             <div class="courseInfo" v-if="props.row.monday.courseName">
               <span>{{ props.row.monday.courseName }}</span
@@ -217,11 +218,8 @@ import { useGetTimetable } from "@/hooks/useGetTimetable";
 import { addTimetable, deleteTimetable, updateTimetable } from "~/service/user";
 import type { FormInstance } from "element-plus/es/components/form";
 import type { Course, CourseDetail, DayOfWeekString } from "~/types/Course";
-import { useHomestore } from "~/store/home";
-import { storeToRefs } from "pinia";
 let isEdit = ref(false);
 const ruleFormRef = ref<FormInstance>();
-const homeStore = useHomestore();
 
 const props = defineProps(["isEditCourse", "userId"]);
 let userId = ref();
@@ -279,6 +277,7 @@ let currentEditCourse = reactive({
   },
 });
 
+//点击课表进行操作
 const handleCellClick = (row: any, column: any, event: any) => {
   if (!isEditCourse.value) {
     return;
@@ -311,8 +310,8 @@ const rules = ref({
   ],
 });
 
+//编辑课表
 const editCourseFun = (formValidate: FormInstance | undefined) => {
-  console.log(formValidate);
   if (!formValidate) return;
   formValidate?.validate((valid) => {
     if (!valid) {
@@ -377,6 +376,7 @@ const editCourseFun = (formValidate: FormInstance | undefined) => {
   });
 };
 
+//单元格样式
 const cellContentStyle = (row: any) => {
   if (row.columnIndex != 0) {
     return {
@@ -387,6 +387,7 @@ const cellContentStyle = (row: any) => {
   }
 };
 
+//删除课表
 const deleteCourseFun = () => {
   ElMessageBox.confirm("确认要删除该课程吗", "提示", {
     confirmButtonText: "OK",

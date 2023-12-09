@@ -1,3 +1,4 @@
+<!-- 考核类型展示的组件 -->
 <template>
   <ClientOnly>
     <el-dialog
@@ -65,11 +66,11 @@
 
 <script setup lang="ts">
 import {
+  getAllTypesService,
   addAccessTypeService,
   deleteTypeByIdService,
-  getAllTypesService,
   updateTypeService,
-} from "~/service/user";
+} from "~/service/access";
 import { onMounted } from "vue";
 import type { TypesType } from "~/types/Access";
 import type { ElInput } from "element-plus";
@@ -108,7 +109,6 @@ const changeUpdateTypesState = () => {
 
 const getTypesList = async () => {
   let getTypesListRes = await getAllTypesService();
-  console.log(getTypesListRes);
   if (getTypesListRes.data.value.code == 20000) {
     typesList.value = getTypesListRes.data.value.data;
     isNull.value = false;

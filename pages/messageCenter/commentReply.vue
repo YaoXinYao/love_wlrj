@@ -9,7 +9,7 @@
     <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
-        :key="index"
+        :key="info.id"
         class="noticeItem animate__animated animate__fadeIn"
       >
         <Info :data="info" :type="'CommentReply'" />
@@ -25,9 +25,10 @@ import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
 const messageStore = useMessageStore();
 messageStore.ChangeCurType("CommentReply");
 import { useHomestore } from "~/store/home";
+import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
-const { curType, pageInfo, infoList } = storeToRefs(messageStore);
+const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);
 const isLoading = ref(false);
 
 messageStore.ChangePageInfo({
@@ -38,7 +39,19 @@ messageStore.ChangePageInfo({
 const isNull = ref(false);
 onMounted(() => {
   getInfo();
+  isUpdate.value.CommentReply = false;
+  useGetNotReadMessage();
 });
+
+watch(
+  () => isUpdate.value.CommentReply,
+  (newValue) => {
+    if (newValue) {
+      getInfo();
+      isUpdate.value.CommentReply = false;
+    }
+  }
+);
 
 const getInfo = async () => {
   isLoading.value = true;
@@ -53,7 +66,8 @@ const getInfo = async () => {
     currentPage: messageRes?.resPageInfo.current,
     total: messageRes?.resPageInfo.total,
   });
-  if (messageRes.infoResList) {
+
+  if (messageRes.infoResList.length != 0) {
     messageStore.ChangeInfoList(messageRes.infoResList);
   } else {
     messageStore.ChangeInfoList([]);
@@ -61,8 +75,6 @@ const getInfo = async () => {
   }
   isLoading.value = false;
 };
-
-console.log(pageInfo.value);
 </script>
 <style scoped>
 .infinite-list {

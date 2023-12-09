@@ -1,3 +1,4 @@
+<!-- 个人课表页面 -->
 <template>
   <div class="animate__animated animate__fadeIn">
     <div class="btn">
@@ -7,6 +8,7 @@
       <ReturnPersonalPage />
     </div>
 
+    <!-- 自定义组件用来对课表进行展示、删除、添加、更新 isEditCourse：是否可编辑课表 userId：用户id -->
     <Timetable :isEditCourse="true" :userId="userId" />
   </div>
 </template>

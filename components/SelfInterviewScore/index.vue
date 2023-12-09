@@ -1,3 +1,4 @@
+<!-- 面试类型信息组件 -->
 <template>
   <div class="selfScore">
     <el-table
@@ -30,7 +31,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="考核名称" prop="plan" />
+      <el-table-column label="考核名称" prop="plan" fixed />
       <el-table-column label="考核类型" prop="type">
         <template #default="scope"
           ><el-tag size="large">{{ scope.row.type }}</el-tag></template
@@ -69,7 +70,7 @@ import {
   getAccessInfo,
   getInterviewService,
   getUserInterviewService,
-} from "~/service/user";
+} from "~/service/access";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
 const props = defineProps(["userId"]);
 let userId = ref();
@@ -103,6 +104,7 @@ const handleCurrentChange = (val: number) => {
   getInfo();
 };
 
+//获取面试信息
 const getInfo = async () => {
   interviewList.value = [];
   let scoreInfoRes = await getUserInterviewService({

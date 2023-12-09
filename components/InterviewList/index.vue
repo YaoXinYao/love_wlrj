@@ -1,3 +1,4 @@
+<!-- 后台面试成绩组件 -->
 <template>
   <ClientOnly>
     <el-dialog
@@ -68,6 +69,7 @@
             type="success"
             @click="addInterviewBtn"
             style="margin-right: 20px"
+            v-if="!(gradeNumber <= userGrade && userRole != 3)"
             >添加</el-button
           >
         </div>
@@ -128,21 +130,21 @@
 </template>
 
 <script setup lang="ts">
+import { searchUserByGradeService, searchUserervice } from "~/service/user";
 import {
   addInterviewService,
   deleteInterviewService,
   getInterviewService,
-  searchUserByGradeService,
-  searchUserervice,
-} from "~/service/user";
+} from "~/service/access";
 import type { UserAllInfoType } from "~/types/User";
 import { Delete } from "@element-plus/icons-vue";
 import type { FormInstance } from "element-plus";
-
 const props = defineProps(["id", "dialogVisible"]);
 const emit = defineEmits(["interviewAlert"]);
 let gradeNumber = ref(-1);
 let id = ref(-1);
+let userGrade = ref<number>(0);
+let userRole = ref<number>(1);
 const options = ref<Array<UserAllInfoType>>([]);
 const addInterviewRef = ref<FormInstance>();
 let userList = ref<Array<UserAllInfoType>>([]);
@@ -220,13 +222,9 @@ const handleCurChange = (val: number) => {
 };
 
 const deleteInterview = async (interviewId: number, row: any) => {
-  console.log(interviewId);
-
-  console.log(row);
   ElMessageBox.confirm("你确定要删除该消息吗？")
     .then(async () => {
       let deleteRes = await deleteInterviewService([interviewId]);
-      console.log(deleteRes);
 
       if (deleteRes.data.value.code == 20000) {
         ElMessage({
@@ -239,23 +237,17 @@ const deleteInterview = async (interviewId: number, row: any) => {
             index = i;
           }
         }
-        console.log(index);
 
         let interviewItemRes = await getInterviewService({
           id: row.userId,
           pId: id.value,
         });
-        console.log(interviewItemRes.data.value.code);
-        console.log(interviewItemRes.data.value.code == 20000);
-
         if (interviewItemRes.data.value.code == 20000) {
           userList.value[index].interviewList =
             interviewItemRes.data.value.data;
         } else {
           userList.value[index].interviewList = null;
         }
-
-        console.log(userList.value);
       } else {
         ElMessage({
           type: "error",
@@ -281,11 +273,9 @@ const searchUserByGrade = async (val: string) => {
     loading.value = true;
 
     let res = await searchUserByGradeService(gradeNumber.value, val);
-    console.log(res);
     if (res.data.value.code == 20000) {
       options.value = res.data.value.data;
     }
-    console.log(options.value);
     loading.value = false;
   }
 };
@@ -294,14 +284,11 @@ const addInterview = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (vaild) => {
     if (vaild) {
-      console.log(form.studentId);
       let addInterviewRes = await addInterviewService({
         content: form.content,
         PId: id.value,
         studentId: form.studentId,
       });
-
-      console.log(addInterviewRes);
       if (addInterviewRes.data.value.code == 20000) {
         ElMessage({
           type: "success",
@@ -339,9 +326,16 @@ const changeAddInterviewState = () => {
 };
 
 //暴露方法接收试卷id和学生id
-function interviewId(grade: number, pId: number) {
+function interviewId(
+  grade: number,
+  pId: number,
+  userGradeProp: number,
+  userRoleProp: number
+) {
   id.value = pId;
   gradeNumber.value = grade;
+  userGrade.value = userGradeProp;
+  userRole.value = userRoleProp;
 }
 defineExpose({ interviewId });
 </script>
