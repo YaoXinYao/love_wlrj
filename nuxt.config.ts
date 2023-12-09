@@ -73,7 +73,7 @@ export default defineNuxtConfig({
     devProxy: {
       //论坛管理
       "/api": {
-        target: "http://152.136.161.44:19491/forum/swagger/forum",
+        target: "http://152.136.161.44:19491",
         changeOrigin: true,
         prependPath: true,
       },
