@@ -50,7 +50,6 @@
         <el-button type="primary" @click="addinterModel = true"
           >添加接口</el-button
         >
-        <el-button type="success" @click="resetInter">更新权限</el-button>
       </div>
       <el-table
         :data="interfaceData"
@@ -225,16 +224,6 @@ const deleteInters = () => {
       ElMessage.warning("删除失败");
     }
     interDelete.value = false;
-  });
-};
-//重新加载接口
-const resetInter = () => {
-  authors.updateRoleAuthor().then((res) => {
-    if (res == 20000) {
-      ElMessage.success("权限更新完成");
-    } else {
-      ElMessage.error("更新权限失败");
-    }
   });
 };
 

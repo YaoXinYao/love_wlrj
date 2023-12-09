@@ -158,6 +158,7 @@ const addAuthor = () => {
       if (res == 20000) {
         ElMessage.success("添加成功");
         authorId.value = "";
+        resetInter()
         author.getAllRole().then(async (ress) => {
           roles.value = [];
           let len = ress.length;
@@ -191,6 +192,7 @@ const deleteAuthors = () => {
   author.deleteRoleAuthor(deleteAuthorId.value, roleId.value).then((res) => {
     if (res == 20000) {
       ElMessage.success("移除成功");
+      resetInter()
       let index = roles.value[userIndex.value].authorities.findIndex((item) => {
         if (item.authorityId == deleteAuthorId.value) {
           return true;
@@ -206,6 +208,10 @@ const deleteAuthors = () => {
 const shutClose = () => {
   addUserAuthor.value = false;
   authorId.value = "";
+};
+//重新加载权限
+const resetInter = () => {
+  author.updateRoleAuthor().then((res) => {});
 };
 </script>
 
