@@ -111,12 +111,12 @@ export function GetMylovefile(params: Tagparams) {
 //获取首页轮播图
 export function GetWrapper() {
   return Hyrequire.get<IResultData<WrapperType[]>>(
-    "/coustom/user/carousel/selectAllCarousel"
+    "/api/user/swagger/user/carousel/selectAllCarousel"
   );
 }
 // 热点新闻 这是那个usefetch请求
 export function GetHotnews(params: Hotnews) {
-  return Hyrequire.get<IResultData<NewsRoot>>("/notice/news/select", {
+  return Hyrequire.get<IResultData<NewsRoot>>("/api/notice/news/select", {
     ...params,
   });
 }

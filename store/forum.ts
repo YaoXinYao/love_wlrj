@@ -48,7 +48,6 @@ export interface cards {
   postSubId: number;
   postSource: string;
   pages: number;
-  datas: any[];
   discuss: any[];
   singleData: any;
   total: number;
@@ -77,7 +76,6 @@ export const forumStore = defineStore("forumInfo", {
       postSubId: 0,
       postSource: "",
       pages: 0,
-      datas: [],
       discuss: [],
       singleData: {},
       total: 0,
@@ -123,6 +121,8 @@ export const forumStore = defineStore("forumInfo", {
       if (pageNo == 1) {
         this.loadings = true;
       }
+      let datas = []
+      let h = 0;
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -132,9 +132,9 @@ export const forumStore = defineStore("forumInfo", {
         postUserId
       );
       this.pages = data.value?.data.pages;
-      this.datas = [];
       let dataArr = data.value?.data.records || [];
-      let h = 0;
+      console.log("后端页码",pageNo);
+      console.log("后端结果",data.value?.data.records);
       for (let i = 0; i < dataArr.length; i++) {
         //查询用户
         const use = await this.selectUser(dataArr[i].postUserId);
@@ -174,7 +174,7 @@ export const forumStore = defineStore("forumInfo", {
             collect = true;
             await this.addlike(dataArr[i].postId, 1, "Collect", userId);
           }
-          this.datas[h] = {
+          datas[h] = {
             ...postData,
             photos,
             userName,
@@ -186,7 +186,7 @@ export const forumStore = defineStore("forumInfo", {
         }
       }
       this.loadings = false;
-      return this.datas;
+      return datas;
     },
     //用户查询自己发布过的帖子
     async userPosts(
