@@ -3,7 +3,11 @@
 import { getMessageInfo } from "~/service/message";
 import { getPostInfoById } from "~/service/post";
 import { getUserInfoById } from "~/service/user";
-import type { GetMessagePropsType, MessageInfoResType } from "~/types/Message";
+import type {
+  GetMessagePropsType,
+  MessageInfoItemType,
+  MessageInfoResType,
+} from "~/types/Message";
 
 export const useGetMessageInfo = async (
   messageInfoProps: GetMessagePropsType
@@ -11,9 +15,7 @@ export const useGetMessageInfo = async (
   const messageInfoData = reactive<{ data: Array<MessageInfoResType> }>({
     data: [],
   });
-  let infoResList = reactive<Array<{ id: number; info: string; date: string }>>(
-    []
-  );
+  let infoResList = reactive<Array<MessageInfoItemType>>([]);
 
   let messageInfoRes = await getMessageInfo(messageInfoProps);
   let baseInfo = messageInfoRes.data.value.data;
@@ -24,7 +26,6 @@ export const useGetMessageInfo = async (
     pageSize: baseInfo.size,
   };
   messageInfoData.data = baseInfo.records;
-  console.log(messageInfoData.data);
 
   if (messageInfoData.data.length == 0) {
     infoResList = [];
@@ -65,7 +66,7 @@ export const useGetMessageInfo = async (
           date: messageInfoData.data[i].msgTime,
           msgStatus: messageInfoData.data[i].msgStatus,
           msgContentId: messageInfoData.data[i].msgContentId,
-          msgSendName:messageInfoData.data[i].msgSendName,
+          msgSendName: messageInfoData.data[i].msgSendName,
           msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
         };
         infoResList.push(infoItem);
@@ -77,7 +78,7 @@ export const useGetMessageInfo = async (
           date: messageInfoData.data[i].msgTime,
           msgStatus: messageInfoData.data[i].msgStatus,
           msgContentId: messageInfoData.data[i].msgContentId,
-          msgSendName:messageInfoData.data[i].msgSendName,
+          msgSendName: messageInfoData.data[i].msgSendName,
           msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
         };
         infoResList.push(infoItem);
@@ -91,7 +92,7 @@ export const useGetMessageInfo = async (
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName:messageInfoData.data[i].msgSendName,
+        msgSendName: messageInfoData.data[i].msgSendName,
         msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
       };
       infoResList.push(infoItem);
@@ -103,7 +104,7 @@ export const useGetMessageInfo = async (
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName:messageInfoData.data[i].msgSendName,
+        msgSendName: messageInfoData.data[i].msgSendName,
         msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
       };
       infoResList.push(infoItem);
@@ -115,7 +116,7 @@ export const useGetMessageInfo = async (
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName:messageInfoData.data[i].msgSendName,
+        msgSendName: messageInfoData.data[i].msgSendName,
         msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
       };
       infoResList.push(infoItem);

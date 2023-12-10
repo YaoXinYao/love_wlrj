@@ -134,7 +134,7 @@ const exit = () => {
 .dropDown {
   cursor: pointer;
   color: #666;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
 }
 

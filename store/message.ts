@@ -34,7 +34,6 @@ export const useMessageStore = defineStore("messageStore", {
   },
   actions: {
     ChangePageInfo(props: MessagePageInfoType) {
-      console.log(props);
       this.pageInfo = props;
     },
     ChangeCurType(type: MessageTypes) {

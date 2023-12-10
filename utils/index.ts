@@ -319,15 +319,13 @@ export async function Filefragmentation(
   form.append("total", shardCount as any); //总片数
   form.append("index", chunkindex as any); //当前是第几片
   form.append("md5", md5);
+  let timer: any = null;
   //数据填充完毕，开始上传
   try {
-    const { data } = await useFetch<any>(
-      "/disk/disk/file/shardingUploadAsync",
-      {
-        method: "post",
-        body: form,
-      }
-    );
+    const { data } = await useFetch<any>("/api/disk/file/shardingUploadAsync", {
+      method: "post",
+      body: form,
+    });
     //这个分片上传成功
     if (data.value!.code == 20000) {
       await Filefragmentation(file, chunkindex + 1, md5, uploadname, curTag);
@@ -343,7 +341,10 @@ export async function Filefragmentation(
       }, 1000);
     }
   } catch (error) {
-    setTimeout(async () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(async () => {
       await Filefragmentation(file, chunkindex, md5, uploadname, curTag);
     }, 1000);
   }

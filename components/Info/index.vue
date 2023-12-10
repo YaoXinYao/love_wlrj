@@ -43,7 +43,6 @@ let { userinfo } = storeToRefs(homeStore);
 const props = defineProps(["data", "type"]);
 const target = ref();
 const emit = defineEmits(["addAlert", "info_event"]);
-console.log(props.data);
 
 const deleteMessage = () => {
   ElMessageBox.confirm("你确定要删除该消息吗？")
@@ -110,6 +109,7 @@ useObserver(target, updateMsgStatus, props.data.id);
 
     .noticeContent {
       color: rgb(160, 203, 235);
+      word-break: break-all;
     }
   }
 }
