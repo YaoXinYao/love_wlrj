@@ -32,7 +32,7 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            label="课程开始时间（开始时间为开课的周一）"
+            label="课程开始时间（开课周周一）"
             prop="courseBeginDate"
           >
             <el-date-picker
@@ -62,7 +62,6 @@
           </span>
         </template>
       </el-dialog>
-
       <el-table
         :data="timetableList"
         style="
