@@ -52,9 +52,10 @@ export interface cards {
   discuss: any[];
   singleData: any;
   total: number;
+  totaType: number;
   loadings: boolean;
-  newPostContent:string;
-  newPostTitle:string
+  newPostContent: string;
+  newPostTitle: string;
 }
 export interface forums {
   labelModel: boolean;
@@ -80,9 +81,10 @@ export const forumStore = defineStore("forumInfo", {
       discuss: [],
       singleData: {},
       total: 0,
+      totaType: 0,
       loadings: false,
-      newPostContent:"",
-      newPostTitle:""
+      newPostContent: "",
+      newPostTitle: "",
     };
   },
   actions: {
@@ -118,7 +120,7 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
-      if(pageNo == 1){
+      if (pageNo == 1) {
         this.loadings = true;
       }
       const { data } = await getPost(
@@ -195,6 +197,7 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
+      this.loadings = true
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -204,6 +207,7 @@ export const forumStore = defineStore("forumInfo", {
         postUserId
       );
       this.total = data.value?.data.total || 0;
+      this.totaType = data.value?.data.total || 0;
       let dataArr = data.value?.data.records || [];
       let userDatas = [];
       if (dataArr.length != 0) {
@@ -214,6 +218,7 @@ export const forumStore = defineStore("forumInfo", {
           userDatas[i] = { ...postDataWithoutImg, photos };
         }
       }
+      this.loadings = false
       return userDatas;
     },
     //查询自己收藏或点赞的帖子
@@ -225,6 +230,7 @@ export const forumStore = defineStore("forumInfo", {
       userId?: number,
       postId?: number
     ) {
+      this.loadings = true
       let { data } = await getKeep(
         idType,
         pageNo,
@@ -236,6 +242,7 @@ export const forumStore = defineStore("forumInfo", {
       if (data.value?.code == 53004) {
         return [];
       } else {
+        this.totaType = data.value?.data.total || 0;
         let dataAll = data.value?.data.records || [];
         let selectKeeps = [];
         if (dataAll.length != 0) {
@@ -249,6 +256,7 @@ export const forumStore = defineStore("forumInfo", {
             selectKeeps[i] = { ...postDataWithoutImg, photos, ...postData };
           }
         }
+        this.loadings = false
         return selectKeeps;
       }
     },

@@ -36,7 +36,7 @@
       </div>
       <div class="newsbg"></div>
     </div>
-    <div class="main" v-loading="loading">
+    <div class="main" v-loading="loadings">
       <div class="introduce">
         <div class="triangle"></div>
         <div class="con">关于我</div>
@@ -173,10 +173,11 @@
             </div>
           </li>
           <el-pagination
-            v-if="total != 0"
+            v-if="totaType != 0"
             layout="prev, pager, next"
-            :total="total"
+            :total="totaType"
             :page-size="pages"
+            v-model:current-page="pageNo"
             @current-change="handleCurrentChange"
           />
         </ul>
@@ -192,9 +193,9 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-let { total } = storeToRefs(forums);
+let { total, totaType,loadings } = storeToRefs(forums);
 let pages = 15;
-let loading = ref(true);
+let pageNo = ref(1);
 
 let posts = ref<any[]>([]);
 let jage = ref("artic");
@@ -203,7 +204,6 @@ onMounted(() => {
     .userPosts(1, pages, undefined, undefined, undefined, userinfo.value.userId)
     .then((res) => {
       posts.value = res;
-      loading.value = false;
     });
 });
 //分页
@@ -212,7 +212,6 @@ const handleCurrentChange = (val: number) => {
 };
 //查询帖子
 function getStatus(pageNo: number) {
-  loading.value = true;
   if (jage.value == "artic") {
     forums
       .userPosts(
@@ -239,11 +238,11 @@ function getStatus(pageNo: number) {
         posts.value = res;
       });
   }
-  loading.value = false;
 }
 //切换状态查询帖子
 function changeStatus(status: string) {
   jage.value = status;
+  pageNo.value = 1;
   getStatus(1);
 }
 //取消点赞或收藏
@@ -257,6 +256,7 @@ const deleteData = (postId: number, type: string) => {
         }
       });
       posts.value.splice(index, 1);
+      totaType.value = totaType.value - 1;
     } else {
       ElMessage.success("取消失败");
     }
@@ -580,7 +580,7 @@ const deletePost = (id: number) => {
           height: 90px;
           a {
             display: inline-block;
-            p{
+            p {
               text-indent: 2em;
             }
           }

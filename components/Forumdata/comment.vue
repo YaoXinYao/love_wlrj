@@ -183,6 +183,8 @@ function comLike(comId: number, status: number, index: number,comUserId:number) 
       }
     }
     .cardContent {
+      word-break: break-all;
+      line-height: 22px;
       margin-bottom: 5px;
     }
     .cardImage {

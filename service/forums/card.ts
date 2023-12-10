@@ -3,7 +3,7 @@ import type { IResultData } from "../forum";
 
 //发布帖子
 export const addpost = (query: any, params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/post/insert", query, {
+  return hyRequest.post<IResultData<any>>("/api/forum/post/insert", query, {
     body: params,watch:false 
   });
 };
@@ -16,7 +16,7 @@ export const getPost = (
   postContent?: string,
   postUserId?: number
 ) => {
-  return hyRequest.get<IResultData<any>>("/api/post/select", {
+  return hyRequest.get<IResultData<any>>("/api/forum/post/select", {
     pageNo,
     pageSize,
     postTitle,
@@ -32,7 +32,7 @@ export const judgeLike = (
   type: string,
   userId: number
 ) => {
-  return hyRequest.post<IResultData<any>>("/api/post/likeOrCollect", "", {
+  return hyRequest.post<IResultData<any>>("/api/forum/post/likeOrCollect", "", {
     body: {
       postId,
       status,
@@ -43,25 +43,25 @@ export const judgeLike = (
 };
 //查询单个帖子
 export const singlePost = (postId: number) => {
-  return hyRequest.get<IResultData<any>>("/api/post/getPostById", { postId });
+  return hyRequest.get<IResultData<any>>("/api/forum/post/getPostById", { postId });
 };
 //查询指定文章下评论
 export const getComment = (postId: number) => {
-  return hyRequest.get<IResultData<any>>("/api/comment/select", { postId });
+  return hyRequest.get<IResultData<any>>("/api/forum/comment/select", { postId });
 };
 //发布评论
 export const postComment = (query: any, params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/comment/insert", query, {
+  return hyRequest.post<IResultData<any>>("/api/forum/comment/insert", query, {
     body: params,watch:false
   });
 };
 //删除评论
 export const deleteComment = (ids: number[]) => {
-  return hyRequest.delete<IResultData<any>>("/api/comment/delete", { ids });
+  return hyRequest.delete<IResultData<any>>("/api/forum/comment/delete", { ids });
 };
 //评论点赞
 export const likeComment = (comId: number, status: number, userId: number) => {
-  return hyRequest.post<IResultData<any>>("/api/comment/likeOrCancel", {
+  return hyRequest.post<IResultData<any>>("/api/forum/comment/likeOrCancel", {
     comId,
     status,
     userId,
@@ -76,7 +76,7 @@ export const getKeep = (
   userId?: number,
   postId?: number
 ) => {
-  return hyRequest.get<IResultData<any>>("/api/post/getKeep", {
+  return hyRequest.get<IResultData<any>>("/api/forum/post/getKeep", {
     idType,
     pageNo,
     pageSize,
@@ -87,5 +87,5 @@ export const getKeep = (
 };
 //删除帖子
 export const deletePost = (ids: number[]) => {
-  return hyRequest.delete<IResultData<any>>("/api/post/delete", { ids });
+  return hyRequest.delete<IResultData<any>>("/api/forum/post/delete", { ids });
 };

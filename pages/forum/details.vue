@@ -45,7 +45,7 @@
         <el-input
           type="textarea"
           v-model="conten"
-          maxlength="600"
+          maxlength="200"
           placeholder="留言评论"
           show-word-limit
           :autosize="{ minRows: 5, maxRows: 8 }"
@@ -175,7 +175,7 @@
       <el-input
         type="textarea"
         v-model="contens"
-        maxlength="600"
+        maxlength="200"
         placeholder="追加评论"
         show-word-limit
         :autosize="{ minRows: 5, maxRows: 8 }"
@@ -622,6 +622,8 @@ watch(status, (newStatus) => {
         }
       }
       .cardContent {
+        word-break: break-all;
+        line-height: 22px;
         margin-bottom: 5px;
       }
       .cardImage {
