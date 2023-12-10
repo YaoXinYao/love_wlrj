@@ -11,10 +11,16 @@
       </div>
       <nav :class="header.isSpread ? 'NavBar' : 'NavBar2'">
         <div class="HeaderNavItem">
+          <NuxtLink to="/">
+            <span>首页</span>
+          </NuxtLink>
+        </div>
+        <div class="HeaderNavItem">
           <NuxtLink to="/blog">
             <span>博客展示</span>
           </NuxtLink>
         </div>
+
         <!--  <div class="HeaderNavItem">
           <span>
             产品
