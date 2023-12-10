@@ -14,9 +14,10 @@
       <div class="content">
         <div class="text">
           <h2>{{ decodeURIComponent(singleData.postTitle) }}</h2>
-          <div class="autorInfo">{{ singleData.userName }}<span>{{ singleData.postTime }}</span>
-              <span>
-                <svg
+          <div class="autorInfo">
+            {{ singleData.userName }}<span>{{ singleData.postTime }}</span>
+            <span>
+              <svg
                 t="1701501024430"
                 class="icon"
                 viewBox="0 0 1024 1024"
@@ -32,10 +33,13 @@
                   fill="#e16531"
                 ></path>
               </svg>
-                {{ singleData.postView }}
-              </span>
+              {{ singleData.postView }}
+            </span>
           </div>
-          <div class="textContent" v-html="decodeURIComponent(singleData.postContent)"></div>
+          <div
+            class="textContent"
+            v-html="decodeURIComponent(singleData.postContent)"
+          ></div>
         </div>
       </div>
     </div>
@@ -52,7 +56,7 @@
           input-style="background:#edf1f2"
         />
         <el-upload
-          v-if="showImg || formImage.files.length!=0"
+          v-if="showImg || formImage.files.length != 0"
           class="uploadimg"
           action=""
           list-type="picture-card"
@@ -90,7 +94,9 @@
         <div class="btn">
           <el-button type="primary" @click="submitData(0, 0)">提交</el-button>
           <el-button type="info" @click="cleardata()">清空</el-button>
-          <el-button type="warning" @click= "addImg">{{ showImg ? "取消图片" : "添加图片"}}</el-button>
+          <el-button type="warning" @click="addImg">{{
+            showImg ? "取消图片" : "添加图片"
+          }}</el-button>
         </div>
       </div>
       <div class="disscussHead"><span>全部评论</span></div>
@@ -256,7 +262,7 @@ const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 let commentVisible = ref(false);
-let showImg = ref(false)
+let showImg = ref(false);
 let datas = useRoute().query.data;
 commentNews.comPostId = datas;
 const route = useRoute();
@@ -269,7 +275,7 @@ const { status, data, send, open, close } = useWebSocket(
     },
   }
 );
-let a ="<h1>111</h1>"
+let a = "<h1>111</h1>";
 onMounted(() => {
   let id = Number(datas);
   forums.getSingle(id, userinfo.value.userId);
@@ -292,12 +298,12 @@ const sentMessage = (
   send(JSON.stringify(obj));
 };
 //父评论添加图片
-const addImg=()=>{
-  if(showImg){
-    formImage.files=[]
+const addImg = () => {
+  if (showImg) {
+    formImage.files = [];
   }
-  showImg.value = !showImg.value
-}
+  showImg.value = !showImg.value;
+};
 //删除图片
 const handleRemove = (file: UploadFile) => {
   const index = formImage.files.indexOf(file);
@@ -346,12 +352,14 @@ const submitData = (comFatherId: number, comRootId: number) => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
-              sentMessage(
-                singleData.value.postUserId,
-                conten.value,
-                "PostComment",
-                singleData.value.postId
-              );
+              if (singleData.value.postUserId != userinfo.value.userId) {
+                sentMessage(
+                  singleData.value.postUserId,
+                  conten.value,
+                  "PostComment",
+                  singleData.value.postId
+                );
+              }
               forums.selectComment(Number(datas), userinfo.value.userId);
               conten.value = "";
               formImage.files = [];
@@ -419,12 +427,14 @@ const sureCom = () => {
           forums.addComment(commentNews, formData).then((res) => {
             if (res == 20000) {
               ElMessage.success("评论成功");
-              sentMessage(
-                sendFatherId.value,
-                contens.value,
-                "CommentReply",
-                commentNews.comFatherId
-              );
+              if (userinfo.value.userId != sendFatherId.value) {
+                sentMessage(
+                  sendFatherId.value,
+                  contens.value,
+                  "CommentReply",
+                  singleData.value.postId
+                );
+              }
               forums.selectComment(Number(datas), userinfo.value.userId);
               contens.value = "";
               formImages.files = [];
@@ -468,7 +478,14 @@ function comLike(
         if (res == 20000) {
           discuss.value[index].likes = true;
           ElMessage.success("点赞成功");
-          sentMessage(comUserId, "点赞了你的评论", "CommentLike", comId);
+          if (comUserId != userinfo.value.userId) {
+            sentMessage(
+              comUserId,
+              "点赞了你的评论",
+              "CommentLike",
+              singleData.value.postId
+            );
+          }
         } else if (res == 53003) {
           ElMessage.warning("请勿重复点赞");
         } else {
@@ -529,15 +546,15 @@ watch(status, (newStatus) => {
       }
       .text {
         margin-right: 40px;
-        line-height:24px;
-        .autorInfo{
-          margin:10px 0px;
+        line-height: 24px;
+        .autorInfo {
+          margin: 10px 0px;
           color: rgb(124, 123, 123);
-          span{
+          span {
             margin-left: 40px;
           }
         }
-        .textContent{
+        .textContent {
           overflow: hidden;
         }
       }
@@ -570,7 +587,7 @@ watch(status, (newStatus) => {
     .uploadimg {
       margin: 15px 0px;
     }
-    .btn{
+    .btn {
       margin-top: 10px;
     }
   }
@@ -672,7 +689,7 @@ watch(status, (newStatus) => {
     overflow: hidden;
   }
 }
-p{
-  word-wrap:break-word;
+p {
+  word-wrap: break-word;
 }
 </style>

@@ -154,6 +154,7 @@ onMounted(() => {
 //文件上传
 const uploadPhoto = async (formEl: FormInstance | undefined) => {
   loading.value = true
+  console.log("postContent",postNews.postContent);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -176,21 +177,22 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
         let sid = Number(postNews.postSubId);
         const otherContent = {
           labelId: postNews.labelId,
-          postContent: postNews.postContent,
           postTitle: postNews.postTitle,
-          postUserId: postNews.postUserId,
+          postUserId: userinfo.value.userId,
+          postContent: postNews.postContent,
           postSubId:sid
         };
         
         forumData.addCard(otherContent,formData).then((result) => {
           if (result == 20000) {
             ElMessage.success("发布帖子成功");
+            loading.value = false
             router.push("/forum/home");
           } else {
             ElMessage.error("发布帖子失败");
+            loading.value = false
           }
         });
-        loading.value = false
       }
     } else {
       loading.value = false

@@ -67,6 +67,7 @@ import { useHomestore } from "~/store/home";
 let forums = forumStore();
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
+let {singleData} = storeToRefs(forums)
 const props = defineProps({
   cimmentData: {
     type: Array as () => any[],
@@ -123,7 +124,9 @@ function comLike(comId: number, status: number, index: number,comUserId:number) 
       if (res == 20000) {
         props.cimmentData[index].likes = true;
         ElMessage.success("点赞成功");
-        sentMessage(comUserId,"点赞了你的评论","CommentLike",comId)
+        if(comUserId != userinfo.value.userId){
+          sentMessage(comUserId,"点赞了你的评论","CommentLike",singleData.value.postId)
+        }
       } else if (res == 53003) {
         ElMessage.warning("请勿重复点赞");
       } else {
