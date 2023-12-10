@@ -37,7 +37,7 @@ const markText = ref("");
 useHeader();
 const { data, pending, error, refresh } = await useFetch<
   IResultData<Articlemd>
->(`/notice/news/selectById?newsId=${route.params.id}`);
+>(`/api/notice/news/selectById?newsId=${route.params.id}`);
 markText.value = data.value!.data.newsContent;
 function changewide() {
   iswidescreen.value = !iswidescreen.value;

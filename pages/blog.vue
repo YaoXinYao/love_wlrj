@@ -48,7 +48,7 @@ const fetchdate = async () => {
     IResultData<{
       [key: string]: blogitem[];
     }>
-  >("/zinfo/user/user/selectBlog");
+  >("/api/user/user/selectBlog");
   newblog.value.data = data.value!.data;
 };
 const curGrade = ref<string>("2021");
