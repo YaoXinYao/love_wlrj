@@ -81,37 +81,9 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
-      //网盘接口
-      "/disk": {
-        target: "http://152.136.161.44:19491/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      //用户接口
-      "/zinfo": {
-        target: "http://152.136.161.44:19491/",
-        changeOrigin: true,
-        prependPath: true,
-      },
+      //牛庆凯接口
       "/check": {
         target: "http://124.222.153.56:19591/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      "/notice": {
-        target: "http://152.136.161.44:19491/notice/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      //考核模块
-      "/access": {
-        target: "http://152.136.161.44:19491/assess/",
-        changeOrigin: true,
-        prependPath: true,
-      },
-      //消息
-      "/messageInterface": {
-        target: "http://152.136.161.44:19491/forum/",
         changeOrigin: true,
         prependPath: true,
       },

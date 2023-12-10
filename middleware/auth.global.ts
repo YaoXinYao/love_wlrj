@@ -28,7 +28,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       type: "warning",
       duration: 2,
     });
-    homestore.exitlogin();
+    useLoginout();
     return navigateTo("/login");
   } else {
     //未设置权限的页面，则默认公开，
