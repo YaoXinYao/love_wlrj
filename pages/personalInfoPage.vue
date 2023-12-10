@@ -61,6 +61,37 @@ definePageMeta({
   roles: 1,
 });
 
+var logText = [
+  `欢迎来到`,
+  `未来软件工作室!`,
+  `行而不弃，未来可期✨`,
+  "©2023 By 未来",
+  `
+
+  ______               __                                   
+ /      \             /  |                                  
+/$$$$$$  | __    __  _$$ |_    __    __   ______    ______  
+$$ |_ $$/ /  |  /  |/ $$   |  /  |  /  | /      \  /      \ 
+$$   |    $$ |  $$ |$$$$$$/   $$ |  $$ |/$$$$$$  |/$$$$$$  |
+$$$$/     $$ |  $$ |  $$ | __ $$ |  $$ |$$ |  $$/ $$    $$ |
+$$ |      $$ \__$$ |  $$ |/  |$$ \__$$ |$$ |      $$$$$$$$/ 
+$$ |      $$    $$/   $$  $$/ $$    $$/ $$ |      $$       |
+$$/        $$$$$$/     $$$$/   $$$$$$/  $$/        $$$$$$$/ 
+                                                            
+                                                            
+                                                            
+`,
+];
+
+console.log(
+  `\n%c${logText[0]}  %c${logText[1]}\n\n    %c${logText[2]}\n\n          %c${logText[3]}\n         %c${logText[4]}`,
+  "",
+  "color:#39c5bb;font-weight:700",
+  "",
+  "color:#39c5bb;",
+  "color:#39c5bb;font-style: italic;"
+);
+
 //上传头像成功回调
 const handleAvatarSuccess: UploadProps["onSuccess"] = async (
   response,

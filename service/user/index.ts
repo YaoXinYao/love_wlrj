@@ -121,3 +121,10 @@ export const updateUserAvatar = (file: any) => {
 export const getAllGrade = () => {
   return hyRequest.get<IResultData<any>>(`/api/user/user/selectAllGrade`);
 };
+
+//是否可以修改课表
+export const getIsEditCourseService = () => {
+  return hyRequest.get<IResultData<any>>(
+    `/check/attendance/course-manage/getModifyCourse`
+  );
+};

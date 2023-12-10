@@ -46,11 +46,22 @@ export interface MessageInfoResType {
   msgAccept: number;
   msgContent: string;
   msgContentId: number;
-  msgContentName?: string;
+  msgContentName: string;
   msgId: number;
   msgSend: number;
-  msgSendName?: string;
+  msgSendName: string;
   msgStatus: number;
   msgTime: string;
   msgType: MessageTypes;
+  msgSendAvatar: string;
+}
+
+export interface MessageInfoItemType {
+  id: number;
+  infoContent: string;
+  date: string;
+  msgStatus: string | number;
+  msgContentId: string | number;
+  msgSendName: string;
+  msgSendAvatar: string;
 }
