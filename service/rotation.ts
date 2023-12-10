@@ -11,7 +11,9 @@ export const deleteCarousel = (carouselId: number) => {
   return hyRequest.request(
     "/api/user/swagger/user/carousel/deleteCarousel",
     "DELETE",
-    { carouselId }
+    {
+      carouselId,
+    }
   );
 };
 //添加轮播

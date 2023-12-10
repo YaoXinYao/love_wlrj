@@ -89,7 +89,7 @@
             class="pagination"
             v-model:current-page="pageInfo.currentPage"
             v-model:page-size="pageInfo.pageSize"
-            :page-sizes="[5, 10, 15]"
+            :page-sizes="[5, 10]"
             small
             :background="true"
             layout="total, sizes, prev, pager, next, jumper"

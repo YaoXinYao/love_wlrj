@@ -13,7 +13,7 @@
           <el-input
             :value="decodeURIComponent(postInfos.postTitle)"
             :disabled="true"
-            autosize
+            :autosize="{ minRows: 1, maxRows: 3 }"
             type="textarea"
           />
         </el-form-item>
@@ -24,7 +24,7 @@
           <el-input
             :value="decodeURIComponent(postInfos.postContent)"
             :disabled="true"
-            autosize
+            :autosize="{ minRows: 4, maxRows: 10 }"
             type="textarea"
           />
         </el-form-item>
@@ -117,4 +117,5 @@ function deletePost() {
     }
   }
 }
+
 </style>

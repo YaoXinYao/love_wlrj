@@ -216,6 +216,7 @@ let newNotice = noticeInfoRes.data.value.data.records[0];
 .noticeContent {
   line-height: 20px;
   letter-spacing: 0.3em;
+  word-break: break-all;
 }
 
 @media screen and (max-width: 850px) {

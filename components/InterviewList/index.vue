@@ -168,7 +168,6 @@ const pageInfo = reactive({
 });
 const changeState = () => {
   dialogVisible.value = false;
-  expandRowKeys.value.length = 0;
 };
 
 watch(toRef(props, "dialogVisible"), (newValue, oldValue) => {
