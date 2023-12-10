@@ -64,7 +64,7 @@
       </div>
     </div>
   </ClientOnly>
-    <ClientOnly>
+    <!-- <ClientOnly>
         <div class="leaveing">
             <div>
                 <el-form 
@@ -125,7 +125,7 @@
                 <leaveContent ref="contentRef"></leaveContent>
             </div>
         </div>
-    </ClientOnly>
+    </ClientOnly> -->
 </template>
 
 <script setup lang="ts">

@@ -3,21 +3,21 @@ import HYRequest from '../forum'
 
 
 export const insertNotice = (query:any) =>{
-    return HYRequest.post('/notice/affiche/insert',query)
+    return HYRequest.post('/api/notice/affiche/insert',query)
 }
 
 export const getNotice = (query:any) =>{
-    return HYRequest.get('/notice/affiche/select',query)
+    return HYRequest.get('/api/notice/affiche/select',query)
 }
 
 
 export const getGrade = () =>{
-    return HYRequest.get('/coustom/user/user/selectAllGrade')
+    return HYRequest.get('/api/user/user/selectAllGrade')
 }
 
 
 export const getUser = (query:any) =>{
-    return HYRequest.get('/coustom/user/user/selectByGroupAndGrade',query)
+    return HYRequest.get('/api/user/user/selectByGroupAndGrade',query)
 }
 
 export const postAffiche = (query:any,body?:any) =>{
@@ -27,9 +27,9 @@ export const postAffiche = (query:any,body?:any) =>{
     // console.log(formData)
 
     if(body){
-        return HYRequest.post('/notice/affiche/insert',query,{body:formData})
+        return HYRequest.post('/api/notice/affiche/insert',query,{body:formData})
     }else{
-        return HYRequest.post('/notice/affiche/insert',query)
+        return HYRequest.post('/api/notice/affiche/insert',query)
     }
 }
 

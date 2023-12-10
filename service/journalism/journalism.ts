@@ -4,12 +4,12 @@ import HYRequest from '../forum'
 
 // 删除
 export const deleteNew = (query:any)=>{
-    return HYRequest.delete('/notice/news/delete',query)
+    return HYRequest.delete('/api/notice/news/delete',query)
 }
 
 
 export const getNew = (query:any)=>{
-    return HYRequest.get('/notice/news/select',query)
+    return HYRequest.get('/api/notice/news/select',query)
 }
 
 
@@ -23,9 +23,9 @@ export const insertNew = (query:any,body:any)=>{
         formData.append(`${item}`,query[item])
     }
     formData.append('newsImgs',body)
-    return HYRequest.post('/notice/news/insert','',{body:formData})
+    return HYRequest.post('/api/notice/news/insert','',{body:formData})
 }
 
 export const updateNew = (query:any)=>{
-    return HYRequest.put('/notice/news/update',query)
+    return HYRequest.put('/api/notice/news/update',query)
 }
