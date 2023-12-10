@@ -14,6 +14,17 @@ export interface AddAccessType {
   type: string;
   typeId: number | undefined;
   types?: Array<AccessItem>;
+  subscribersType?: number | string;
+  sbType?: string | number;
+  message?: string;
+  time?: string;
+}
+
+export interface NoticeType {
+  time?: string;
+  sb?: number | string;
+  sbType?: number | string;
+  message?: string;
 }
 
 export interface MyObject {

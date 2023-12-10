@@ -110,6 +110,7 @@ useObserver(target, updateMsgStatus, props.data.id);
 
     .noticeContent {
       color: rgb(160, 203, 235);
+      word-break: break-all;
     }
   }
 }

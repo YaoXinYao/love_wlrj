@@ -108,8 +108,6 @@ let userGrade = ref<number>(0);
 let accessTargetGrade = ref<number>(1);
 const changeState = () => {
   dialogVisible.value = false;
-  templates.length = 0;
-  scoreListData.value.length = 0;
 };
 
 let managePageInfo = ref({

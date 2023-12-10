@@ -2,33 +2,27 @@ import hyRequest, { type IResultData } from "../forum";
 import type { GetMessagePropsType } from "~/types/Message";
 
 export const getMessageInfo = (props: GetMessagePropsType) => {
-  return hyRequest.get<IResultData<any>>("/messageInterface/message/select", {
+  return hyRequest.get<IResultData<any>>("/api/forum/message/select", {
     ...props,
   });
 };
 
 export const deleteMessageInfoService = (ids: Array<number>) => {
-  return hyRequest.delete<IResultData<any>>(
-    "/messageInterface/message/delete",
-    {
-      ids,
-    }
-  );
+  return hyRequest.delete<IResultData<any>>("/api/forum/message/delete", {
+    ids,
+  });
 };
 
 //未读消息
 export const getNotReadInfo = (userId: number) => {
-  return hyRequest.get<IResultData<any>>(
-    `/messageInterface/message/selectTypeCnt`,
-    {
-      userId,
-    }
-  );
+  return hyRequest.get<IResultData<any>>(`/api/forum/message/selectTypeCnt`, {
+    userId,
+  });
 };
 
 //修改消息状态为已读
 export const updateMsgStatus = (msgId: string) => {
-  return hyRequest.put<IResultData<any>>(`/messageInterface/message/update`, {
+  return hyRequest.put<IResultData<any>>(`/api/forum/message/update`, {
     msgId,
     msgStatus: 1,
   });
@@ -36,7 +30,7 @@ export const updateMsgStatus = (msgId: string) => {
 
 //最新一条公告
 export const getNewNotice = () => {
-  return hyRequest.get<IResultData<any>>(`/notice/affiche/select`, {
+  return hyRequest.get<IResultData<any>>(`/api/notice/affiche/select`, {
     pageNo: 1,
     pageSize: 1,
   });

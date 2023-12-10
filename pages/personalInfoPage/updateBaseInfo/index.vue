@@ -62,19 +62,20 @@
             placeholder="请再次输入密码进行确认"
           />
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
+        <!-- <el-form-item label="邮箱" prop="email">
           <el-input
             v-model="updatePassInfo.email"
             autocomplete="off"
             maxlength="40"
             show-word-limit
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="验证码" prop="code">
           <div style="display: flex">
             <el-input
               v-model="updatePassInfo.code"
               autocomplete="off"
+              placeholder="在基本信息的邮箱中获取"
             /><el-button
               type="primary"
               @click="sendCode"
@@ -168,7 +169,7 @@ const baseInfo = reactive({
 const updatePassInfo = reactive({
   newPassword: "",
   againPassword: "",
-  email: "",
+  email: userinfo.value.userEmail,
   code: "",
 });
 
@@ -181,7 +182,6 @@ const rules = reactive<FormRules<typeof baseInfo>>({
 const rules2 = reactive<FormRules<typeof updatePassInfo>>({
   newPassword: [{ validator: validatePass, trigger: "blur" }],
   againPassword: [{ validator: validateCheckPass, trigger: "blur" }],
-  email: [{ validator: validateEmail, trigger: "blur" }],
   code: [{ validator: checkNullContent, trigger: "blur" }],
 });
 

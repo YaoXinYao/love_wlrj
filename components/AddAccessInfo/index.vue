@@ -50,6 +50,13 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item prop="subscribersType" label="考核对象方向">
+            <el-select v-model="accessInfo.subscribersType">
+              <el-option label="全体" value="" />
+              <el-option label="前端" :value="1" />
+              <el-option label="后端" :value="2" />
+            </el-select>
+          </el-form-item>
           <el-form-item prop="deadline" label="考核时间"
             ><el-date-picker
               v-model="accessInfo.deadline"
@@ -59,6 +66,27 @@
               date-format="YYYY/MM/DD ddd"
               value-format="YYYY-MM-DD HH:mm:ss"
               time-format="A hh:mm:ss"
+            />
+          </el-form-item>
+          <el-form-item prop="time" label="通知时间"
+            ><el-date-picker
+              v-model="accessInfo.time"
+              type="datetime"
+              placeholder="请选择邮箱通知时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              date-format="YYYY/MM/DD ddd"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              time-format="A hh:mm:ss"
+            />
+          </el-form-item>
+          <el-form-item prop="message" label="通知内容">
+            <el-input
+              v-model="accessInfo.message"
+              :rows="2"
+              type="textarea"
+              maxlength="100"
+              show-word-limit
+              placeholder="邮箱通知内容..."
             />
           </el-form-item>
           <el-form-item prop="additional" label="补充说明">
@@ -125,11 +153,16 @@
 import { reactive, ref, watch } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { getAllGrade } from "~/service/user";
-import { getAllTypesService, addAccessService } from "~/service/access";
+import {
+  getAllTypesService,
+  addAccessService,
+  sendAccessNoticeService,
+} from "~/service/access";
 import type {
   AccessTypesType,
   AccessItem,
   AddAccessType,
+  NoticeType,
 } from "~/types/Access";
 let allGrade: Array<string>;
 let typeList: Array<AccessTypesType>;
@@ -194,6 +227,9 @@ const accessInfo = reactive<AddAccessType>({
   deadline: "",
   subscribers: "",
   additional: "",
+  subscribersType: "",
+  message: "",
+  time: "",
   types: [
     {
       name: "",
@@ -257,6 +293,8 @@ const rules = reactive<FormRules<typeof accessInfo>>({
   deadline: [{ validator: validateNull, trigger: "blur" }],
   subscribers: [{ validator: validateNull, trigger: "blur" }],
   additional: [{ validator: validateNull, trigger: "blur" }],
+  message: [{ validator: validateNull, trigger: "blur" }],
+  time: [{ validator: validateNull, trigger: "blur" }],
 });
 
 const removeDomain = (item: AccessItem) => {
@@ -288,6 +326,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (accessInfo.type == "笔试") {
       let sum: number = 0;
       if (accessInfo.types) {
+        if (accessInfo.types.length == 0) {
+          ElMessage({
+            type: "warning",
+            message: "请添加考核项",
+          });
+          return;
+        }
         for (let i = 0; i < accessInfo.types.length; i++) {
           sum = sum * 1 + accessInfo.types[i]?.rate * 1;
         }
@@ -304,7 +349,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       accessInfo.types = undefined;
     }
 
-    addAccessService(accessInfo).then((res: any) => {
+    let { message, time, ...accessProps } = accessInfo;
+    let noticeProps = {
+      sbType: accessInfo.subscribersType,
+      message,
+      time,
+      sb: accessInfo.subscribers,
+    };
+
+    addAccessService(accessProps).then(async (res: any) => {
       if (res.data.value.code === 20000) {
         ElMessage({
           type: "success",
@@ -312,6 +365,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         });
         emit("update_event", true);
         dialogVisible.value = false;
+        let sendAccessNoticeRes = await sendAccessNoticeService(noticeProps);
+        if (sendAccessNoticeRes.data.value.code == 20000) {
+          ElMessage({
+            type: "success",
+            message: "考核通知发送成功",
+          });
+        } else {
+          ElMessage({
+            type: "error",
+            message: "考核通知发送失败",
+          });
+        }
       } else if (res.data.value.code === 52003) {
         ElMessage({
           type: "warning",

@@ -1,24 +1,29 @@
 import hyRequest from "../forum";
 import type { IResultData } from "../forum";
-import type { AddAccessType, MyObject, ScoreAddType } from "~/types/Access";
+import type {
+  AddAccessType,
+  MyObject,
+  NoticeType,
+  ScoreAddType,
+} from "~/types/Access";
 //获取所有类型
 export const getAllTypesService = () => {
-  return hyRequest.get<IResultData<any>>(`/access/type/list`);
+  return hyRequest.get<IResultData<any>>(`/api/assess/type/list`);
 };
 
 //根据id搜索类型
 export const getTypesByIdService = (id: number) => {
-  return hyRequest.get<IResultData<any>>(`/access/type/get`, { id });
+  return hyRequest.get<IResultData<any>>(`/api/assess/type/get`, { id });
 };
 
 //添加类型
 export const addAccessTypeService = (typeName: string) => {
-  return hyRequest.post<IResultData<any>>(`/access/type/add`, { typeName });
+  return hyRequest.post<IResultData<any>>(`/api/assess/type/add`, { typeName });
 };
 
 //删除类型
 export const deleteTypeByIdService = (ids: Array<number | string>) => {
-  return hyRequest.delete<IResultData<any>>(`/access/type/delete`, "", {
+  return hyRequest.delete<IResultData<any>>(`/api/assess/type/delete`, "", {
     body: JSON.stringify(ids),
   });
 };
@@ -28,12 +33,14 @@ export const updateTypeService = (props: {
   id: string | number;
   name: string;
 }) => {
-  return hyRequest.put<IResultData<any>>(`/access/type/update`, { ...props });
+  return hyRequest.put<IResultData<any>>(`/api/assess/type/update`, {
+    ...props,
+  });
 };
 
 //添加考核
 export const addAccessService = (props: AddAccessType) => {
-  return hyRequest.post<IResultData<any>>(`/access/studyPlan/add`, "", {
+  return hyRequest.post<IResultData<any>>(`/api/assess/studyPlan/add`, "", {
     body: JSON.stringify({ ...props }),
   });
 };
@@ -45,33 +52,35 @@ export const getAllAccessService = (props: {
   pageSize: number;
   subscribers?: string;
 }) => {
-  return hyRequest.get<IResultData<any>>(`/access/studyPlan/page`, {
+  return hyRequest.get<IResultData<any>>(`/api/assess/studyPlan/page`, {
     ...props,
   });
 };
 
 //删除考核
 export const deleteAccessService = (ids: Array<number>) => {
-  return hyRequest.delete<IResultData<any>>(`/access/studyPlan/delete`, {
+  return hyRequest.delete<IResultData<any>>(`/api/assess/studyPlan/delete`, {
     ids,
   });
 };
 
 //添加某个考核的成绩
 export const addAccessScore = (props: ScoreAddType) => {
-  return hyRequest.post<IResultData<any>>(`/access/grade/add`, "", {
+  return hyRequest.post<IResultData<any>>(`/api/assess/grade/add`, "", {
     body: JSON.stringify(props),
   });
 };
 
 //获取某个考核的信息
 export const getAccessInfo = (id: number) => {
-  return hyRequest.get<IResultData<any>>(`/access/studyPlan/select`, { id });
+  return hyRequest.get<IResultData<any>>(`/api/assess/studyPlan/select`, {
+    id,
+  });
 };
 
 //获取试卷模版
 export const getTemplateService = (id: number) => {
-  return hyRequest.get<IResultData<any>>(`/access/templates/search`, {
+  return hyRequest.get<IResultData<any>>(`/api/assess/templates/search`, {
     id,
   });
 };
@@ -84,14 +93,14 @@ export const getScoreByAccessService = (props: {
   studentId?: number;
 }) => {
   return hyRequest.get<IResultData<any>>(
-    `/access/grade/getGradeByStudentId`,
+    `/api/assess/grade/getGradeByStudentId`,
     props
   );
 };
 
 //删除成绩
 export const deleteScoreService = (ids: Array<number>) => {
-  return hyRequest.delete<IResultData<any>>(`/access/grade/delete`, {
+  return hyRequest.delete<IResultData<any>>(`/api/assess/grade/delete`, {
     ids,
   });
 };
@@ -102,19 +111,19 @@ export const addInterviewService = (props: {
   PId: number;
   studentId: number | string;
 }) => {
-  return hyRequest.post<IResultData<any>>(`/access/interview/add`, props);
+  return hyRequest.post<IResultData<any>>(`/api/assess/interview/add`, props);
 };
 
 //删除面评
 export const deleteInterviewService = (ids: Array<number>) => {
-  return hyRequest.delete<IResultData<any>>(`/access/interview/delete`, {
+  return hyRequest.delete<IResultData<any>>(`/api/assess/interview/delete`, {
     ids,
   });
 };
 
 //获得面评
 export const getInterviewService = (props: { id: number; pId?: number }) => {
-  return hyRequest.get<IResultData<any>>(`/access/interview/list`, props);
+  return hyRequest.get<IResultData<any>>(`/api/assess/interview/list`, props);
 };
 
 //获得某个用户参与的所有面试
@@ -123,7 +132,14 @@ export const getUserInterviewService = (props: {
   pageSize: number;
   id: number | string;
 }) => {
-  return hyRequest.get<IResultData<any>>(`/access/interview/getPIds`, {
+  return hyRequest.get<IResultData<any>>(`/api/assess/interview/getPIds`, {
+    ...props,
+  });
+};
+
+//发送考核通知
+export const sendAccessNoticeService = (props: NoticeType) => {
+  return hyRequest.post<IResultData<any>>(`/api/assess/studyPlan/sendMessage`, {
     ...props,
   });
 };
