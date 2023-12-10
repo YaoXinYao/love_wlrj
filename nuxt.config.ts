@@ -11,8 +11,12 @@ export default defineNuxtConfig({
         },
       },
     },
+    esbuild: {
+      drop: process.env.NUXT_API_ENV !== "dev" ? ["console", "debugger"] : [],
+    },
     //自动导入样式
     plugins: [ElementPlus({})],
+    //代码压缩
   },
   app: {
     head: {
@@ -111,6 +115,10 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true,
       },
+    },
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true,
     },
   },
   routeRules: {
