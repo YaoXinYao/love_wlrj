@@ -14,7 +14,7 @@
                             <div class="proclamaTitle" style="font-size: 24px;">
                                 {{(latestProclamation as any).noticeTitle}}
                             </div>
-                            <div  style="flex: 1;">
+                            <div class="proclamaMatter">
                                 {{(latestProclamation as any).noticeContent}}
                             </div>
                             <div class="rightTime">
@@ -67,7 +67,14 @@
                 </div>
             </template>
         </div>
-        <div class="sideContents">
+        <div :class="{sideContents: true, sideContent: !sideRef}">
+            <div :class="{sideIcon: true, sideChange: !sideRef}" @click="handleChangeSide">
+                <el-icon :class="{sideIcons: !sideRef}"  size="30" ><Memo /></el-icon>
+                <div :class="{sideList: true,sideListChange: !sideRef}">
+                    <div   v-for="(item,index) in sortTIme">{{ index }}</div>
+                </div>
+                
+            </div>
             
         </div>
     </ClientOnly>
@@ -75,7 +82,7 @@
 
 <script setup lang="ts">
 useHeader();
-import {Calendar} from '@element-plus/icons-vue'
+import {Calendar, Memo} from '@element-plus/icons-vue'
 import proclamationStore from '@/store/proclamation'
 import {storeToRefs} from 'pinia'
 
@@ -95,6 +102,7 @@ let sortTIme = ref()
 const divRef = ref()
 const divCenterRef = ref()
 const divDispaly = ref<boolean[]>([true])
+const sideRef = ref(true)
 
 onMounted(async ()=>{
     await nextTick()
@@ -157,6 +165,12 @@ onMounted(async ()=>{
     },{passive:true})
     window.scrollTo(0, 0);
 })
+
+function handleChangeSide(){
+    console.log(1111)
+    sideRef.value = false
+}
+
 
 </script>
 
@@ -239,6 +253,10 @@ onMounted(async ()=>{
                     display: flex;
                     flex-direction: row;
                     justify-content: flex-end;
+                }
+                .proclamaMatter{
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
                 }
             }
             &:hover{
@@ -348,10 +366,10 @@ onMounted(async ()=>{
                     text-overflow: ellipsis;
                     padding: 10px 20px;
                     .proclamaContent{
-                        line-height: 18px;
+                        line-height: 24px;
                         margin-bottom: 10px;
                         .proclamaDesc{
-                            max-height: 54px;
+                            max-height: 72px;
                             overflow: hidden;
                             word-break: break-all;
                             display: -webkit-box;
@@ -378,7 +396,99 @@ onMounted(async ()=>{
     }   
 }
 
+.sideContents{
+    position: fixed;
+    top: 20%;
+    right: 3%;
+    border-radius: 50%;
+    background: #fff;
+    text-align: center;
+    line-height: 40px;
+    box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.15);
+    
+    .sideIcon{
+        height: 40px;
+        width: 40px;
+        display: flex;
+        flex-direction: column;
 
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        
+        overflow: hidden;
+        .sideIcons{
+            animation-name: changeIcon;
+            animation-duration: 1s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+        .sideList{
+            display: none;
+        }
+        .sideListChange{
+            animation-name: sideList;
+            animation-duration: 1s;
+            animation-delay: 2s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+    }
+    .sideChange{
+        animation-name: sideChange;
+        animation-duration: 1s;
+        animation-delay: 1s;
+        animation-fill-mode: forwards;
+        animation-timing-function: linear;
+        animation-iteration-count: 1;
+    }
+}
+.sideContent{
+    animation-name: sideChange;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+}
+
+@keyframes changeIcon {
+    0%{
+        transform: rotate(0deg);
+
+    }
+
+    100%{
+        transform: rotate(1080deg);
+        font-size: 0px;
+        display: none;
+    }
+}
+
+@keyframes sideChange {
+    50%{
+        border-radius: 6px;
+    }
+    100%{
+        height: 40px;
+        width: 100px;
+        border-radius: 6px;
+    }
+}
+
+@keyframes sideList {
+
+    0%{
+        display: flex;
+    }
+
+    100%{
+        height: 100%;
+        display: flex;
+    }
+}
 
 
 @media (min-width:1201px){
