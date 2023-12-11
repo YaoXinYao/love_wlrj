@@ -109,7 +109,6 @@ useObserver(target, updateMsgStatus, props.data.id);
 
     .noticeContent {
       color: rgb(160, 203, 235);
-      word-break: break-all;
     }
   }
 }
@@ -148,6 +147,7 @@ useObserver(target, updateMsgStatus, props.data.id);
   color: #666;
   letter-spacing: 0.1em;
   cursor: pointer;
+  word-break: break-all;
 }
 
 .noticeDate {
