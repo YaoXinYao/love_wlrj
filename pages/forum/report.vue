@@ -5,16 +5,18 @@
         <span>发布新贴</span>
         <div class="navRight">
           <div>
-            <el-button type="primary" @click="dialog = true">发布</el-button>
+            <el-button type="primary" @click="openForm">发布</el-button>
           </div>
           <div>
             <img :src="userinfo.userPicture" alt="头像" />
           </div>
-          <div><span><NuxtLink to="/forum/home">返回论坛社区</NuxtLink></span></div>
+          <div>
+            <span><NuxtLink to="/forum/home">返回论坛社区</NuxtLink></span>
+          </div>
         </div>
       </div>
     </div>
-    <div v-loading="loading">
+    <div v-loading="uploading">
       <ClientOnly>
         <WangEdit />
       </ClientOnly>
@@ -136,9 +138,8 @@ let manages = forumManage();
 let forums = forumStore();
 let { userinfo } = storeToRefs(userData);
 let { subfields, labels } = storeToRefs(manages);
-let { newPostContent, newPostTitle } = storeToRefs(forums);
+let { newPostContent, newPostTitle, uploading } = storeToRefs(forums);
 
-let loading = ref(false);
 let dialog = ref(false);
 let dialogImageUrl = ref("");
 let dialogVisible = ref(false);
@@ -147,13 +148,8 @@ let postImg = ref<any[]>([]);
 let formImage = reactive<any>({
   files: [],
 });
-interface RuleForm {
-  labelId: any[];
-  postSubId: string;
-  postUserId: number;
-}
 const rulesFormRef = ref<FormInstance>();
-let postNews = reactive<RuleForm>({
+let postNews = reactive<any>({
   labelId: [],
   postSubId: "",
   postUserId: userinfo.value.userId,
@@ -174,6 +170,7 @@ const rules = reactive({
     },
   ],
 });
+let reg = new RegExp("<[^>]+>", "g");
 definePageMeta({
   layout: "custom",
 });
@@ -181,52 +178,73 @@ onMounted(() => {
   manages.labelInfo(1, 100);
   manages.subfieldInfo(1, 100);
 });
-
+//点击发布，打开抽屉
+const openForm = () => {
+  if (!newPostTitle.value.trim()) {
+    ElMessage.warning("帖子标题不能为空");
+  } else {
+    let filterContents = newPostContent.value.replace(reg, "");
+    if (!filterContents.trim()) {
+      ElMessage.warning("帖子内容不能为空");
+    } else {
+      dialog.value = true;
+    }
+  }
+};
 //上传帖子
 const uploadPhoto = async (formEl: FormInstance | undefined) => {
-  loading.value = true;
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
       let jage = true;
       postImg.value = [];
-      for (let i = 0; i < formImage.files.length; i++) {
-        jage = formImage.files[i].raw.type.startsWith("image/");
-        if (!jage) {
-          ElMessage.warning("文件类型错误");
-          return;
-        } else {
-          postImg.value.push(formImage.files[i].raw);
-        }
-      }
-      if (jage) {
-        dialog.value = false;
-        let formData = new FormData();
-        postImg.value.forEach((item: any, index: number) => {
-          formData.append(`postImg[${index}]`, item);
-        });
-        let sid = Number(postNews.postSubId);
-        const otherContent = {
-          labelId: postNews.labelId,
-          postContent: newPostContent.value,
-          postTitle: newPostTitle.value,
-          postUserId: postNews.postUserId,
-          postSubId: sid,
-        };
-        forums.addCard(otherContent, formData).then((result) => {
-          if (result == 20000) {
-            ElMessage.success("发布帖子成功");
-            newPostContent.value = "";
-            newPostTitle.value = "";
-            router.push("/forum/home");
+      if (formImage.files.length != 0) {
+        for (let i = 0; i < formImage.files.length; i++) {
+          jage = formImage.files[i].raw.type.startsWith("image/");
+          if (!jage) {
+            ElMessage.warning("文件类型错误");
+            return;
           } else {
-            ElMessage.error("发布帖子失败");
+            postImg.value.push(formImage.files[i].raw);
           }
-        });
-        loading.value = false;
+        }
+        if (jage) {
+          dialog.value = false;
+          let formData = new FormData();
+          postImg.value.forEach((item: any, index: number) => {
+            formData.append("postImgs", item);
+          });
+          let sid = Number(postNews.postSubId);
+          const otherContent = {
+            labelId: postNews.labelId,
+            postContent: newPostContent.value,
+            postSubId: sid,
+            postTitle: newPostTitle.value,
+            postUserId: postNews.postUserId,
+          };
+          Object.keys(otherContent).forEach((key) => {
+            //使用类型断言key as keyof typeof otherContent来告诉 TypeScript key 的类型
+            const value = otherContent[key as keyof typeof otherContent];
+            formData.append(`${key}`, value);
+          });
+          forums.addCard(formData).then((result) => {
+            if (result == 20000) {
+              ElMessage.success("发布帖子成功");
+              newPostContent.value = "";
+              newPostTitle.value = "";
+              postNews.labelId = [];
+              postNews.postSubId = "";
+              formImage.files = [];
+              postImg.value = [];
+              router.push("/forum/home");
+            } else {
+              ElMessage.error("发布帖子失败");
+            }
+          });
+        }
+      } else {
+        ElMessage.warning("至少上传一张图片");
       }
-    } else {
-      loading.value = false;
     }
   });
 };
@@ -298,8 +316,8 @@ const handleRemove = (file: UploadFile) => {
         color: #222226;
         text-align: center;
       }
-      span:hover{
-      color: rgb(57, 182, 231);
+      span:hover {
+        color: rgb(57, 182, 231);
       }
     }
   }

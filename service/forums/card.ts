@@ -2,9 +2,9 @@ import hyRequest from "../forum";
 import type { IResultData } from "../forum";
 
 //发布帖子
-export const addpost = (query: any, params: FormData) => {
-  return hyRequest.post<IResultData<any>>("/api/forum/post/insert", query, {
-    body: params,watch:false 
+export const addpost = (params: FormData) => {
+  return hyRequest.post<IResultData<any>>("/api/forum/post/insert",{},{
+    body: params
   });
 };
 //查询帖子

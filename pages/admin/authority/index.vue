@@ -13,14 +13,13 @@
             角色名称：<span>{{ item.roleName }}</span>
           </li>
           <li>
-            管理者: <span>{{ item.str }}</span>
+            管理者: <span>{{ item.managers }}</span>
           </li>
           <li>
             总人数: <span class="tag__content">{{ item.person }}</span>
           </li>
           <li>
-            权限：<span v-if="item.k != 0">权限等级低于下{{ item.k }}级</span>
-            <span v-if="item.k == 0">权限等级最高，是最高管理者</span>
+            权限：<span>{{ item.level }}</span>
           </li>
           <li class="setAuthor" @click="lookAuthor(item.roleId, index)">
             权限管理
@@ -42,7 +41,11 @@
         :style="inputcss"
       >
         <el-table-column type="index" label="序号" width="100" />
-        <el-table-column property="authorityName" label="权限名称" width="200" />
+        <el-table-column
+          property="authorityName"
+          label="权限名称"
+          width="200"
+        />
         <el-table-column #default="scope" label="操作" width="150">
           <el-button type="danger" @click="sureDelete(scope.row)"
             >删除</el-button
@@ -93,13 +96,13 @@
 import { storeToRefs } from "pinia";
 import { authority } from "~/store/authority";
 interface Role {
-  authorities: any[];
-  k: number;
-  person: number;
-  roleDefault: number;
   roleId: number;
   roleName: string;
-  str: string;
+  roleDefault: number;
+  authorities: any[];
+  managers: string;
+  person: number;
+  level: string;
 }
 let author = authority();
 let { authoritydata } = storeToRefs(author);
@@ -114,25 +117,29 @@ let userAuthors = ref(false);
 let authorDelete = ref(false);
 onMounted(() => {
   author.getAllRole().then(async (res) => {
-    roles.value = [];
+    roles.value = new Array(3);
     let len = res.length;
     for (let i = 0; i < len; i++) {
-      let k = len - 1 - i;
-      let str = "";
-      if (i != len - 1) {
-        for (let j = i + 1; j < len; j++) {
-          if (j != len - 1) str = str + res[j].roleName + ",";
-          else str = str + res[j].roleName;
-        }
+      if (res[i].roleId == 1) {
+        let level = "权限等级最低";
+        let managers = "大二,管理员";
+        let person = await author.getUseNum(res[i].roleId);
+        roles.value[0] = { ...res[i], managers, person, level };
+      } else if (res[i].roleId == 2) {
+        let level = "权限等级中等";
+        let managers = "管理员";
+        let person = await author.getUseNum(res[i].roleId);
+        roles.value[1] = { ...res[i], managers, person, level };
       } else {
-        str = "已是最高管理者";
+        let level = "权限等级最高";
+        let managers = "无上级管理者";
+        let person = await author.getUseNum(res[i].roleId);
+        roles.value[2] = { ...res[i], managers, person, level };
       }
-      let person = await author.getUseNum(res[i].roleId);
-      roles.value[i] = { ...res[i], k, str, person };
     }
     loading.value = false;
   });
-  author.getAuthority()
+  author.getAuthority();
 });
 const listcss = {
   padding: "20px",
@@ -158,23 +165,26 @@ const addAuthor = () => {
       if (res == 20000) {
         ElMessage.success("添加成功");
         authorId.value = "";
-        resetInter()
-        author.getAllRole().then(async (ress) => {
-          roles.value = [];
-          let len = ress.length;
+        resetInter();
+        author.getAllRole().then(async (res) => {
+          let len = res.length;
           for (let i = 0; i < len; i++) {
-            let k = len - 1 - i;
-            let str = "";
-            if (i != len - 1) {
-              for (let j = i + 1; j < len; j++) {
-                if (j != len - 1) str = str + ress[j].roleName + ",";
-                else str = str + ress[j].roleName;
-              }
+            if (res[i].roleId == 1) {
+              let level = "权限等级最低";
+              let managers = "大二,管理员";
+              let person = await author.getUseNum(res[i].roleId);
+              roles.value[0] = { ...res[i], managers, person, level };
+            } else if (res[i].roleId == 2) {
+              let level = "权限等级中等";
+              let managers = "管理员";
+              let person = await author.getUseNum(res[i].roleId);
+              roles.value[1] = { ...res[i], managers, person, level };
             } else {
-              str = "已是最高管理者";
+              let level = "权限等级最高";
+              let managers = "无上级管理者";
+              let person = await author.getUseNum(res[i].roleId);
+              roles.value[2] = { ...res[i], managers, person, level };
             }
-            let person = await author.getUseNum(ress[i].roleId);
-            roles.value[i] = { ...ress[i], k, str, person };
           }
         });
       } else if (res == 52003) {
@@ -192,7 +202,7 @@ const deleteAuthors = () => {
   author.deleteRoleAuthor(deleteAuthorId.value, roleId.value).then((res) => {
     if (res == 20000) {
       ElMessage.success("移除成功");
-      resetInter()
+      resetInter();
       let index = roles.value[userIndex.value].authorities.findIndex((item) => {
         if (item.authorityId == deleteAuthorId.value) {
           return true;
@@ -257,6 +267,7 @@ const resetInter = () => {
       }
     }
     .setAuthor {
+      width: 100%;
       padding-bottom: 0px;
     }
     .setAuthor:hover {
