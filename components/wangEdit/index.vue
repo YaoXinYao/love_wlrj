@@ -3,7 +3,9 @@
     <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <div class="editTitle">
       <el-input
-        placeholder="请输入文章标题(5~20个字)"
+        placeholder="请输入文章标题(最多20个字)"
+        maxlength="20"
+        show-word-limit
         v-model="newPostTitle"
       ></el-input>
     </div>

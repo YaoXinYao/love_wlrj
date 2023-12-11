@@ -53,6 +53,7 @@ export interface cards {
   total: number;
   totaType: number;
   loadings: boolean;
+  uploading:boolean;
   newPostContent: string;
   newPostTitle: string;
 }
@@ -81,6 +82,7 @@ export const forumStore = defineStore("forumInfo", {
       total: 0,
       totaType: 0,
       loadings: false,
+      uploading:false,
       newPostContent: "",
       newPostTitle: "",
     };
@@ -103,9 +105,11 @@ export const forumStore = defineStore("forumInfo", {
       return code;
     },
     // 发布帖子
-    async addCard(query: any, params: FormData) {
-      const { data } = await addpost(query, params);
+    async addCard(params: FormData) {
+      this.uploading = true
+      const { data } = await addpost(params);
       const code = data.value?.code;
+      this.uploading = false
       return code;
     },
     //主页查询帖子
@@ -133,8 +137,6 @@ export const forumStore = defineStore("forumInfo", {
       );
       this.pages = data.value?.data.pages;
       let dataArr = data.value?.data.records || [];
-      console.log("后端页码",pageNo);
-      console.log("后端结果",data.value?.data.records);
       for (let i = 0; i < dataArr.length; i++) {
         //查询用户
         const use = await this.selectUser(dataArr[i].postUserId);
@@ -422,7 +424,7 @@ export const forumManage = defineStore("manage", {
     //获取标签
     async labelInfo(pageNo: number, pageSize: number) {
       const { data } = await getLabel(pageNo, pageSize);
-      this.labels = data.value?.data.records || [];
+      this.labels = data.value?.data.records || []; 
     },
     //添加标签
     async addLabel(name: string) {
