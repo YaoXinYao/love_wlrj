@@ -198,6 +198,9 @@ const changeState = () => {
   accessInfo.type = "笔试";
   accessInfo.deadline = "";
   accessInfo.subscribers = "";
+  accessInfo.subscribersType = "";
+  accessInfo.message = "";
+  accessInfo.time = "";
   accessInfo.additional = "";
   accessInfo.types = [
     {
