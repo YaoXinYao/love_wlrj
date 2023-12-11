@@ -48,6 +48,8 @@
               <el-input
                 class="elinput"
                 type="text"
+                @focus="() => changeback(true)"
+                @blur="() => changeback(false)"
                 v-model="ruleForm.code"
                 placeholder="请输入验证码"
                 autocomplete="off"
