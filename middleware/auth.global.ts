@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { storeToRefs } from "pinia";
+import { useLoginout } from "~/hooks/useLoginout";
 import { useHomestore } from "~/store/home";
 export default defineNuxtRouteMiddleware((to, from) => {
   const homestore = useHomestore();

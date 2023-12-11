@@ -202,6 +202,11 @@ const updateSelfInformation = (formValidate: FormInstance | undefined) => {
             message: "修改成功",
           });
           homeStore.updateUserInfo();
+        } else if (res.data.value.code == 52003) {
+          ElMessage({
+            type: "error",
+            message: "修改失败，邮箱已存在",
+          });
         } else {
           ElMessage({
             type: "error",
