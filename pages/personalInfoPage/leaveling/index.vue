@@ -146,6 +146,7 @@ const checklist = checkStore();
 const { userinfo } = storeToRefs(user);
 const { currentQuery } = storeToRefs(checklist);
 const contentRef = ref<InstanceType<typeof leaveContent>>();
+const timeRef = ref(true)
 console.log(userinfo.value.userId);
 
 interface IProps {
@@ -201,12 +202,15 @@ function handles(flag: boolean) {
     let endTIme = new Date(form.leaveEndTime);
     if (startTIme > endTIme) {
       console.log("错误");
+      timeRef.value = false
       ElMessage({
         type: "warning",
         message: "重新填写时间",
         customClass: "elmessage",
       });
     }
+  }else{
+    timeRef.value = true
   }
 }
 
@@ -221,30 +225,40 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   });
   if (result) {
-    let forms = form;
-    let beginTime = new Date(forms.leaveBeginTime);
-    for (let item in forms) {
-      if (item === "leaveBeginTime") {
-        forms[item] = dateFormat(beginTime);
+    if(timeRef.value){
+      let forms = form;
+      let beginTime = new Date(forms.leaveBeginTime);
+      for (let item in forms) {
+        if (item === "leaveBeginTime") {
+          forms[item] = dateFormat(beginTime);
+        }
       }
+      // console.log(forms)
+      // console.log(currentQuery)
+      createLeave(forms).then((res) => {
+        let code = res.data.value.code;
+        console.log(code);
+        if (code === 20000) {
+          ElNotification({
+            title: "请假完成",
+            message: `请假理由：${form.leaveReason}`,
+            type: "success",
+            zIndex: 10000,
+          });
+          contentRef.value?.fetchUserListData(currentQuery);
+          formRef.value?.resetFields()
+        }
+      });
+    }else{
+      ElMessage({
+        type: "warning",
+        message: "时间错误",
+        customClass: "elmessage",
+      });
     }
-    // console.log(forms)
-    // console.log(currentQuery)
-    createLeave(forms).then((res) => {
-      let code = res.data.value.code;
-      console.log(code);
-      if (code === 20000) {
-        ElNotification({
-          title: "请假完成",
-          message: `请假理由：${form.leaveReason}`,
-          type: "success",
-          zIndex: 10000,
-        });
-        contentRef.value?.fetchUserListData(currentQuery);
-      }
-    });
+
     // curTime.value = new Date();
-    // formRef.value?.resetFields()
+    
   }
 };
 

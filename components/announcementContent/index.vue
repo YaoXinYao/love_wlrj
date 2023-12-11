@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+
 <template>
     <div class="announcement" v-loading="loading">
         <div class="content">
@@ -13,7 +13,7 @@ import { reactive } from 'vue';
                         
                         <el-card @click="con(item)" class="card">
                             <el-icon class="cardIcon" @click.stop="handleDelete(item)" size="20"><CircleCloseFilled /></el-icon>
-                            <h2>{{ item.noticeType }}</h2>
+                            <h2>{{ item.noticeTitle }}</h2>
                         </el-card>
                         
                     </el-timeline-item>

@@ -7,18 +7,18 @@
                 </div>
                 <div class="showProclam latest">
                     <div class="proclamaPicture">
-                            <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
+                            <img class="proclamaPic" :src="(latestProclamation as any).noticeImg ? (latestProclamation as any).noticeImg : '/img/4.webp' " alt="" >
                             <div class="specialEffects"></div>
                     </div>
                     <div class="proclamaDetail">
                             <div class="proclamaTitle" style="font-size: 24px;">
-                                {{latestProclamation.noticeTitle}}
+                                {{(latestProclamation as any).noticeTitle}}
                             </div>
                             <div  style="flex: 1;">
-                                {{latestProclamation.noticeContent}}
+                                {{(latestProclamation as any).noticeContent}}
                             </div>
                             <div class="rightTime">
-                                {{latestProclamation.noticeTime}}
+                                {{(latestProclamation as any).noticeTime}}
                             </div>
                     </div>
                 </div>
@@ -67,6 +67,9 @@
                 </div>
             </template>
         </div>
+        <div class="sideContents">
+            
+        </div>
     </ClientOnly>
 </template>
 
@@ -80,10 +83,7 @@ definePageMeta({
     roles:1
 })
 
-interface proclamationType {
-    latestProclamation:string,
-    proclamation: Array<any>
-}
+
 
 const ProclamationStore = proclamationStore()
 
@@ -95,7 +95,6 @@ let sortTIme = ref()
 const divRef = ref()
 const divCenterRef = ref()
 const divDispaly = ref<boolean[]>([true])
-// const list = ref({})
 
 onMounted(async ()=>{
     await nextTick()
@@ -108,17 +107,18 @@ onMounted(async ()=>{
 
 
     function changeList(){
-        console.log(proclamation)
+        // console.log(proclamation)
         for(let i=proclamation.value.length-1;i>=0;i--){
-            let time = new Date(proclamation.value[i].noticeTime)
+            let time = new Date((proclamation.value[i] as any).noticeTime)
             let year = time.getFullYear()+ '-'+ (time.getMonth() + 1).toString().padStart(2,)  as any
-            console.log(year)
+            // console.log(year)
             if(list.hasOwnProperty(year)){
                 list[year].push(proclamation.value[i])
             }else{
                 list[year] = []
                 list[year].push(proclamation.value[i])
             }
+            list[year] = list[year].reverse()
         }
         
         let arr = Object.entries(list)
@@ -138,37 +138,24 @@ onMounted(async ()=>{
             divDispaly.value.push(false)
         })
 
-        console.log(sortarr)
-        console.log(list)
         sortTIme.value = sortarr
     }
     changeList()
 
     window.addEventListener('scroll',(e)=>{
-        // console.log(e)
-        // console.log(window.innerHeight,window.scrollY)
-        // console.log(divRef.value)
         let arr = divRef.value
         for(let item in divRef.value){
-            console.log(divDispaly.value)
+
             if(Number(item) >= 1){
                 console.log(divRef.value[item])
                 if(window.innerHeight + window.scrollY >= divRef.value[item].offsetTop){
-                    console.log('在')
+
                     divDispaly.value[Number(item)] = true
-                }else{
-                    console.log('不在')
                 }
             }
         }
     },{passive:true})
-
     window.scrollTo(0, 0);
-
-    // 
-
-
-
 })
 
 </script>
