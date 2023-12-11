@@ -183,7 +183,7 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
           postSubId:sid
         };
         
-        forumData.addCard(otherContent,formData).then((result) => {
+        forumData.addCard(formData).then((result) => {
           if (result == 20000) {
             ElMessage.success("发布帖子成功");
             loading.value = false

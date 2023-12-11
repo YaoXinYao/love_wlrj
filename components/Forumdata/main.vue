@@ -212,7 +212,7 @@ const { status, data, send, open, close } = useWebSocket(
 );
 onMounted(() => {
   manages.subfieldInfo(1, 100);
-  fetchData()
+  fetchData();
 });
 //发送消息
 const sentMessage = (
@@ -252,11 +252,11 @@ function loadData() {
   }
 }
 function fetchData() {
-  show.value = 1
+  show.value = 1;
   if (postSubId.value == 0) {
     console.log("pageNo.value", pageNo.value);
     forums
-      .selectPost(userinfo.value.userId, pageNo.value, 10, postSource.value)
+      .selectPost(userinfo.value.userId, pageNo.value, 5, postSource.value)
       .then((res) => {
         console.log("结果", res);
         console.log("页码", pageNo.value);
@@ -272,7 +272,7 @@ function fetchData() {
       .selectPost(
         userinfo.value.userId,
         pageNo.value,
-        10,
+        5,
         postSource.value,
         postSubId.value
       )
@@ -433,8 +433,13 @@ function postLike(
       overflow: hidden;
       font-family: "阿里妈妈刀隶体";
       .cardTitle {
+        display: inline-block;
+        width: 100%;
         font-size: 20px;
         font-weight: 600;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         cursor: pointer;
       }
       .cardUser {
@@ -473,12 +478,14 @@ function postLike(
     }
   }
   .card:nth-of-type(odd) {
+    background: white;
     flex-direction: row;
     .cardPhotos {
       border-radius: 15px 0 0 15px;
     }
   }
   .card:nth-of-type(even) {
+    background: white;
     flex-direction: row-reverse;
     .cardPhotos {
       border-radius: 0 15px 15px 0;
