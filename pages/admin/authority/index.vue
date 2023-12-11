@@ -22,7 +22,7 @@
             权限：<span>{{ item.level }}</span>
           </li>
           <li class="setAuthor" @click="lookAuthor(item.roleId, index)">
-            权限管理
+            <span>权限管理</span>
           </li>
         </ul>
       </div>
@@ -269,10 +269,10 @@ const resetInter = () => {
     .setAuthor {
       width: 100%;
       padding-bottom: 0px;
-    }
-    .setAuthor:hover {
-      cursor: pointer;
-      color: #baf309;
+      span:hover {
+        cursor: pointer;
+        color: #baf309;
+      }
     }
   }
 }

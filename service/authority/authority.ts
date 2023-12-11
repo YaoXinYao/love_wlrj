@@ -61,3 +61,11 @@ export const deleteRoleAuthority = (authorityId: number, roleId: number) => {
     roleId,
   });
 };
+//查看课表状态
+export const getModifyCourse = () => {
+  return hyRequest.request("/check/attendance/course-manage/getModifyCourse", "GET");
+}
+//修改课表状态
+export const noticeUpdateCourse = (flag:string) => {
+  return hyRequest.request("/check/attendance/course-manage/noticeUpdateCourse", "POST",{flag});
+}

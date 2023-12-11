@@ -2,7 +2,7 @@
   <div class="main" v-loading="loadings">
     <div class="search">
       <div>搜索帖子</div>
-      <div>
+      <div class="condition">
         <el-input
           v-model="postSource"
           class="w-50 m-2"
@@ -10,6 +10,7 @@
           :suffix-icon="Search"
           @keyup.enter="searchPost(postSubId)"
         />
+        <el-button type="primary" @click="searchPost(postSubId)">搜索</el-button>
       </div>
     </div>
     <ul class="classify">
@@ -240,12 +241,8 @@ const searchPost = (ids: number) => {
 };
 //查询帖子
 function loadData() {
-  console.log(11111);
-  console.log("pageNo", pageNo.value);
   if (pages.value > pageNo.value) {
-    console.log("33333");
     if (show.value == 0) {
-      console.log("222222");
       show.value = 1;
       fetchData();
     }
@@ -254,18 +251,14 @@ function loadData() {
 function fetchData() {
   show.value = 1;
   if (postSubId.value == 0) {
-    console.log("pageNo.value", pageNo.value);
     forums
       .selectPost(userinfo.value.userId, pageNo.value, 5, postSource.value)
       .then((res) => {
-        console.log("结果", res);
-        console.log("页码", pageNo.value);
         for (let i = 0; i < res.length; i++) {
           pagesData.value.push({ ...res[i] });
         }
         show.value = 0;
         pageNo.value++;
-        console.log("show", show.value);
       });
   } else {
     forums
@@ -277,14 +270,11 @@ function fetchData() {
         postSubId.value
       )
       .then((res) => {
-        console.log("结果", res);
-        console.log("页码", pageNo.value);
         for (let i = 0; i < res.length; i++) {
           pagesData.value.push({ ...res[i] });
         }
         show.value = 0;
         pageNo.value++;
-        console.log("show", show.value);
       });
   }
 }
@@ -361,6 +351,9 @@ function postLike(
     justify-content: space-between;
     padding: 0px 20px;
     font-size: 18px;
+    .condition{
+      display: flex;
+    }
   }
   .classify {
     display: flex;
