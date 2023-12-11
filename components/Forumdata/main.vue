@@ -305,7 +305,9 @@ function postLike(
           if (res == 20000) {
             pagesData.value[index].likes = true;
             ElMessage.success("点赞成功");
-            sentMessage(postUserId, "点赞了你的帖子", "PostLike", postId);
+            if (postUserId != userinfo.value.userId) {
+              sentMessage(postUserId, "点赞了你的帖子", "PostLike", postId);
+            }
           } else if (res == 53003) {
             ElMessage.warning("请勿重复点赞");
           } else {
@@ -315,7 +317,9 @@ function postLike(
           if (res == 20000) {
             pagesData.value[index].collect = true;
             ElMessage.success("收藏成功");
-            sentMessage(postUserId, "收藏了了你的帖子", "PostCollect", postId);
+            if (postUserId != userinfo.value.userId) {
+              sentMessage(postUserId, "收藏了你的帖子", "PostCollect", postId);
+            }
           } else if (res == 53003) {
             ElMessage.warning("请勿重复收藏");
           } else {
