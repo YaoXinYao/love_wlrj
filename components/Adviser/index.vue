@@ -105,7 +105,7 @@ function loading() {
 }
 .Adviser {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding: 1.5rem;
   background: linear-gradient(-32.2deg, #f7edfa, #e2ebfa);
   color: white;
@@ -154,6 +154,7 @@ function loading() {
           }
         }
         .Advcardname {
+          margin: 0.2rem 0;
           margin-top: 0.1rem;
           color: black;
           height: 0.3rem;
@@ -164,6 +165,7 @@ function loading() {
         }
         .position {
           font-size: 0.18rem;
+          letter-spacing: 0.1em;
         }
       }
     }

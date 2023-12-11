@@ -129,3 +129,7 @@ export function getFilePreviewList(fileId: number) {
     }
   );
 }
+//退出登录
+export function Loginout() {
+  return Hyrequire.get("/api/user/user/loginOut");
+}
