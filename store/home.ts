@@ -4,6 +4,7 @@ import type { HomeStore, HomeStoreuser } from "~/types/Home";
 import {
   GetHotnews,
   GetWrapper,
+  Loginout,
   getAllblog,
   getUserinfo2,
 } from "~/service/homeApi";
@@ -94,6 +95,8 @@ export const useHomestore = defineStore("home", {
       }
     },
     async exitlogin() {
+      const res = await Loginout();
+      console.log(res.data.value);
       this.user.token = "";
     },
     async updateblog() {

@@ -5,9 +5,10 @@
     <!-- 第二屏 -->
     <GroupIntroduction />
     <!-- 第三屏 -->
-    <ProjectDisplay />
-    <!-- 第四屏 -->
     <Adviser />
+
+    <!-- 第四屏 -->
+    <ProjectDisplay />
     <!-- 第五屏 -->
     <Advisory />
   </div>

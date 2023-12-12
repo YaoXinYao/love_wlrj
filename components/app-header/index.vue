@@ -150,7 +150,7 @@
                   backgroundImage: `url(${
                     userinfo.userPicture ||
                     'https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~120x120.awebp'
-                  })`,
+                  })`.trim(),
                 }"
               ></div>
             </div>
@@ -214,9 +214,6 @@ const messagetotal = computed(() => {
     notReadNum.value.postLikeCnt
   );
 });
-const exit = () => {
-  homestore.exitlogin();
-};
 //注册插件
 gsap.registerPlugin(ScrollTrigger);
 //组件挂载完毕

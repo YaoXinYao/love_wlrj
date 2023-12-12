@@ -1,4 +1,5 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
+import { useLoginout } from "~/hooks/useLoginout";
 type Methods = "GET" | "POST" | "put";
 class Hyrequest {
   request<T = any>(
@@ -11,10 +12,26 @@ class Hyrequest {
       const newoptions: UseFetchOptions<T> = {
         method: method,
         headers: {
-          "Authorization": Authtoken(),
           ...options?.headers,
         },
         ...options,
+        //响应
+        onResponse({ request, response, options }) {
+          if (response.status == 403) {
+            //退出登录
+            useLoginout();
+            ElMessage({ message: "账号验证失败，重新登陆", type: "info" });
+            navigateTo("/login");
+          }
+          //如果状态码为403  则直接重新登录。账号已经被顶掉
+        },
+        //请求拦截
+        onRequest({ request, options }) {
+          // 设置请求头
+          options.headers = options.headers || {};
+          //@ts-ignore
+          options.headers.Authorization = Authtoken();
+        },
       };
       if (method == "GET") {
         newoptions.query = data || {};
