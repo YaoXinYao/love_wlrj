@@ -2,7 +2,7 @@
   <div class="main" v-loading="loadings">
     <div class="search">
       <div>搜索帖子</div>
-      <div>
+      <div class="condition">
         <el-input
           v-model="postSource"
           class="w-50 m-2"
@@ -10,6 +10,7 @@
           :suffix-icon="Search"
           @keyup.enter="searchPost(postSubId)"
         />
+        <el-button type="primary" @click="searchPost(postSubId)">搜索</el-button>
       </div>
     </div>
     <ul class="classify">
@@ -212,7 +213,7 @@ const { status, data, send, open, close } = useWebSocket(
 );
 onMounted(() => {
   manages.subfieldInfo(1, 100);
-  fetchData()
+  fetchData();
 });
 //发送消息
 const sentMessage = (
@@ -240,51 +241,40 @@ const searchPost = (ids: number) => {
 };
 //查询帖子
 function loadData() {
-  console.log(11111);
-  console.log("pageNo", pageNo.value);
   if (pages.value > pageNo.value) {
-    console.log("33333");
     if (show.value == 0) {
-      console.log("222222");
       show.value = 1;
       fetchData();
     }
   }
 }
 function fetchData() {
-  show.value = 1
+  show.value = 1;
   if (postSubId.value == 0) {
-    console.log("pageNo.value", pageNo.value);
     forums
-      .selectPost(userinfo.value.userId, pageNo.value, 10, postSource.value)
+      .selectPost(userinfo.value.userId, pageNo.value, 5, postSource.value)
       .then((res) => {
-        console.log("结果", res);
-        console.log("页码", pageNo.value);
         for (let i = 0; i < res.length; i++) {
           pagesData.value.push({ ...res[i] });
         }
         show.value = 0;
         pageNo.value++;
-        console.log("show", show.value);
       });
   } else {
     forums
       .selectPost(
         userinfo.value.userId,
         pageNo.value,
-        10,
+        5,
         postSource.value,
         postSubId.value
       )
       .then((res) => {
-        console.log("结果", res);
-        console.log("页码", pageNo.value);
         for (let i = 0; i < res.length; i++) {
           pagesData.value.push({ ...res[i] });
         }
         show.value = 0;
         pageNo.value++;
-        console.log("show", show.value);
       });
   }
 }
@@ -305,7 +295,9 @@ function postLike(
           if (res == 20000) {
             pagesData.value[index].likes = true;
             ElMessage.success("点赞成功");
-            sentMessage(postUserId, "点赞了你的帖子", "PostLike", postId);
+            if (postUserId != userinfo.value.userId) {
+              sentMessage(postUserId, "点赞了你的帖子", "PostLike", postId);
+            }
           } else if (res == 53003) {
             ElMessage.warning("请勿重复点赞");
           } else {
@@ -315,7 +307,9 @@ function postLike(
           if (res == 20000) {
             pagesData.value[index].collect = true;
             ElMessage.success("收藏成功");
-            sentMessage(postUserId, "收藏了了你的帖子", "PostCollect", postId);
+            if (postUserId != userinfo.value.userId) {
+              sentMessage(postUserId, "收藏了你的帖子", "PostCollect", postId);
+            }
           } else if (res == 53003) {
             ElMessage.warning("请勿重复收藏");
           } else {
@@ -357,6 +351,9 @@ function postLike(
     justify-content: space-between;
     padding: 0px 20px;
     font-size: 18px;
+    .condition{
+      display: flex;
+    }
   }
   .classify {
     display: flex;
@@ -433,8 +430,13 @@ function postLike(
       overflow: hidden;
       font-family: "阿里妈妈刀隶体";
       .cardTitle {
+        display: inline-block;
+        width: 100%;
         font-size: 20px;
         font-weight: 600;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         cursor: pointer;
       }
       .cardUser {
@@ -473,12 +475,14 @@ function postLike(
     }
   }
   .card:nth-of-type(odd) {
+    background: white;
     flex-direction: row;
     .cardPhotos {
       border-radius: 15px 0 0 15px;
     }
   }
   .card:nth-of-type(even) {
+    background: white;
     flex-direction: row-reverse;
     .cardPhotos {
       border-radius: 0 15px 15px 0;

@@ -53,7 +53,8 @@ export interface cards {
   total: number;
   totaType: number;
   loadings: boolean;
-  uploading:boolean;
+  uploading: boolean;
+  detailLoading: boolean;
   newPostContent: string;
   newPostTitle: string;
 }
@@ -82,7 +83,8 @@ export const forumStore = defineStore("forumInfo", {
       total: 0,
       totaType: 0,
       loadings: false,
-      uploading:false,
+      uploading: false,
+      detailLoading: false,
       newPostContent: "",
       newPostTitle: "",
     };
@@ -106,10 +108,10 @@ export const forumStore = defineStore("forumInfo", {
     },
     // 发布帖子
     async addCard(params: FormData) {
-      this.uploading = true
+      this.uploading = true;
       const { data } = await addpost(params);
       const code = data.value?.code;
-      this.uploading = false
+      this.uploading = false;
       return code;
     },
     //主页查询帖子
@@ -125,7 +127,7 @@ export const forumStore = defineStore("forumInfo", {
       if (pageNo == 1) {
         this.loadings = true;
       }
-      let datas = []
+      let datas = [];
       let h = 0;
       const { data } = await getPost(
         pageNo,
@@ -199,7 +201,7 @@ export const forumStore = defineStore("forumInfo", {
       postContent?: string,
       postUserId?: number
     ) {
-      this.loadings = true
+      this.loadings = true;
       const { data } = await getPost(
         pageNo,
         pageSize,
@@ -220,7 +222,7 @@ export const forumStore = defineStore("forumInfo", {
           userDatas[i] = { ...postDataWithoutImg, photos };
         }
       }
-      this.loadings = false
+      this.loadings = false;
       return userDatas;
     },
     //查询自己收藏或点赞的帖子
@@ -232,7 +234,7 @@ export const forumStore = defineStore("forumInfo", {
       userId?: number,
       postId?: number
     ) {
-      this.loadings = true
+      this.loadings = true;
       let { data } = await getKeep(
         idType,
         pageNo,
@@ -258,12 +260,13 @@ export const forumStore = defineStore("forumInfo", {
             selectKeeps[i] = { ...postDataWithoutImg, photos, ...postData };
           }
         }
-        this.loadings = false
+        this.loadings = false;
         return selectKeeps;
       }
     },
     //查询单个帖子
     async getSingle(postId: number, userId: any) {
+      this.detailLoading = true;
       const { data } = await singlePost(postId);
       let single = data.value?.data || {};
       const { postImg, ...postData } = single;
@@ -301,6 +304,7 @@ export const forumStore = defineStore("forumInfo", {
         likes,
         collect,
       });
+      this.detailLoading = false
     },
     //删除帖子
     async deletePosts(ids: number[]) {
@@ -424,7 +428,7 @@ export const forumManage = defineStore("manage", {
     //获取标签
     async labelInfo(pageNo: number, pageSize: number) {
       const { data } = await getLabel(pageNo, pageSize);
-      this.labels = data.value?.data.records || []; 
+      this.labels = data.value?.data.records || [];
     },
     //添加标签
     async addLabel(name: string) {

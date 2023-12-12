@@ -1,5 +1,5 @@
 <template>
-  <div class="deatils">
+  <div class="deatils" v-loading = "detailLoading">
     <div
       class="bgphoto"
       v-if="singleData.photoShow == true"
@@ -241,7 +241,7 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { singleData, discuss } = storeToRefs(forums);
+const { singleData, discuss,detailLoading } = storeToRefs(forums);
 let conten = ref("");
 let contens = ref("");
 let commentNews = reactive<any>({
