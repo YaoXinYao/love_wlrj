@@ -35,5 +35,5 @@ export const postAffiche = (query:any,body?:any) =>{
 
 
 export const deleteNotice = (query:any) =>{
-    return HYRequest.delete('/notice/affiche/delete',query)
+    return HYRequest.delete('/api/notice/affiche/delete',query)
 }

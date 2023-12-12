@@ -51,8 +51,8 @@ export const getSaveSchedule = async ()=>{
         time.grade = data[j]
         for(let i=1;i<=3;i++){
             // console.log(data[1])
-            let msResult = await HYRquest.get('/check/attendance/saveSchedule/getSaveSchedule',{gradeLevel:data[j],order:i,status:0})
-            let meResult = await HYRquest.get('/check/attendance/saveSchedule/getSaveSchedule',{gradeLevel:data[j],order:i,status:1})
+            let msResult = await HYRquest.get('/api/attendance/saveSchedule/getSaveSchedule',{gradeLevel:data[j],order:i,status:0})
+            let meResult = await HYRquest.get('/api/attendance/saveSchedule/getSaveSchedule',{gradeLevel:data[j],order:i,status:1})
             // console.log(msResult.data.value)
             if(i===1){
                 time.morningStart = msResult.data.value.data !== null ? msResult.data.value.data : ''
@@ -84,11 +84,11 @@ export const getSaveSchedule = async ()=>{
 
 export const saveSchedule = (query:any) =>{
     
-    return HYRquest.post('/check/attendance/saveSchedule/save',query)
+    return HYRquest.post('/api/attendance/saveSchedule/save',query)
 }
 
 
 
 export const deleteSchedule = (query:any) =>{
-    return HYRquest.delete('/check/attendance/saveSchedule/deleteSchedule',query)
+    return HYRquest.delete('/api/attendance/saveSchedule/deleteSchedule',query)
 }

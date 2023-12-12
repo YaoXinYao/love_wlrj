@@ -7,18 +7,18 @@
                 </div>
                 <div class="showProclam latest">
                     <div class="proclamaPicture">
-                            <img class="proclamaPic" :src="latestProclamation.noticeImg" alt="" >
+                            <img class="proclamaPic" :src="(latestProclamation as any).noticeImg ? (latestProclamation as any).noticeImg : '/img/4.webp' " alt="" >
                             <div class="specialEffects"></div>
                     </div>
                     <div class="proclamaDetail">
                             <div class="proclamaTitle" style="font-size: 24px;">
-                                {{latestProclamation.noticeTitle}}
+                                {{(latestProclamation as any).noticeTitle}}
                             </div>
-                            <div  style="flex: 1;">
-                                {{latestProclamation.noticeContent}}
+                            <div class="proclamaMatter">
+                                {{(latestProclamation as any).noticeContent}}
                             </div>
                             <div class="rightTime">
-                                {{latestProclamation.noticeTime}}
+                                {{(latestProclamation as any).noticeTime}}
                             </div>
                     </div>
                 </div>
@@ -67,12 +67,22 @@
                 </div>
             </template>
         </div>
+        <div :class="{sideContents: true, sideContent: !sideRef}">
+            <div :class="{sideIcon: true, sideChange: !sideRef}" @click="handleChangeSide">
+                <el-icon :class="{sideIcons: !sideRef}"  size="30" ><Memo /></el-icon>
+                <div :class="{sideList: true,sideListChange: !sideRef}">
+                    <div   v-for="(item,index) in sortTIme">{{ index }}</div>
+                </div>
+                
+            </div>
+            
+        </div>
     </ClientOnly>
 </template>
 
 <script setup lang="ts">
 useHeader();
-import {Calendar} from '@element-plus/icons-vue'
+import {Calendar, Memo} from '@element-plus/icons-vue'
 import proclamationStore from '@/store/proclamation'
 import {storeToRefs} from 'pinia'
 
@@ -80,10 +90,7 @@ definePageMeta({
     roles:1
 })
 
-interface proclamationType {
-    latestProclamation:string,
-    proclamation: Array<any>
-}
+
 
 const ProclamationStore = proclamationStore()
 
@@ -95,7 +102,7 @@ let sortTIme = ref()
 const divRef = ref()
 const divCenterRef = ref()
 const divDispaly = ref<boolean[]>([true])
-// const list = ref({})
+const sideRef = ref(true)
 
 onMounted(async ()=>{
     await nextTick()
@@ -108,17 +115,18 @@ onMounted(async ()=>{
 
 
     function changeList(){
-        console.log(proclamation)
+        // console.log(proclamation)
         for(let i=proclamation.value.length-1;i>=0;i--){
-            let time = new Date(proclamation.value[i].noticeTime)
+            let time = new Date((proclamation.value[i] as any).noticeTime)
             let year = time.getFullYear()+ '-'+ (time.getMonth() + 1).toString().padStart(2,)  as any
-            console.log(year)
+            // console.log(year)
             if(list.hasOwnProperty(year)){
                 list[year].push(proclamation.value[i])
             }else{
                 list[year] = []
                 list[year].push(proclamation.value[i])
             }
+            list[year] = list[year].reverse()
         }
         
         let arr = Object.entries(list)
@@ -138,38 +146,31 @@ onMounted(async ()=>{
             divDispaly.value.push(false)
         })
 
-        console.log(sortarr)
-        console.log(list)
         sortTIme.value = sortarr
     }
     changeList()
 
     window.addEventListener('scroll',(e)=>{
-        // console.log(e)
-        // console.log(window.innerHeight,window.scrollY)
-        // console.log(divRef.value)
         let arr = divRef.value
         for(let item in divRef.value){
-            console.log(divDispaly.value)
+
             if(Number(item) >= 1){
                 console.log(divRef.value[item])
                 if(window.innerHeight + window.scrollY >= divRef.value[item].offsetTop){
-                    console.log('在')
+
                     divDispaly.value[Number(item)] = true
-                }else{
-                    console.log('不在')
                 }
             }
         }
     },{passive:true})
-
     window.scrollTo(0, 0);
-
-    // 
-
-
-
 })
+
+function handleChangeSide(){
+    console.log(1111)
+    sideRef.value = false
+}
+
 
 </script>
 
@@ -252,6 +253,10 @@ onMounted(async ()=>{
                     display: flex;
                     flex-direction: row;
                     justify-content: flex-end;
+                }
+                .proclamaMatter{
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
                 }
             }
             &:hover{
@@ -361,10 +366,10 @@ onMounted(async ()=>{
                     text-overflow: ellipsis;
                     padding: 10px 20px;
                     .proclamaContent{
-                        line-height: 18px;
+                        line-height: 24px;
                         margin-bottom: 10px;
                         .proclamaDesc{
-                            max-height: 54px;
+                            max-height: 72px;
                             overflow: hidden;
                             word-break: break-all;
                             display: -webkit-box;
@@ -391,7 +396,99 @@ onMounted(async ()=>{
     }   
 }
 
+.sideContents{
+    position: fixed;
+    top: 20%;
+    right: 3%;
+    border-radius: 50%;
+    background: #fff;
+    text-align: center;
+    line-height: 40px;
+    box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.15);
+    
+    .sideIcon{
+        height: 40px;
+        width: 40px;
+        display: flex;
+        flex-direction: column;
 
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        
+        overflow: hidden;
+        .sideIcons{
+            animation-name: changeIcon;
+            animation-duration: 1s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+        .sideList{
+            display: none;
+        }
+        .sideListChange{
+            animation-name: sideList;
+            animation-duration: 1s;
+            animation-delay: 2s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+            animation-iteration-count: 1;
+        }
+    }
+    .sideChange{
+        animation-name: sideChange;
+        animation-duration: 1s;
+        animation-delay: 1s;
+        animation-fill-mode: forwards;
+        animation-timing-function: linear;
+        animation-iteration-count: 1;
+    }
+}
+.sideContent{
+    animation-name: sideChange;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+}
+
+@keyframes changeIcon {
+    0%{
+        transform: rotate(0deg);
+
+    }
+
+    100%{
+        transform: rotate(1080deg);
+        font-size: 0px;
+        display: none;
+    }
+}
+
+@keyframes sideChange {
+    50%{
+        border-radius: 6px;
+    }
+    100%{
+        height: 40px;
+        width: 100px;
+        border-radius: 6px;
+    }
+}
+
+@keyframes sideList {
+
+    0%{
+        display: flex;
+    }
+
+    100%{
+        height: 100%;
+        display: flex;
+    }
+}
 
 
 @media (min-width:1201px){
