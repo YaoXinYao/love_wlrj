@@ -489,7 +489,7 @@ export const forumManage = defineStore("manage", {
         let photos: string[] = img ? img.split(",") : [];
         //查询用户
         const use = await this.getUser(dataArr[i].postUserId);
-        let userName = use.userName;
+        let userName = use ? use.userName : "未知";
         //查询分栏
         const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
         if (data.value?.data.records.length == 0) {
