@@ -415,10 +415,11 @@ function postLike(
         width: 100%;
         height: 16em;
         object-fit: cover;
+        transform: scale(1.1);
         transition: filter 375ms ease-in 0.2s, transform 0.6s;
       }
       img:hover {
-        transform: scale(1.1);
+        transform: scale(1.2);
       }
     }
     .cardInfo {
