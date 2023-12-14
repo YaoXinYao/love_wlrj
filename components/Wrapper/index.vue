@@ -23,10 +23,7 @@
         </div>
       </div>
       <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
-        <el-carousel-item
-          v-for="(item, index) in data ? data.data : wapprt"
-          :key="index"
-        >
+        <el-carousel-item v-for="(item, index) in Wrapper" :key="index">
           <img class="carouselimg" :src="item.carouselUrl" alt="" />
         </el-carousel-item>
       </el-carousel>
@@ -46,18 +43,23 @@
 import { gsap } from "gsap";
 import type { IResultData } from "~/service/forum";
 import type { WrapperType } from "~/types/Home";
+const Wrapper = ref<WrapperType[]>([]);
 const { data } = await useFetch<IResultData<WrapperType[]>>(
-  "http://152.136.161.44:19491/user/carousel/selectAllCarousel"
-);
-//替代品
-const wapprt: WrapperType[] = [
+  "/api/user/swagger/user/carousel/selectAllCarousel",
   {
-    carouselContent: "",
-    carouselUrl: "",
-    carouselId: 1,
-    carouselTitle: "",
+    method: "get",
+    server: false,
+  }
+);
+watch(
+  data,
+  () => {
+    Wrapper.value = data.value?.data || [];
   },
-];
+  {
+    immediate: true,
+  }
+);
 const carousel = ref();
 onMounted(() => {
   //首屏划入标题

@@ -8,7 +8,7 @@
         <div class="swiper-wrapper">
           <NuxtLink
             class="swiper-slide"
-            v-for="(item, index) in data.data"
+            v-for="(item, index) in MyProjectDis"
             :key="index"
             :to="item.projectUrl"
             target="_blank"
@@ -50,10 +50,25 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { IResultData } from "~/types/Userlogin";
 import type { ProjectDesType } from "~/types/disk";
 const MyProjectDis = ref<ProjectDesType[]>([]);
-const { data } = await useFetch<any>(
-  "http://112.125.120.78:19521/project/api/getProjectList"
+const { data } = await useFetch<IResultData<ProjectDesType[]>>(
+  "/api2/project/api/getProjectList",
+  {
+    method: "get",
+    server: false,
+  }
+);
+watch(
+  data,
+  () => {
+    console.log(data.value?.data);
+    MyProjectDis.value = data.value!.data;
+  },
+  {
+    immediate: true,
+  }
 );
 onMounted(async () => {
   //@ts-ignore
