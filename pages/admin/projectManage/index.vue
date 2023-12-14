@@ -112,7 +112,9 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="addProject"> 添加 </el-button>
+          <el-button type="primary" @click="addProject"
+            >{{ editFlag ? "修改" : "添加" }}
+          </el-button>
         </span>
       </template>
     </el-dialog>
@@ -154,6 +156,15 @@ const ruleFormRef = ref<FormInstance>(); //表单数据
 const dialogVisible = ref(false);
 const imgUrl = ref("");
 const file = ref<File>();
+
+const validatePassURL = (rule: any, value: string, callback: any) => {
+  const reg = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+  if (!reg.test(value)) {
+    callback(new Error("请输入正确的网址(https || https 开头)"));
+  } else {
+    callback();
+  }
+};
 const rules = reactive<FormRules<typeof form>>({
   projectName: [
     { validator: generateRules("项目名称不能为空", 0), trigger: "blur" },
@@ -161,10 +172,8 @@ const rules = reactive<FormRules<typeof form>>({
   projectIntroduce: [
     { validator: generateRules("项目介绍不能为空", 0), trigger: "blur" },
   ],
-  projectUrl: [
-    { validator: generateRules("项目地址不能为空", 0), trigger: "blur" },
-  ],
-  projectTime: [{ validator: generateRules("未选择时间", 1), trigger: "blur" }],
+  projectUrl: [{ validator: validatePassURL, trigger: "blur" }],
+  projectTime: [{ validator: generateRules("请选择时间", 1), trigger: "blur" }],
   projectTeams: [
     { validator: generateRules("团队名称不能为空", 0), trigger: "blur" },
   ],

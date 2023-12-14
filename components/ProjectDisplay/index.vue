@@ -6,10 +6,12 @@
     <div id="swipertran">
       <div class="swiper mySwiper">
         <div class="swiper-wrapper">
-          <div
+          <NuxtLink
             class="swiper-slide"
             v-for="(item, index) in data.data"
             :key="index"
+            :to="item.projectUrl"
+            target="_blank"
           >
             <div class="img">
               <img :src="item.projectImage" alt="" />
@@ -20,7 +22,7 @@
                 {{ item.projectIntroduce }}
               </div>
             </div>
-          </div>
+          </NuxtLink>
         </div>
       </div>
       <div class="swiper-button-prev"></div>

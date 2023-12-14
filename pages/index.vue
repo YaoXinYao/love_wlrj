@@ -14,7 +14,6 @@
 </template>
 <script setup lang="ts">
 import { useHomestore } from "~/store/home";
-import { useDiskstore } from "~/store/disk";
 const usehomestore = useHomestore();
 usehomestore.ChangeisRequireanim(true);
 </script>
