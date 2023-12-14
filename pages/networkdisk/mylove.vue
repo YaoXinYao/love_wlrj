@@ -192,9 +192,7 @@ const SearchChange = debounce(async (val: string) => {
   await diskstore.SearchMylovefile(val);
   loading.value = false;
 }, 500);
-const BeforeClonehander = () => {
-  console.log("关闭");
-};
+const BeforeClonehander = () => {};
 </script>
 <style scoped lang="scss">
 .filelist {

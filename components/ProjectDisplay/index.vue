@@ -31,7 +31,7 @@
     <div id="mobile">
       <div
         class="swiper-slide"
-        v-for="(item, index) in MyProjectDis"
+        v-for="(item, index) in MyProjectDis || []"
         :key="index"
       >
         <div class="img">
@@ -63,8 +63,8 @@ const { data } = await useFetch<IResultData<ProjectDesType[]>>(
 watch(
   data,
   () => {
+    MyProjectDis.value = data.value?.data || [];
     console.log(data.value?.data);
-    MyProjectDis.value = data.value!.data;
   },
   {
     immediate: true,

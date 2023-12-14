@@ -143,7 +143,6 @@ export const useDiskstore = defineStore("disk", {
         fileId: filedid,
         userId: Authuserid(),
       });
-      console.log(res.data.value);
       if (res.data.value.code !== 20000)
         return ElMessage({ message: "删除失败", type: "error" });
       const copy = [...this.Myfile.SearchItem];
@@ -230,7 +229,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Pagesize,
         types: this.curTag.map((item) => `types=${item}`).join("&") || "types=",
       });
-      console.log(res.data.value.data);
+
       this.Filelist = res.data.value.data;
       this.Loading = false;
     },
@@ -254,7 +253,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Myfile.PageSize,
         userId: Authuserid(),
       });
-      console.log(res.data.value.data);
+
       this.Myfile.FileList = res.data.value.data;
       this.Myfile.Loading = false;
     },
@@ -297,28 +296,25 @@ export const useDiskstore = defineStore("disk", {
     },
     //改变某一个的收藏状态
     async changeUncomment(id: number) {
-      console.log(id);
       const index = this.Filelist.dataList.findIndex((item) => item.id == id);
-      console.log(index);
+
       this.Filelist.dataList[index].is_collection == 0
         ? (this.Filelist.dataList[index].is_collection = 1)
         : (this.Filelist.dataList[index].is_collection = 0);
     },
     //Mylove收藏
     async changeUncomment2(id: number) {
-      console.log(id);
       const index = this.Mylove.FileList.dataList.findIndex(
         (item) => item.id == id
       );
-      console.log(index);
+
       this.Mylove.FileList.dataList[index].is_collection == 0
         ? (this.Mylove.FileList.dataList[index].is_collection = 1)
         : (this.Mylove.FileList.dataList[index].is_collection = 0);
     },
     async changeUncomment3(id: number) {
-      console.log(id);
       const index = this.Mylove.SearchItem.findIndex((item) => item.id == id);
-      console.log(index);
+
       this.Mylove.SearchItem[index].is_collection == 0
         ? (this.Mylove.SearchItem[index].is_collection = 1)
         : (this.Mylove.SearchItem[index].is_collection = 0);

@@ -113,7 +113,6 @@ const yearDate = ref([
   },
 ]);
 watch(curYear, (cur, preval) => {
-  console.log(cur, preval);
   const durantion = Math.abs(
     Number(yearDate.value[cur].time.slice(0, 4)) -
       Number(yearDate.value[preval].time.slice(0, 4))

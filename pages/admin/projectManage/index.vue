@@ -242,7 +242,7 @@ const changeImg = async (event: Event) => {
     if (editFlag.value) {
       loading.value = true;
       const res = await updataCover(fileraw, curProID.value);
-      console.log(res.data.value);
+
       if (res.data.value.code == 20000) {
         ElMessage({ message: "更新成功", type: "success" });
         await diskStore.updataCoverstore(curProID.value, fileBase64);

@@ -105,8 +105,6 @@ export function DiskSearch(params: SearchParams) {
 //项目添加
 export function ProjectAdd(params: ProjectParams) {
   const formdata = new FormData();
-  console.log(params.projectStartTime);
-  console.log(params.projectCompletionTime);
   formdata.append("projectName", params.projectName);
   formdata.append("file", params.file as any);
   formdata.append("projectCompletionTime", params.projectCompletionTime);
@@ -114,7 +112,6 @@ export function ProjectAdd(params: ProjectParams) {
   formdata.append("projectStartTime", params.projectStartTime);
   formdata.append("projectUrl", params.projectUrl);
   formdata.append("projectTeams", params.projectTeams);
-  console.log(formdata);
   return Hyrequire.post<IResultData<any>>(
     "/api2/project/api/addProject",
     {},
