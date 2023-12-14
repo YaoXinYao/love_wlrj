@@ -6,7 +6,6 @@
     <GroupIntroduction />
     <!-- 第三屏 -->
     <Adviser />
-
     <!-- 第四屏 -->
     <ProjectDisplay />
     <!-- 第五屏 -->
@@ -15,6 +14,7 @@
 </template>
 <script setup lang="ts">
 import { useHomestore } from "~/store/home";
+import { useDiskstore } from "~/store/disk";
 const usehomestore = useHomestore();
 usehomestore.ChangeisRequireanim(true);
 </script>

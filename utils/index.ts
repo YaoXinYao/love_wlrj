@@ -384,3 +384,19 @@ export function isTokenExpired(token: { expiration: number }) {
     return false; // 未过期
   }
 }
+//生成规则
+export function generateRules(info: string, len: number) {
+  const validatePass = (rule: any, value: string, callback: any) => {
+    if (value.length <= len) {
+      callback(new Error(info));
+    } else {
+      callback();
+    }
+  };
+  return validatePass;
+}
+//检验文件类型
+export function ExamImage(file: File) {
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+  return allowedTypes.includes(file.type);
+}

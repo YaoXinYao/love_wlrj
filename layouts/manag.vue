@@ -43,6 +43,14 @@
               ></template
             >
           </el-menu-item>
+          <el-menu-item index="/admin/projectManage" v-if="userinfo.roleId != 1">
+            <el-icon><PictureRounded /></el-icon>
+            <template #title
+              ><NuxtLink to="/admin/projectManage" @click="skipAdd($event)"
+                >项目展示管理</NuxtLink
+              ></template
+            >
+          </el-menu-item>
           <el-menu-item index="/admin/forumManage">
             <el-icon><setting /></el-icon>
             <template #title

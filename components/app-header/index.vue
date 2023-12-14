@@ -133,7 +133,7 @@
       </nav>
 
       <div class="login">
-        <NuxtLink v-if="user.token == ''" to="/login">
+        <NuxtLink v-show="user.token == ''" to="/login">
           <TransitionButton innertext="登录"></TransitionButton>
         </NuxtLink>
         <el-dropdown v-if="user.token !== ''" :hide-on-click="false">
@@ -213,6 +213,9 @@ const messagetotal = computed(() => {
     notReadNum.value.postCommentCnt +
     notReadNum.value.postLikeCnt
   );
+});
+useHead({
+  meta: [{ name: "referrer", content: "no-referrer" }],
 });
 //注册插件
 gsap.registerPlugin(ScrollTrigger);

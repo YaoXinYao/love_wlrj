@@ -8,19 +8,16 @@
         <div class="swiper-wrapper">
           <div
             class="swiper-slide"
-            v-for="(item, index) in imgitem"
+            v-for="(item, index) in data.data"
             :key="index"
           >
             <div class="img">
-              <img :src="item.src" alt="" />
+              <img :src="item.projectImage" alt="" />
             </div>
             <div class="swipertext">
-              <div class="title">PBR渲染</div>
+              <div class="title">{{ item.projectName }}</div>
               <div class="desc">
-                基于 Frame Graph
-                的现代图形渲染管线，光源、摄像机、材质等参数全都支持真实物理属性，优化美术创作流水线，为游戏带来更写实的画面表现。
-                基于 Frame Graph
-                的现代图形渲染管线，光源、摄像机、材质等参数全都支持真实物理属性，优化美术创作流水线，为游戏带来更写实的画面表现。
+                {{ item.projectIntroduce }}
               </div>
             </div>
           </div>
@@ -30,63 +27,33 @@
       <div class="swiper-button-next"></div>
     </div>
     <div id="mobile">
-      <div class="swiper-slide" v-for="(item, index) in imgitem" :key="index">
+      <div
+        class="swiper-slide"
+        v-for="(item, index) in MyProjectDis"
+        :key="index"
+      >
         <div class="img">
-          <img :src="item.src" alt="" />
+          <img :src="item.projectImage" alt="" />
         </div>
         <div class="swipertext">
-          <div class="title">PBR渲染</div>
+          <div class="title">{{ item.projectName }}</div>
           <div class="desc">
-            基于 Frame Graph
-            的现代图形渲染管线，光源、摄像机、材质等参数全都支持真实物理属性，优化美术创作流水线，为游戏带来更写实的画面表现。
-            基于 Frame Graph
-            的现代图形渲染管线，光源、摄像机、材质等参数全都支持真实物理属性，优化美术创作流水线，为游戏带来更写实的画面表现。
+            {{ item.projectIntroduce }}
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-const imgitem: any[] = [
-  {
-    src: "https://download.cocos.com/CocosPortal/image/d9602582aea545e28dc9843c3d4d158c/d9602582aea545e28dc9843c3d4d158c.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/dfb3da75c6444732bb8c8d70fcac27c4/dfb3da75c6444732bb8c8d70fcac27c4.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/f159f7cc10824731806d420fb971b34a/f159f7cc10824731806d420fb971b34a.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/cb2da946b6e4499580dedd01aac3c378/cb2da946b6e4499580dedd01aac3c378.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/447b5f50f64b45a4ba4ba17104b6db10/447b5f50f64b45a4ba4ba17104b6db10.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/85494319f03443e18f4098d1432b9f27/85494319f03443e18f4098d1432b9f27.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/1ba5db609d7046c58198e9a89c876b05/1ba5db609d7046c58198e9a89c876b05.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/4550afd20b2144b8a355bd7f507e5eb2/4550afd20b2144b8a355bd7f507e5eb2.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/0742b5e9548347868ae98f553fa899ac/0742b5e9548347868ae98f553fa899ac.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/a87aeff3e9434c28a4e9ea6f93bd8100/a87aeff3e9434c28a4e9ea6f93bd8100.png",
-  },
-  {
-    src: "https://download.cocos.com/CocosPortal/image/1c8d7fa139554be9ae76cb1b1b940d42/1c8d7fa139554be9ae76cb1b1b940d42.png",
-  },
-];
-onMounted(() => {
+import type { ProjectDesType } from "~/types/disk";
+const MyProjectDis = ref<ProjectDesType[]>([]);
+const { data } = await useFetch<any>(
+  "http://112.125.120.78:19521/project/api/getProjectList"
+);
+onMounted(async () => {
   //@ts-ignore
   let swiper = new Swiper(".mySwiper", {
     slidesPerView: 3, // 轮播区域展示的数量

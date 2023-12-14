@@ -4,10 +4,11 @@ import {
   LookMyfile,
   SearchFile,
   SearchMyfile,
+  getAllProject,
   uploaddeleteFile,
 } from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
-import type { Diskstore } from "~/types/disk";
+import type { Diskstore, ProjectDesType } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
   state(): Diskstore {
     return {
@@ -94,9 +95,48 @@ export const useDiskstore = defineStore("disk", {
         diskFileNumber: 0,
         diskFileSize: "",
       },
+      MyProjectDis: [],
     };
   },
   actions: {
+    //更新项目信息
+    async updataProjectinfo(obj: ProjectDesType & { projectId: number }) {
+      const index = this.MyProjectDis.findIndex(
+        (item) => item.projectId == obj.projectId
+      );
+      this.MyProjectDis[index] = {
+        ...obj,
+        projectImage: this.MyProjectDis[index].projectImage,
+      };
+    },
+    //更新指定ID 的项目封面
+    async updataCoverstore(id: number | string, imgurl: string) {
+      const index = this.MyProjectDis.findIndex((item) => item.projectId == id);
+      this.MyProjectDis[index].projectImage = imgurl;
+    },
+    //删除指定ID 的项目
+    async deleteProjectID(id: number | string) {
+      const copy = [...this.MyProjectDis];
+      const newcopy = copy.filter((item) => {
+        return item.projectId != id;
+      });
+      this.MyProjectDis = newcopy;
+    },
+    //请求获得当前展示的项目
+    async GetDisProject() {
+      const res = await getAllProject();
+      try {
+        if (res.data) {
+          this.MyProjectDis = res.data.value.data;
+        }
+      } catch (error) {
+        this.MyProjectDis = [];
+      }
+    },
+    //添加一个项目
+    async AddProjectDesc(Obj: ProjectDesType) {
+      this.MyProjectDis.push(Obj);
+    },
     //删除回调，前台删除
     async SearchFileReplce(filedid: number) {
       const res = await uploaddeleteFile({
