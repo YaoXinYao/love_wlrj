@@ -8,7 +8,7 @@
         <div class="swiper-wrapper">
           <NuxtLink
             class="swiper-slide"
-            v-for="(item, index) in MyProjectDis"
+            v-for="(item, index) in data?.data"
             :key="index"
             :to="item.projectUrl"
             target="_blank"
@@ -53,24 +53,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { IResultData } from "~/types/Userlogin";
 import type { ProjectDesType } from "~/types/disk";
 const MyProjectDis = ref<ProjectDesType[]>([]);
+console.log("路由");
 const { data } = await useFetch<IResultData<ProjectDesType[]>>(
-  "/api2/project/api/getProjectList",
-  {
-    method: "get",
-    server: false,
-  }
+  `${useRequestURL().href}api2/project/api/getProjectList`
 );
-watch(
-  data,
-  () => {
-    MyProjectDis.value = data.value?.data || [];
-    console.log(data.value?.data);
-  },
-  {
-    immediate: true,
-  }
-);
-onMounted(async () => {
+function swiperloading() {
   //@ts-ignore
   let swiper = new Swiper(".mySwiper", {
     slidesPerView: 3, // 轮播区域展示的数量
@@ -102,6 +89,9 @@ onMounted(async () => {
   swiperContainer!.addEventListener("mouseleave", function () {
     swiper!.autoplay.start();
   });
+}
+onMounted(async () => {
+  swiperloading();
   loading();
 });
 function loading() {
