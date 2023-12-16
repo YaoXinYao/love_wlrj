@@ -1,7 +1,7 @@
 <template>
-    <div class="content" >
+    <div class="content"  v-loading.fullscreen="loading">
         <div class="header">
-            <Header @new-value="handleNewValueClick"></Header>
+            <Header @new-value="handleNewValueClick" @load="handleLoading"></Header>
         </div>
         <div class="announcementl">
             <Content @show-click="handleChangesClick" ref="contentRef" ></Content>
@@ -20,7 +20,6 @@
                                 <div class="announceContent">
                                     {{ announcementCon.noticeContent }}
                                 </div>
-                                <!-- <el-input :placeholder="announcementCon.content" /> -->
                             </el-form-item>
                             <el-form-item v-show="announcementCon.noticeImg">
                                 <div class="picContent">
@@ -64,6 +63,7 @@ import Content from '@/components/announcementContent/index.vue'
 import {ref } from 'vue'
 import type {annoucement} from '@/store/store'
 
+const loading = ref(false)
 const isShow = ref(false)
 const ImgRef = ref()
 const isFullScreen = ref(false)
@@ -76,6 +76,10 @@ definePageMeta({
     roles:2
 })
 
+function handleLoading(data:boolean){
+
+    loading.value = data
+}
 
 let announcementCon = ref<annoucement>({
     noticeTitle: '',

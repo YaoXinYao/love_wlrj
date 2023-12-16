@@ -308,7 +308,7 @@ function handleSubmit(){
       }else if(form.labelType === 'nightStart'){
         query.order = "3"
         query.status = "0"
-      }else if(form.labelType === 'morningnightEndStart'){
+      }else if(form.labelType === 'nightEnd'){
         query.order = "3"
         query.status = "1"
       }

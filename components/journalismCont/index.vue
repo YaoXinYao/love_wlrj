@@ -1,5 +1,5 @@
 <template>
-    <div class="recent-announcement">
+    <div class="recent-announcement" >
         <!-- 随机公告 -->
         <div class="barrage-container">
             <el-form
@@ -23,6 +23,7 @@
                         <div class="fileShow">
                             <img  :src="refForm.newsImgs !== '' ? srcValue : ''" alt="上传图片" class="Pic">
                             <div class="imgName">
+                                
                                 {{ refForm.newsImgs.name }}
                             </div>
                             <div class="delPic" @click="handleDeletePic">
@@ -64,8 +65,8 @@ const isClear = ref(false)
 const fileInput = ref()
 const srcValue = ref('')
 const markRef = ref<InstanceType<typeof Markdown>>()
-
-const emit = defineEmits(['newValue'])
+const loading = ref(false)
+const emit = defineEmits(['newValue','load'])
 
 
 
@@ -169,12 +170,16 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 type: 'warning',
             }
         ).then(()=>{
+            loading.value = false
+            emit('load',true)
             insertNew(form,fileList).then(res=>{
                 // console.log('上传图片')
                 console.log(res.data.value)
                 // console.log(res)
                 let data = res.data.value
                 if(data.code === 20000){
+                    loading.value = true
+                    emit('load',false)
                     ElNotification({
                         title:'发送成功',
                         message:`这是一条${refForm.newsTitle}的新闻`,
@@ -221,21 +226,32 @@ const resetForm = (forEl:FormInstance | undefined)=>{
 function handleFileChange(event:any){
     // console.log(event)
     const file = event.target.files[0]
-    console.log(file)
+    // console.log(event.target)
+    // console.log(file)
     let nameArr = file.name.split('.')
-    if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp' || nameArr[nameArr.length-1] === 'jpeg'){
-        refForm.newsImgs = file
-        const value = URL.createObjectURL(file)
-        srcValue.value = value
-        // console.log(value)
-        // console.log(refForm.newsImgs)
+    const size = 2097152;
+    if(file.size <= size){
+        if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp' || nameArr[nameArr.length-1] === 'jpeg'){
+            refForm.newsImgs = file
+            const value = URL.createObjectURL(file)
+            srcValue.value = value
+            // console.log(value)
+            // console.log(refForm.newsImgs)
+        }else{
+            ElNotification({
+                title:'上传失败',
+                message:`格式不正确`,
+                type:'warning',
+                zIndex: 10000,
+            })
+        }
     }else{
         ElNotification({
-            title:'上传失败',
-            message:`格式不正确`,
-            type:'warning',
-            zIndex: 10000,
-        })
+                title:'上传失败',
+                message:`文件太大，最大2MB`,
+                type:'warning',
+                zIndex: 10000,
+            })
     }
 }
 
