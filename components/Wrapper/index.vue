@@ -23,7 +23,7 @@
         </div>
       </div>
       <el-carousel ref="carousel" height="100vh" :interval="5000" arrow="never">
-        <el-carousel-item v-for="(item, index) in data?.data" :key="index">
+        <el-carousel-item v-for="(item, index) in wrapper" :key="index">
           <img class="carouselimg" :src="item.carouselUrl" alt="" />
         </el-carousel-item>
       </el-carousel>
@@ -43,9 +43,20 @@
 import { gsap } from "gsap";
 import type { IResultData } from "~/service/forum";
 import type { WrapperType } from "~/types/Home";
-//服务端渲染，获取数据
+const wrapper = ref<WrapperType[]>([]);
+//服务端渲染，获取数据,同时也支持客户端获取数据，但是部署之后会出现问题，真的让人头疼
 const { data } = await useFetch<IResultData<WrapperType[]>>(
-  `${useRequestURL().href}api/user/swagger/user/carousel/selectAllCarousel`
+  `${useRequestURL().href}api/user/swagger/user/carousel/selectAllCarousel`,
+  {
+    server: false,
+  }
+);
+watch(
+  data,
+  () => {
+    wrapper.value = data.value?.data || [];
+  },
+  { immediate: true }
 );
 const carousel = ref();
 onMounted(() => {

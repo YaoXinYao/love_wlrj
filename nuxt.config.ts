@@ -27,10 +27,12 @@ export default defineNuxtConfig({
         },
         {
           name: "keywords",
-          content: "未来, 未来软件工作室, 未来小组，河南科技学院最牛小组",
+          content:
+            "未来, 未来软件工作室, 未来小组,河南科技学院最牛小组,高国红,李士勇",
         },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "referrer", content: "no-referrer" },
+        { name: "og:title", content: "未来软件工作室" },
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/favicon2.ico" },

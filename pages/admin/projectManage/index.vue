@@ -6,6 +6,7 @@
     <div class="projectDis">
       <div class="sliderbox">
         <swiper
+          ref="swiperRef"
           :slides-per-view="3"
           :navigation="true"
           :modules="[Navigation]"
@@ -47,7 +48,7 @@
           </swiper-slide>
           ...
         </swiper>
-        <!--  <div class="swiper-button-prev"></div>
+      <!--   <div class="swiper-button-prev" @click="Prevpage"></div>
         <div class="swiper-button-next"></div> -->
       </div>
     </div>
@@ -147,6 +148,7 @@ const form = reactive<ProjectDesc>({
   projectTeams: "",
 });
 const diskStore = useDiskstore();
+const swiperRef = ref(null);
 const { MyProjectDis } = storeToRefs(diskStore);
 await diskStore.GetDisProject();
 const curProID = ref(0);
@@ -156,7 +158,6 @@ const ruleFormRef = ref<FormInstance>(); //表单数据
 const dialogVisible = ref(false);
 const imgUrl = ref("");
 const file = ref<File>();
-
 const validatePassURL = (rule: any, value: string, callback: any) => {
   const reg = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
   if (!reg.test(value)) {
@@ -164,6 +165,10 @@ const validatePassURL = (rule: any, value: string, callback: any) => {
   } else {
     callback();
   }
+};
+const Prevpage = () => {
+  //@ts-ignore
+  console.log(swiperRef.value.swiper);
 };
 const rules = reactive<FormRules<typeof form>>({
   projectName: [

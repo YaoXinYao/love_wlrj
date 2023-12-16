@@ -21,7 +21,7 @@ export const useHotnews = defineStore("hotnews", {
   actions: {
     async getHotnews(curIndex: number) {
       const res = await GetHotnews({ pageNo: curIndex, pageSize: 4 });
-
+      console.log("新闻获取", res.data.value.data);
       this.HotNews = res.data.value.data;
     },
   },
