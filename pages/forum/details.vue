@@ -506,7 +506,7 @@ function comLike(
 }
 watch(status, (newStatus) => {
   if (newStatus === "OPEN") {
-    console.log("WebSocket connection established");
+    // console.log("WebSocket connection established");
   }
 });
 </script>

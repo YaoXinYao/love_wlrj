@@ -52,7 +52,7 @@
       <el-upload
         class="upload-demo"
         ref="uploadFiles"
-        action="/zinfo/user/user/importUser"
+        action="/api/user/user/importUser"
         method="post"
         :auto-upload="false"
         :multiple="false"
@@ -355,7 +355,7 @@ function handelUpload(file: any) {
 function submitFiles() {
   if (team.value == "" || role.value == "") {
     ElMessage.warning("分组或角色不能为空");
-  } else if (!fileList) {
+  } else if (fileList == false) {
     ElMessage.warning("请导入上传文件");
   } else {
     //为导入用户设置默认组别
@@ -365,6 +365,7 @@ function submitFiles() {
         staffStore.defaultRoles(Number(role.value)).then((res) => {
           if (res == 20000) {
             uploadFiles.value!.submit();
+            curTable.value = 1
             setTimeout(() => {
               modelState.value = false;
               uploadFiles.value!.clearFiles();
@@ -387,7 +388,11 @@ const successFun = (
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
-  ElMessage.success("导入成功");
+  if(response.code == 20000){
+    ElMessage.success("导入成功");
+  }else{
+    ElMessage.error("导入失败");
+  }
   staffStore.getAllUser(1, 7).then((res) => {
     if (res.code == 20000) {
       users.value = res.data?.records;
@@ -429,10 +434,11 @@ function closeDialog() {
 }
 //删除成员
 function deleteStaff() {
-  if (isSignle.value) {
+  if (!isSignle.value) {
     staffStore.deleteMore(moreDelete.value).then((res) => {
       if (res == 20000) {
         ElMessage.success("删除成员成功");
+        curTable.value = 1
         staffStore.getAllUser(1, 7).then((res) => {
           if (res.code == 20000) {
             users.value = res.data?.records;
@@ -451,6 +457,7 @@ function deleteStaff() {
         ElMessage.success("删除成功");
         staffStore.getAllUser(1, 7).then((res) => {
           if (res.code == 20000) {
+            curTable.value = 1
             users.value = res.data?.records;
             total.value = res.data?.total;
           } else {

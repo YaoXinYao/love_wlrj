@@ -51,7 +51,7 @@ export const useStaffStore = defineStore("staff", {
       isSignle:false,
       manageGroup:false,
       manageRole:false,
-      curTable:1
+      curTable:1,
     };
   },
   actions: {
@@ -88,7 +88,6 @@ export const useStaffStore = defineStore("staff", {
     //修改某个年级的角色
     async updateGrade(grade:string,roleId:number){
       let {data} = await updateByGrade(grade,roleId)
-      console.log("修改角色",data.value);
       return data.value?.code
     },
     //删除组别
@@ -104,7 +103,6 @@ export const useStaffStore = defineStore("staff", {
     //为用户设置组别
     async setGroup(groupId:number,userId:number){
       let {data} = await updateUserGroup(groupId,userId)
-      console.log("为用户设置组别",data.value);
       return data.value?.code
     },
     //分页查询所有用户
@@ -139,7 +137,6 @@ export const useStaffStore = defineStore("staff", {
     //删除多个用户
     async deleteMore(ids: number[]) {
       let { data } = await deleteMoreUser(ids);
-      console.log("删除多个用户", data.value)
       return data.value.code
     },
   },

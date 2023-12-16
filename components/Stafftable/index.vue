@@ -28,7 +28,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      v-model:current-page="currentPage"
+      v-model:current-page="curTable"
       :small="small"
       :disabled="disabled"
       :background="background"
@@ -46,7 +46,6 @@ import {useHomestore} from "~/store/home"
 let userData = useHomestore()
 let {userinfo} = storeToRefs(userData)
 import { ref } from "vue";
-const currentPage = ref();
 const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
@@ -63,14 +62,14 @@ const {
   signleDelete,
   isSignle,
   moreDelete,
-  curTable
+  curTable,
 } = storeToRefs(staffData);
 const multipleSelection = ref<any[]>([]);
 //选择项改变触发
 const handleSelectionChange = (val: any[]) => {
   multipleSelection.value = val;
   moreDelete.value = [];
-  isSignle.value = true;
+  isSignle.value = false;
   for (let i = 0; i < val.length; i++) {
     moreDelete.value[i] = val[i].userId;
   }
@@ -81,7 +80,8 @@ const handleEdit = (row: any) => {
 };
 const handleDelete = (row: any) => {
   signleDelete.value = row.userId;
-  isSignle.value = false;
+  moreDelete.value = [];
+  isSignle.value = true;
   deleteModel.value = true;
 };
 //改变当前页
