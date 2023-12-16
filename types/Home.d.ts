@@ -184,3 +184,19 @@ export interface Record {
   newsImg: string;
   newsTime: string;
 }
+export interface ProjectDesc {
+  projectName: string;
+  projectTime: any;
+  projectIntroduce: string;
+  projectUrl: string;
+  projectTeams: string;
+}
+export interface ProjectParams {
+  projectName: string;
+  projectStartTime: string;
+  projectCompletionTime: string;
+  projectIntroduce: string;
+  projectUrl: string;
+  file?: File;
+  projectTeams: string;
+}

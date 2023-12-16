@@ -49,6 +49,7 @@ export interface Diskstore {
     diskFileNumber: number;
     diskFileSize: string;
   };
+  MyProjectDis: ProjectDesType[];
 }
 export interface Fileprops {
   id: number;
@@ -135,4 +136,16 @@ export interface SearchParams {
   index: number;
   keyword: string;
   pageSize: number;
+}
+// 项目数据结构
+export interface ProjectDesType {
+  projectId?: number | string;
+  projectName: string;
+  projectIntroduce: string;
+  projectImage?: string;
+  projectUrl: string;
+  projectTeams: string;
+  projectStartTime?: string;
+  projectCompletionTime?: string;
+  projectDays?: number;
 }

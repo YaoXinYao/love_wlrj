@@ -1,6 +1,6 @@
 <template>
   <div class="login2">
-    <a class="loginbt">{{ innertext }}</a>
+    <NuxtLink class="loginbt">{{ innertext }}</NuxtLink>
   </div>
 </template>
 <script setup lang="ts">

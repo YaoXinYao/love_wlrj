@@ -6,7 +6,6 @@
     <GroupIntroduction />
     <!-- 第三屏 -->
     <Adviser />
-
     <!-- 第四屏 -->
     <ProjectDisplay />
     <!-- 第五屏 -->

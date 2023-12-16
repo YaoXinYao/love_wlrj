@@ -97,7 +97,6 @@ const Favoritefilesend = Mythrottle(async (id: number) => {
   const res = await Favoritefile(id);
   if (res.data.value.code === 20000) {
     diskstore.changeUncomment(id);
-    console.log(res.data.value.message);
     ElMessage({ message: res.data.value.message, type: "success" });
   }
   if (res.data.value.code === 51000) {

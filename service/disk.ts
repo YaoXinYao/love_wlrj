@@ -6,9 +6,11 @@ import type {
   SearchMyfileType,
   Fileprops,
   SearchParams,
+  ProjectDesType,
 } from "~/types/disk";
 import Hyrequire from "./index";
 import type { IResultData } from "~/types/Userlogin";
+import type { ProjectParams } from "~/types/Home";
 export function getfilelist(index: number, pagesize: number) {
   return Hyrequire.request("/api/disk/file/getAllUploadFileList", "GET", {
     index: index,
@@ -40,7 +42,7 @@ export function uploadfile(
 export function unCollectionFile(params: unCollectType) {
   return Hyrequire.request<IResultData<any>>(
     "/api/disk/file/unCollectionFile",
-    "put",
+    "PUT",
     { ...params, userId: Authuserid() }
   );
 }
@@ -56,12 +58,12 @@ export function LookMyfile(params: MyfileType) {
 }
 //修改为私密
 export function FileToPrivate(params: ToProvate) {
-  return Hyrequire.request("/api/disk/file/updateFileToPrivate", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileToPrivate", "PUT", {
     ...params,
   });
 }
 export function FileToPublic(params: ToProvate) {
-  return Hyrequire.request("/api/disk/file/updateFileToPublic", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileToPublic", "PUT", {
     ...params,
   });
 }
@@ -90,7 +92,7 @@ export function SearchMyfile(parmas: SearchMyfileType) {
 }
 //删除文件
 export function uploaddeleteFile(params: ToProvate) {
-  return Hyrequire.request("/api/disk/file/updateFileDelete", "put", {
+  return Hyrequire.request("/api/disk/file/updateFileDelete", "PUT", {
     ...params,
   });
 }
@@ -99,4 +101,49 @@ export function DiskSearch(params: SearchParams) {
   return Hyrequire.request("/api/disk/es/searchES", "GET", {
     ...params,
   });
+}
+//项目添加
+export function ProjectAdd(params: ProjectParams) {
+  const formdata = new FormData();
+  formdata.append("projectName", params.projectName);
+  formdata.append("file", params.file as any);
+  formdata.append("projectCompletionTime", params.projectCompletionTime);
+  formdata.append("projectIntroduce", params.projectIntroduce);
+  formdata.append("projectStartTime", params.projectStartTime);
+  formdata.append("projectUrl", params.projectUrl);
+  formdata.append("projectTeams", params.projectTeams);
+  return Hyrequire.post<IResultData<any>>(
+    "/api2/project/api/addProject",
+    {},
+    {
+      body: formdata,
+    }
+  );
+}
+//获取所有项目信息
+export function getAllProject() {
+  return Hyrequire.get<IResultData<ProjectDesType[]>>(
+    "/api2/project/api/getProjectList"
+  );
+}
+//删除项目
+export function deleteProject(id: number | string) {
+  return Hyrequire.delete<IResultData<any>>(
+    `/api2/project/api/deleteProject?projectId=${id}`
+  );
+}
+//更换封面
+export function updataCover(file: File, projectId: number) {
+  const fordata = new FormData();
+  fordata.append("file", file);
+  fordata.append("projectId", projectId.toString());
+  return Hyrequire.put(
+    "/api2/project/api/updateProjectImage",
+    {},
+    { body: fordata }
+  );
+}
+//修改项目
+export function updateProject(obj: any) {
+  return Hyrequire.put("/api2/project/api/updateProject", { ...obj });
 }

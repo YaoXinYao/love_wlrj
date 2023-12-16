@@ -25,7 +25,6 @@ useHead({
   title: "未找到该页面",
 });
 onMounted(() => {
-  console.log("加载中");
   //@ts-ignore
   window.game = new CatchTheCatGame({
     w: 11,

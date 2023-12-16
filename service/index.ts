@@ -1,6 +1,6 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
 import { useLoginout } from "~/hooks/useLoginout";
-type Methods = "GET" | "POST" | "put";
+type Methods = "GET" | "POST" | "PUT" | "DELETE";
 class Hyrequest {
   request<T = any>(
     url: string,
@@ -36,7 +36,7 @@ class Hyrequest {
       if (method == "GET") {
         newoptions.query = data || {};
       }
-      if (method == "POST" || method == "put") {
+      if (method == "POST" || method == "PUT") {
         newoptions.params = data || {};
       }
       useFetch<T>(url, newoptions as any)
@@ -51,8 +51,14 @@ class Hyrequest {
   get<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "GET", params, options);
   }
-  post<T = any>(url: string, data: any, options: UseFetchOptions<T>) {
+  post<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "POST", data, options);
+  }
+  put<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
+    return this.request<T>(url, "PUT", data, options);
+  }
+  delete<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
+    return this.request<T>(url, "DELETE", params, options);
   }
 }
 export default new Hyrequest();
