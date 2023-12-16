@@ -28,6 +28,7 @@
                 <div ref="divRef"  
                     class="proclamTitle" 
                     v-show="divDispaly[item.index]"
+                    :id="index.toString()"
                     :style="{'transform': divDispaly[item.index] ? 'translateY(0)' : 'translateY(-3rem)',opacity: divDispaly[item.index] ? 1 : 0}" 
                 >
                     <div>
@@ -67,14 +68,13 @@
                 </div>
             </template>
         </div>
-        <div :class="{sideContents: true, sideContent: !sideRef}">
-            <div :class="{sideIcon: true, sideChange: !sideRef}" @click="handleChangeSide">
-                <el-icon :class="{sideIcons: !sideRef}"  size="30" ><Memo /></el-icon>
-                <div :class="{sideList: true,sideListChange: !sideRef}">
-                    <div   v-for="(item,index) in sortTIme">{{ index }}</div>
-                </div>
-                
-            </div>
+        <div class="menus">
+            <el-menu>
+                <el-sub-menu index="2">
+                    <template #title>时间目录</template>
+                    <el-menu-item v-for="(item,index) in sortTIme"  :index="index.toString()" :key="index" ><a :href="`#${index}`" style="display: inline-block;width: 100%;">{{ index }}</a></el-menu-item>
+                </el-sub-menu>
+            </el-menu>
             
         </div>
     </ClientOnly>
@@ -150,26 +150,43 @@ onMounted(async ()=>{
     }
     changeList()
 
-    window.addEventListener('scroll',(e)=>{
+    window.addEventListener('scroll',debounce(scrolls,500),{passive:true})
+    window.scrollTo(0, 0);
+})
+
+function  scrolls(e:any){
         let arr = divRef.value
+        console.log(1)
         for(let item in divRef.value){
 
             if(Number(item) >= 1){
-                console.log(divRef.value[item])
+                // console.log(divRef.value[item])
                 if(window.innerHeight + window.scrollY >= divRef.value[item].offsetTop){
 
                     divDispaly.value[Number(item)] = true
                 }
             }
         }
-    },{passive:true})
-    window.scrollTo(0, 0);
-})
+    }
 
-function handleChangeSide(){
-    console.log(1111)
-    sideRef.value = false
+
+
+function debounce(fn:Function,times:number){
+    let time:any;
+
+    return function(){
+        let context = this
+        let args = arguments
+        clearTimeout(time)
+        time = setTimeout(()=>{
+            arguments
+            fn.apply(context,args)
+            
+        },time)
+    }
 }
+
+
 
 
 </script>
@@ -243,6 +260,7 @@ function handleChangeSide(){
             }
             .proclamaDetail{
                 display: flex;
+                flex: 1;
                 flex-direction: column;
                 gap: 20px;
                 max-width: 400px;
@@ -250,9 +268,9 @@ function handleChangeSide(){
                 position: relative;
                 .rightTime{
                     padding-bottom: 20px;
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: flex-end;
+                    bottom: 0;
+                    position: absolute;
+                    right: 0;
                 }
                 .proclamaMatter{
                     word-wrap: break-word;
@@ -396,74 +414,21 @@ function handleChangeSide(){
     }   
 }
 
-.sideContents{
+.menus{
+    width: 150px;
+    border-radius: 12px;
+    overflow: hidden;
+    // position: ;
     position: fixed;
-    top: 20%;
-    right: 3%;
-    border-radius: 50%;
-    background: #fff;
-    text-align: center;
-    line-height: 40px;
+    top: 12%;
+    right: 2%;
     box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.15);
-    
-    .sideIcon{
-        height: 40px;
-        width: 40px;
-        display: flex;
-        flex-direction: column;
-
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        
-        overflow: hidden;
-        .sideIcons{
-            animation-name: changeIcon;
-            animation-duration: 1s;
-            animation-fill-mode: forwards;
-            animation-timing-function: linear;
-            animation-iteration-count: 1;
+    :deep(.el-menu--inline){
+        max-height: 150px;
+        overflow: auto;
+        &::-webkit-scrollbar{
+            width: 0px;
         }
-        .sideList{
-            display: none;
-        }
-        .sideListChange{
-            animation-name: sideList;
-            animation-duration: 1s;
-            animation-delay: 2s;
-            animation-fill-mode: forwards;
-            animation-timing-function: linear;
-            animation-iteration-count: 1;
-        }
-    }
-    .sideChange{
-        animation-name: sideChange;
-        animation-duration: 1s;
-        animation-delay: 1s;
-        animation-fill-mode: forwards;
-        animation-timing-function: linear;
-        animation-iteration-count: 1;
-    }
-}
-.sideContent{
-    animation-name: sideChange;
-    animation-duration: 1s;
-    animation-delay: 1s;
-    animation-fill-mode: forwards;
-    animation-timing-function: linear;
-    animation-iteration-count: 1;
-}
-
-@keyframes changeIcon {
-    0%{
-        transform: rotate(0deg);
-
-    }
-
-    100%{
-        transform: rotate(1080deg);
-        font-size: 0px;
-        display: none;
     }
 }
 

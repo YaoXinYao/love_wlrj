@@ -115,7 +115,7 @@ const fileInput = ref()
 const srcValue = ref('')
 
 
-const emit = defineEmits(['newValue'])
+const emit = defineEmits(['newValue','load'])
 
 
 getGrade().then(res=>{
@@ -255,11 +255,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             type: 'warning',
             }
         ).then(()=>{
+            emit('load',true)
             postAffiche(form,fileList).then(res=>{
-                // console.log('上传图片')
-                // console.log(res.data)
                 let data = res.data.value
                 if(data.code === 20000){
+                    emit('load',false)
                     ElNotification({
                         title:'发送成功',
                         message:`这是一条${refForm.noticeType}的公告`,
@@ -288,6 +288,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             type: 'warning',
             }
         ).then(()=>{
+
             postAffiche(form).then(res=>{
                 // console.log(res.data.value)
                 let data = res.data.value
@@ -312,10 +313,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         })
 
     }
-    // console.log(form)
-    // console.log(fileList)
-    // postAffiche()
-
   }
 }
 
@@ -334,10 +331,8 @@ const resetForm = (forEl:FormInstance | undefined)=>{
 
 
 const handleGetUsers = (item:any)=>{
-    // console.log(item)
     refForm.user = ''
     getUser({grade:item}).then(res=>{
-        // console.log(res.data.value.data)
         users.value = res.data.value.data
     })
 }
@@ -352,17 +347,26 @@ function handleFileChange(event:any){
     // console.log(event)
     const file = event.target.files[0]
     // console.log(file)
+    const size = 2097152;
+
     let nameArr = file.name.split('.')
-    if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
-        refForm.noticeImgs = file
-        const value = URL.createObjectURL(file)
-        srcValue.value = value
-        // console.log(value)
-        // console.log(refForm.noticeImgs)
+    if(file.size < size){
+        if(nameArr[nameArr.length-1] === 'png' || nameArr[nameArr.length-1] === 'jpg' || nameArr[nameArr.length-1] === 'webp'){
+            refForm.noticeImgs = file
+            const value = URL.createObjectURL(file)
+            srcValue.value = value
+        }else{
+            ElNotification({
+                title:'上传失败',
+                message:`格式不正确`,
+                type:'warning',
+                zIndex: 10000,
+            })
+        }
     }else{
         ElNotification({
             title:'上传失败',
-            message:`格式不正确`,
+            message:`文件太大，最大为2MB`,
             type:'warning',
             zIndex: 10000,
         })
