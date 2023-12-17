@@ -181,7 +181,7 @@ function handleDeleteBtnClick(data:any){
         '是否驳回此请假',
         "审批请假",
         {
-            confirmButtonText:'通过',
+            confirmButtonText:'驳回',
             cancelButtonText: '取消',
             type:'warning'
         }
