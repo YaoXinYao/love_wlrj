@@ -91,7 +91,12 @@
       </template>
     </el-dialog>
     <!-- 查看成员信息 -->
-    <el-dialog v-model="editModel" title="成员信息" width="400px" class="edit">
+    <el-dialog
+      v-model="editModel"
+      title="成员信息"
+      width="400px"
+      class="edit"
+    >
       <el-form>
         <el-form-item label="姓名" :label-width="formLabelWidth">
           <el-input v-bind:value="signleInfo.userName" disabled />
@@ -122,7 +127,7 @@
           :label-width="formLabelWidth"
           v-if="userinfo.roleId == 3"
         >
-          <el-select v-model="signleInfo.groupName">
+          <el-select v-model="signleInfo.initGroup">
             <el-option
               v-for="item in teamData"
               :key="item.groupId"
@@ -136,7 +141,7 @@
           :label-width="formLabelWidth"
           v-if="userinfo.roleId != 3"
         >
-          <el-input v-bind:value="signleInfo.groupName" disabled />
+          <el-input v-bind:value="signleInfo.initGroup" disabled />
         </el-form-item>
         <el-form-item label="博客链接" :label-width="formLabelWidth">
           <el-input v-bind:value="signleInfo.userBlog" disabled />
@@ -236,9 +241,7 @@
       />
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="shutScore"
-            >关闭</el-button
-          >
+          <el-button type="primary" @click="shutScore">关闭</el-button>
         </span>
       </template>
     </el-dialog>
@@ -288,6 +291,7 @@ let {
   input,
   grade,
   grades,
+  groups,
   manageRole,
 } = storeToRefs(staffStore);
 let team = ref("");
@@ -307,7 +311,7 @@ const scoreType = ref("笔试");
 let typeOptions = ref([
   { value: "笔试", label: "笔试" },
   { value: "面试", label: "面试" },
-]);
+])
 onMounted(() => {
   staffStore.getGrades();
 });
@@ -321,14 +325,14 @@ function getRandomTagType() {
     | "danger"
     | "";
 }
-//获取组别
+//获取所有组别
 function getAllGroups() {
   staffStore.getAllGroup().then((res) => {
     teamData.value = res;
   });
 }
 getAllGroups();
-//获取角色
+//获取所有角色
 function getAllRoles() {
   staffStore.getAllRole().then((res) => {
     roleData.value = res;
@@ -365,7 +369,7 @@ function submitFiles() {
         staffStore.defaultRoles(Number(role.value)).then((res) => {
           if (res == 20000) {
             uploadFiles.value!.submit();
-            curTable.value = 1
+            curTable.value = 1;
             setTimeout(() => {
               modelState.value = false;
               uploadFiles.value!.clearFiles();
@@ -388,9 +392,9 @@ const successFun = (
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
-  if(response.code == 20000){
+  if (response.code == 20000) {
     ElMessage.success("导入成功");
-  }else{
+  } else {
     ElMessage.error("导入失败");
   }
   staffStore.getAllUser(1, 7).then((res) => {
@@ -438,7 +442,7 @@ function deleteStaff() {
     staffStore.deleteMore(moreDelete.value).then((res) => {
       if (res == 20000) {
         ElMessage.success("删除成员成功");
-        curTable.value = 1
+        curTable.value = 1;
         staffStore.getAllUser(1, 7).then((res) => {
           if (res.code == 20000) {
             users.value = res.data?.records;
@@ -457,7 +461,7 @@ function deleteStaff() {
         ElMessage.success("删除成功");
         staffStore.getAllUser(1, 7).then((res) => {
           if (res.code == 20000) {
-            curTable.value = 1
+            curTable.value = 1;
             users.value = res.data?.records;
             total.value = res.data?.total;
           } else {
@@ -474,7 +478,7 @@ function deleteStaff() {
 //修改用户的组别
 const editGroup = () => {
   let userId = signleInfo.value.userId;
-  let groupId = Number(signleInfo.value.groupName);
+  let groupId = Number(signleInfo.value.initGroup);
   staffStore.setGroup(groupId, userId).then((res) => {
     if (res == 20000) {
       ElMessage.success("修改成功");
@@ -484,6 +488,13 @@ const editGroup = () => {
       } else {
         groupId = Number(group.value);
       }
+      //重新获取该年级下的组别数据
+      staffStore.getGroup(grade.value).then((res) => {
+        if (res?.code == 20000) {
+          groups.value = res?.data;
+        }
+      });
+      //重新获取用户数据
       staffStore
         .getAllUser(curTable.value, 7, groupId, input.value, grade.value)
         .then((res) => {
@@ -586,10 +597,10 @@ const updateShut = () => {
   manageRole.value = false;
 };
 //关闭成绩弹窗
-const shutScore = ()=>{
-  personScore.value = false
-  scoreType.value="笔试"
-}
+const shutScore = () => {
+  personScore.value = false;
+  scoreType.value = "笔试";
+};
 </script>
 <style lang="scss" scoped>
 .el-button--text {

@@ -63,7 +63,7 @@
             >
             <div class="cardUser">
               发表于<span>{{ item.postTime }}</span
-              >|<span>{{ item.userName }}</span>
+              >|<span>{{ item.userDto.userName }}</span>
             </div>
             <div
               class="cardContent"

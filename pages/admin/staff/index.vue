@@ -10,7 +10,7 @@
             :value="item"
           />
         </el-select>
-        <el-select v-model="group" placeholder="可选组别">
+        <el-select v-model="group" clearable placeholder="可选组别">
           <el-option
             v-for="item in groups"
             :key="item.groupId"
@@ -72,7 +72,6 @@ let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 import { ref } from "vue";
 let loading = ref(true);
-let groups = ref<any>([]);
 const staffStore = useStaffStore();
 const {
   modelState,
@@ -80,6 +79,7 @@ const {
   grades,
   grade,
   group,
+  groups,
   input,
   users,
   total,

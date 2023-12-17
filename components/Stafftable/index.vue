@@ -8,21 +8,26 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" v-if="userinfo.roleId == 3"/>
-      <el-table-column property="userGrade" label="年级">
-      </el-table-column>
-      <el-table-column property="userAccount" label="学号">
-      </el-table-column>
-      <el-table-column property="userName" label="姓名"/>
-      <el-table-column property="userSexVal" label="性别"/>
+      <el-table-column
+        type="selection"
+        width="50"
+        v-if="userinfo.roleId == 3"
+      />
+      <el-table-column property="userGrade" label="年级"> </el-table-column>
+      <el-table-column property="userAccount" label="学号"> </el-table-column>
+      <el-table-column property="userName" label="姓名" />
+      <el-table-column property="userSexVal" label="性别" />
       <el-table-column label="班级">
         <template #default="scope">{{ scope.row.userClass }}</template>
       </el-table-column>
-      <el-table-column property="groupName" label="方向">
-        </el-table-column>
+      <el-table-column property="groupName" label="方向"> </el-table-column>
       <el-table-column #default="scope" label="操作">
         <el-button size="small" @click="handleEdit(scope.row)">详情</el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)" v-if="userinfo.roleId >= scope.row.roleId && userinfo.roleId!=1"
+        <el-button
+          size="small"
+          type="danger"
+          @click="handleDelete(scope.row)"
+          v-if="userinfo.roleId >= scope.row.roleId && userinfo.roleId != 1"
           >删除</el-button
         >
       </el-table-column>
@@ -42,9 +47,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 import { ref } from "vue";
 const small = ref(false);
 const background = ref(false);
@@ -75,7 +80,8 @@ const handleSelectionChange = (val: any[]) => {
   }
 };
 const handleEdit = (row: any) => {
-  signleInfo.value = row
+  let initGroup = row.groupName;
+  signleInfo.value = {...row,initGroup};
   editModel.value = true;
 };
 const handleDelete = (row: any) => {
@@ -86,7 +92,7 @@ const handleDelete = (row: any) => {
 };
 //改变当前页
 const handleCurrentChange = (val: number) => {
-  curTable.value = val
+  curTable.value = val;
   let groupId;
   if (group.value == "") {
     groupId = undefined;

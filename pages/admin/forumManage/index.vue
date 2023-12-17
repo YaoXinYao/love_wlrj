@@ -42,7 +42,7 @@
         style="width: 100%"
       >
         <el-table-column property="postTime" label="时间"></el-table-column>
-        <el-table-column property="userName" label="发帖人"></el-table-column>
+        <el-table-column property="userDto.userName" label="发帖人"></el-table-column>
         <el-table-column #default="scope" label="标题">
           <span v-html="decodeURIComponent(scope.row.postTitle)"></span>
         </el-table-column>
@@ -127,12 +127,14 @@ function selectPosts() {
   } else {
     subId = Number(condition.subfield);
   }
+  currentPage.value = 1
   manages.getPosts(1, 7, condition.title, subId, condition.content);
 }
 function reset() {
   condition.title = "";
   condition.content = "";
   condition.subfield = "";
+  currentPage.value = 1
   manages.getPosts(1, 7);
 }
 //查看此行帖子信息

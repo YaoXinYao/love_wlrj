@@ -28,22 +28,6 @@ export interface subfield {
   subId: number;
   subName: string;
 }
-export interface singleType {
-  collect: boolean;
-  head: string;
-  likes: boolean;
-  photos: string[];
-  postCollect: number;
-  postContent: string;
-  postId: number;
-  postLike: number;
-  postSubId: number;
-  postTime: string;
-  postTitle: string;
-  postUserId: number;
-  postView: number;
-  userName: string;
-}
 export interface cards {
   postSubId: number;
   postSource: string;
@@ -114,7 +98,7 @@ export const forumStore = defineStore("forumInfo", {
       this.uploading = false;
       return code;
     },
-    //主页查询帖子
+    //主页查询帖子-----去除查询用户信息接口
     async selectPost(
       userId: any,
       pageNo: number,
@@ -140,16 +124,9 @@ export const forumStore = defineStore("forumInfo", {
       this.pages = data.value?.data.pages;
       let dataArr = data.value?.data.records || [];
       for (let i = 0; i < dataArr.length; i++) {
-        //查询用户
-        const use = await this.selectUser(dataArr[i].postUserId);
-        if (use == null) {
+        if (dataArr[i].userDto == null) {
           continue;
         } else {
-          let userName = use.userName;
-          let head =
-            use.userPicture == "未设置"
-              ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-              : use.userPicture;
           const { postImg, ...postData } = dataArr[i];
           let img: string = dataArr[i].postImg;
           //分割图片
@@ -181,8 +158,6 @@ export const forumStore = defineStore("forumInfo", {
           datas[h] = {
             ...postData,
             photos,
-            userName,
-            head,
             likes,
             collect,
           };
@@ -264,7 +239,7 @@ export const forumStore = defineStore("forumInfo", {
         return selectKeeps;
       }
     },
-    //查询单个帖子
+    //查询单个帖子-----去除查询用户信息接口
     async getSingle(postId: number, userId: any) {
       this.detailLoading = true;
       const { data } = await singlePost(postId);
@@ -288,23 +263,14 @@ export const forumStore = defineStore("forumInfo", {
         collect = true;
         await this.addlike(single.postId, 1, "Collect", userId);
       }
-      //查询发帖者
-      const use = await this.selectUser(single.postUserId);
-      let userName = use.userName;
-      let head =
-        use.userPicture == "未设置"
-          ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-          : use.userPicture;
       Object.assign(this.singleData, {
         ...postData,
         photos,
         photoShow,
-        userName,
-        head,
         likes,
         collect,
       });
-      this.detailLoading = false
+      this.detailLoading = false;
     },
     //删除帖子
     async deletePosts(ids: number[]) {
@@ -483,21 +449,22 @@ export const forumManage = defineStore("manage", {
       this.mdatas = [];
       let dataArr = data.value?.data.records || [];
       for (let i = 0; i < dataArr.length; i++) {
-        const { postImg, ...postData } = dataArr[i];
-        let img: string = dataArr[i].postImg;
-        //分割图片
-        let photos: string[] = img ? img.split(",") : [];
-        //查询用户
-        const use = await this.getUser(dataArr[i].postUserId);
-        let userName = use ? use.userName : "未知";
-        //查询分栏
-        const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
-        if (data.value?.data.records.length == 0) {
-          const subName = "暂无";
-          this.mdatas[i] = { ...postData, userName, subName, photos };
+        if (!dataArr[i].userDto) {
+          continue;
         } else {
-          const subName = data.value?.data.records[0].subName;
-          this.mdatas[i] = { ...postData, userName, subName, photos };
+          const { postImg, ...postData } = dataArr[i];
+          let img: string = dataArr[i].postImg;
+          //分割图片
+          let photos: string[] = img ? img.split(",") : [];
+          //查询分栏
+          const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
+          if (data.value?.data.records.length == 0) {
+            const subName = "暂无";
+            this.mdatas[i] = { ...postData,subName, photos };
+          } else {
+            const subName = data.value?.data.records[0].subName;
+            this.mdatas[i] = { ...postData,subName, photos };
+          }
         }
       }
       this.loading = false;

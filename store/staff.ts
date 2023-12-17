@@ -22,6 +22,7 @@ export interface Staffs {
   grades: any[];
   grade: string;
   group: string;
+  groups:any[];
   input: string;
   users: any[];
   total: number;
@@ -42,6 +43,7 @@ export const useStaffStore = defineStore("staff", {
       grades: [],
       grade: "",
       group: "",
+      groups:[],
       input: "",
       users: [],
       total: 0,
