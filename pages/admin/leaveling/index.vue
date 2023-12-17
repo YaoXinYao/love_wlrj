@@ -140,7 +140,7 @@ function handleQueryClick(){
     justify-content: flex-start;
     flex-direction: column;
     align-items: center;
-    width: 90%;
+    width: 1494px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #9ca6c2;
@@ -151,7 +151,7 @@ function handleQueryClick(){
             text-align: right;
             margin-right: 100px;
         }
-}
+    }
 }
 .demo-form-inline .el-input {
 --el-input-width: 220px;

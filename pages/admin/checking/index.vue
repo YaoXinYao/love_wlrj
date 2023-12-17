@@ -421,6 +421,7 @@ function handleChangeClick(data:any){
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 1670px;
     .search{
         border: 1px solid rgba(227,232,247);
         border-radius: 12px;

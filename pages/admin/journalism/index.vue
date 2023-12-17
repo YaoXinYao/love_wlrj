@@ -34,5 +34,6 @@ function handleLoading(data:any){
 <style scoped lang="scss">
 .journalism{
     height: 100%;
+    width: 1670px;
 }
 </style>

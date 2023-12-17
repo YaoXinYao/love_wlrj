@@ -21,5 +21,6 @@ definePageMeta({
     border: 1px solid rgba(227,232,247);
     border-radius: 12px;
     padding: 10px 20px;
+    width: 1670px;
 }
 </style>
