@@ -13,9 +13,12 @@
     <div class="signle">
       <div class="content">
         <div class="text">
-          <h2>{{ decodeURIComponent(singleData.postTitle) }}</h2>
+          <h2 v-if="!singleData.postTitle" class="loadingContent">
+            Loading...
+          </h2>
+          <h2 v-else>{{ decodeURIComponent(singleData.postTitle) }}</h2>
           <div class="autorInfo">
-            {{ singleData.userDto?.userName || "未知"}}
+            {{ singleData.userDto?.userName || "未知" }}
             <span>{{ singleData.postTime }}</span>
             <span>
               <svg
@@ -37,7 +40,11 @@
               {{ singleData.postView }}
             </span>
           </div>
+          <div v-if="!singleData.postContent" class="loadingContent">
+            Loading...
+          </div>
           <div
+            v-else
             class="textContent"
             v-html="decodeURIComponent(singleData.postContent)"
           ></div>
@@ -109,10 +116,10 @@
           <div class="cardTop">
             <div class="userInfo">
               <div>
-                <img :src="item.head" alt="" />
+                <img :src="item.user.userPicture" alt="" />
               </div>
               <div>
-                <p>{{ item.comUserName }}</p>
+                <p>{{ item.user.userName }}</p>
                 <p class="time">{{ item.comTime }}</p>
               </div>
             </div>

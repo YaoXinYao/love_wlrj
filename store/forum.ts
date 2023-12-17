@@ -74,11 +74,6 @@ export const forumStore = defineStore("forumInfo", {
     };
   },
   actions: {
-    //用于发帖查询用户信息
-    async selectUser(id: number) {
-      const { data } = await getUserInfo(id);
-      return data.value?.data;
-    },
     //收藏/点赞帖子
     async addlike(
       postId: number,
@@ -286,15 +281,9 @@ export const forumStore = defineStore("forumInfo", {
       let k = 0;
       if (comData != null) {
         for (let i = 0; i < comData.length; i++) {
-          let user = await this.selectUser(comData[i].comUserId);
-          if (user == null) {
+          if (comData[i].user == null) {
             continue;
           } else {
-            let comUserName = user.userName;
-            let head =
-              user.userPicture == "未设置"
-                ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-                : user.userPicture;
             const { comImg, ...comInfo } = comData[i];
             let img = comData[i].comImg;
             let photos = img ? img.split(",") : [];
@@ -304,18 +293,14 @@ export const forumStore = defineStore("forumInfo", {
               likes = true;
               await this.LikesComment(comData[i].comId, 1, userId);
             }
-            this.discuss[k] = { ...comInfo, comUserName, head, photos, likes };
+            this.discuss[k] = { ...comInfo, photos, likes };
             if (comData[i].children.length != 0) {
               this.discuss[k].children = [];
               let m = 0;
               for (let j = 0; j < comData[i].children.length; j++) {
-                let cuser = await this.selectUser(
-                  comData[i].children[j].comUserId
-                );
-                if (cuser == null) {
+                if (comData[i].children[j].user == null) {
                   continue;
                 } else {
-                  let comUserName = cuser.userName;
                   const { comImg, ...comInfos } = comData[i].children[j];
                   let img = comData[i].children[j].comImg;
                   let photos = img ? img.split(",") : [];
@@ -333,14 +318,8 @@ export const forumStore = defineStore("forumInfo", {
                       userId
                     );
                   }
-                  let head =
-                    cuser.userPicture == "未设置"
-                      ? "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201912%2F26%2F20191226135004_nW4Jc.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1698651724&t=05cf56641aeb49efcb3ac3375dc04390"
-                      : cuser.userPicture;
                   this.discuss[k].children[m] = {
                     ...comInfos,
-                    comUserName,
-                    head,
                     photos,
                     likes,
                   };
@@ -460,10 +439,10 @@ export const forumManage = defineStore("manage", {
           const { data } = await getSubfield(1, 1, dataArr[i].postSubId);
           if (data.value?.data.records.length == 0) {
             const subName = "暂无";
-            this.mdatas[i] = { ...postData,subName, photos };
+            this.mdatas[i] = { ...postData, subName, photos };
           } else {
             const subName = data.value?.data.records[0].subName;
-            this.mdatas[i] = { ...postData,subName, photos };
+            this.mdatas[i] = { ...postData, subName, photos };
           }
         }
       }
