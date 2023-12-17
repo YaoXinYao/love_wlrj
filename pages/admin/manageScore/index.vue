@@ -191,7 +191,6 @@ const roleId = ref<number>(1);
 const searchRef = ref<FormInstance>();
 const windowWidth = ref(window.innerWidth);
 let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
-let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 
 definePageMeta({
   layout: "manag",
@@ -284,8 +283,6 @@ const getAccessInfo = async (props: {
     type: props.type,
   });
   accessInfo.value = accessInfoRes.data.value.data.records;
-  console.log(accessInfo.value);
-
   managePageInfo.value.currentPage = accessInfoRes.data.value.data.current;
   managePageInfo.value.pageSize = accessInfoRes.data.value.data.size;
   managePageInfo.value.total = accessInfoRes.data.value.data.total;

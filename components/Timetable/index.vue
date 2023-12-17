@@ -8,6 +8,7 @@
         draggable
         class="addCourseAlert"
         @close="closeEvent"
+        :width="dialogWidth"
       >
         <el-form
           :model="currentEditCourse.info"
@@ -217,8 +218,11 @@ import { useGetTimetable } from "@/hooks/useGetTimetable";
 import { addTimetable, deleteTimetable, updateTimetable } from "~/service/user";
 import type { FormInstance } from "element-plus/es/components/form";
 import type { Course, CourseDetail, DayOfWeekString } from "~/types/Course";
+import { debounce } from "lodash";
 let isEdit = ref(false);
 const ruleFormRef = ref<FormInstance>();
+const windowWidth = ref(window.innerWidth);
+let dialogWidth = ref("35%");
 
 const props = defineProps(["isEditCourse", "userId"]);
 let userId = ref();
@@ -242,6 +246,29 @@ watch(
     getTimetable();
   }
 );
+
+onMounted(() => {
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 const getTimetable = () => {
   useGetTimetable(userId.value).then((res) => {

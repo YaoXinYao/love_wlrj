@@ -4,7 +4,7 @@
     <el-dialog
       v-model="updateTypeDialogVisible"
       title="修改考核类型"
-      width="30%"
+      :width="typeDialogWidth"
       @closed="changeUpdateTypesState"
     >
       <el-input v-model="updateTypeText"></el-input>
@@ -18,7 +18,7 @@
     <el-dialog
       v-model="dialogVisible"
       title="考核类型管理"
-      width="30%"
+      :width="typeDialogWidth"
       draggable
       @closed="changeTypesState"
     >
@@ -74,6 +74,7 @@ import {
 import { onMounted } from "vue";
 import type { TypesType } from "~/types/Access";
 import type { ElInput } from "element-plus";
+import { debounce } from "lodash";
 onMounted(() => {
   getTypesList();
 });
@@ -86,6 +87,8 @@ const addTagValue = ref("");
 const updateTypeText = ref("");
 const updateTypeId = ref();
 const isNull = ref<boolean>(false);
+const windowWidth = ref(window.innerWidth);
+let typeDialogWidth = ref("35%");
 
 const emit = defineEmits(["typeAlert"]);
 
@@ -95,6 +98,30 @@ const props = defineProps({
     default: false,
   },
 });
+
+onMounted(() => {
+  if (windowWidth.value <= 800) {
+    typeDialogWidth.value = "90%";
+  } else {
+    typeDialogWidth.value = "35%";
+  }
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+  console.log(windowWidth);
+
+  if (windowWidth.value <= 800) {
+    typeDialogWidth.value = "90%";
+  } else {
+    typeDialogWidth.value = "35%";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 //弹窗关闭的时候将控制显示的变量置为false，防止刷新时的关闭
 const changeTypesState = () => {

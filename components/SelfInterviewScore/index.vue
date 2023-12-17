@@ -75,7 +75,6 @@ const childBorder = ref(false);
 let interviewScoreList = ref<Array<AccessResInfoType>>([]);
 const windowWidth = ref(window.innerWidth);
 let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
-let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 const props = defineProps(["userId"]);
 let userId = ref();
 userId.value = props.userId;
@@ -97,8 +96,8 @@ onMounted(() => {
   }
   window.addEventListener("resize", handleResize);
 });
+
 onUnmounted(() => {
-  writtenScoreList.value = [];
   window.removeEventListener("resize", handleResize);
 });
 

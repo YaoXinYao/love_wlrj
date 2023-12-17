@@ -5,7 +5,7 @@
       <el-dialog
         v-model="dialogVisible"
         title="添加考核成绩"
-        width="30%"
+        :width="dialogWidth"
         draggable
         @closed="changeState"
       >
@@ -79,7 +79,32 @@ import type {
   ScoreAddType,
 } from "~/types/Access";
 import type { UserAllInfoType } from "~/types/User";
+import { debounce } from "lodash";
 let dialogVisible = ref(false);
+const windowWidth = ref(window.innerWidth);
+let dialogWidth = ref("35%");
+onMounted(() => {
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 function changes(data: boolean) {
   dialogVisible.value = data;
