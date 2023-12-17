@@ -103,6 +103,26 @@ export const searchUserervice = (props: {
   });
 };
 
+//获得用户所有组别
+export const getAllGroupsService = () => {
+  return hyRequest.get<IResultData<any>>("/api/user/group/selectAllGroup");
+};
+
+//根据年级与组别获取用户
+export const getUserByGradeAndGroupService = (props: {
+  userGrade?: number;
+  groupId?: number | string;
+  pageNo?: number;
+  pageSize?: number;
+  search?: string;
+}) => {
+  console.log(props);
+
+  return hyRequest.get<IResultData<any>>("/api/user/user/selectAllUser", {
+    ...props,
+  });
+};
+
 //修改密码
 export const updateUserPassword = (props: UpdatePassType) => {
   return hyRequest.put<IResultData<any>>(`/api/user/user/updatePassword`, {

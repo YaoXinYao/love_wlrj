@@ -131,7 +131,12 @@
 </template>
 
 <script setup lang="ts">
-import { searchUserByGradeService, searchUserervice } from "~/service/user";
+import {
+  getAllGroupsService,
+  getUserByGradeAndGroupService,
+  searchUserByGradeService,
+  searchUserervice,
+} from "~/service/user";
 import {
   addInterviewService,
   deleteInterviewService,
@@ -140,12 +145,16 @@ import {
 import type { UserAllInfoType } from "~/types/User";
 import { Delete } from "@element-plus/icons-vue";
 import type { FormInstance } from "element-plus";
+import type { GroupType } from "~/types/Access";
 const props = defineProps(["id", "dialogVisible"]);
 const emit = defineEmits(["interviewAlert"]);
 let gradeNumber = ref(-1);
 let id = ref(-1);
 let userGrade = ref<number>(0);
 let userRole = ref<number>(1);
+let groupNumber = ref<number | null>();
+let groupName = ref<string | "">();
+let groupId = ref<string | number>("");
 const options = ref<Array<UserAllInfoType>>([]);
 const addInterviewRef = ref<FormInstance>();
 let userList = ref<Array<UserAllInfoType>>([]);
@@ -179,12 +188,49 @@ watch(dialogVisible, (newValue, oldValue) => {
   emit("interviewAlert", dialogVisible.value);
 });
 
-watch(id, (newValue) => {
+watch([id, groupNumber], ([newId, newGroupNumber]) => {
+  switch (newGroupNumber) {
+    case 1:
+      groupName.value = "前端";
+      break;
+    case 2:
+      groupName.value = "后端";
+      break;
+    default:
+      groupName.value = "";
+  }
   getGradeUser(gradeNumber.value);
 });
 
 const getGradeUser = async (grade: number) => {
-  let userListRes = await searchUserervice({ ...pageInfo, userGrade: grade });
+  let getAllGroupsRes = await getAllGroupsService();
+  let allGroups: Array<GroupType>;
+  if (getAllGroupsRes.data.value.code == 20000) {
+    allGroups = getAllGroupsRes.data.value.data;
+  } else {
+    ElMessage({
+      type: "error",
+      message: "获取人员失败",
+    });
+    return;
+  }
+  for (let i = 0; i < allGroups.length; i++) {
+    if (allGroups[i].groupName == groupName.value) {
+      groupId.value = allGroups[i].groupId;
+      break;
+    } else if (i == allGroups.length - 1) {
+      groupId.value = "";
+    }
+  }
+
+  // groupId = group.groupId;
+  let userListRes = await getUserByGradeAndGroupService({
+    userGrade: grade,
+    groupId: groupId.value,
+    pageNo: pageInfo.pageNo,
+    pageSize: pageInfo.pageSize,
+  });
+
   if (userListRes.data.value.code == 20000) {
     let { current, total, size } = userListRes.data.value.data;
     pageInfo.pageNo = current;
@@ -272,9 +318,16 @@ const searchUserByGrade = async (val: string) => {
   if (val.trim() != "") {
     loading.value = true;
 
-    let res = await searchUserByGradeService(gradeNumber.value, val);
+    let res = await getUserByGradeAndGroupService({
+      userGrade: gradeNumber.value,
+      groupId: groupId.value,
+      search: val,
+      pageNo: 1,
+      pageSize: 20,
+    });
+
     if (res.data.value.code == 20000) {
-      options.value = res.data.value.data;
+      options.value = res.data.value.data.records;
     }
     loading.value = false;
   }
@@ -323,6 +376,8 @@ const onExpand = (row: any) => {
 };
 const changeAddInterviewState = () => {
   addInterviewDialogFormVisible.value = false;
+  options.value = [];
+  addInterviewRef.value?.resetFields();
 };
 
 //暴露方法接收试卷id和学生id
@@ -330,12 +385,14 @@ function interviewId(
   grade: number,
   pId: number,
   userGradeProp: number,
-  userRoleProp: number
+  userRoleProp: number,
+  gradeNumberProp: number
 ) {
   id.value = pId;
   gradeNumber.value = grade;
   userGrade.value = userGradeProp;
   userRole.value = userRoleProp;
+  groupNumber.value = gradeNumberProp;
 }
 defineExpose({ interviewId });
 </script>

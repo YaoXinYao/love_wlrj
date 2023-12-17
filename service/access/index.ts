@@ -51,7 +51,11 @@ export const getAllAccessService = (props: {
   nodePage: number;
   pageSize: number;
   subscribers?: string;
+  subscribersType?: string;
+  type?: string;
 }) => {
+  console.log(props);
+
   return hyRequest.get<IResultData<any>>(`/api/assess/studyPlan/page`, {
     ...props,
   });

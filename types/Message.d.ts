@@ -45,22 +45,52 @@ export interface MessagePageInfoType {
 export interface MessageInfoResType {
   msgAccept: number;
   msgContent: string;
-  msgContentId: number;
-  msgContentName: string;
+  msgContentId: number | string;
   msgId: number;
   msgSend: number;
-  msgSendName: string;
   msgStatus: number;
   msgTime: string;
-  msgType: MessageTypes;
-  msgSendAvatar: string;
+  msgType: string;
+  post: MessagePostType;
+  userDto: MessageUserType;
+}
+
+export interface MessagePostType {
+  postCollect: number;
+  postContent: string;
+  postId: number;
+  postImg: null | string;
+  postLike: number;
+  postSubId: number;
+  postTime: string;
+  postTitle: string;
+  postUserId: number;
+  postView: number | string;
+  userDto: MessageUserType;
+}
+
+export interface MessageUserType {
+  groupId: number | string;
+  groupName: null | string;
+  roleId: number;
+  roleName: null | string;
+  userAccount: string;
+  userBlog: string;
+  userClass: string;
+  userEmail: string;
+  userGrade: string | number;
+  userId: number | string;
+  userName: string;
+  userPicture: string;
+  userQq: string | null;
+  userSexVal: null | string | number;
 }
 
 export interface MessageInfoItemType {
   id: number;
   infoContent: string;
   date: string;
-  msgStatus: string | number;
+  msgStatus: number;
   msgContentId: string | number;
   msgSendName: string;
   msgSendAvatar: string;

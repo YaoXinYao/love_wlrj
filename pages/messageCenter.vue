@@ -90,9 +90,9 @@
             v-model:current-page="pageInfo.currentPage"
             v-model:page-size="pageInfo.pageSize"
             :page-sizes="[5, 10]"
-            small
+            :small="true"
             :background="true"
-            layout="total, sizes, prev, pager, next, jumper"
+            :layout="paginationLayout"
             :total="pageInfo.total"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -106,25 +106,47 @@
 <script setup lang="ts">
 import "animate.css";
 import { useRoute } from "vue-router";
-
 import { getNotReadInfo } from "~/service/message";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
-const homeStore = useHomestore();
-let { userinfo } = storeToRefs(homeStore);
+import { debounce } from "lodash";
 import { useMessageStore } from "~/store/message";
 import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
-import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
+const homeStore = useHomestore();
+let { userinfo } = storeToRefs(homeStore);
 const messageStore = useMessageStore();
+const windowWidth = ref(window.innerWidth);
+let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
 const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
 const route = useRoute();
+let pagerCount = ref<number>(4);
 definePageMeta({
+  layout: "person",
   roles: 1,
 });
 
 onMounted(() => {
   getInfo();
+  if (window.innerWidth <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+  window.addEventListener("resize", handleResize);
 });
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 //获取未读信息数量并存于store
 let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
@@ -167,13 +189,11 @@ const getInfo = async () => {
 const handleSizeChange = (val: number) => {
   pageInfo.value.pageSize = val;
   getInfo();
-  useGetNotReadMessage();
 };
 
 const handleCurrentChange = (val: number) => {
   pageInfo.value.currentPage = val;
   getInfo();
-  useGetNotReadMessage();
 };
 </script>
 
@@ -194,29 +214,28 @@ const handleCurrentChange = (val: number) => {
   background-image: url("@/assets/image/messageBg.png");
   // background-image: linear-gradient(to right, #74ebd5 0%, #9face6 100%);
   width: 100%;
-  // height: 100vh;
-  overflow: hidden;
+  height: 100vh;
+  overflow: auto;
 }
 
 .mainContent {
   display: flex;
   width: $originalWidth;
-  // height: calc(100% - 200px);
+  // height: calc(100% - 60px);
   margin: 0 auto;
-  margin-top: 175px;
-  padding-bottom: 50px;
+  margin-top: 100px;
   transition: width 0.3s;
 }
 
 .siderBar {
-  width: 150px;
+  width: 170px;
   height: max-content;
   background-color: #8babfc;
   border-radius: 5px;
   color: #fff;
   overflow: auto;
   position: sticky;
-  top: 0px;
+  top: 100px;
 
   h2 {
     text-align: center;
@@ -249,6 +268,10 @@ const handleCurrentChange = (val: number) => {
         color: #8babfc;
       }
     }
+
+    li:last-child {
+      margin: 0 0;
+    }
   }
 }
 
@@ -271,12 +294,23 @@ const handleCurrentChange = (val: number) => {
   margin-left: 20px;
   height: max-content;
   position: relative;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow-x: auto;
   min-height: 400px;
   // overflow: auto;
 }
 
+.active {
+  background-color: #fff;
+  color: #8babfc;
+}
+
+.pagination {
+  height: 50px;
+  width: max-content;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
 @media screen and (max-width: 1050px) {
   .mainContent {
     width: $scaleWidth1;
@@ -292,17 +326,5 @@ const handleCurrentChange = (val: number) => {
   .mainContainer {
     width: $scaleWidth3;
   }
-}
-
-.active {
-  background-color: #fff;
-  color: #8babfc;
-}
-
-.pagination {
-  height: 50px;
-  width: max-content;
-  margin-left: 20px;
-  margin-bottom: 20px;
 }
 </style>

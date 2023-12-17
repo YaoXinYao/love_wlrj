@@ -78,7 +78,6 @@ useHead({
 onMounted(() => {
   let len = PERSONALPAGEBG.length;
   bgIndex.value = Math.floor(Math.random() * len);
-  console.log(PERSONALPAGEBG[bgIndex.value]);
 });
 
 //上传头像成功回调

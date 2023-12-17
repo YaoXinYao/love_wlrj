@@ -44,13 +44,12 @@ export interface AccessResInfoType {
   id: number;
   plan: string;
   publisher: number;
-  publisherName?: string;
+  publisherName: string;
   subscribers: string;
   type: string;
   typeId: number | null;
-  typeName?: string;
+  typeName: string;
   updateTime: string | null;
-  sonTable?: Array<any>;
   managePageInfo: ?any;
   scoreList?: any;
   templates?: any;
@@ -66,6 +65,8 @@ export interface AccessStoreType {
   managePageInfo: { currentPage: number; pageSize: number; total: number };
   manageSearchGrade: string;
   manageSearchName: string;
+  manageSearchSubscribersType: string;
+  manageSearchType: string;
   selfWrittenPageInfo: { currentPage: number; pageSize: number; total: number };
   selfInterviewPageInfo: {
     currentPage: number;
@@ -120,4 +121,10 @@ export interface AccessPageInfoType {
   currentPage: number;
   pageSize: number;
   total: number;
+}
+
+export interface GroupType {
+  groupId: number;
+  groupName: string;
+  groupDefault: number;
 }
