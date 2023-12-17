@@ -3,35 +3,42 @@
     <div class="title">
       <div class="title-top">项目展示</div>
     </div>
-    <div id="swipertran">
-      <div class="swiper mySwiper">
-        <div class="swiper-wrapper">
-          <NuxtLink
-            class="swiper-slide"
-            v-for="(item, index) in data?.data"
-            :key="index"
-            :to="item.projectUrl"
-            target="_blank"
-          >
-            <div class="img">
-              <img :src="item.projectImage" alt="" />
-            </div>
-            <div class="swipertext">
-              <div class="title">{{ item.projectName }}</div>
-              <div class="desc">
-                {{ item.projectIntroduce }}
-              </div>
-            </div>
-          </NuxtLink>
+    <swiper
+      :slides-per-view="3"
+      :space-between="50"
+      :autoplay="true"
+      :free-mode="true"
+      :delay="1000"
+      :modules="[Autoplay, FreeMode]"
+      :loop="true"
+      id="swipertran"
+    >
+      <swiper-slide
+        class="swiper-slide"
+        v-for="(item, index) in Projectlist"
+        :key="index"
+        :to="item.projectUrl"
+        target="_blank"
+      >
+        <div class="img">
+          <img :src="item.projectImage" alt="" />
         </div>
-      </div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
+        <div class="swipertext">
+          <div class="title">{{ item.projectName }}</div>
+          <div class="desc">
+            {{ item.projectIntroduce }}
+          </div>
+        </div>
+      </swiper-slide>
+      <!--  <div class="swiper-button-prev" @click="Prevpage"></div>
+      <div class="swiper-button-next"></div> -->
+    </swiper>
+    <!--   <div class="swiper-button-prev" @click="Prevpage"></div>
+        <div class="swiper-button-next"></div> -->
     <div id="mobile">
       <div
         class="swiper-slide"
-        v-for="(item, index) in MyProjectDis || []"
+        v-for="(item, index) in Projectlist || []"
         :key="index"
       >
         <div class="img">
@@ -48,50 +55,32 @@
   </div>
 </template>
 <script setup lang="ts">
+import "swiper/css";
+import { Autoplay, FreeMode } from "swiper/modules";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { IResultData } from "~/types/Userlogin";
 import type { ProjectDesType } from "~/types/disk";
-const MyProjectDis = ref<ProjectDesType[]>([]);
-console.log("路由");
+import { Swiper, SwiperSlide } from "swiper/vue";
+const Projectlist = ref<ProjectDesType[]>([]);
 const { data } = await useFetch<IResultData<ProjectDesType[]>>(
-  `${useRequestURL().href}api2/project/api/getProjectList`
+  `${useRequestURL().origin}/api2/project/api/getProjectList`,
+  {
+    server: false,
+    lazy: true,
+  }
 );
-function swiperloading() {
-  //@ts-ignore
-  let swiper = new Swiper(".mySwiper", {
-    slidesPerView: 3, // 轮播区域展示的数量
-    spaceBetween: 30,
-    mousewheel: false,
-    keyboard: true,
-    loop: true, // 循环播放
-    speed: 1000,
-    autoplay: {
-      // 自动播放
-      delay: 1000,
-      disableOnInteraction: true,
-    },
-    navigation: {
-      prevEl: ".swiper-button-prev",
-      nextEl: ".swiper-button-next",
-    },
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-    },
-  });
-  let swiperContainer = document.querySelector(".mySwiper");
-  // 监听鼠标进入事件，禁用轮播
-  swiperContainer!.addEventListener("mouseenter", function () {
-    swiper!.autoplay.stop();
-  });
-  // 监听鼠标离开事件，启用轮播
-  swiperContainer!.addEventListener("mouseleave", function () {
-    swiper!.autoplay.start();
-  });
-}
+watch(
+  data,
+  async () => {
+    Projectlist.value = data.value?.data || [];
+  },
+  {
+    immediate: true,
+  }
+);
+Projectlist.value = data.value?.data || [];
 onMounted(async () => {
-  swiperloading();
   loading();
 });
 function loading() {
@@ -130,6 +119,7 @@ function loading() {
 #projectdisplay {
   position: relative;
   width: 100%;
+  min-height: 5.5rem;
   height: 80vh;
   display: flex;
   justify-content: center;
@@ -157,6 +147,9 @@ function loading() {
   #swipertran {
     position: relative;
     width: 11.6rem;
+    min-height: 4rem;
+    height: 60vh;
+    padding-block: 5vh;
     .swiper {
       width: 100%;
       height: 60vh;
@@ -225,20 +218,33 @@ function loading() {
             max-height: 1.3rem;
           }
         }
+        .deleteProject,
+        .editProejct {
+          opacity: 1;
+        }
+      }
+      .deleteProject {
+        position: absolute;
+        opacity: 0;
+        transition-duration: 0.3s;
+        top: 0.1rem;
+        right: 0.1rem;
+        height: 0.3rem;
+        cursor: pointer;
+        width: 0.6rem;
+      }
+      .editProejct {
+        position: absolute;
+        opacity: 0;
+        transition-duration: 0.3s;
+        top: 0.1rem;
+        left: 0.1rem;
+        height: 0.3rem;
+        cursor: pointer;
+        width: 0.6rem;
       }
     }
-    .swiper-button-prev {
-      background: #ff0000;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-    }
-    .swiper-button-next {
-      background: #fe0000;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-    }
+
     .swiper-slide img {
       display: block;
       width: 100%;
@@ -246,46 +252,8 @@ function loading() {
       object-fit: cover;
     }
     // 去掉左右箭头默认样式
-    .swiper-button-prev:after {
-      display: none;
-    }
-    .swiper-button-next:after {
-      display: none;
-    }
+
     // 定义新的样式
-    .swiperbtcommont {
-      background-color: white;
-      box-shadow: 5px 5px 0.16rem 0 rgba(0, 0, 0, 0.16);
-      width: 0.35rem;
-      height: 0.35rem;
-      bottom: 0.15rem;
-      position: absolute;
-      transition-duration: 0.3s;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 40%;
-      top: 50%;
-      &:hover {
-        background-color: rgb(55, 112, 229);
-      }
-    }
-    .swiper-button-prev {
-      @extend .swiperbtcommont;
-      background-image: url("/images/targetleft.png");
-      left: -0.5rem;
-      &:hover {
-        background-image: url("/images/targetleftwhite.png");
-      }
-    }
-    .swiper-button-next {
-      @extend .swiperbtcommont;
-      background-image: url("/images/targetright.png");
-      background-position: center;
-      right: -0.5rem;
-      &:hover {
-        background-image: url("/images/targetrightwhite.png");
-      }
-    }
   }
   #mobile {
     display: none;

@@ -72,6 +72,13 @@ const { status, data, send, open, close } = useWebSocket(
           message: ` <strong style="color: rgb(40,77,213);" >${Message.uploadName}</strong>上传了<br/>${Message.name}`,
           duration: 4000,
         });
+        useNotify(
+          "未来软件工作室",
+          `${Message.uploadName}上传了${Message.name}`,
+          () => {
+            navigateTo("/networkdisk/documentcommunity");
+          }
+        );
       }
     },
   }
