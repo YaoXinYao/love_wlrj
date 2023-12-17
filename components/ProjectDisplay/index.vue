@@ -62,8 +62,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { IResultData } from "~/types/Userlogin";
 import type { ProjectDesType } from "~/types/disk";
 import { Swiper, SwiperSlide } from "swiper/vue";
-
-console.log("路由", useRequestURL());
 const Projectlist = ref<ProjectDesType[]>([]);
 const { data } = await useFetch<IResultData<ProjectDesType[]>>(
   `${useRequestURL().origin}/api2/project/api/getProjectList`,
@@ -121,6 +119,7 @@ function loading() {
 #projectdisplay {
   position: relative;
   width: 100%;
+  min-height: 5.5rem;
   height: 80vh;
   display: flex;
   justify-content: center;
@@ -148,6 +147,7 @@ function loading() {
   #swipertran {
     position: relative;
     width: 11.6rem;
+    min-height: 4rem;
     height: 60vh;
     padding-block: 5vh;
     .swiper {

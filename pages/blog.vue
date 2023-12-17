@@ -51,7 +51,7 @@ const fetchdate = async () => {
   >("/api/user/user/selectBlog");
   newblog.value.data = data.value!.data;
 };
-const curGrade = ref<string>("2021");
+const curGrade = ref<string>(new Date().getFullYear().toString());
 onMounted(async () => {
   await nextTick();
   await fetchdate();

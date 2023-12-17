@@ -36,11 +36,14 @@ const diskstore = useDiskstore();
 const searchText = ref("");
 const searchModel = ref(0); // 0 标签搜索  1，name搜索
 function searchFile() {
+  useNotify("未来软件工作室", `赵子豪上传了阿瓦达吴大维`, () => {
+    window.open("http://www.mozilla.org", "_blank");
+  });
   if (searchText.value == "")
     return ElMessage({ message: "请输入搜索内容", type: "warning" });
   //searchModel.value = 1;
   //diskstore.changeSearch(searchText.value);
-   ElMessage({ message: "搜索功能暂未开放", type: "warning" });
+  ElMessage({ message: "搜索功能暂未开放", type: "warning" });
 }
 //监听 curIndex 的变化，页数切换，watch巧妙监听
 const { AllType, curTag, Pagesize, curIndex } = storeToRefs(diskstore);

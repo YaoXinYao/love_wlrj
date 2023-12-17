@@ -97,7 +97,7 @@ if (user.value.token) {
           title: "叮叮",
           message: h("p", { style: "color: teal" }, tipText),
         });
-
+        useNotify("未来软件工作室", tipText, () => {});
         if (pageInfo.value.currentPage == 1) {
           isUpdate.value[info.msgType as MessageTypes] = true;
         }

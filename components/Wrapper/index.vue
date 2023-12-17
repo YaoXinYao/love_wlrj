@@ -60,6 +60,10 @@ watch(
 );
 const carousel = ref();
 onMounted(() => {
+  const dom: HTMLDivElement = document.getElementsByClassName(
+    "el-carousel__container"
+  )[0] as HTMLDivElement;
+  dom.style.minHeight = "7rem";
   //首屏划入标题
   const line = gsap.timeline();
   line
@@ -104,6 +108,10 @@ function prepage() {
     align-items: center;
   }
 }
+.el-carousel--horizontal {
+  height: 100vh;
+  min-height: 7rem;
+}
 .wrapperMixd {
   width: 100%;
   height: auto;
@@ -111,11 +119,13 @@ function prepage() {
   overflow: hidden;
   .wrapper {
     height: 100vh;
+    min-height: 7rem;
     width: 100%;
     position: relative;
     .carouselimg {
       width: 100%;
       height: 100%;
+      min-height: 7rem;
       object-fit: cover;
     }
     .spcial {
@@ -188,6 +198,7 @@ function prepage() {
   .mixed {
     position: absolute;
     top: 0;
+    min-height: 7rem;
     width: 100%;
     height: 100vh;
     padding-top: 1.8rem;
