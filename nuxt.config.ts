@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       },
     },
     esbuild: {
-      drop: process.env.NUXT_API_ENV !== "dev" ? ["console", "debugger"] : [],
+      drop: process.env.NUXT_API_ENV !== "dev" ? ["debugger"] : [],
     },
     //自动导入样式
     plugins: [ElementPlus({})],
@@ -27,10 +27,12 @@ export default defineNuxtConfig({
         },
         {
           name: "keywords",
-          content: "未来, 未来软件工作室, 未来小组，河南科技学院最牛小组",
+          content:
+            "未来, 未来软件工作室, 未来小组,河南科技学院最牛小组,高国红,李士勇",
         },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "referrer", content: "no-referrer" },
+        { name: "og:title", content: "未来软件工作室" },
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/favicon2.ico" },
@@ -75,7 +77,6 @@ export default defineNuxtConfig({
   },
   nitro: {
     devProxy: {
-      //论坛管理
       "/api": {
         target: "http://152.136.161.44:19491/",
         changeOrigin: true,
@@ -84,6 +85,11 @@ export default defineNuxtConfig({
       //牛庆凯接口
       "/check": {
         target: "http://124.222.153.56:19591/",
+        changeOrigin: true,
+        prependPath: true,
+      },
+      "/api2": {
+        target: "http://112.125.120.78:19521/",
         changeOrigin: true,
         prependPath: true,
       },

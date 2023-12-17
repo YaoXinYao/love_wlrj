@@ -1,7 +1,16 @@
 <!-- 个人主页 -->
 <template>
   <div class="container">
-    <div class="backgroung_img">
+    <div class="headerDisplay">
+      <el-image
+        fit="cover"
+        class="background_img"
+        :src="PERSONALPAGEBG[bgIndex]"
+      >
+        <template #error>
+          <div class="errorBg"></div>
+        </template>
+      </el-image>
       <div class="text__box one">未来软件工作室</div>
     </div>
 
@@ -42,7 +51,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import {
   ElMessage,
@@ -52,13 +61,23 @@ import {
 } from "element-plus";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
+import { PERSONALPAGEBG } from "~/assets/data/tsConstant";
 const homeStore = useHomestore();
 let { userinfo, user } = storeToRefs(homeStore);
 const imageUrl = ref(userinfo.value.userPicture);
+const bgIndex = ref<number>(0);
 
 definePageMeta({
   layout: "person",
   roles: 1,
+});
+useHead({
+  meta: [{ name: "referrer", content: "no-referrer" }],
+});
+
+onMounted(() => {
+  let len = PERSONALPAGEBG.length;
+  bgIndex.value = Math.floor(Math.random() * len);
 });
 
 //上传头像成功回调
@@ -112,14 +131,28 @@ const handleAvatarError = (
   background-color: rgb(238, 238, 238);
   padding-bottom: 50px;
 }
-.backgroung_img {
+.headerDisplay {
   width: 100%;
-  height: 340px;
-  background-image: url("@/assets/image/personalBg.webp");
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  height: 400px;
   overflow: hidden;
+  position: relative;
+
+  .background_img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+}
+
+.errorBg {
+  width: 100%;
+  height: 100%;
+  background-image: url("@/assets/image/personalPageBg/personalBg.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .text__box {
@@ -133,7 +166,8 @@ const handleAvatarError = (
   color: #fff;
   animation: width 1.2s steps(7) forwards;
   letter-spacing: 2px;
-  margin: 150px auto;
+  margin: 170px auto;
+
   &::after {
     content: "";
     position: absolute;
@@ -170,9 +204,11 @@ const handleAvatarError = (
   height: max-content;
   padding: 10px 20px;
   margin: auto;
-  margin-top: -30px;
+  margin-top: -50px;
   border-radius: 10px;
   transition: width 0.3s;
+  position: relative;
+  z-index: 10;
 }
 
 .avatar-uploader {

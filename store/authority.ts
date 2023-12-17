@@ -11,6 +11,8 @@ import {
   updateRoleAuthority,
   insertRoleAuthority,
   deleteRoleAuthority,
+  getModifyCourse,
+  noticeUpdateCourse
 } from "~/service/authority/authority";
 export interface manage {
   authoritydata:any[]
@@ -68,14 +70,22 @@ export const authority = defineStore("authority", {
     //给用户删除权限
     async deleteRoleAuthor(authorityId: number, roleId: number) {
       let { data } = await deleteRoleAuthority(authorityId, roleId);
-      console.log("给用户删除权限", data.value);
       return data.value?.code;
     },
     //给用户添加权限
     async addRoleAuthor(authorityId: number, roleId: number) {
       let { data } = await insertRoleAuthority(authorityId, roleId);
-      console.log("给用户添加权限", data.value);
       return data.value?.code;
     },
+    //获取课表状态
+    async getCourseStatus(){
+      let {data} = await getModifyCourse()
+      return data.value
+    },
+    //修改课表状态
+    async editCourseStatus(flag:string){
+      let {data} = await noticeUpdateCourse(flag)
+      return data.value
+    }
   },
 });

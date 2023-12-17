@@ -133,7 +133,7 @@
       </nav>
 
       <div class="login">
-        <NuxtLink v-if="user.token == ''" to="/login">
+        <NuxtLink v-show="user.token == ''" to="/login">
           <TransitionButton innertext="登录"></TransitionButton>
         </NuxtLink>
         <el-dropdown v-if="user.token !== ''" :hide-on-click="false">
@@ -150,7 +150,7 @@
                   backgroundImage: `url(${
                     userinfo.userPicture ||
                     'https://p6-passport.byteacctimg.com/img/user-avatar/6971cbaa33a2f797512b9bfb86732e02~120x120.awebp'
-                  })`,
+                  })`.trim(),
                 }"
               ></div>
             </div>
@@ -214,9 +214,9 @@ const messagetotal = computed(() => {
     notReadNum.value.postLikeCnt
   );
 });
-const exit = () => {
-  homestore.exitlogin();
-};
+useHead({
+  meta: [{ name: "referrer", content: "no-referrer" }],
+});
 //注册插件
 gsap.registerPlugin(ScrollTrigger);
 //组件挂载完毕

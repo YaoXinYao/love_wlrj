@@ -5,10 +5,10 @@
         <div class="cardTop">
           <div class="userInfo">
             <div>
-              <img :src="item.head" alt=""/>
+              <img :src="item.user.userPicture" alt=""/>
             </div>
             <div>
-              <p>{{ item.comUserName }}</p>
+              <p>{{ item.user.userName }}</p>
               <p class="time">{{ item.comTime }}</p>
             </div>
           </div>

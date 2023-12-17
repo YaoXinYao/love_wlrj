@@ -1,42 +1,49 @@
 <template>
-  <div class="header">
-    <div class="headerContent">
-      <NuxtLink to="/" class="logoBox">
-        <img class="logo" src="@/assets/image/小组logo.png" />
-        <span class="logoText">未来软件</span>
-      </NuxtLink>
-
-      <ul class="nav">
-        <li><NuxtLink to="/forum/home">论坛</NuxtLink></li>
-        <li><NuxtLink to="/proclamation">公告</NuxtLink></li>
-        <li><NuxtLink to="/networkdisk">网盘</NuxtLink></li>
-      </ul>
-      <div class="navUser">
-        <el-dropdown trigger="click" class="dropDown">
-          <span class="el-dropdown-link">
-            {{ userinfo.userName
-            }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>
-                <li>
-                  <NuxtLink to="/admin/staff">后台</NuxtLink>
-                </li></el-dropdown-item
-              >
-              <el-dropdown-item>
-                <li>
-                  <NuxtLink to="/messageCenter/postLike">消息中心</NuxtLink>
-                </li></el-dropdown-item
-              >
-              <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+  <div class="container">
+    <div class="header">
+      <div class="headerContent">
+        <NuxtLink to="/" class="logoBox">
+          <img class="logo" src="@/assets/image/小组logo.png" />
+          <span class="logoText">未来软件</span>
+        </NuxtLink>
+        <ul class="nav">
+          <li><NuxtLink to="/forum/home">论坛</NuxtLink></li>
+          <li><NuxtLink to="/proclamation">公告</NuxtLink></li>
+          <li><NuxtLink to="/networkdisk">网盘</NuxtLink></li>
+        </ul>
+        <div class="navUser">
+          <el-dropdown trigger="click" class="dropDown">
+            <span class="el-dropdown-link">
+              {{ userinfo.userName
+              }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>
+                  <li>
+                    <NuxtLink to="/personalInfoPage/modules">个人中心</NuxtLink>
+                  </li></el-dropdown-item
+                >
+                <el-dropdown-item>
+                  <li>
+                    <NuxtLink to="/messageCenter/postLike">消息中心</NuxtLink>
+                  </li></el-dropdown-item
+                >
+                <el-dropdown-item>
+                  <li>
+                    <NuxtLink to="/admin/staff">后台管理</NuxtLink>
+                  </li></el-dropdown-item
+                >
+                <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
     </div>
+    <slot></slot>
+    <!-- <div class="footer"></div> -->
   </div>
-  <slot></slot>
 </template>
 
 <script setup lang="ts">
@@ -62,6 +69,10 @@ const exit = () => {
   font-size: 14px;
   margin-bottom: 20px;
 }
+
+.container {
+  height: max-content;
+}
 .header {
   position: fixed;
   top: 0;
@@ -70,7 +81,7 @@ const exit = () => {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid #ddd;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .headerContent {
@@ -162,5 +173,11 @@ const exit = () => {
   .navUser {
     justify-content: center;
   }
+}
+
+.footer {
+  width: 100%;
+  height: 100px;
+  background-color: rgb(41, 41, 41);
 }
 </style>

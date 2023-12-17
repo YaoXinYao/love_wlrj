@@ -165,7 +165,7 @@ import type {
   NoticeType,
 } from "~/types/Access";
 let allGrade: Array<string>;
-let typeList: Array<AccessTypesType>;
+let typeList = ref<Array<AccessTypesType>>();
 const isCanAdd = ref<boolean>(true);
 onMounted(() => {
   getAllGrade().then((res) => {
@@ -173,7 +173,7 @@ onMounted(() => {
   });
 
   getAllTypesService().then((res: any) => {
-    typeList = res.data.value.data;
+    typeList.value = res.data.value.data;
   });
 });
 

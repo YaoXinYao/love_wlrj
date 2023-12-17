@@ -67,7 +67,7 @@
         v-model:current-page="pageInfo.currentPage"
         v-model:page-size="pageInfo.pageSize"
         :page-sizes="[5, 10, 15]"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="paginationLayout"
         :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -78,18 +78,21 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-const parentBorder = ref(true);
-const childBorder = ref(false);
-let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 import {
   getAccessInfo,
   getInterviewService,
   getScoreByAccessService,
   getTemplateService,
 } from "~/service/access";
+import { debounce } from "lodash";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
+const parentBorder = ref(true);
+const childBorder = ref(false);
+let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 const props = defineProps(["userId"]);
 let userId = ref();
+const windowWidth = ref(window.innerWidth);
+let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
 userId.value = props.userId;
 const pageInfo = ref<AccessPageInfoType>({
   currentPage: 1,
@@ -105,9 +108,30 @@ watch(
   }
 );
 
+onMounted(() => {
+  getInfo();
+  if (window.innerWidth <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+  window.addEventListener("resize", handleResize);
+});
 onUnmounted(() => {
   writtenScoreList.value = [];
+  window.removeEventListener("resize", handleResize);
 });
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
+
 const handleSizeChange = (val: number) => {
   pageInfo.value.pageSize = val;
   getInfo();
@@ -129,7 +153,6 @@ const getInfo = async () => {
 
   let scoreInfo = scoreInfoRes.data.value;
   let scoreInfoData = scoreInfo.data.list;
-
   if (scoreInfo.code == 20000) {
     pageInfo.value.currentPage = scoreInfo.data.pageIndex;
     pageInfo.value.pageSize = scoreInfo.data.size;
@@ -140,6 +163,7 @@ const getInfo = async () => {
       obj.id = scoreInfoData[i].id;
       let getTemplateRes = await getTemplateService(scoreInfoData[i].pid);
       let studyPlanRes = await getAccessInfo(scoreInfoData[i].pid);
+
       let interviewList = null;
       if (scoreInfoData[i].type == "面评") {
         let getInterviewRes = await getInterviewService({
@@ -156,9 +180,7 @@ const getInfo = async () => {
       for (let j = 0; j < scores.length; j++) {
         obj[scores[j].name] = scores[j].score;
       }
-
       scoreList.push(obj);
-
       studyPlan.scoreList = scoreList;
       studyPlan.template = getTemplateRes.data.value.data.types;
       studyPlan.interviewList = interviewList;
@@ -169,8 +191,6 @@ const getInfo = async () => {
     return;
   }
 };
-
-getInfo();
 </script>
 
 <style lang="scss" scoped>

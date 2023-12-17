@@ -10,6 +10,8 @@ export const useAccessPageInfoStore = defineStore("accessPageInfoStore", {
       },
       manageSearchGrade: "",
       manageSearchName: "",
+      manageSearchSubscribersType: "",
+      manageSearchType: "",
       selfWrittenPageInfo: {
         currentPage: 1,
         pageSize: 5,

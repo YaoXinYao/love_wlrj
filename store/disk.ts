@@ -4,10 +4,11 @@ import {
   LookMyfile,
   SearchFile,
   SearchMyfile,
+  getAllProject,
   uploaddeleteFile,
 } from "~/service/disk";
 import { GetMylovefile, getAlltag, getFileTaglist } from "~/service/homeApi";
-import type { Diskstore } from "~/types/disk";
+import type { Diskstore, ProjectDesType } from "~/types/disk";
 export const useDiskstore = defineStore("disk", {
   state(): Diskstore {
     return {
@@ -94,16 +95,54 @@ export const useDiskstore = defineStore("disk", {
         diskFileNumber: 0,
         diskFileSize: "",
       },
+      MyProjectDis: [],
     };
   },
   actions: {
+    //更新项目信息
+    async updataProjectinfo(obj: ProjectDesType & { projectId: number }) {
+      const index = this.MyProjectDis.findIndex(
+        (item) => item.projectId == obj.projectId
+      );
+      this.MyProjectDis[index] = {
+        ...obj,
+        projectImage: this.MyProjectDis[index].projectImage,
+      };
+    },
+    //更新指定ID 的项目封面
+    async updataCoverstore(id: number | string, imgurl: string) {
+      const index = this.MyProjectDis.findIndex((item) => item.projectId == id);
+      this.MyProjectDis[index].projectImage = imgurl;
+    },
+    //删除指定ID 的项目
+    async deleteProjectID(id: number | string) {
+      const copy = [...this.MyProjectDis];
+      const newcopy = copy.filter((item) => {
+        return item.projectId != id;
+      });
+      this.MyProjectDis = newcopy;
+    },
+    //请求获得当前展示的项目
+    async GetDisProject() {
+      const res = await getAllProject();
+      try {
+        if (res.data) {
+          this.MyProjectDis = res.data.value.data;
+        }
+      } catch (error) {
+        this.MyProjectDis = [];
+      }
+    },
+    //添加一个项目
+    async AddProjectDesc(Obj: ProjectDesType) {
+      this.MyProjectDis.push(Obj);
+    },
     //删除回调，前台删除
     async SearchFileReplce(filedid: number) {
       const res = await uploaddeleteFile({
         fileId: filedid,
         userId: Authuserid(),
       });
-      console.log(res.data.value);
       if (res.data.value.code !== 20000)
         return ElMessage({ message: "删除失败", type: "error" });
       const copy = [...this.Myfile.SearchItem];
@@ -190,7 +229,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Pagesize,
         types: this.curTag.map((item) => `types=${item}`).join("&") || "types=",
       });
-      console.log(res.data.value.data);
+
       this.Filelist = res.data.value.data;
       this.Loading = false;
     },
@@ -214,7 +253,7 @@ export const useDiskstore = defineStore("disk", {
         pageSize: this.Myfile.PageSize,
         userId: Authuserid(),
       });
-      console.log(res.data.value.data);
+
       this.Myfile.FileList = res.data.value.data;
       this.Myfile.Loading = false;
     },
@@ -257,28 +296,25 @@ export const useDiskstore = defineStore("disk", {
     },
     //改变某一个的收藏状态
     async changeUncomment(id: number) {
-      console.log(id);
       const index = this.Filelist.dataList.findIndex((item) => item.id == id);
-      console.log(index);
+
       this.Filelist.dataList[index].is_collection == 0
         ? (this.Filelist.dataList[index].is_collection = 1)
         : (this.Filelist.dataList[index].is_collection = 0);
     },
     //Mylove收藏
     async changeUncomment2(id: number) {
-      console.log(id);
       const index = this.Mylove.FileList.dataList.findIndex(
         (item) => item.id == id
       );
-      console.log(index);
+
       this.Mylove.FileList.dataList[index].is_collection == 0
         ? (this.Mylove.FileList.dataList[index].is_collection = 1)
         : (this.Mylove.FileList.dataList[index].is_collection = 0);
     },
     async changeUncomment3(id: number) {
-      console.log(id);
       const index = this.Mylove.SearchItem.findIndex((item) => item.id == id);
-      console.log(index);
+
       this.Mylove.SearchItem[index].is_collection == 0
         ? (this.Mylove.SearchItem[index].is_collection = 1)
         : (this.Mylove.SearchItem[index].is_collection = 0);

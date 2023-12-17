@@ -38,7 +38,7 @@ const dialogVisible = ref(false);
 const disabled = ref(false);
 
 const handleRemove = (file: UploadFile) => {
-  console.log(file);
+  // console.log(file);
 };
 
 const handlePictureCardPreview = (file: UploadFile) => {

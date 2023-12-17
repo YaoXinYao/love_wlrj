@@ -15,7 +15,7 @@
         >编辑提示</el-button
       >
     </div>
-    <el-dialog v-model="tip" title="注意事项" draggable width="30%">
+    <el-dialog v-model="tip" title="注意事项" draggable width="50%">
       <el-card class="tip-card">
         <p>
           &emsp;&emsp;开始时间为开课周周一，如11周开课，则开始时间应当填写11周周一日期。

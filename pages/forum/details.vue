@@ -1,5 +1,5 @@
 <template>
-  <div class="deatils">
+  <div class="deatils" v-loading="detailLoading">
     <div
       class="bgphoto"
       v-if="singleData.photoShow == true"
@@ -13,9 +13,13 @@
     <div class="signle">
       <div class="content">
         <div class="text">
-          <h2>{{ decodeURIComponent(singleData.postTitle) }}</h2>
+          <h2 v-if="!singleData.postTitle" class="loadingContent">
+            Loading...
+          </h2>
+          <h2 v-else>{{ decodeURIComponent(singleData.postTitle) }}</h2>
           <div class="autorInfo">
-            {{ singleData.userName }}<span>{{ singleData.postTime }}</span>
+            {{ singleData.userDto?.userName || "未知" }}
+            <span>{{ singleData.postTime }}</span>
             <span>
               <svg
                 t="1701501024430"
@@ -36,7 +40,11 @@
               {{ singleData.postView }}
             </span>
           </div>
+          <div v-if="!singleData.postContent" class="loadingContent">
+            Loading...
+          </div>
           <div
+            v-else
             class="textContent"
             v-html="decodeURIComponent(singleData.postContent)"
           ></div>
@@ -108,10 +116,10 @@
           <div class="cardTop">
             <div class="userInfo">
               <div>
-                <img :src="item.head" alt="" />
+                <img :src="item.user.userPicture" alt="" />
               </div>
               <div>
-                <p>{{ item.comUserName }}</p>
+                <p>{{ item.user.userName }}</p>
                 <p class="time">{{ item.comTime }}</p>
               </div>
             </div>
@@ -241,7 +249,7 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-const { singleData, discuss } = storeToRefs(forums);
+const { singleData, discuss, detailLoading } = storeToRefs(forums);
 let conten = ref("");
 let contens = ref("");
 let commentNews = reactive<any>({
@@ -275,12 +283,12 @@ const { status, data, send, open, close } = useWebSocket(
     },
   }
 );
-let a = "<h1>111</h1>";
 onMounted(() => {
   let id = Number(datas);
   forums.getSingle(id, userinfo.value.userId);
   forums.selectComment(id, userinfo.value.userId);
 });
+
 //发送消息
 const sentMessage = (
   msgAccept: number,
@@ -506,7 +514,7 @@ function comLike(
 }
 watch(status, (newStatus) => {
   if (newStatus === "OPEN") {
-    console.log("WebSocket connection established");
+    // console.log("WebSocket connection established");
   }
 });
 </script>

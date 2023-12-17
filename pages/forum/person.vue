@@ -53,7 +53,7 @@
         <ul v-if="posts.length != 0">
           <li class="details" v-for="(item, index) in posts" :key="index">
             <div v-if="item.photos.length == 0" class="noImg">
-              <div class="detailsTitle">
+              <div class="title">
                 <NuxtLink
                   @click="
                     navigateTo({
@@ -63,9 +63,11 @@
                   "
                   >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
                 >
-                <span>{{ item.postTime }}</span>
               </div>
-              <div class="detailsContent">
+              <div class="postTime">
+                发布博客 <span>{{ item.postTime.split(" ")[0] }}</span>
+              </div>
+              <div class="content">
                 <NuxtLink
                   @click="
                     navigateTo({
@@ -77,7 +79,7 @@
                 >
                 </NuxtLink>
               </div>
-              <div class="detailsData">
+              <div class="data">
                 <div>
                   <span>{{ item.postView }}阅读</span>
                   <span>{{ item.postLike }}点赞</span>
@@ -129,7 +131,9 @@
                     "
                     >{{ decodeURIComponent(item.postTitle) }}</NuxtLink
                   >
-                  <span>{{ item.postTime }}</span>
+                </div>
+                <div class="postTime">
+                  发布博客 <span>{{ item.postTime.split(" ")[0] }}</span>
                 </div>
                 <div class="content">
                   <NuxtLink
@@ -193,7 +197,7 @@ import { useHomestore } from "~/store/home";
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
 let forums = forumStore();
-let { total, totaType,loadings } = storeToRefs(forums);
+let { total, totaType, loadings } = storeToRefs(forums);
 let pages = 15;
 let pageNo = ref(1);
 
@@ -311,13 +315,13 @@ const deletePost = (id: number) => {
     .article {
       flex: 1;
       overflow: hidden;
-      margin-left: 20px;
+      margin: 0 0 0 20px;
       min-height: 200px;
       position: relative;
       ul {
         list-style: none;
         li {
-          height: 180px;
+          height: 210px;
           border-radius: 7px;
           background-color: rgb(237 237 237 / 40%);
           padding: 10px;
@@ -481,65 +485,24 @@ const deletePost = (id: number) => {
 .article {
   .details {
     position: relative;
-    .noImg {
-      .detailsTitle {
-        height: 20px;
-        width: 100%;
-        line-height: 20px;
-        font-size: 18px;
-        position: relative;
-        margin-bottom: 10px;
-        cursor: pointer;
-        span {
-          display: inline-block;
-          position: absolute;
-          right: 50px;
-          font-size: 16px;
-        }
-      }
-      .detailsContent {
-        line-height: 23px;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        cursor: pointer;
-        height: 90px;
-        padding: 0px 10px;
-        a {
-          display: inline-block;
-          p {
-            text-indent: 2em;
-          }
-        }
-      }
-      .detailsData {
-        position: absolute;
-        display: flex;
-        width: calc(100% - 50px);
-        justify-content: space-between;
-        bottom: 10px;
-        margin-right: 50px;
-        height: 32px;
-        line-height: 32px;
-        span {
-          display: inline-block;
-          margin-right: 15px;
-        }
+    .noImg{
+      padding: 0 10px;
+      .data{
+        width: calc(100% - 10px) !important;
       }
     }
     .withImg {
       display: flex;
       .photos {
         flex: 0 0 300px;
-        height: 150px;
+        height: 190px;
         border-radius: 7px;
         margin-right: 30px;
         overflow: hidden;
         cursor: pointer;
         img {
           width: 100%;
-          height: 150px;
+          height: 190px;
           border-radius: 2px;
           -o-object-fit: cover;
           object-fit: cover;
@@ -547,7 +510,7 @@ const deletePost = (id: number) => {
           border: 1px solid #f5f6f7;
         }
       }
-      @media screen and (max-width: 768px) {
+      @media screen and (max-width: 800px) {
         .photos {
           flex: 0 0 175px;
         }
@@ -555,50 +518,54 @@ const deletePost = (id: number) => {
       .news {
         flex: 1;
         overflow: hidden;
-        position: relative;
-        .title {
-          height: 20px;
-          line-height: 20px;
-          font-size: 18px;
-          position: relative;
-          margin-bottom: 10px;
-          cursor: pointer;
-          span {
-            display: inline-block;
-            position: absolute;
-            right: 50px;
-            font-size: 16px;
-          }
+      }
+    }
+    .title {
+      height: 20px;
+      line-height: 20px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .postTime {
+      width: 100%;
+      height: 16px;
+      line-height: 16px;
+      font-size: 14px;
+      text-align: right;
+      padding-right: 20px;
+      margin-right: 20px;
+    }
+    .content {
+      line-height: 23px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      cursor: pointer;
+      height: 90px;
+      margin: 10px 0;
+      a {
+        display: inline-block;
+        p {
+          text-indent: 2em;
         }
-        .content {
-          line-height: 23px;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 2;
-          overflow: hidden;
-          cursor: pointer;
-          height: 90px;
-          a {
-            display: inline-block;
-            p {
-              text-indent: 2em;
-            }
-          }
-        }
-        .data {
-          position: absolute;
-          display: flex;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          width: calc(100% - 50px);
-          bottom: 10px;
-          height: 32px;
-          line-height: 32px;
-          span {
-            display: inline-block;
-            margin-right: 15px;
-          }
-        }
+      }
+    }
+    .data {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      width: calc(100% - 20px);
+      height: 30px;
+      line-height: 30px;
+      font-size: 14px;
+      span {
+        display: inline-block;
+        margin-right: 15px;
       }
     }
   }
@@ -611,17 +578,21 @@ const deletePost = (id: number) => {
     }
   }
 }
+//有图片和无图片公用样式
 @media screen and (max-width: 800px) {
   .userInfo {
     ul {
       width: 300px !important;
     }
-  }
-  .showHome {
-    display: block !important;
+    .showHome {
+      display: block !important;
+    }
   }
   .introduce {
     display: none;
+  }
+  .article {
+    margin: 0 10px !important;
   }
 }
 </style>

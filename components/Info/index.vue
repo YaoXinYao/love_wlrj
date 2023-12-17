@@ -9,15 +9,7 @@
       />
       <span class="infoSenderName">{{ props.data.msgSendName }}</span>
     </div>
-    <NuxtLink
-      @click="
-        navigateTo({
-          path: '/forum/details',
-          query: { data: props.data.msgContentId },
-        })
-      "
-      class="noticeContent"
-    >
+    <NuxtLink @click="readInfo" class="noticeContent">
       &emsp;&emsp;{{ props.data.infoContent }}
     </NuxtLink>
     <span class="noticeDate">{{ props.data.date }}</span>
@@ -44,6 +36,13 @@ const props = defineProps(["data", "type"]);
 const target = ref();
 const emit = defineEmits(["addAlert", "info_event"]);
 
+const readInfo = async () => {
+  await updateMsgStatus(props.data.id);
+  navigateTo({
+    path: "/forum/details",
+    query: { data: props.data.msgContentId },
+  });
+};
 const deleteMessage = () => {
   ElMessageBox.confirm("你确定要删除该消息吗？")
     .then(async () => {
@@ -86,8 +85,6 @@ const deleteMessage = () => {
       });
     });
 };
-
-useObserver(target, updateMsgStatus, props.data.id);
 </script>
 
 <style lang="scss" scoped>
@@ -109,7 +106,6 @@ useObserver(target, updateMsgStatus, props.data.id);
 
     .noticeContent {
       color: rgb(160, 203, 235);
-      word-break: break-all;
     }
   }
 }
@@ -148,6 +144,7 @@ useObserver(target, updateMsgStatus, props.data.id);
   color: #666;
   letter-spacing: 0.1em;
   cursor: pointer;
+  word-break: break-all;
 }
 
 .noticeDate {

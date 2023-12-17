@@ -18,8 +18,6 @@ export const useRotationStore = defineStore("rotation", {
   actions: {
     async getCarousel() {
       let { data } = await selectCarousel();
-      console.log("轮播",data.value);
-      
       this.carouselItem = data.value.data;
     },
     async deleteCarousel(id: number) {

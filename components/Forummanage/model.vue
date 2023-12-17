@@ -4,7 +4,7 @@
     <el-dialog v-model="lookModel" title="帖子信息" width="440px">
       <el-form :model="postInfos">
         <el-form-item label="发帖人" :label-width="formLabelWidth">
-          <el-input :value="postInfos.userName" :disabled="true" />
+          <el-input :value="postInfos.userDto.userName" :disabled="true" />
         </el-form-item>
         <el-form-item label="发帖时间" :label-width="formLabelWidth">
           <el-input :value="postInfos.postTime" :disabled="true" />

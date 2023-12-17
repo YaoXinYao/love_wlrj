@@ -4,6 +4,9 @@
       <el-button class="addAutor" type="success" @click="autorModel = true"
         >添加权限</el-button
       >
+      <el-button class="statusCourse" type="primary" @click="editCourse">{{
+        courseStatus != "1" ? "禁止修改课表" : "允许修改课表"
+      }}</el-button>
     </div>
     <el-table
       :data="authoritydata"
@@ -115,10 +118,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {storeToRefs} from 'pinia'
+import { storeToRefs } from "pinia";
 import { authority } from "~/store/authority";
 let authors = authority();
-let {authoritydata} = storeToRefs(authors)
+let { authoritydata } = storeToRefs(authors);
 let authorName = ref("");
 let interfaceData = ref<any[]>([]);
 let interfacePath = ref("");
@@ -130,19 +133,46 @@ let interfaceModel = ref(false);
 let addinterModel = ref(false);
 let interDelete = ref(false);
 let authorDelete = ref(false);
+let courseStatus = ref("");
 let inputcss = {
   marginTop: "10px",
 };
 onMounted(() => {
-  authors.getAuthority()
+  authors.getCourseStatus().then((res) => {
+    courseStatus.value = res.data;
+  });
+  authors.getAuthority();
 });
+//修改课表
+const editCourse = () => {
+  if (courseStatus.value == "1") {
+    authors.editCourseStatus("0").then((res) => {
+      if (res.code == 20000) {
+        courseStatus.value = "0";
+        ElMessage.success("修改成功");
+      } else {
+        ElMessage.error("修改失败");
+      }
+    });
+  } else {
+    authors.editCourseStatus("1").then((res) => {
+      console.log("修改课表", res);
+      if (res.code == 20000) {
+        courseStatus.value = "1";
+        ElMessage.success("修改成功");
+      } else {
+        ElMessage.error("修改失败");
+      }
+    });
+  }
+};
 //添加权限
 const addAuthority = () => {
   if (authorName.value.trim()) {
     authors.postAuthority(authorName.value).then((res) => {
       if (res == 20000) {
         ElMessage.success("添加成功");
-        authors.getAuthority()
+        authors.getAuthority();
         autorModel.value = false;
         authorName.value = "";
       } else if (res == 52003) {

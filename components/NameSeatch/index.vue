@@ -89,7 +89,6 @@ function filetype(val: string) {
   return val.match(reg)![1];
 }
 watch([Pagesize2, curIndex2, Searchtext], () => {
-  console.log("重新请求");
   diskstore.getNameFile();
 });
 </script>

@@ -27,20 +27,46 @@
       @typeAlert="typeHandle"
       ref="typeRef"
     />
-    <el-form :inline="true" :model="manageSearchKeys">
+    <el-form :inline="true" :model="manageSearchKeys" ref="searchRef">
       <el-form-item label="考核名称"
         ><el-input v-model="manageSearchName" placeholder="考核名称" clearable
       /></el-form-item>
       <el-form-item label="考核年级"
         ><el-input v-model="manageSearchGrade" placeholder="考核年级" clearable
       /></el-form-item>
+      <el-form-item label="考核方向">
+        <el-select v-model="manageSearchSubscribersType" style="width: 90px">
+          <el-option label="全体" value="" />
+          <el-option label="前端" :value="1" />
+          <el-option label="后端" :value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="考核类型">
+        <el-select v-model="manageSearchType" style="width: 90px">
+          <el-option label="全部" value="" />
+          <el-option label="笔试" value="笔试" />
+          <el-option label="面试" value="面试" />
+        </el-select>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="searchAccess">搜索</el-button>
-        <el-button type="warning" @click="resetInfo">重置</el-button>
-        <el-button type="success" @click="addAlert" v-if="roleId != 1"
+        <el-button type="primary" @click="searchAccess" class="btn"
+          >搜索</el-button
+        >
+        <el-button type="warning" @click="resetInfo" class="btn"
+          >重置</el-button
+        >
+        <el-button
+          type="success"
+          @click="addAlert"
+          v-if="roleId != 1"
+          class="btn"
           >新增</el-button
         >
-        <el-button type="info" @click="accessTypeAlert" v-if="roleId != 1"
+        <el-button
+          type="info"
+          @click="accessTypeAlert"
+          v-if="roleId != 1"
+          class="btn"
           >考核类型管理</el-button
         >
       </el-form-item>
@@ -55,15 +81,26 @@
       <el-table-column label="考核名称" prop="plan" fixed />
       <el-table-column label="类别" prop="type">
         <template #default="scope"
-          ><el-tag size="large">{{ scope.row.type }}</el-tag></template
-        >
-      </el-table-column>
-      <el-table-column label="考核类型" prop="assessType">
-        <template #default="scope"
           ><el-tag size="large" type="success">{{
-            scope.row.typeName
+            scope.row.type
           }}</el-tag></template
         >
+      </el-table-column>
+      <el-table-column label="考核类型" prop="typeName">
+        <template #default="scope"
+          ><el-tag size="large">{{ scope.row.typeName }}</el-tag></template
+        >
+      </el-table-column>
+      <el-table-column label="方向" prop="subscribersType">
+        <template #default="scope">
+          <el-tag size="large" type="danger">{{
+            scope.row.subscribersType === 1
+              ? "前端"
+              : scope.row.subscribersType === 2
+              ? "后端"
+              : "全体"
+          }}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column label="发起者" prop="publisherName" />
       <el-table-column label="考核对象" prop="subscribers" />
@@ -83,6 +120,7 @@
             style="width: 55px; height: 32px"
             @click="watchAccess(scope.row)"
             :disabled="isDisableByGrade(scope.row.subscribers, false)"
+            class="btn"
             >查看</el-button
           >
           <el-button
@@ -92,6 +130,7 @@
             style="width: 55px; height: 32px"
             @click="deleteAccess(scope.row)"
             :disabled="isDisableByGrade(scope.row.subscribers, true)"
+            class="btn"
             >删除</el-button
           >
         </template>
@@ -104,7 +143,8 @@
       v-if="managePageInfo.total"
       :page-sizes="[5, 10, 15, 20]"
       :small="false"
-      layout="total, sizes, prev, pager, next, jumper"
+      :pager-count="5"
+      :layout="paginationLayout"
       :total="managePageInfo.total"
       @size-change="handleSizeChange"
       @current-change="handleCurChange"
@@ -113,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import ScoreTable from "@/components/ScoreTable/index.vue";
 import InterviewList from "@/components/InterviewList/index.vue";
 import AccessTypes from "@/components/AccessTypes/index.vue";
@@ -121,12 +161,14 @@ import { getLoginUser, getUserInfoById } from "~/service/user";
 import {
   deleteAccessService,
   getAllAccessService,
+  getAllTypesService,
   getTypesByIdService,
 } from "~/service/access";
 import { useAccessPageInfoStore } from "~/store/accessPageInfo";
 import { storeToRefs } from "pinia";
 const tableRef = ref();
-import type { AccessResInfoType } from "~/types/Access";
+import type { AccessResInfoType, AccessTypesType } from "~/types/Access";
+import type { FormInstance } from "element-plus";
 const accessPageInfoStore = useAccessPageInfoStore();
 const isLoading = ref(false);
 const accessDialogVisible = ref(false);
@@ -136,11 +178,20 @@ const typeDialogVisible = ref(false);
 const watchScoreRef = ref<InstanceType<typeof ScoreTable>>();
 const watchInterviewRef = ref<InstanceType<typeof InterviewList>>();
 const typeRef = ref<InstanceType<typeof AccessTypes>>();
-const { managePageInfo, manageSearchGrade, manageSearchName } =
-  storeToRefs(accessPageInfoStore);
+const {
+  managePageInfo,
+  manageSearchGrade,
+  manageSearchName,
+  manageSearchSubscribersType,
+  manageSearchType,
+} = storeToRefs(accessPageInfoStore);
 const accessInfo = ref<Array<AccessResInfoType>>([]);
 const getGrade = ref<number>(0);
 const roleId = ref<number>(1);
+const searchRef = ref<FormInstance>();
+const windowWidth = ref(window.innerWidth);
+let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
+let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 
 definePageMeta({
   layout: "manag",
@@ -152,7 +203,27 @@ onMounted(async () => {
     getGrade.value = userInfoRes.data.value.data.userGrade as number;
     roleId.value = userInfoRes.data.value.data.roleId;
   }
+  if (window.innerWidth <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+  window.addEventListener("resize", handleResize);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 /**
  * 判断用户是否有权操作
@@ -196,40 +267,25 @@ const isDisableByRole = (role: number, isEqual: boolean) => {
 
 //获取考核信息
 const getAccessInfo = async (props: {
-  keyword?: string;
+  name?: string;
   currentPage: number;
   pageSize: number;
   subscribers?: string;
+  subscribersType?: string;
+  type?: string;
 }) => {
   isLoading.value = true;
   const accessInfoRes = await getAllAccessService({
-    name: props.keyword,
+    name: props.name,
     nodePage: props.currentPage,
     pageSize: props.pageSize,
     subscribers: props.subscribers,
+    subscribersType: props.subscribersType,
+    type: props.type,
   });
-
   accessInfo.value = accessInfoRes.data.value.data.records;
-  if (accessInfo.value) {
-    for (let i = 0; i < accessInfo.value.length; i++) {
-      let user = await getUserInfoById(accessInfo.value[i].publisher as number);
-      if (user.data.value.code == 20000) {
-        accessInfo.value[i].publisherName = user.data.value.data.userName;
-      } else {
-        accessInfo.value[i].publisherName = "未知";
-      }
-      let typeName = "未知";
-      if (accessInfo.value[i].typeId) {
-        let typeNameRes = await getTypesByIdService(
-          accessInfo.value[i].typeId as number
-        );
-        if (typeNameRes.data.value.code == 20000) {
-          typeName = typeNameRes.data.value.data;
-        }
-      }
-      accessInfo.value[i].typeName = typeName;
-    }
-  }
+  console.log(accessInfo.value);
+
   managePageInfo.value.currentPage = accessInfoRes.data.value.data.current;
   managePageInfo.value.pageSize = accessInfoRes.data.value.data.size;
   managePageInfo.value.total = accessInfoRes.data.value.data.total;
@@ -240,55 +296,60 @@ const resetInfo = () => {
   managePageInfo.value.currentPage = 1;
   manageSearchGrade.value = "";
   manageSearchName.value = "";
+  manageSearchSubscribersType.value = "";
+  manageSearchType.value = "";
   getAccessInfo({
-    keyword: "",
+    name: "",
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
     subscribers: "",
+    subscribersType: "",
+    type: "",
   });
 };
 
 //搜索
 const searchAccess = async () => {
-  if (manageSearchGrade.value == "" && manageSearchName.value == "") {
-    ElMessage({
-      type: "warning",
-      message: "请输入关键词",
-    });
-  } else {
-    managePageInfo.value.currentPage = 1;
-    getAccessInfo({
-      keyword: manageSearchName.value,
-      subscribers: manageSearchGrade.value,
-      currentPage: 1,
-      pageSize: managePageInfo.value.pageSize,
-    });
-  }
+  managePageInfo.value.currentPage = 1;
+  getAccessInfo({
+    name: manageSearchName.value,
+    subscribers: manageSearchGrade.value,
+    currentPage: 1,
+    pageSize: managePageInfo.value.pageSize,
+    subscribersType: manageSearchSubscribersType.value,
+    type: manageSearchType.value,
+  });
 };
 
 getAccessInfo({
-  keyword: manageSearchName.value,
+  name: manageSearchName.value,
   subscribers: manageSearchGrade.value,
   currentPage: managePageInfo.value.currentPage,
   pageSize: managePageInfo.value.pageSize,
+  subscribersType: manageSearchSubscribersType.value,
+  type: manageSearchType.value,
 });
 
 const handleSizeChange = async (val: number) => {
   managePageInfo.value.pageSize = val;
   getAccessInfo({
-    keyword: manageSearchName.value,
+    name: manageSearchName.value,
     subscribers: manageSearchGrade.value,
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
+    subscribersType: manageSearchSubscribersType.value,
+    type: manageSearchType.value,
   });
 };
 const handleCurChange = async (val: number) => {
   managePageInfo.value.currentPage = val;
   getAccessInfo({
-    keyword: manageSearchName.value,
+    name: manageSearchName.value,
     subscribers: manageSearchGrade.value,
     currentPage: managePageInfo.value.currentPage,
     pageSize: managePageInfo.value.pageSize,
+    subscribersType: manageSearchSubscribersType.value,
+    type: manageSearchType.value,
   });
 };
 
@@ -358,6 +419,8 @@ const typeHandle = (props: boolean) => {
 const updateEvent = (props: boolean) => {
   manageSearchName.value = "";
   manageSearchGrade.value = "";
+  manageSearchSubscribersType.value = "";
+  manageSearchType.value = "";
   if (props) {
     getAccessInfo({
       currentPage: managePageInfo.value.currentPage,
@@ -387,10 +450,12 @@ const deleteAccess = (row: any) => {
           message: "删除成功",
         });
         getAccessInfo({
-          keyword: manageSearchName.value,
+          name: manageSearchName.value,
           subscribers: manageSearchGrade.value,
           currentPage: managePageInfo.value.currentPage,
           pageSize: managePageInfo.value.pageSize,
+          subscribersType: manageSearchSubscribersType.value,
+          type: manageSearchType.value,
         });
       } else {
         ElMessage({
@@ -429,7 +494,8 @@ const watchAccess = (row: any) => {
       row.subscribers,
       row.id,
       getGrade.value,
-      roleId.value
+      roleId.value,
+      row.subscribersType
     );
   }
 };
@@ -467,5 +533,9 @@ const watchAccess = (row: any) => {
   margin: 10px 0;
   display: flex;
   justify-content: center;
+}
+
+.btn {
+  margin: 2px;
 }
 </style>

@@ -52,7 +52,7 @@
         v-model:current-page="pageInfo.currentPage"
         v-model:page-size="pageInfo.pageSize"
         :page-sizes="[5, 10, 15]"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="paginationLayout"
         :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -63,15 +63,19 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-const parentBorder = ref(true);
-const childBorder = ref(false);
-let interviewScoreList = ref<Array<AccessResInfoType>>([]);
 import {
   getAccessInfo,
   getInterviewService,
   getUserInterviewService,
 } from "~/service/access";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
+import { debounce } from "lodash";
+const parentBorder = ref(true);
+const childBorder = ref(false);
+let interviewScoreList = ref<Array<AccessResInfoType>>([]);
+const windowWidth = ref(window.innerWidth);
+let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
+let writtenScoreList = ref<Array<AccessResInfoType>>([]);
 const props = defineProps(["userId"]);
 let userId = ref();
 userId.value = props.userId;
@@ -83,9 +87,30 @@ const pageInfo = ref<AccessPageInfoType>({
 
 const interviewList = ref<Array<AccessResInfoType>>([]);
 
-onMounted(async () => {
+onMounted(() => {
+  getInfo();
   interviewScoreList.value = [];
+  if (window.innerWidth <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+  window.addEventListener("resize", handleResize);
 });
+onUnmounted(() => {
+  writtenScoreList.value = [];
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    paginationLayout.value = "total, prev, pager, next";
+  } else {
+    paginationLayout.value = "total, sizes, prev, pager, next, jumper";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 watch(
   () => props.userId,
@@ -125,13 +150,12 @@ const getInfo = async () => {
         id: userId.value,
         pId: pIdList[i],
       });
+
       interviewList.value[i] = InterviewListItem.data.value.data;
       interviewList.value[i].interviewList = interviewItem.data.value.data;
     }
   }
 };
-
-getInfo();
 </script>
 
 <style lang="scss" scoped>

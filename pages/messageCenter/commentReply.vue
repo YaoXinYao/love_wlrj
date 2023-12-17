@@ -1,11 +1,11 @@
 <template>
-  <div class="app">
+  <div class="app" v-loading="isLoading">
     <div v-show="!pageInfo.total && !isLoading">
       <el-empty description="暂无数据" />
     </div>
-    <div v-show="isLoading" class="isLoading">
+    <!-- <div v-show="isLoading" class="isLoading">
       <span>加载中...</span>
-    </div>
+    </div> -->
     <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
@@ -22,10 +22,10 @@ import { storeToRefs } from "pinia";
 import { useMessageStore } from "~/store/message";
 import { watch, onMounted } from "vue";
 import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
-const messageStore = useMessageStore();
-messageStore.ChangeCurType("CommentReply");
 import { useHomestore } from "~/store/home";
 import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
+const messageStore = useMessageStore();
+messageStore.ChangeCurType("CommentReply");
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);

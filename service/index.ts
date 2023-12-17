@@ -1,5 +1,6 @@
 import type { AsyncData, UseFetchOptions } from "nuxt/dist/app/composables";
-type Methods = "GET" | "POST" | "put";
+import { useLoginout } from "~/hooks/useLoginout";
+type Methods = "GET" | "POST" | "PUT" | "DELETE";
 class Hyrequest {
   request<T = any>(
     url: string,
@@ -11,15 +12,31 @@ class Hyrequest {
       const newoptions: UseFetchOptions<T> = {
         method: method,
         headers: {
-          "Authorization": Authtoken(),
           ...options?.headers,
         },
         ...options,
+        //响应
+        onResponse({ request, response, options }) {
+          if (response.status == 403) {
+            //退出登录
+            useLoginout();
+            ElMessage({ message: "账号验证失败，重新登陆", type: "info" });
+            navigateTo("/login");
+          }
+          //如果状态码为403  则直接重新登录。账号已经被顶掉
+        },
+        //请求拦截
+        onRequest({ request, options }) {
+          // 设置请求头
+          options.headers = options.headers || {};
+          //@ts-ignore
+          options.headers.Authorization = Authtoken();
+        },
       };
       if (method == "GET") {
         newoptions.query = data || {};
       }
-      if (method == "POST" || method == "put") {
+      if (method == "POST" || method == "PUT") {
         newoptions.params = data || {};
       }
       useFetch<T>(url, newoptions as any)
@@ -34,8 +51,14 @@ class Hyrequest {
   get<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "GET", params, options);
   }
-  post<T = any>(url: string, data: any, options: UseFetchOptions<T>) {
+  post<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
     return this.request<T>(url, "POST", data, options);
+  }
+  put<T = any>(url: string, data: any, options?: UseFetchOptions<T>) {
+    return this.request<T>(url, "PUT", data, options);
+  }
+  delete<T = any>(url: string, params?: any, options?: UseFetchOptions<T>) {
+    return this.request<T>(url, "DELETE", params, options);
   }
 }
 export default new Hyrequest();

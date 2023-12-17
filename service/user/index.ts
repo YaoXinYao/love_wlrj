@@ -5,7 +5,7 @@ import type { CourseType } from "~/types/Course";
 //添加课表
 export const addTimetable = (props: CourseType) => {
   return hyRequest.post<IResultData<any>>(
-    `/check/attendance/course-manage/createCourse`,
+    `/api/attendance/course-manage/createCourse`,
     {
       ...props,
     }
@@ -15,7 +15,7 @@ export const addTimetable = (props: CourseType) => {
 //修改课表
 export const updateTimetable = (props: CourseType) => {
   return hyRequest.put<IResultData<any>>(
-    `/check/attendance/course-manage/updateCourse`,
+    `/api/attendance/course-manage/updateCourse`,
     {
       ...props,
     }
@@ -25,7 +25,7 @@ export const updateTimetable = (props: CourseType) => {
 //获取某人的课表
 export const getTimetable = (userId: number) => {
   return hyRequest.get<IResultData<any>>(
-    `/check/attendance/course-manage/getPersonAllCourse`,
+    `/api/attendance/course-manage/getPersonAllCourse`,
     {
       userId,
     }
@@ -35,7 +35,7 @@ export const getTimetable = (userId: number) => {
 //删除课程
 export const deleteTimetable = (id: string) => {
   return hyRequest.delete<IResultData<any>>(
-    `/check/attendance/course-manage/deleteCourse`,
+    `/api/attendance/course-manage/deleteCourse`,
     {
       id,
     }
@@ -103,6 +103,26 @@ export const searchUserervice = (props: {
   });
 };
 
+//获得用户所有组别
+export const getAllGroupsService = () => {
+  return hyRequest.get<IResultData<any>>("/api/user/group/selectAllGroup");
+};
+
+//根据年级与组别获取用户
+export const getUserByGradeAndGroupService = (props: {
+  userGrade?: number;
+  groupId?: number | string;
+  pageNo?: number;
+  pageSize?: number;
+  search?: string;
+}) => {
+  console.log(props);
+
+  return hyRequest.get<IResultData<any>>("/api/user/user/selectAllUser", {
+    ...props,
+  });
+};
+
 //修改密码
 export const updateUserPassword = (props: UpdatePassType) => {
   return hyRequest.put<IResultData<any>>(`/api/user/user/updatePassword`, {
@@ -125,6 +145,6 @@ export const getAllGrade = () => {
 //是否可以修改课表
 export const getIsEditCourseService = () => {
   return hyRequest.get<IResultData<any>>(
-    `/check/attendance/course-manage/getModifyCourse`
+    `/api/attendance/course-manage/getModifyCourse`
   );
 };

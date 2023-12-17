@@ -64,7 +64,6 @@ onMounted(() => {
 watch(
   () => props.num,
   () => {
-    console.log("改变");
     loading();
   }
 );

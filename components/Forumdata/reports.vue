@@ -154,7 +154,6 @@ onMounted(() => {
 //文件上传
 const uploadPhoto = async (formEl: FormInstance | undefined) => {
   loading.value = true
-  console.log("postContent",postNews.postContent);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -183,7 +182,7 @@ const uploadPhoto = async (formEl: FormInstance | undefined) => {
           postSubId:sid
         };
         
-        forumData.addCard(otherContent,formData).then((result) => {
+        forumData.addCard(formData).then((result) => {
           if (result == 20000) {
             ElMessage.success("发布帖子成功");
             loading.value = false

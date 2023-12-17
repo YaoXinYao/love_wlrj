@@ -74,7 +74,7 @@ export function getAlltag() {
 }
 //收藏文件
 export function Favoritefile(fileId: number) {
-  return Hyrequire.request("/api/disk/file/collectionFile", "put", {
+  return Hyrequire.request("/api/disk/file/collectionFile", "PUT", {
     fileId,
     userId: Authuserid(),
   });
@@ -111,7 +111,7 @@ export function GetMylovefile(params: Tagparams) {
 //获取首页轮播图
 export function GetWrapper() {
   return Hyrequire.get<IResultData<WrapperType[]>>(
-    "/api/user/swagger/user/carousel/selectAllCarousel"
+    "/api/user/carousel/selectAllCarousel"
   );
 }
 // 热点新闻 这是那个usefetch请求
@@ -128,4 +128,8 @@ export function getFilePreviewList(fileId: number) {
       fileId,
     }
   );
+}
+//退出登录
+export function Loginout() {
+  return Hyrequire.get("/api/user/user/loginOut");
 }

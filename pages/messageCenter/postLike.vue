@@ -1,11 +1,11 @@
 <template>
-  <div class="app">
+  <div class="app" v-loading="isLoading">
     <div v-show="!pageInfo.total && !isLoading">
       <el-empty description="暂无数据" />
     </div>
-    <div v-show="isLoading" class="isLoading">
+    <!-- <div v-show="isLoading" class="isLoading">
       <span>加载中...</span>
-    </div>
+    </div> -->
     <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"

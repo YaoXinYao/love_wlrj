@@ -1,12 +1,12 @@
 <!-- 消息中心模块，本目录下代码基本一致，方便日后对某个模块进行调整 -->
 <template>
-  <div class="app">
+  <div class="app" v-loading="isLoading">
     <div v-show="!pageInfo.total && !isLoading">
       <el-empty description="暂无数据" />
     </div>
-    <div v-show="isLoading" class="isLoading">
+    <!-- <div v-show="isLoading" class="isLoading">
       <span>加载中...</span>
-    </div>
+    </div> -->
     <ul class="infinite-list" v-show="pageInfo.total">
       <li
         v-for="(info, index) in infoList"
@@ -24,10 +24,10 @@ import { storeToRefs } from "pinia";
 import { useMessageStore } from "~/store/message";
 import { watch, onMounted } from "vue";
 import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
-const messageStore = useMessageStore();
-messageStore.ChangeCurType("PostComment");
 import { useHomestore } from "~/store/home";
 import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
+const messageStore = useMessageStore();
+messageStore.ChangeCurType("PostComment");
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);
@@ -38,6 +38,7 @@ messageStore.ChangePageInfo({
   currentPage: 1,
   total: 0,
 });
+
 onMounted(() => {
   getInfo();
   isUpdate.value.PostComment = false;

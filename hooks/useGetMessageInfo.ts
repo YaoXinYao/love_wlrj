@@ -1,8 +1,6 @@
 // 用来获取消息中心的消息
 
 import { getMessageInfo } from "~/service/message";
-import { getPostInfoById } from "~/service/post";
-import { getUserInfoById } from "~/service/user";
 import type {
   GetMessagePropsType,
   MessageInfoItemType,
@@ -16,7 +14,6 @@ export const useGetMessageInfo = async (
     data: [],
   });
   let infoResList = reactive<Array<MessageInfoItemType>>([]);
-
   let messageInfoRes = await getMessageInfo(messageInfoProps);
   let baseInfo = messageInfoRes.data.value.data;
   let resPageInfo = {
@@ -25,99 +22,80 @@ export const useGetMessageInfo = async (
     total: baseInfo.total,
     pageSize: baseInfo.size,
   };
-  messageInfoData.data = baseInfo.records;
 
+  messageInfoData.data = baseInfo.records;
   if (messageInfoData.data.length == 0) {
     infoResList = [];
     return { infoResList, resPageInfo };
   }
 
-  for (let i = 0; i < messageInfoData.data.length; i++) {
-    //查询信息发送者信息
-    let userInfoRes = await getUserInfoById(messageInfoData.data[i].msgSend);
-
-    if (userInfoRes.data.value.code === 20000) {
-      messageInfoData.data[i].msgSendName =
-        userInfoRes.data.value.data.userName;
-      messageInfoData.data[i].msgSendAvatar =
-        userInfoRes.data.value.data.userPicture;
-    } else {
-      messageInfoData.data[i].msgSendName = "未知人员";
+  if (messageInfoProps.type == "PostLike") {
+    for (let i = 0; i < messageInfoData.data.length; i++) {
+      let infoItem = {
+        id: messageInfoData.data[i].msgId,
+        infoContent: `点赞了你的帖子《${messageInfoData.data[i].post.postTitle}》`,
+        date: messageInfoData.data[i].msgTime,
+        msgStatus: messageInfoData.data[i].msgStatus,
+        msgContentId: messageInfoData.data[i].msgContentId,
+        msgSendName: messageInfoData.data[i].userDto.userName,
+        msgSendAvatar: messageInfoData.data[i].userDto.userPicture,
+      };
+      infoResList.push(infoItem);
     }
-
-    if (
-      messageInfoProps.type == "PostLike" ||
-      messageInfoProps.type == "PostCollect"
-    ) {
-      //查询帖子名称
-      let postInfoRes = await getPostInfoById(
-        messageInfoData.data[i].msgContentId
-      );
-      if (postInfoRes.data.value.code === 20000) {
-        messageInfoData.data[i].msgContentName =
-          postInfoRes.data.value.data.postTitle;
-      } else {
-        messageInfoData.data[i].msgContentName = "未知文章";
-      }
-      if (messageInfoProps.type == "PostLike") {
-        let infoItem = {
-          id: messageInfoData.data[i].msgId,
-          infoContent: `点赞了你的帖子《${messageInfoData.data[i].msgContentName}》`,
-          date: messageInfoData.data[i].msgTime,
-          msgStatus: messageInfoData.data[i].msgStatus,
-          msgContentId: messageInfoData.data[i].msgContentId,
-          msgSendName: messageInfoData.data[i].msgSendName,
-          msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
-        };
-        infoResList.push(infoItem);
-      }
-      if (messageInfoProps.type == "PostCollect") {
-        let infoItem = {
-          id: messageInfoData.data[i].msgId,
-          infoContent: `收藏了你的帖子《${messageInfoData.data[i].msgContentName}》`,
-          date: messageInfoData.data[i].msgTime,
-          msgStatus: messageInfoData.data[i].msgStatus,
-          msgContentId: messageInfoData.data[i].msgContentId,
-          msgSendName: messageInfoData.data[i].msgSendName,
-          msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
-        };
-        infoResList.push(infoItem);
-      }
+  }
+  if (messageInfoProps.type == "PostCollect") {
+    for (let i = 0; i < messageInfoData.data.length; i++) {
+      let infoItem = {
+        id: messageInfoData.data[i].msgId,
+        infoContent: `收藏了你的帖子《${messageInfoData.data[i].post.postTitle}》`,
+        date: messageInfoData.data[i].msgTime,
+        msgStatus: messageInfoData.data[i].msgStatus,
+        msgContentId: messageInfoData.data[i].msgContentId,
+        msgSendName: messageInfoData.data[i].userDto.userName,
+        msgSendAvatar: messageInfoData.data[i].userDto.userPicture,
+      };
+      infoResList.push(infoItem);
     }
+  }
 
-    if (messageInfoProps.type == "PostComment") {
+  if (messageInfoProps.type == "PostComment") {
+    for (let i = 0; i < messageInfoData.data.length; i++) {
       let infoItem = {
         id: messageInfoData.data[i].msgId,
         infoContent: `评论了你:"${messageInfoData.data[i].msgContent}"`,
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName: messageInfoData.data[i].msgSendName,
-        msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
+        msgSendName: messageInfoData.data[i].userDto.userName,
+        msgSendAvatar: messageInfoData.data[i].userDto.userPicture,
       };
       infoResList.push(infoItem);
     }
-    if (messageInfoProps.type == "CommentLike") {
+  }
+  if (messageInfoProps.type == "CommentLike") {
+    for (let i = 0; i < messageInfoData.data.length; i++) {
       let infoItem = {
         id: messageInfoData.data[i].msgId,
         infoContent: `点赞了你的评论:"${messageInfoData.data[i].msgContent}"`,
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName: messageInfoData.data[i].msgSendName,
-        msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
+        msgSendName: messageInfoData.data[i].userDto.userName,
+        msgSendAvatar: messageInfoData.data[i].userDto.userPicture,
       };
       infoResList.push(infoItem);
     }
-    if (messageInfoProps.type == "CommentReply") {
+  }
+  if (messageInfoProps.type == "CommentReply") {
+    for (let i = 0; i < messageInfoData.data.length; i++) {
       let infoItem = {
         id: messageInfoData.data[i].msgId,
         infoContent: `回复了你:"${messageInfoData.data[i].msgContent}"`,
         date: messageInfoData.data[i].msgTime,
         msgStatus: messageInfoData.data[i].msgStatus,
         msgContentId: messageInfoData.data[i].msgContentId,
-        msgSendName: messageInfoData.data[i].msgSendName,
-        msgSendAvatar: messageInfoData.data[i].msgSendAvatar,
+        msgSendName: messageInfoData.data[i].userDto.userName,
+        msgSendAvatar: messageInfoData.data[i].userDto.userPicture,
       };
       infoResList.push(infoItem);
     }
