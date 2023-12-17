@@ -154,7 +154,6 @@ onMounted(() => {
 //文件上传
 const uploadPhoto = async (formEl: FormInstance | undefined) => {
   loading.value = true
-  console.log("postContent",postNews.postContent);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {

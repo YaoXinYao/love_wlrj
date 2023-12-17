@@ -10,7 +10,7 @@
             :value="item"
           />
         </el-select>
-        <el-select v-model="group" placeholder="可选组别">
+        <el-select v-model="group" clearable placeholder="可选组别">
           <el-option
             v-for="item in groups"
             :key="item.groupId"
@@ -19,16 +19,40 @@
           />
         </el-select>
         <el-input v-model="input" placeholder="请输入关键字" clearable />
-        <el-button type="primary" :icon="Search" @click="selectStaff(1)"
+        <el-button type="primary" :icon="Search" @click="selectStaff()"
           >搜索</el-button
         >
       </div>
       <div>
-        <el-button type="info" @click="manageRole = true" v-if="userinfo.roleId == 3">角色</el-button>
-        <el-button type="warning" @click="manageGroup = true" v-if="userinfo.roleId != 1">组别</el-button>
-        <el-button type="danger" @click="deleteModel = true" v-if="userinfo.roleId == 3">删除</el-button>
-        <el-button type="success" @click="modelState = true" v-if="userinfo.roleId != 1">导入</el-button>
-        <el-button type="primary" @click="downTemplate" class="downfile" v-if="userinfo.roleId != 1"
+        <el-button
+          type="info"
+          @click="manageRole = true"
+          v-if="userinfo.roleId == 3"
+          >角色</el-button
+        >
+        <el-button
+          type="warning"
+          @click="manageGroup = true"
+          v-if="userinfo.roleId != 1"
+          >组别</el-button
+        >
+        <el-button
+          type="danger"
+          @click="jdageMore"
+          v-if="userinfo.roleId == 3"
+          >删除</el-button
+        >
+        <el-button
+          type="success"
+          @click="modelState = true"
+          v-if="userinfo.roleId != 1"
+          >导入</el-button
+        >
+        <el-button
+          type="primary"
+          @click="downTemplate"
+          class="downfile"
+          v-if="userinfo.roleId != 1"
           >下载导入模板</el-button
         >
       </div>
@@ -43,22 +67,34 @@
 import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
 import { Search } from "@element-plus/icons-vue";
-import {useHomestore} from "~/store/home"
-let userData = useHomestore()
-let {userinfo} = storeToRefs(userData)
+import { useHomestore } from "~/store/home";
+let userData = useHomestore();
+let { userinfo } = storeToRefs(userData);
 import { ref } from "vue";
-let loading = ref(true)
-let groups = ref<any>([]);
+let loading = ref(true);
 const staffStore = useStaffStore();
-const { modelState, deleteModel, grades, grade, group, input, users, total,manageGroup ,curTable,manageRole} =
-  storeToRefs(staffStore);
+const {
+  modelState,
+  deleteModel,
+  grades,
+  grade,
+  group,
+  groups,
+  input,
+  users,
+  total,
+  manageGroup,
+  curTable,
+  manageRole,
+  moreDelete,
+} = storeToRefs(staffStore);
 onMounted(() => {
   staffStore.getGrades();
   staffStore.getAllUser(1, 7).then((res) => {
     if (res.code == 20000) {
       users.value = res.data?.records;
       total.value = res.data?.total;
-      loading.value = false
+      loading.value = false;
     } else {
       ElMessage.error("获取人员数据失败");
     }
@@ -77,8 +113,8 @@ watch(grade, (newValue, oldValue) => {
   }
 });
 //检索不同条件下的人员
-function selectStaff(current: number) {
-  curTable.value = 1
+function selectStaff() {
+  curTable.value = 1;
   let groupId;
   if (group.value == "") {
     groupId = undefined;
@@ -86,7 +122,7 @@ function selectStaff(current: number) {
     groupId = Number(group.value);
   }
   staffStore
-    .getAllUser(current, 7, groupId, input.value, grade.value)
+    .getAllUser(curTable.value, 7, groupId, input.value, grade.value)
     .then((res) => {
       if (res.code == 20000) {
         users.value = res.data?.records;
@@ -115,6 +151,13 @@ function downTemplate() {
     });
   }
 }
+const jdageMore = () => {
+  if (moreDelete.value.length == 0) {
+    ElMessage.warning("请先选择要删除的成员");
+  } else {
+    deleteModel.value = true;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
