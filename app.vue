@@ -106,5 +106,10 @@ if (user.value.token) {
     }
   );
 }
+onMounted(() => {
+  if (window.Notification) {
+    Notification.requestPermission();
+  }
+});
 </script>
 <style></style>

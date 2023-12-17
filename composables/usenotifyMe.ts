@@ -1,8 +1,3 @@
-const options: NotificationOptions = {
-  dir: "auto", // 文字方向
-  requireInteraction: false, // 不自动关闭通知
-  icon: "/image/logo2.png",
-};
 /**
  *
  * @param title 通知栏标题
