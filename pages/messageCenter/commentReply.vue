@@ -1,5 +1,5 @@
 <template>
-  <div class="app" v-loading="isLoading">
+  <div class="app" v-loading="isLoading" element-loading-text="加载中...">
     <div v-show="!pageInfo.total && !isLoading">
       <el-empty description="暂无数据" />
     </div>

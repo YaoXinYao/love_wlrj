@@ -15,7 +15,7 @@
     <el-dialog
       v-model="dialogVisible"
       draggable
-      width="max-content"
+      :width="dialogWidth"
       @closed="changeState"
     >
       <template #header>
@@ -88,7 +88,7 @@ import {
 import AddScoreInfo from "@/components/AddScoreInfo/index.vue";
 import UpdateScoreInfo from "@/components/UpdateScoreInfo/index.vue";
 import type { AccessItem } from "~/types/Access";
-
+import { debounce } from "lodash";
 const props = defineProps(["id", "dialogVisible", "getGrade", "roleId"]);
 const emit = defineEmits(["scoreAlert"]);
 let dialogVisible = ref(false);
@@ -106,6 +106,31 @@ let pId = ref(-1);
 let userRoleId = ref<number>(1);
 let userGrade = ref<number>(0);
 let accessTargetGrade = ref<number>(1);
+const windowWidth = ref(window.innerWidth);
+let dialogWidth = ref("35%");
+onMounted(() => {
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
+
 const changeState = () => {
   dialogVisible.value = false;
 };

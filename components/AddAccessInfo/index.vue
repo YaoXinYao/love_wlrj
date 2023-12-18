@@ -5,7 +5,7 @@
       <el-dialog
         v-model="dialogVisible"
         title="添加考核信息"
-        width="30%"
+        :width="dialogWidth"
         draggable
         @closed="changeState"
       >
@@ -164,9 +164,12 @@ import type {
   AddAccessType,
   NoticeType,
 } from "~/types/Access";
+import { debounce } from "lodash";
 let allGrade: Array<string>;
 let typeList = ref<Array<AccessTypesType>>();
 const isCanAdd = ref<boolean>(true);
+const windowWidth = ref(window.innerWidth);
+let dialogWidth = ref("35%");
 onMounted(() => {
   getAllGrade().then((res) => {
     allGrade = res.data.value.data;
@@ -175,7 +178,27 @@ onMounted(() => {
   getAllTypesService().then((res: any) => {
     typeList.value = res.data.value.data;
   });
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+  window.addEventListener("resize", handleResize);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+  } else {
+    dialogWidth.value = "35%";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
 
 const props = defineProps({
   dialogVisible: {

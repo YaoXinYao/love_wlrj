@@ -4,6 +4,7 @@
     <el-dialog
       v-model="addInterviewDialogFormVisible"
       title="添加面评"
+      :width="dialogWidth"
       @closed="changeAddInterviewState"
     >
       <el-form :model="form" ref="addInterviewRef">
@@ -61,7 +62,12 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="dialogVisible" draggable @closed="changeState">
+    <el-dialog
+      v-model="dialogVisible"
+      draggable
+      @closed="changeState"
+      :width="dialogWidth"
+    >
       <template #header>
         <div class="my-header">
           <h3>面评列表</h3>
@@ -120,7 +126,7 @@
           v-model:page-size="pageInfo.pageSize"
           :page-sizes="[5, 10, 15, 20]"
           :small="false"
-          layout="total, sizes, prev, pager, next, jumper"
+          :layout="layout"
           :total="pageInfo.total"
           @size-change="handleSizeChange"
           @current-change="handleCurChange"
@@ -134,8 +140,6 @@
 import {
   getAllGroupsService,
   getUserByGradeAndGroupService,
-  searchUserByGradeService,
-  searchUserervice,
 } from "~/service/user";
 import {
   addInterviewService,
@@ -146,6 +150,7 @@ import type { UserAllInfoType } from "~/types/User";
 import { Delete } from "@element-plus/icons-vue";
 import type { FormInstance } from "element-plus";
 import type { GroupType } from "~/types/Access";
+import { debounce } from "lodash";
 const props = defineProps(["id", "dialogVisible"]);
 const emit = defineEmits(["interviewAlert"]);
 let gradeNumber = ref(-1);
@@ -161,6 +166,36 @@ let userList = ref<Array<UserAllInfoType>>([]);
 let dialogVisible = ref(false);
 const addInterviewDialogFormVisible = ref(false);
 const loading = ref(false);
+const windowWidth = ref(window.innerWidth);
+let dialogWidth = ref("35%");
+let layout = ref("total, sizes, prev, pager, next, jumper");
+onMounted(() => {
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+    layout.value = "total, prev, pager, next";
+  } else {
+    dialogWidth.value = "35%";
+    layout.value = "total, sizes, prev, pager, next, jumpers";
+  }
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const handleResize = debounce(() => {
+  windowWidth.value = window.innerWidth;
+
+  if (windowWidth.value <= 800) {
+    dialogWidth.value = "90%";
+    layout.value = "total, prev, pager, next";
+  } else {
+    dialogWidth.value = "35%";
+    layout.value = "total, sizes, prev, pager, next, jumpers";
+  }
+}, 200); // 设置防抖延迟时间，单位为毫秒
+
 function rowKey(row: any) {
   return row.userId + "";
 }
@@ -317,7 +352,6 @@ const addInterviewBtn = () => {
 const searchUserByGrade = async (val: string) => {
   if (val.trim() != "") {
     loading.value = true;
-
     let res = await getUserByGradeAndGroupService({
       userGrade: gradeNumber.value,
       groupId: groupId.value,

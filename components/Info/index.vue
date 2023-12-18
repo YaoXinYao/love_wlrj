@@ -23,13 +23,13 @@
 <script setup lang="ts">
 import { Delete } from "@element-plus/icons-vue";
 import { deleteMessageInfoService, updateMsgStatus } from "~/service/message";
-import { useObserver } from "~/hooks/useObserver";
 import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
 import { useMessageStore } from "~/store/message";
 import { storeToRefs } from "pinia";
 const messageStore = useMessageStore();
 const { infoList, pageInfo, curType } = storeToRefs(messageStore);
 import { useHomestore } from "~/store/home";
+import { useGetNotReadMessage } from "../../hooks/useGetNotReadMessage";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const props = defineProps(["data", "type"]);
@@ -37,7 +37,10 @@ const target = ref();
 const emit = defineEmits(["addAlert", "info_event"]);
 
 const readInfo = async () => {
-  await updateMsgStatus(props.data.id);
+  if (props.data.msgStatus == 0) {
+    await updateMsgStatus(props.data.id);
+    useGetNotReadMessage();
+  }
   navigateTo({
     path: "/forum/details",
     query: { data: props.data.msgContentId },

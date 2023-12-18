@@ -116,8 +116,6 @@ export const getUserByGradeAndGroupService = (props: {
   pageSize?: number;
   search?: string;
 }) => {
-  console.log(props);
-
   return hyRequest.get<IResultData<any>>("/api/user/user/selectAllUser", {
     ...props,
   });

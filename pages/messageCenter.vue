@@ -9,14 +9,17 @@
             <li
               :class="route.path === '/messageCenter/postLike' ? 'active' : ''"
             >
-              <nuxt-link to="/messageCenter/postLike"
+              <span
+                @click="
+                  handleClick('postLike', 'PostLike', notReadNum.postLikeCnt)
+                "
                 ><el-badge
                   :value="notReadNum.postLikeCnt"
                   :hidden="!(notReadNum.postLikeCnt > 0)"
                   :max="99"
                   class="item"
                   ><span class="iconfont">&#xec7f;</span>帖子点赞</el-badge
-                ></nuxt-link
+                ></span
               >
             </li>
             <li
@@ -24,7 +27,14 @@
                 route.path === '/messageCenter/postCollect' ? 'active' : ''
               "
             >
-              <nuxt-link to="/messageCenter/postCollect"
+              <span
+                @click="
+                  handleClick(
+                    'postCollect',
+                    'PostCollect',
+                    notReadNum.postCollectCnt
+                  )
+                "
                 ><el-badge
                   :value="notReadNum.postCollectCnt"
                   :hidden="!(notReadNum.postCollectCnt > 0)"
@@ -32,12 +42,21 @@
                   class="item"
                   ><span class="iconfont">&#xe65e;</span>帖子收藏</el-badge
                 >
-              </nuxt-link>
+              </span>
             </li>
             <li
-              :class="route.path === '/messageCenter/comment' ? 'active' : ''"
+              :class="
+                route.path === '/messageCenter/postComment' ? 'active' : ''
+              "
             >
-              <nuxt-link to="/messageCenter/comment"
+              <span
+                @click="
+                  handleClick(
+                    'postComment',
+                    'PostComment',
+                    notReadNum.postCommentCnt
+                  )
+                "
                 ><el-badge
                   :value="notReadNum.postCommentCnt"
                   :hidden="!(notReadNum.postCommentCnt > 0)"
@@ -45,14 +64,21 @@
                   class="item"
                   ><span class="iconfont">&#xe8b4;</span>帖子评论</el-badge
                 >
-              </nuxt-link>
+              </span>
             </li>
             <li
               :class="
                 route.path === '/messageCenter/commentLike' ? 'active' : ''
               "
             >
-              <nuxt-link to="/messageCenter/commentLike"
+              <span
+                @click="
+                  handleClick(
+                    'commentLike',
+                    'CommentLike',
+                    notReadNum.commentLikeCnt
+                  )
+                "
                 ><el-badge
                   :value="notReadNum.commentLikeCnt"
                   :hidden="!(notReadNum.commentLikeCnt > 0)"
@@ -61,7 +87,7 @@
                 >
                   <span class="iconfont">&#xec7f;</span>评论点赞</el-badge
                 >
-              </nuxt-link>
+              </span>
             </li>
 
             <li
@@ -69,7 +95,14 @@
                 route.path === '/messageCenter/commentReply' ? 'active' : ''
               "
             >
-              <nuxt-link to="/messageCenter/commentReply"
+              <span
+                @click="
+                  handleClick(
+                    'commentReply',
+                    'CommentReply',
+                    notReadNum.commentReplyCnt
+                  )
+                "
                 ><el-badge
                   :value="notReadNum.commentReplyCnt"
                   :hidden="!(notReadNum.commentReplyCnt > 0)"
@@ -77,7 +110,7 @@
                   class="item"
                   ><span class="iconfont">&#xe8b4;</span>评论回复</el-badge
                 >
-              </nuxt-link>
+              </span>
             </li>
           </ul>
         </div>
@@ -92,6 +125,7 @@
             :page-sizes="[5, 10]"
             :small="true"
             :background="true"
+            :pager-count="5"
             :layout="paginationLayout"
             :total="pageInfo.total"
             @size-change="handleSizeChange"
@@ -106,12 +140,13 @@
 <script setup lang="ts">
 import "animate.css";
 import { useRoute } from "vue-router";
-import { getNotReadInfo } from "~/service/message";
+import { fastReadService, getNotReadInfo } from "~/service/message";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash";
 import { useMessageStore } from "~/store/message";
 import { useGetMessageInfo } from "~/hooks/useGetMessageInfo";
+import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
 const messageStore = useMessageStore();
@@ -119,7 +154,6 @@ const windowWidth = ref(window.innerWidth);
 let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
 const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
 const route = useRoute();
-let pagerCount = ref<number>(4);
 definePageMeta({
   layout: "person",
   roles: 1,
@@ -127,6 +161,8 @@ definePageMeta({
 
 onMounted(() => {
   getInfo();
+  //获取未读信息数量并存于store
+  useGetNotReadMessage();
   if (window.innerWidth <= 800) {
     paginationLayout.value = "total, prev, pager, next";
   } else {
@@ -148,22 +184,63 @@ const handleResize = debounce(() => {
   }
 }, 200); // 设置防抖延迟时间，单位为毫秒
 
-//获取未读信息数量并存于store
-let notReadInfoRes = await getNotReadInfo(userinfo.value.userId);
-const {
-  commentLikeCnt,
-  commentReplyCnt,
-  postCollectCnt,
-  postCommentCnt,
-  postLikeCnt,
-} = notReadInfoRes.data.value.data;
-messageStore.ChangeNotReadNum({
-  commentLikeCnt,
-  commentReplyCnt,
-  postCollectCnt,
-  postCommentCnt,
-  postLikeCnt,
-});
+let timer: NodeJS.Timeout | null = null;
+const clickCount = ref(0);
+
+const handleClick = async (
+  page: string,
+  msgType: string,
+  notReadInfoNum: number
+): Promise<void> => {
+  clickCount.value++;
+
+  if (clickCount.value === 1) {
+    timer = setTimeout(() => {
+      if (clickCount.value === 1) {
+        navigateTo("/messageCenter/" + page);
+      }
+
+      clickCount.value = 0;
+    }, 300); // 设置延迟时间，单位为毫秒
+  } else {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    clickCount.value = 0;
+
+    if (route.path.split("/")[2] == page) {
+      // 执行双击事件
+      if (notReadInfoNum) {
+        ElMessageBox.confirm("确定要全部已读该类型消息吗？", "提示", {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(async () => {
+          let fastReadRes = await fastReadService({
+            msgAccept: userinfo.value.userId,
+            msgType: msgType,
+          });
+          if (fastReadRes.data.value.code == 20000) {
+            ElMessage({
+              type: "success",
+              message: "操作成功~",
+            });
+
+            //获取未读信息数量并存于store
+            useGetNotReadMessage();
+          } else {
+            ElMessage({
+              type: "error",
+              message: "操作失败！请检查网络~",
+            });
+          }
+        });
+      }
+    } else {
+      navigateTo("/messageCenter/" + page);
+    }
+  }
+};
 
 //利用自己封装的hook获取消息数据
 const getInfo = async () => {

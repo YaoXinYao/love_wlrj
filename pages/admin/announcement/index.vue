@@ -154,6 +154,7 @@ function handleKeyDown(e:any){
 
 .content{
     display: flex;
+    width:1420px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
