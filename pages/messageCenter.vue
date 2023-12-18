@@ -125,6 +125,7 @@
             :page-sizes="[5, 10]"
             :small="true"
             :background="true"
+            :pager-count="5"
             :layout="paginationLayout"
             :total="pageInfo.total"
             @size-change="handleSizeChange"

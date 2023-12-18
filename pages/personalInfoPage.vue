@@ -108,8 +108,9 @@ const handleAvatarError = (
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) => {
-  ElMessage.error("上传失败");
+  ElMessage.error("上传失败，请检查网络！");
 };
+
 </script>
 <style lang="scss" scoped>
 @font-face {
