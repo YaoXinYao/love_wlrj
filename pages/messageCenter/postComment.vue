@@ -1,6 +1,6 @@
 <!-- 消息中心模块，本目录下代码基本一致，方便日后对某个模块进行调整 -->
 <template>
-  <div class="app" v-loading="isLoading">
+  <div class="app" v-loading="isLoading" element-loading-text="加载中...">
     <div v-show="!pageInfo.total && !isLoading">
       <el-empty description="暂无数据" />
     </div>
