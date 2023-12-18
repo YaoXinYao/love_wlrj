@@ -31,7 +31,7 @@
                 >
                 <el-dropdown-item>
                   <li>
-                    <NuxtLink to="/admin/staff">后台管理</NuxtLink>
+                    <NuxtLink to="/admin/staff">进入后台</NuxtLink>
                   </li></el-dropdown-item
                 >
                 <el-dropdown-item @click="exit">退出登录</el-dropdown-item>

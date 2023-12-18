@@ -114,7 +114,6 @@ onUnmounted(() => {
 
 const handleResize = debounce(() => {
   windowWidth.value = window.innerWidth;
-  console.log(windowWidth);
 
   if (windowWidth.value <= 800) {
     typeDialogWidth.value = "90%";

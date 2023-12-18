@@ -28,6 +28,18 @@ export const updateMsgStatus = (msgId: string) => {
   });
 };
 
+//一键已读
+export const fastReadService = (props: {
+  msgAccept: string | number;
+  msgType: string;
+}) => {
+  console.log(props);
+
+  return hyRequest.put<IResultData<any>>(`api/forum/message/read`, {
+    ...props,
+  });
+};
+
 //最新一条公告
 export const getNewNotice = () => {
   return hyRequest.get<IResultData<any>>(`/api/notice/affiche/select`, {
