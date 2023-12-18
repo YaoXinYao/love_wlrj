@@ -400,20 +400,20 @@ function postLike(
   padding-bottom: 40px;
   .card {
     width: 98%;
-    min-height: 16em;
     margin: auto;
     margin-top: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     display: flex;
     flex-wrap: wrap;
+    overflow: hidden;
     .cardPhotos {
       overflow: hidden;
       width: 400px;
-      height: 100%;
+      height: 230px;
       img {
         width: 100%;
-        height: 16em;
+        height: 230px;
         object-fit: cover;
         transform: scale(1.1);
         transition: filter 375ms ease-in 0.2s, transform 0.6s;
@@ -450,12 +450,13 @@ function postLike(
       .cardContent {
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
+        max-height: 100px;
         overflow: hidden;
       }
       .icons {
         width: 150px;
-        margin-top: 3px;
+        margin-top: 6px;
         list-style: none;
         display: flex;
         flex-wrap: wrap;

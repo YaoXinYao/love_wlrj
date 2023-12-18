@@ -171,6 +171,7 @@ const rules = reactive({
   ],
 });
 let reg = new RegExp("<[^>]+>", "g");
+let imgReg = /<img.*?>/g;
 definePageMeta({
   layout: "custom",
 });
@@ -183,11 +184,15 @@ const openForm = () => {
   if (!newPostTitle.value.trim()) {
     ElMessage.warning("帖子标题不能为空");
   } else {
-    let filterContents = newPostContent.value.replace(reg, "");
-    if (!filterContents.trim()) {
-      ElMessage.warning("帖子内容不能为空");
-    } else {
+    if (imgReg.test(newPostContent.value)) {
       dialog.value = true;
+    } else {
+      let filterContents = newPostContent.value.replace(reg, "");
+      if (!filterContents.trim()) {
+        ElMessage.warning("帖子内容不能为空");
+      } else {
+        dialog.value = true;
+      }
     }
   }
 };
