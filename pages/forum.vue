@@ -4,6 +4,9 @@
   </div>
 </template>
 <script lang="ts" setup>
+definePageMeta({
+  roles: 1,
+});
 </script>
 
 <style lang="scss" scoped>
