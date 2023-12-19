@@ -79,6 +79,7 @@ const getInfo = async () => {
 <style scoped>
 .infinite-list {
   height: max-content;
+  min-height: 200px;
   padding: 10px;
   box-sizing: border-box;
 }
