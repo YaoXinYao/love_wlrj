@@ -89,7 +89,6 @@
                 >
               </span>
             </li>
-
             <li
               :class="
                 route.path === '/messageCenter/commentReply' ? 'active' : ''
@@ -114,7 +113,6 @@
             </li>
           </ul>
         </div>
-
         <div class="messageContainer">
           <NuxtPage class="animate__animated animate__fadeIn"></NuxtPage>
           <el-pagination

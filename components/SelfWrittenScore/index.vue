@@ -69,6 +69,7 @@
         :page-sizes="[5, 10, 15]"
         :layout="paginationLayout"
         :total="pageInfo.total"
+        v-if="pageInfo.total"
         :pager-count="5"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"

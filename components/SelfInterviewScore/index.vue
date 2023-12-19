@@ -11,13 +11,11 @@
       <el-table-column type="expand">
         <template #default="props">
           <div class="interviewList">
-            <span class="nullSpan" v-show="!props.row.interviewList"
-              >暂无数据</span
-            >
+            <span class="nullSpan" v-show="!props.row.comments">暂无数据</span>
             <div
               class="commentItem"
-              v-show="props.row.interviewList"
-              v-for="(c, index) in props.row.interviewList"
+              v-show="props.row.comments.length"
+              v-for="(c, index) in props.row.comments"
               :key="index"
             >
               <span class="reviewer"
@@ -32,16 +30,16 @@
         </template>
       </el-table-column>
       <el-table-column label="考核名称" prop="plan" fixed />
-      <el-table-column label="考核类型" prop="type">
-        <template #default="scope"
-          ><el-tag size="large">{{ scope.row.type }}</el-tag></template
-        >
-      </el-table-column>
-      <el-table-column label="考核类别" prop="typeId">
+      <el-table-column label="考核类别" prop="type">
         <template #default="scope"
           ><el-tag size="large" type="success">{{
-            scope.row.typeId
+            scope.row.type
           }}</el-tag></template
+        >
+      </el-table-column>
+      <el-table-column label="考核类型" prop="typeName">
+        <template #default="scope"
+          ><el-tag size="large">{{ scope.row.typeName }}</el-tag></template
         >
       </el-table-column>
       <el-table-column label="考核时间" prop="deadline" />
@@ -55,6 +53,7 @@
         :layout="paginationLayout"
         :pager-count="5"
         :total="pageInfo.total"
+        v-if="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -143,17 +142,7 @@ const getInfo = async () => {
     pageInfo.value.currentPage = pageIndex;
     pageInfo.value.pageSize = size;
     pageInfo.value.total = allCount;
-    let pIdList = scoreInfoRes.data.value.data.list;
-    for (let i = 0; i < pIdList.length; i++) {
-      let InterviewListItem = await getAccessInfo(pIdList[i]);
-      let interviewItem = await getInterviewService({
-        id: userId.value,
-        pId: pIdList[i],
-      });
-
-      interviewList.value[i] = InterviewListItem.data.value.data;
-      interviewList.value[i].interviewList = interviewItem.data.value.data;
-    }
+    interviewList.value = scoreInfoRes.data.value.data.records;
   }
 };
 </script>

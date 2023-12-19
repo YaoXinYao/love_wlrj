@@ -36,10 +36,7 @@
           v-if="userinfo.roleId != 1"
           >组别</el-button
         >
-        <el-button
-          type="danger"
-          @click="jdageMore"
-          v-if="userinfo.roleId == 3"
+        <el-button type="danger" @click="jdageMore" v-if="userinfo.roleId == 3"
           >删除</el-button
         >
         <el-button
@@ -68,9 +65,12 @@ import { storeToRefs } from "pinia";
 import { useStaffStore } from "~/store/staff";
 import { Search } from "@element-plus/icons-vue";
 import { useHomestore } from "~/store/home";
+import { ref } from "vue";
+definePageMeta({
+  roles: 1,
+});
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
-import { ref } from "vue";
 let loading = ref(true);
 const staffStore = useStaffStore();
 const {
