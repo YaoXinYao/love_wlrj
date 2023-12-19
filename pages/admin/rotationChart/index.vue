@@ -42,12 +42,12 @@
       </template>
     </el-dialog>
     <el-dialog v-model="rotatinState" title="提示信息" width="450px">
-      <el-form label-width="5em" v-loading = "loading">
+      <el-form label-width="5em" v-loading="loading">
         <el-form-item label="标题">
-          <el-input v-model="carouselTitle"/>
+          <el-input v-model="carouselTitle" />
         </el-form-item>
         <el-form-item label="介绍">
-          <el-input v-model="carouselContent"/>
+          <el-input v-model="carouselContent" />
         </el-form-item>
         <el-form-item label="轮播图">
           <el-upload
@@ -114,6 +114,9 @@ import { CircleClose, Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
 import type { UploadFile, UploadUserFile } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useRotationStore } from "~/store/rotation";
+definePageMeta({
+  roles: 2,
+});
 let rotatinDelete = ref(false);
 let rotatinState = ref(false);
 const rotationsInfo = useRotationStore();

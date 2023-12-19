@@ -200,7 +200,6 @@ let forums = forumStore();
 let { total, totaType, loadings } = storeToRefs(forums);
 let pages = 15;
 let pageNo = ref(1);
-
 let posts = ref<any[]>([]);
 let jage = ref("artic");
 onMounted(() => {

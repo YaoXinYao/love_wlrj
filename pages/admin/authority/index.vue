@@ -95,6 +95,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { authority } from "~/store/authority";
+definePageMeta({
+  roles: 3,
+});
 interface Role {
   roleId: number;
   roleName: string;

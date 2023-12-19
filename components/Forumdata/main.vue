@@ -10,7 +10,9 @@
           :suffix-icon="Search"
           @keyup.enter="searchPost(postSubId)"
         />
-        <el-button type="primary" @click="searchPost(postSubId)">搜索</el-button>
+        <el-button type="primary" @click="searchPost(postSubId)"
+          >搜索</el-button
+        >
       </div>
     </div>
     <ul class="classify">
@@ -67,7 +69,12 @@
             </div>
             <div
               class="cardContent"
-              v-html="decodeURIComponent(item.postContent)"
+              v-html="
+                decodeURIComponent(item.postContent).replace(
+                  /<img\b[^>]*>/gi,
+                  ''
+                )
+              "
             ></div>
             <ul class="icons">
               <li>
@@ -351,7 +358,7 @@ function postLike(
     justify-content: space-between;
     padding: 0px 20px;
     font-size: 18px;
-    .condition{
+    .condition {
       display: flex;
     }
   }

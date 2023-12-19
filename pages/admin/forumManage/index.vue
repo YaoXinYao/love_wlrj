@@ -80,9 +80,12 @@ import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { forumManage } from "~/store/forum";
 import { useHomestore } from "~/store/home";
+import { ref } from "vue";
+definePageMeta({
+    roles:1
+})
 let userData = useHomestore();
 let { userinfo } = storeToRefs(userData);
-import { ref } from "vue";
 const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);

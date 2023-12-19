@@ -174,6 +174,7 @@ let reg = new RegExp("<[^>]+>", "g");
 let imgReg = /<img.*?>/g;
 definePageMeta({
   layout: "custom",
+  roles:1,
 });
 onMounted(() => {
   manages.labelInfo(1, 100);
