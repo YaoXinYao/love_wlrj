@@ -387,6 +387,7 @@ export function isTokenExpired(token: { expiration: number }) {
 //生成规则
 export function generateRules(info: string, len: number) {
   const validatePass = (rule: any, value: string, callback: any) => {
+    value = value.trim();
     if (value.length <= len) {
       callback(new Error(info));
     } else {

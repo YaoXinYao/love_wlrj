@@ -3,12 +3,12 @@
     <div class="blogcontainer">
       <div class="blogcontarinerleft">
         <div
-          v-for="(item, key) in newblog!.data"
+          v-for="(item, key) in reversedData"
           :key="key"
-          @click="() => changegrade(key as string)"
-          :class="`gradeitem ${curGrade == key ? 'activegrade' : ''}`"
+          @click="() => changegrade(item)"
+          :class="`gradeitem ${curGrade == item ? 'activegrade' : ''}`"
         >
-          {{ key + "级" }}
+          {{ item + "级" }}
         </div>
       </div>
       <div class="blogcontarinerright">
@@ -49,12 +49,15 @@ const fetchdate = async () => {
       [key: string]: blogitem[];
     }>
   >("/api/user/user/selectBlog");
-  newblog.value.data = data.value!.data;
+  newblog.value.data = data.value!.data || [];
 };
 const curGrade = ref<string>(new Date().getFullYear().toString());
 onMounted(async () => {
   await nextTick();
   await fetchdate();
+  //初始化年级选项
+  const keys = Object.keys(newblog.value.data);
+  curGrade.value = keys[keys.length - 1];
   loading();
 });
 function loading() {
@@ -86,6 +89,10 @@ function changegrade(index: string) {
     loading();
   });
 }
+const reversedData = computed(() => {
+  // 将对象的键转换为数组，然后反转数组
+  return Object.keys(newblog.value.data).reverse();
+});
 </script>
 <style scoped lang="scss">
 @media screen and (max-width: 998px) {

@@ -1,7 +1,7 @@
 <template>
   <div id="desc">
     <div class="container">
-      <TransitionButton2 class="containerTital" title="关于未来" />
+      <!-- <TransitionButton2 class="containerTital" title="关于未来" /> -->
       <div class="home-about-container">
         <div class="about-intro">
           <div class="about-vision">
