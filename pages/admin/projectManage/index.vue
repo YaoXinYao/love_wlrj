@@ -48,7 +48,7 @@
           </swiper-slide>
           ...
         </swiper>
-      <!--   <div class="swiper-button-prev" @click="Prevpage"></div>
+        <!--   <div class="swiper-button-prev" @click="Prevpage"></div>
         <div class="swiper-button-next"></div> -->
       </div>
     </div>
@@ -140,6 +140,9 @@ import type { ProjectDesType } from "~/types/disk";
 useHead({
   title: "项目展示管理",
 });
+definePageMeta({
+  roles: 2,
+});
 const form = reactive<ProjectDesc>({
   projectName: "",
   projectTime: [new Date(), new Date()],
@@ -161,7 +164,7 @@ const file = ref<File>();
 const validatePassURL = (rule: any, value: string, callback: any) => {
   const reg = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
   if (!reg.test(value)) {
-    callback(new Error("请输入正确的网址(https || https 开头)"));
+    callback(new Error("请输入正确的网址(http || https 开头)"));
   } else {
     callback();
   }

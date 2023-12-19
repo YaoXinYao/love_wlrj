@@ -36,7 +36,7 @@
             <el-menu-item index="5">
               <template #title>
                 <i class="iconfont icon-gonggao"> </i>
-                <NuxtLink to="/blog" target="_parent">
+                <NuxtLink to="/proclamation" target="_parent">
                   <span>小组公告</span>
                 </NuxtLink>
               </template>

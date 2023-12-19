@@ -1,6 +1,6 @@
 <template>
   <div class="admin">
-      <NuxtPage></NuxtPage>
+    <NuxtPage></NuxtPage>
   </div>
   </template>
   <script lang="ts" setup>
