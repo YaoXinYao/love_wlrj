@@ -101,6 +101,7 @@ import { Userloginany, Userloginemail, sendEmeil } from "~/service/homeApi";
 import type { FormInstance, FormRules } from "element-plus";
 import { useHomestore } from "~/store/home";
 import { storeToRefs } from "pinia";
+import { useGetNotReadMessage } from "~/hooks/useGetNotReadMessage";
 //定义登录的模板
 definePageMeta({
   layout: "custom",
@@ -259,6 +260,7 @@ async function login() {
       switch (info.code) {
         case 20000:
           Homestore.Changeuserinfo(info.data);
+          useGetNotReadMessage();
           ElMessage({
             message: "登录成功",
             type: "success",
