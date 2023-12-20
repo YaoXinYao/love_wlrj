@@ -150,7 +150,8 @@ let { userinfo } = storeToRefs(homeStore);
 const messageStore = useMessageStore();
 const windowWidth = ref(window.innerWidth);
 let paginationLayout = ref<string>("total, sizes, prev, pager, next, jumper");
-const { curType, pageInfo, infoList, notReadNum } = storeToRefs(messageStore);
+const { curType, pageInfo, infoList, notReadNum, isLoading } =
+  storeToRefs(messageStore);
 const route = useRoute();
 definePageMeta({
   layout: "person",
@@ -224,7 +225,7 @@ const handleClick = async (
               type: "success",
               message: "操作成功~",
             });
-
+            getInfo();
             //获取未读信息数量并存于store
             useGetNotReadMessage();
           } else {
@@ -243,6 +244,7 @@ const handleClick = async (
 
 //利用自己封装的hook获取消息数据
 const getInfo = async () => {
+  isLoading.value = true;
   let messageRes = await useGetMessageInfo({
     pageNo: pageInfo.value.currentPage,
     pageSize: pageInfo.value.pageSize,
@@ -260,6 +262,7 @@ const getInfo = async () => {
 
     infoList.value = messageRes.infoResList;
   }
+  isLoading.value = false;
 };
 
 const handleSizeChange = (val: number) => {

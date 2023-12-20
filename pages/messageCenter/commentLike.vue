@@ -1,20 +1,23 @@
 <template>
-  <div class="app" v-loading="isLoading" element-loading-text="加载中...">
-    <div v-show="!pageInfo.total && !isLoading">
-      <el-empty description="暂无数据" />
+  <div class="app">
+    <div
+      v-loading="isLoading"
+      element-loading-text="加载中..."
+      style="min-height: 400px"
+    >
+      <div v-show="!pageInfo.total && !isLoading">
+        <el-empty description="暂无数据" />
+      </div>
+      <ul class="infinite-list" v-show="pageInfo.total">
+        <li
+          v-for="(info, index) in infoList"
+          :key="info.id"
+          class="noticeItem animate__animated animate__fadeIn"
+        >
+          <Info :data="info" :type="'CommentLike'" />
+        </li>
+      </ul>
     </div>
-    <!-- <div v-show="isLoading" class="isLoading">
-      <span>加载中...</span>
-    </div> -->
-    <ul class="infinite-list" v-show="pageInfo.total">
-      <li
-        v-for="(info, index) in infoList"
-        :key="info.id"
-        class="noticeItem animate__animated animate__fadeIn"
-      >
-        <Info :data="info" :type="'CommentLike'" />
-      </li>
-    </ul>
   </div>
 </template>
 <script setup lang="ts">
@@ -28,8 +31,8 @@ const messageStore = useMessageStore();
 messageStore.ChangeCurType("CommentLike");
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
-const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);
-const isLoading = ref(false);
+const { curType, pageInfo, infoList, isUpdate, isLoading } =
+  storeToRefs(messageStore);
 
 messageStore.ChangePageInfo({
   pageSize: 5,
@@ -38,6 +41,7 @@ messageStore.ChangePageInfo({
 });
 const isNull = ref(false);
 onMounted(() => {
+  isLoading.value = false;
   getInfo();
   isUpdate.value.CommentLike = false;
   useGetNotReadMessage();
@@ -77,6 +81,9 @@ const getInfo = async () => {
 };
 </script>
 <style scoped>
+.app {
+  min-height: 200px;
+}
 .infinite-list {
   height: max-content;
   min-height: 200px;

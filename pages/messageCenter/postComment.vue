@@ -1,22 +1,25 @@
 <!-- 消息中心模块，本目录下代码基本一致，方便日后对某个模块进行调整 -->
 <template>
-  <div class="app" v-loading="isLoading" element-loading-text="加载中...">
-    <div v-show="!pageInfo.total && !isLoading">
-      <el-empty description="暂无数据" />
+  <div class="app">
+    <div
+      v-loading="isLoading"
+      element-loading-text="加载中..."
+      style="min-height: 400px"
+    >
+      <div v-show="!pageInfo.total && !isLoading">
+        <el-empty description="暂无数据" />
+      </div>
+      <ul class="infinite-list" v-show="pageInfo.total">
+        <li
+          v-for="(info, index) in infoList"
+          :key="info.id"
+          class="noticeItem animate__animated animate__fadeIn"
+        >
+          <!-- 消息组件 -->
+          <Info :data="info" :type="'PostComment'" />
+        </li>
+      </ul>
     </div>
-    <!-- <div v-show="isLoading" class="isLoading">
-      <span>加载中...</span>
-    </div> -->
-    <ul class="infinite-list" v-show="pageInfo.total">
-      <li
-        v-for="(info, index) in infoList"
-        :key="info.id"
-        class="noticeItem animate__animated animate__fadeIn"
-      >
-        <!-- 消息组件 -->
-        <Info :data="info" :type="'PostComment'" />
-      </li>
-    </ul>
   </div>
 </template>
 <script setup lang="ts">
@@ -30,8 +33,8 @@ const messageStore = useMessageStore();
 messageStore.ChangeCurType("PostComment");
 const homeStore = useHomestore();
 let { userinfo } = storeToRefs(homeStore);
-const { curType, pageInfo, infoList, isUpdate } = storeToRefs(messageStore);
-const isLoading = ref(false);
+const { curType, pageInfo, infoList, isUpdate, isLoading } =
+  storeToRefs(messageStore);
 
 messageStore.ChangePageInfo({
   pageSize: 5,
@@ -40,6 +43,7 @@ messageStore.ChangePageInfo({
 });
 
 onMounted(() => {
+  isLoading.value = false;
   getInfo();
   isUpdate.value.PostComment = false;
   useGetNotReadMessage();

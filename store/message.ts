@@ -8,6 +8,7 @@ import type {
 export const useMessageStore = defineStore("messageStore", {
   state(): MessageType {
     return {
+      isLoading: false,
       pageInfo: {
         currentPage: 1,
         pageSize: 5,

@@ -18,6 +18,7 @@ export interface MessageType {
   infoList: any;
   notReadNum: NotReadNumType;
   isUpdate: IsUpdateType;
+  isLoading: boolean;
 }
 
 export interface IsUpdateType {
