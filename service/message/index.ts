@@ -35,7 +35,7 @@ export const fastReadService = (props: {
 }) => {
   console.log(props);
 
-  return hyRequest.put<IResultData<any>>(`api/forum/message/read`, {
+  return hyRequest.put<IResultData<any>>(`/api/forum/message/read`, {
     ...props,
   });
 };
