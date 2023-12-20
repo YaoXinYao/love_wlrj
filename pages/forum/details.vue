@@ -529,6 +529,7 @@ watch(status, (newStatus) => {
     background-size: cover;
     overflow: hidden;
     background-position: center;
+    background-image: url("/assets/image/back.jpeg");
   }
   .bgphoto.NoData {
     background-image: url("/assets/image/back.jpeg");
