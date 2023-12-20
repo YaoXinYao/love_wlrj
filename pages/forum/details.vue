@@ -3,8 +3,15 @@
     <div
       class="bgphoto"
       v-if="singleData.photoShow == true"
-      :style="{ backgroundImage: `url(${singleData.photos[0]})` }"
-    ></div>
+    >
+      <el-image :src="singleData.photos[0]" style="display: block;height: 380px;" fit="cover">
+        <template #error>
+          <div class="image-slot">
+            <img src="@/assets/image/back.jpeg" alt="默认图片" />
+          </div>
+        </template>
+      </el-image>
+    </div>
     <div class="bgphoto NoData" v-else></div>
     <div class="header">
       <NuxtLink to="/">首页</NuxtLink> >
@@ -529,8 +536,6 @@ watch(status, (newStatus) => {
     background-size: cover;
     overflow: hidden;
     background-position: center;
-  }
-  .bgphoto.NoData {
     background-image: url("/assets/image/back.jpeg");
   }
   .header {

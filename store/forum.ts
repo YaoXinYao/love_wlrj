@@ -237,6 +237,7 @@ export const forumStore = defineStore("forumInfo", {
     //查询单个帖子-----去除查询用户信息接口
     async getSingle(postId: number, userId: any) {
       this.detailLoading = true;
+      this.singleData={}
       const { data } = await singlePost(postId);
       let single = data.value?.data || {};
       const { postImg, ...postData } = single;
