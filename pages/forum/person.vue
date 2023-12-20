@@ -384,13 +384,13 @@ const deletePost = (id: number) => {
       .userHead {
         height: 100px;
         width: 100px;
-        border: 5px rgba(255, 255, 255, 0.74) solid;
         border-radius: 4px;
         background-color: rgb(215, 212, 211);
         img {
           height: 100px;
           width: 100px;
           border-radius: 3px;
+          object-fit: cover;
         }
       }
     }
