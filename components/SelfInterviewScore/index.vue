@@ -63,11 +63,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  getAccessInfo,
-  getInterviewService,
-  getUserInterviewService,
-} from "~/service/access";
+import { getUserInterviewService } from "~/service/access";
 import type { AccessPageInfoType, AccessResInfoType } from "~/types/Access";
 import { debounce } from "lodash";
 const parentBorder = ref(true);

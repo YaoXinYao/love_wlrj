@@ -218,6 +218,7 @@ const handleClick = async (
             msgAccept: userinfo.value.userId,
             msgType: msgType,
           });
+
           if (fastReadRes.data.value.code == 20000) {
             ElMessage({
               type: "success",

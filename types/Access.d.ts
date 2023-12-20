@@ -54,6 +54,7 @@ export interface AccessResInfoType {
   scoreList?: any;
   templates?: any;
   interviewList?: Array<InterviewItem>;
+  comments?: Array<InterviewItem>;
 }
 
 export interface AccessPageInfoType {
@@ -109,7 +110,7 @@ export interface TypesType {
 
 export interface InterviewItem {
   id: number | string;
-  studentId: number | string;
+  studentId?: number | string;
   interviewterId: number | string;
   comment: string;
   createTime: string;
